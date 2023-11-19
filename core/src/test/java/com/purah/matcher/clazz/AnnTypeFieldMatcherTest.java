@@ -27,6 +27,8 @@ public class AnnTypeFieldMatcherTest {
         Assertions.assertFalse(fieldMatcher.match("money", trade));
     }
 
+
+
     @Test
     void resolver() {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
