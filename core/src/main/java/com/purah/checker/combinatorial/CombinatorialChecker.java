@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class CombinatorialChecker implements Checker<Object,Object> {
+
+
+
     @Override
     public SingleCheckerResult<Object> check(CheckInstance<Object> checkInstance) {
         return null;

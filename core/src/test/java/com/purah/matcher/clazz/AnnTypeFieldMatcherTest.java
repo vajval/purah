@@ -1,5 +1,6 @@
 package com.purah.matcher.clazz;
 
+import com.purah.matcher.intf.FieldMatcherWithInstance;
 import com.purah.resolver.DefaultArgResolver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,11 +15,16 @@ public class AnnTypeFieldMatcherTest {
     @Test
     void test() {
 
+        assertMatch(matcher);
 
-        Assertions.assertTrue(matcher.match("initiator", trade));
-        Assertions.assertFalse(matcher.match("recipients", trade));
-        Assertions.assertFalse(matcher.match("money", trade));
 
+    }
+
+
+    public static void assertMatch(FieldMatcherWithInstance fieldMatcher) {
+        Assertions.assertTrue(fieldMatcher.match("initiator", trade));
+        Assertions.assertFalse(fieldMatcher.match("recipients", trade));
+        Assertions.assertFalse(fieldMatcher.match("money", trade));
     }
 
     @Test

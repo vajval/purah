@@ -27,10 +27,10 @@ public class BaseMatcherFactory implements MatcherFactory {
 
 
     /**
-     * 建议继承类 {@link BaseStringMatcher}
+     * 建议继承类 {@link }
      * 对于输入的类<p>
      * 1 必须有一个 只有String 作为入参的单参非私有有构造器<p>
-     * 2 类上必须有 {@link com.vajva.ann.Name} 注解<p>
+     * 2 类上必须有 {@link} 注解<p>
      */
 
     public void initVerify(Class<? extends FieldMatcher> fieldMatcherClazz) {
