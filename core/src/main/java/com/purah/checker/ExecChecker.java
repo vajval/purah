@@ -13,10 +13,7 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
     public String name;
 
     public void addChecker(Checker<?, ?> checker) {
-
-
         cacheMap.put(checker.inputCheckInstanceClass(), checker);
-
 
     }
 

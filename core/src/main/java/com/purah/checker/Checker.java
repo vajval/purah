@@ -12,6 +12,8 @@ public interface Checker<CHECK_INSTANCE, RESULT> extends IName {
      String DEFAULT_ERROR_INFO = "error";
 
 
+
+
     /**
      * 校验 业务 在这里面
      */

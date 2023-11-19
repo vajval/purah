@@ -9,40 +9,11 @@ import static com.purah.Util.*;
 class CheckerManagerTest {
 
 
-    static BaseChecker<Trade, String> tradeChecker = new BaseChecker<>() {
-        @Override
-        public String name() {
-            return "发起者张三检测";
-        }
+    static Checker<Trade, String> tradeChecker =
+            Checkers.autoStringChecker("发起者张三检测", i -> i.getInitiator().getName().equals("张三"), Trade.class);
 
-        @Override
-        public SingleCheckerResult<String> doCheck(CheckInstance<Trade> checkInstance) {
-            User initiator = checkInstance.instance().getInitiator();
-            if (initiator.getName().equals("张三")) {
-                return success("success");
-            } else {
-                return failed("failed");
-            }
-        }
-    };
-
-
-    static BaseChecker<User, String> userChecker = new BaseChecker<>() {
-        @Override
-        public String name() {
-            return "发起者张三检测";
-        }
-
-        @Override
-        public SingleCheckerResult<String> doCheck(CheckInstance<User> checkInstance) {
-            User instance = checkInstance.instance();
-            if (instance.getName().equals("张三")) {
-                return success("success");
-            } else {
-                return failed("failed");
-            }
-        }
-    };
+    static Checker<User, String> userChecker =
+            Checkers.autoStringChecker("发起者张三检测", i -> i.getName().equals("张三"), User.class);
 
 
     @Test
