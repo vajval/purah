@@ -1,187 +1,223 @@
 package com.purah.checker.combinatorial;
 
+import com.purah.checker.BaseChecker;
 import com.purah.checker.CheckInstance;
 import com.purah.checker.Checker;
-import com.purah.checker.context.CombinatorialCheckerResult;
-import com.purah.checker.context.ExecInfo;
+import com.purah.checker.CheckerManager;
+import com.purah.checker.context.*;
 import com.purah.checker.context.ExecType;
-import com.purah.checker.context.SingleCheckerResult;
+import com.purah.resolver.ArgResolver;
+import com.purah.resolver.ArgResolverManager;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-public class CombinatorialChecker implements Checker<Object,Object> {
+public class CombinatorialChecker extends BaseChecker<Object, Object> {
+
+    CombinatorialCheckerConfig config;
 
 
+    /**
+     * 对入参实例使用的规则检查
+     */
+    protected List<Checker> rootInstanceCheckers;
+    /**
+     * 对每个字段使用的规则检查
+     */
+    public List<FieldMatcherCheckerConfig> fieldMatcherCheckerConfigList = new ArrayList<>();
+    private boolean init = false;
+
+    public CombinatorialChecker(CombinatorialCheckerConfig config) {
+        this.config = config;
+    }
 
     @Override
-    public SingleCheckerResult<Object> check(CheckInstance<Object> checkInstance) {
-        return null;
+    public String name() {
+        return config.name;
     }
 
-    //    @Override
-//    public RuleResult check(Object checkInstance) {
-//
-//
-//        RuleExec ruleExec = this.ruleExec();
-//
-//        List<Supplier<RuleResult>> supplierList = new ArrayList<>(mainExRuleList.size() + mainExRuleList.size());
-//
-//        for (Rule rule : mainExRuleList) {
-//            supplierList.add(() -> rule.check(checkInstance));
-//        }
-//
-//        for (MatcherExecRule matcherExecRule : matcherExecList) {
-//            supplierList.add( () -> matcherExecRule.check(checkInstance));
-//        }
-//
-//        ruleExec.exec(supplierList);
-//        return ruleExec.result();
-//    }
-    public CombinatorialChecker(CombinatorialCheckerBuilder combinatorialCheckerBuilder) {
+    public CombinatorialChecker init() {
+        if (this.init) return this;
+        CheckerManager checkerManager = config.purahContext.checkManager();
+        this.rootInstanceCheckers = this.config.extendCheckerNames.stream().map(checkerManager::get).collect(Collectors.toList());
+        this.fieldMatcherCheckerConfigList = config.fieldMatcherCheckerConfigList;
+        for (FieldMatcherCheckerConfig fieldMatcherCheckerConfig : this.fieldMatcherCheckerConfigList) {
+            fieldMatcherCheckerConfig.buildCheckers(checkerManager);
+        }
+        this.init = true;
+        return this;
+    }
+
+    @Override
+    public CheckerResult doCheck(CheckInstance<Object> checkInstance) {
+        if (!init) {
+            init();
+        }
+        MultiCheckerExecutor executor = new MultiCheckerExecutor();
+        List<Supplier<CheckerResult>> supplierList = new ArrayList<>(rootInstanceCheckers.size() + fieldMatcherCheckerConfigList.size());
+
+
+        /*
+          对入参对象的检查
+         */
+        for (Checker checker : rootInstanceCheckers) {
+            Supplier<CheckerResult> singleCheckerResultSupplier = () -> checker.check(checkInstance);
+            supplierList.add(singleCheckerResultSupplier);
+        }
+        /*
+         * 对入参对象中FieldMatcher 匹配的字段进行对应的检查
+         */
+
+
+        for (FieldMatcherCheckerConfig fieldMatcherCheckerConfig : fieldMatcherCheckerConfigList) {
+            FieldMatcherCheckerConfigExecutor fieldMatcherCheckerConfigExecutor = new FieldMatcherCheckerConfigExecutor(fieldMatcherCheckerConfig);
+            supplierList.add(() -> fieldMatcherCheckerConfigExecutor.check(checkInstance));
+        }
+
+        executor.exec(supplierList);
+        return executor.result();
+
 
     }
 
-//    static class Executor {
-//        ExecType execType;
-//        ExecInfo execInfo;
-//        CombinatorialCheckerResult checkerResult;
-//
-//
-//        public Executor(ExecType execType) {
-//            this.execType = execType;
-//            this.checkerResult = new CombinatorialCheckerResult();
-//        }
-//
-//        public boolean exec(List<Supplier<CombinatorialCheckerResult>> ruleResultSupplierList) {
-//            boolean result = true;
-//            for (Supplier<CombinatorialCheckerResult> supplier : ruleResultSupplierList) {
-//                CombinatorialCheckerResult ruleResult = supplier.get();
-//                this.checkerResult.addOtherRuleResult(ruleResult);
-//                if (ruleResult.haveError()) {
-//                    return false;
-//                }
-//                if (ruleResult.haveFailed()) {
-//                    if (execType == ExecType.Main.all_success) {
-//                        return false;
-//                    } else if (execType == ExecType.Main.all_success_but_must_check_all) {
-//                        result = false;
-//                    }
-//                } else {
-//                    if (execType == ExecType.Main.at_least_one) {
-//                        return true;
-//                    } else if (execType == ExecType.Main.at_least_one_but_must_check_all) {
-//                        result = true;
-//                    }
-//                }
-//            }
-//            return result;
-//
-//
-//        }
-//
-//        public RuleResult result() {
-//            return ruleResult;
-//        }
-//    }
+    /**
+     * 多个checker的执行器
+     */
+
+    class MultiCheckerExecutor {
+
+
+        CombinatorialCheckerResult combinatorialCheckerResult;
+        ExecType.Main mainExecType;
+        ExecInfo execInfo = ExecInfo.success;
+
+
+        public MultiCheckerExecutor() {
+            this.mainExecType = CombinatorialChecker.this.config.mainExecType;
+            this.combinatorialCheckerResult = new CombinatorialCheckerResult();
+        }
+
+        public boolean exec(List<Supplier<CheckerResult>> ruleResultSupplierList) {
+            boolean result = true;
+            for (Supplier<CheckerResult> supplier : ruleResultSupplierList) {
+                CheckerResult ruleResult = supplier.get();
+                this.combinatorialCheckerResult.addResult(ruleResult);
+
+                /*
+                   有错误直接返回
+                 */
+                if (ruleResult.error()) {
+                    execInfo = ExecInfo.error;
+                    return false;
+                }
+                if (ruleResult.failed()) {
+                    if (mainExecType == ExecType.Main.all_success) {
+                        // 有错误 而要求必须要全部成功，才算成功
+                        execInfo = ExecInfo.failed;
+                        return false;
+                    } else if (mainExecType == ExecType.Main.all_success_but_must_check_all) {
+                        // 有错误 而要求必须要全部成功，但是必须检查完
+                        execInfo = ExecInfo.failed;
+                        result = false;
+                    }
+                } else {
+                    if (mainExecType == ExecType.Main.at_least_one) {
+                        // 没有错误 而且只要一个成功就够了
+                        execInfo = ExecInfo.success;
+                        return true;
+                    } else if (mainExecType == ExecType.Main.at_least_one_but_must_check_all) {
+                        // 没有错误  但是必须检查完
+                        execInfo = ExecInfo.success;
+                        result = true;
+                    }
+                }
+            }
+            return result;
+
+
+        }
+
+        public CombinatorialCheckerResult result() {
+            combinatorialCheckerResult.setExecInfo(execInfo);
+            return combinatorialCheckerResult;
+        }
+    }
+
+
+    public ArgResolverManager getArgResolverManager() {
+        return config.purahContext.argResolverManager();
+    }
+
+    public CheckerManager getCheckerManager() {
+
+        return config.purahContext.checkManager();
+    }
+
+    public Checker getAndInit(String ruleName) {
+        Checker checker = getCheckerManager().get(ruleName);
+        if (checker instanceof CombinatorialChecker) {
+            return ((CombinatorialChecker) checker).init();
+        }
+        return checker;
+    }
+
+    /**
+     * 对一个 fieldMatcher匹配到的所有字段，进行检查
+     * 检查顺序有两种
+     * 1 对每个字段依次使用所有规则检查，然后下一个对象
+     * 2 使用一个规则依次检查所有字段，然后下一个规则
+     */
+
+    class FieldMatcherCheckerConfigExecutor {
+        FieldMatcherCheckerConfig fieldMatcherCheckerConfig;
+        List<Checker> checkerList;
+
+
+        public FieldMatcherCheckerConfigExecutor(FieldMatcherCheckerConfig fieldMatcherCheckerConfig) {
+            checkerList = fieldMatcherCheckerConfig.getCheckers();
+            this.fieldMatcherCheckerConfig = fieldMatcherCheckerConfig;
+        }
+
+
+        public CheckerResult check(CheckInstance<Object> checkInstance) {
+
+            Object instance = checkInstance.instance();
+
+            ArgResolver argResolver = getArgResolverManager().getArgResolver(instance.getClass());
+            Map<String, Object> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(instance, fieldMatcherCheckerConfig.fieldMatcher);
+
+            List<Supplier<CheckerResult>> supplierList = new ArrayList<>();
+            ExecType.Matcher execType = fieldMatcherCheckerConfig.execType;
+
+            // 对每个匹配到的字段
+
+            if (execType == ExecType.Matcher.checker_instance) {
+                for (Checker checker : checkerList) {
+                    for (Map.Entry<String, Object> entry : matchFieldObjectMap.entrySet()) {
+                        supplierList.add(() -> checker.check(CheckInstance.create(entry.getValue())));
+                    }
+                }
+            } else if (execType == ExecType.Matcher.instance_checker) {
+                for (Map.Entry<String, Object> entry : matchFieldObjectMap.entrySet()) {
+                    for (Checker checker : checkerList) {
+                        supplierList.add(() -> checker.check(CheckInstance.create(entry.getValue())));
+                    }
+                }
+            }else{
+                throw new RuntimeException();
+            }
+
+
+            MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor();
+            multiCheckerExecutor.exec(supplierList);
+            return multiCheckerExecutor.result();
+        }
+    }
+
 
 }
 
-//    protected boolean init = false;
-//
-//    protected ArgResolverManager argResolverManager;
-//
-//    protected RuleManager ruleManager;
-//
-//
-//    protected CombinatorialRuleConfig combinatorialRuleConfig;
-//
-//    protected List<Rule> mainExRuleList;
-//
-//    protected List<MatcherExecRule> matcherExecList;
-//
-//
-//    public CombinatorialRule(CombinatorialRuleConfig combinatorialRuleConfig) {
-//        this.combinatorialRuleConfig = combinatorialRuleConfig;
-//        this.ruleManager = combinatorialRuleConfig.easyRuleContext.ruleManager();
-//        this.argResolverManager = combinatorialRuleConfig.easyRuleContext.argResolverManager();
-//
-//
-//    }
-//
-
-//
-//
-//    private RuleExec ruleExec() {
-//        return new RuleExec(combinatorialRuleConfig.mainExecType);
-//    }
-//
-//
-
-//
-//
-//    public CombinatorialRule init() {
-//        if (this.init) return this;
-//        this.mainExRuleList = this.combinatorialRuleConfig.mainRuleNameList.stream().map(this::getAndInit).collect(Collectors.toList());
-//        this.matcherExecList = this.combinatorialRuleConfig.matcherRuleConfigList.stream().map(MatcherExecRule::new).collect(Collectors.toList());
-//        this.init = true;
-//        return this;
-//    }
-//
-//    public Rule getAndInit(String ruleName) {
-//        Rule rule = ruleManager.getRule(ruleName);
-//        if (rule instanceof CombinatorialRule) {
-//            return ((CombinatorialRule) rule).init();
-//        }
-//        return rule;
-//    }
-//
-//    class MatcherExecRule implements Rule {
-//
-//
-//        FieldMatcher fieldMatcher;
-//
-//        ExecType.Matcher execType;
-//
-//        List<Rule> ruleList = new ArrayList<>();
-//
-//        public MatcherExecRule(CombinatorialRuleConfig.MatcherRuleConfig matcherRuleConfig) {
-//            this.fieldMatcher = matcherRuleConfig.fieldMatcher;
-//            this.execType = matcherRuleConfig.matcherExecType;
-//            for (String ruleName : matcherRuleConfig.ruleNames) {
-//                ruleList.add(CombinatorialRule.this.getAndInit(ruleName));
-//            }
-//        }
-//
-//        @Override
-//        public RuleResult check(Object parentCheckInstance) {
-//            ArgResolver argResolver = argResolverManager.getArgResolver(parentCheckInstance.getClass());
-//            Map<String, Object> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(parentCheckInstance, fieldMatcher);
-//
-//            List<Supplier<RuleResult>> supplierList = new ArrayList<>();
-//
-//            if (execType == ExecType.Matcher.rule_instance) {
-//                for (Rule rule : ruleList) {
-//                    for (Map.Entry<String, Object> entry : matchFieldObjectMap.entrySet()) {
-//                        supplierList.add(() -> rule.check(entry.getValue()));
-//                    }
-//                }
-//            } else {
-//                for (Map.Entry<String, Object> entry : matchFieldObjectMap.entrySet()) {
-//                    for (Rule rule : ruleList) {
-//                        supplierList.add(() -> rule.check(entry.getValue()));
-//
-//                    }
-//                }
-//            }
-//            RuleExec ruleExec = CombinatorialRule.this.ruleExec();
-//            ruleExec.exec(supplierList);
-//            return ruleExec.result();
-//        }
-//    }
-//
-//    @Override
-//    public String name() {
-//        return combinatorialRuleConfig.ruleName;
-//    }
 

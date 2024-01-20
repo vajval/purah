@@ -25,6 +25,8 @@ public class WildCardMatcherTest {
         Set<String> matchFields = fieldMatcher.matchFields(testFields);
         Assertions.assertEquals(matchFields, Sets.newHashSet("ab"));
     }
+
+
     @Test
     public void match_x() {
         FieldMatcher fieldMatcher = new WildCardMatcher("a*");

@@ -2,6 +2,7 @@ package com.purah.resolver;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.purah.Util;
 import com.purah.matcher.singleLevel.WildCardMatcher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,12 @@ class ReflectArgResolverTest {
 
     @Test
     void matchFieldList() {
+//        WildCardMatcher matcher = new WildCardMatcher("i*");
+//
+//        Set<String> s = reflectArgResolver.matchFieldList(Util.initiator, matcher);
+//        System.out.println(s);
+
+
         WildCardMatcher wildCardMatcher = new WildCardMatcher("?b");
 
         Set<String> matchFieldList = reflectArgResolver.matchFieldList(testObject, wildCardMatcher);

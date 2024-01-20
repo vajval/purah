@@ -1,5 +1,6 @@
 package com.purah.checker;
 
+import com.purah.checker.context.CheckerResult;
 import com.purah.checker.context.SingleCheckerResult;
 
 import java.lang.reflect.ParameterizedType;
@@ -28,7 +29,7 @@ public class Checkers {
                 return name;
             }
             @Override
-            public SingleCheckerResult<String> doCheck(CheckInstance<T> checkInstance) {
+            public CheckerResult<String> doCheck(CheckInstance<T> checkInstance) {
                 boolean test;
                 try {
                     test = predicate.test(checkInstance.instance());

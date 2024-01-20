@@ -28,14 +28,25 @@ public class CheckerManager {
             cacheMap.put(name, execChecker);
         }
 
-        execChecker.addChecker(checker);
+        execChecker.addNewChecker(checker);
+        System.out.println(checker.name());
+
+        System.out.println(cacheMap);
 
         return execChecker;
     }
 
 
     public ExecChecker<?, ?> get(String name) {
-        return cacheMap.get(name);
+        ExecChecker result = cacheMap.get(name);
+
+        if (result == null) {
+            throw new RuleRegException("未经注册的规则:" + name);
+        }
+
+
+//
+        return result;
     }
 }
 

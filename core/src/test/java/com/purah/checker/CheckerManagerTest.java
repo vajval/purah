@@ -1,6 +1,5 @@
 package com.purah.checker;
 
-import com.purah.checker.context.SingleCheckerResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -2,7 +2,7 @@ package com.purah.checker;
 
 
 import com.purah.base.IName;
-import com.purah.checker.context.SingleCheckerResult;
+import com.purah.checker.context.CheckerResult;
 import org.springframework.core.ResolvableType;
 
 public interface Checker<CHECK_INSTANCE, RESULT> extends IName {
@@ -18,7 +18,7 @@ public interface Checker<CHECK_INSTANCE, RESULT> extends IName {
      * 校验 业务 在这里面
      */
 
-    SingleCheckerResult<RESULT> check(CheckInstance<CHECK_INSTANCE> checkInstance);
+    CheckerResult<RESULT> check(CheckInstance<CHECK_INSTANCE> checkInstance);
 
 
     default Class<?> inputCheckInstanceClass() {

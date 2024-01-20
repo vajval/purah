@@ -1,8 +1,31 @@
 package com.purah;
 
 import com.purah.matcher.ann.FieldType;
+import com.purah.matcher.clazz.AnnTypeFieldMatcher;
+import com.purah.matcher.clazz.ClassNameMatcher;
+import com.purah.matcher.singleLevel.WildCardMatcher;
 
 public class Util {
+
+
+    public static PurahContext defaultPurahContext() {
+
+        PurahContext purahContext = new PurahContext();
+        purahContext.matcherManager().regBaseStrMatcher(AnnTypeFieldMatcher.class);
+        purahContext.matcherManager().regBaseStrMatcher(ClassNameMatcher.class);
+        purahContext.matcherManager().regBaseStrMatcher(WildCardMatcher.class);
+
+
+
+
+
+
+
+
+        return purahContext;
+    }
+
+
     public static class Trade {
 
         @FieldType("需要检测")
@@ -70,8 +93,8 @@ public class Util {
         }
     }
 
-  public   static User initiator = new User(1L, "张三");
-    public  static User recipients = new User(2L, "李四");
-    public  static double money = 1.25;
-    public   static Trade trade = new Trade(initiator, recipients, money);
+    public static User initiator = new User(1L, "张三");
+    public static User recipients = new User(2L, "李四");
+    public static double money = 1.25;
+    public static Trade trade = new Trade(initiator, recipients, money);
 }

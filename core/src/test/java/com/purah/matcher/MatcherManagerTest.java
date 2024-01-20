@@ -12,17 +12,21 @@ import com.purah.matcher.singleLevel.WildCardMatcher;
 import com.purah.matcher.singleLevel.WildCardMatcherTest;
 import org.junit.jupiter.api.Test;
 
-class MatcherManagerTest {
+public class MatcherManagerTest {
+
+    public static MatcherManager defaultMatcherManager = new MatcherManager();
+
+    static {
+        defaultMatcherManager.regBaseStrMatcher(AnnTypeFieldMatcher.class);
+        defaultMatcherManager.regBaseStrMatcher(ClassNameMatcher.class);
+        defaultMatcherManager.regBaseStrMatcher(WildCardMatcher.class);
+
+    }
 
     @Test
     void main() {
-        MatcherManager matcherManager = new MatcherManager();
 
-        matcherManager.regBaseStrMatcher(AnnTypeFieldMatcher.class);
-        matcherManager.regBaseStrMatcher(ClassNameMatcher.class);
-
-        matcherManager.regBaseStrMatcher(WildCardMatcher.class);
-
+        MatcherManager matcherManager = defaultMatcherManager;
 
         FieldMatcher fieldMatcher = matcherManager.factoryOf("type_by_ann").create("需要检测");
         AnnTypeFieldMatcherTest.assertMatch((FieldMatcherWithInstance) fieldMatcher);
