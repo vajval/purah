@@ -2,7 +2,9 @@ package com.purah.checker;
 
 
 import com.purah.base.BaseManager;
+import com.purah.checker.factory.CheckerFactory;
 import com.purah.exception.RuleRegException;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +19,9 @@ public class CheckerManager {
     protected final Map<String, ExecChecker> cacheMap = new ConcurrentHashMap<>();
 
 
+    public List<CheckerFactory> checkerFactoryList = new ArrayList<>();
+
+
     public ExecChecker<?, ?> reg(Checker<?, ?> checker) {
         if (checker == null) {
             throw new RuleRegException("注册规则不能为空");
@@ -27,27 +32,35 @@ public class CheckerManager {
             execChecker = new ExecChecker<>(name);
             cacheMap.put(name, execChecker);
         }
-
         execChecker.addNewChecker(checker);
-        System.out.println(checker.name());
-
-        System.out.println(cacheMap);
-
         return execChecker;
     }
 
+    public void addCheckerFactory(CheckerFactory checkerFactory) {
+        this.checkerFactoryList.add(checkerFactory);
+
+    }
 
     public ExecChecker<?, ?> get(String name) {
         ExecChecker result = cacheMap.get(name);
 
         if (result == null) {
+            for (CheckerFactory checkerFactory : checkerFactoryList) {
+                if (checkerFactory.match(name)) {
+                    Checker checker = checkerFactory.createChecker(name);
+                    return this.reg(checker);
+
+                }
+            }
+
             throw new RuleRegException("未经注册的规则:" + name);
         }
 
 
-//
         return result;
     }
+
+
 }
 
 
