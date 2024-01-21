@@ -1,28 +1,24 @@
 package com.purah.checker.combinatorial;
 
-import com.google.common.base.Splitter;
-import com.purah.checker.CheckerManager;
-import com.purah.matcher.MatcherManager;
-import com.purah.matcher.factory.MatcherFactory;
-import com.purah.matcher.intf.FieldMatcher;
-
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class CombinatorialCheckerConfigProperties {
     String checkerName;
 
-    List<String> extendCheckerNames = new ArrayList<>();
+    ExecType.Main mainExecType;
+    List<String> useCheckerNames = new ArrayList<>();
     LinkedHashMap<String, Map<String, String>> matcherFieldCheckerMapping = new LinkedHashMap<>();
 
     public CombinatorialCheckerConfigProperties(String checkerName) {
         this.checkerName = checkerName;
     }
 
-    public CombinatorialCheckerConfigProperties extend(List<String> extendCheckerNames) {
-        this.extendCheckerNames = extendCheckerNames;
-        return this;
+    public List<String> getUseCheckerNames() {
+        return useCheckerNames;
+    }
 
+    public void setUseCheckerNames(List<String> useCheckerNames) {
+        this.useCheckerNames = useCheckerNames;
     }
 
     public CombinatorialCheckerConfigProperties add(String matchFactoryType, LinkedHashMap<String, String> fieldCheckerMapping) {
@@ -31,15 +27,21 @@ public class CombinatorialCheckerConfigProperties {
 
     }
 
-    public String checkerName() {
+    public ExecType.Main getMainExecType() {
+        return mainExecType;
+    }
+
+    public void setMainExecType(ExecType.Main mainExecType) {
+        this.mainExecType = mainExecType;
+    }
+
+    public String getCheckerName() {
         return checkerName;
     }
 
-    public List<String> extendCheckerNames() {
-        return extendCheckerNames;
-    }
 
-    public LinkedHashMap<String, Map<String, String>> matcherFieldCheckerMapping() {
+
+    public LinkedHashMap<String, Map<String, String>> getMatcherFieldCheckerMapping() {
         return matcherFieldCheckerMapping;
     }
 

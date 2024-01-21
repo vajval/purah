@@ -3,7 +3,6 @@ package com.purah;
 import com.google.common.base.Splitter;
 import com.purah.checker.Checker;
 import com.purah.checker.CheckerManager;
-import com.purah.checker.ExecChecker;
 import com.purah.checker.combinatorial.CombinatorialChecker;
 import com.purah.checker.combinatorial.CombinatorialCheckerConfig;
 import com.purah.checker.combinatorial.CombinatorialCheckerConfigProperties;
@@ -42,9 +41,9 @@ public class PurahContext {
 
 
         CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(this);
-        config.setExtendCheckerNames(properties.extendCheckerNames());
-        config.setName(properties.checkerName());
-        for (Map.Entry<String, Map<String, String>> entry : properties.matcherFieldCheckerMapping().entrySet()) {
+        config.setExtendCheckerNames(properties.getUseCheckerNames());
+        config.setName(properties.getCheckerName());
+        for (Map.Entry<String, Map<String, String>> entry : properties.getMatcherFieldCheckerMapping().entrySet()) {
             String matcherFactoryName = entry.getKey();
             MatcherFactory matcherFactory = matcherManager.factoryOf(matcherFactoryName);
             for (Map.Entry<String, String> matcherStrChecker : entry.getValue().entrySet()) {
@@ -56,58 +55,8 @@ public class PurahContext {
             }
         }
         CombinatorialChecker checker = new CombinatorialChecker(config);
-        Checker result = checkManager.reg(checker);
-        return result;
+        return checkManager.reg(checker);
     }
 
 
 }
-
-
-//    public boolean checkWithThreadCache(Object checkInstance, Class<? extends RuleCaches> clazz, String... ruleNames) {
-//
-//
-//        RuleCacheContext open = RuleCacheContext.open();
-//
-//        for (String ruleName : ruleNames) {
-//            Rule rule = ruleManager.getRule(ruleName);
-//
-//
-//            if (rule.check(checkInstance).haveFailed()) {
-//                return false;
-//            }
-//
-//        }
-//        return true;
-//    }
-////
-//
-//    public boolean checkWithThreadCache(Object checkInstance, String... ruleNames) {
-//        RuleCacheContext open = RuleCacheContext.open();
-//
-//        for (String ruleName : ruleNames) {
-//            Rule rule = ruleManager.getRule(ruleName);
-//            if (rule.check(checkInstance).haveFailed()) {
-//                return false;
-//            }
-//
-//        }
-//        return true;
-//    }
-
-//    public boolean check(Object checkInstance, String... ruleNames) {
-//        for (String ruleName : ruleNames) {
-//            Rule rule = ruleManager.getRule(ruleName);
-//            RuleResult check = rule.check(checkInstance);
-//
-//            if (rule.check(checkInstance).haveFailed()) {
-//                return false;
-//            }
-//
-//        }
-//        return true;
-//
-//    }
-//
-//
-//}

@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * 将这个注解放到类上面即可
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ElementType.TYPE,ElementType.METHOD})
 @Documented
 public @interface Name {
     String value();

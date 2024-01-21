@@ -5,6 +5,7 @@ import com.purah.checker.context.CheckerResult;
 import com.purah.exception.BaseException;
 import org.springframework.core.ResolvableType;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -96,7 +97,10 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
             if (inputCheckClass.clazz == null) {
                 return false;
             }
-            return inputCheckClass.clazz.isAssignableFrom(inputCheckClass.clazz);
+            /*
+             * 能处理Map 就一定能处理 HashMap
+             */
+            return this.clazz.isAssignableFrom(inputCheckClass.clazz);
         }
 
 

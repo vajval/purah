@@ -14,7 +14,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
+/**
+ *
+ *
+ * 配置的多个规则像结合形成的规则
+ * easy-rule:
+ *   rules:
+ *     - name: 贷款申请
+ *       mapping:
+ *         product_city_rate_wild_card:
+ *           "[{直辖市}_rate}]": 直辖市利率标准检测
+ *           "[{一线城市}_rate}]": 一线城市市利率标准检测
+ *           "[{北方城市}_rate}]": 北方城市市利率标准检测
+ *
+ *         wild_card:
+ *           "[num_*]" : 取值范围检测
+ *         type_by_ann:
+ *           "[短文本]" : 敏感词检查
+ *           "[长文本]" : 敏感词检查
+ */
 public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
     CombinatorialCheckerConfig config;

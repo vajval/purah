@@ -1,0 +1,7 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.vajva.spring.spring.EasyRuleConfiguration,\
+com.vajva.spring.spring.RuleProperties,\
+com.vajva.spring.aop.RuleAspect,\
+com.vajva.spring.aop.RuleCachesAspect,\
+com.vajva.cache.BaseObjectRuleCaches
+
