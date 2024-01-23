@@ -7,31 +7,27 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
 @ConfigurationProperties(value = "purah")
 public class PurahConfigProperties {
 
-    List<CombinatorialCheckerProperties> rules = Collections.emptyList();
+    List<CombinatorialCheckerProperties> combinatorialCheckers = Collections.emptyList();
 
 
-    public List<CombinatorialCheckerProperties> getRules() {
-        return rules;
+    public List<CombinatorialCheckerProperties> getCombinatorialCheckers() {
+        return combinatorialCheckers;
     }
 
-    public void setRules(List<CombinatorialCheckerProperties> rules) {
-        this.rules = rules;
+    public void setCombinatorialCheckers(List<CombinatorialCheckerProperties> combinatorialCheckers) {
+        this.combinatorialCheckers = combinatorialCheckers;
     }
-
 
     public List<CombinatorialCheckerConfigProperties> toCombinatorialCheckerConfigPropertiesList() {
 
-        return rules.stream().map(CombinatorialCheckerProperties::toCombinatorialCheckerConfigProperties).collect(Collectors.toList());
+        return combinatorialCheckers.stream().map(CombinatorialCheckerProperties::toCombinatorialCheckerConfigProperties).collect(Collectors.toList());
 
 
     }
@@ -45,17 +41,17 @@ public class PurahConfigProperties {
     static class CombinatorialCheckerProperties {
 
         protected String name;
-        protected String checkers;
-        protected int execType;
+        protected String useCheckers;
+        protected int execType = ExecType.Main.all_success.value();
 
-        protected Map<String, Map<String, String>> mapping;
+        protected LinkedHashMap<String, LinkedHashMap<String, String>> mapping = new LinkedHashMap<>(0);
 
 
         public CombinatorialCheckerConfigProperties toCombinatorialCheckerConfigProperties() {
             CombinatorialCheckerConfigProperties result = new CombinatorialCheckerConfigProperties(name);
 
-            result.setUseCheckerNames(split(checkers));
-            for (Map.Entry<String, Map<String, String>> entry : mapping.entrySet()) {
+            result.setUseCheckerNames(split(useCheckers));
+            for (Map.Entry<String, LinkedHashMap<String, String>> entry : mapping.entrySet()) {
                 result.add(entry.getKey(), new LinkedHashMap<>(entry.getValue()));
             }
             result.setMainExecType(ExecType.Main.valueOf(execType));
@@ -70,12 +66,12 @@ public class PurahConfigProperties {
             this.name = name;
         }
 
-        public String getCheckers() {
-            return checkers;
+        public String getUseCheckers() {
+            return useCheckers;
         }
 
-        public void setCheckers(String checkers) {
-            this.checkers = checkers;
+        public void setUseCheckers(String useCheckers) {
+            this.useCheckers = useCheckers;
         }
 
         public int getExecType() {
@@ -86,13 +82,29 @@ public class PurahConfigProperties {
             this.execType = execType;
         }
 
-        public Map<String, Map<String, String>> getMapping() {
+        public LinkedHashMap<String, LinkedHashMap<String, String>> getMapping() {
             return mapping;
         }
 
-        public void setMapping(Map<String, Map<String, String>> mapping) {
+        public void setMapping(LinkedHashMap<String, LinkedHashMap<String, String>> mapping) {
             this.mapping = mapping;
+        }
+
+        @Override
+        public String toString() {
+            return "CombinatorialCheckerProperties{" +
+                    "name='" + name + '\'' +
+                    ", useCheckers='" + useCheckers + '\'' +
+                    ", execType=" + execType +
+                    ", mapping=" + mapping +
+                    '}';
         }
     }
 
+    @Override
+    public String toString() {
+        return "PurahConfigProperties{" +
+                "combinatorialCheckers=" + combinatorialCheckers +
+                '}';
+    }
 }

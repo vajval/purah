@@ -1,0 +1,10 @@
+purah:
+  combinatorial_checkers:
+    - name: 字符串通用
+      use_checkers: a,b,c
+      exec_type: 0
+      mapping:
+        wild_card:
+          "[\\*******a\\*]": A,B
+        re:
+          "[.*]": A,B

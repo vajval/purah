@@ -3,6 +3,7 @@ package com.purah.checker;
 import com.purah.base.Name;
 import com.purah.checker.context.CheckerResult;
 import com.purah.checker.context.SingleCheckerResult;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,24 +30,31 @@ public class MethodChecker extends BaseChecker {
     boolean resultIsCheckResultClass = false;
 
 
+    public static boolean enable(Object methodsToCheckersBean, Method method) {
+        Name nameAnnotation = method.getAnnotation(Name.class);
+        if (nameAnnotation == null) {
+            return false;
+        }
+        if (method.getParameters().length != 1) {
+            return false;
+        }
+        Class<?> returnType = method.getReturnType();
+        if (!(returnType.isAssignableFrom(CheckerResult.class)) &&
+                !(returnType.isAssignableFrom(Boolean.class)) &&
+                !(returnType.isAssignableFrom(boolean.class))) {
+            return false;
+
+        }
+        return true;
+    }
+
+
 
     public MethodChecker(Object methodsToCheckersBean, Method method) {
-        this.name = method.getAnnotation(Name.class).value();
-        this.method = method;
-        this.methodsToCheckersBean = methodsToCheckersBean;
-        this.resultClass = method.getReturnType();
-        if ((!this.resultClass.equals(Boolean.class)) && (!this.resultClass.equals(boolean.class))) {
 
-            ParameterizedType genericReturnType = (ParameterizedType) method.getGenericReturnType();
-            resultClass = (Class) genericReturnType.getActualTypeArguments()[0];
+        if (enable(methodsToCheckersBean, method)) {
 
-            resultIsCheckResultClass = true;
-        }
-        this.inputCheckInstanceClass = method.getParameterTypes()[0];
-        if (this.inputCheckInstanceClass.equals(CheckInstance.class)) {
-            ParameterizedType genericReturnType = (ParameterizedType) method.getGenericParameterTypes()[0];
-            this.inputCheckInstanceClass = (Class) genericReturnType.getActualTypeArguments()[0];
-            argIsCheckInstanceClass = true;
+            throw new RuntimeException();
         }
 
     }

@@ -37,7 +37,10 @@ public class SingleCheckerResult<T> implements CheckerResult<T> {
         return info;
     }
 
-  
+    public static <T> SingleCheckerResult<T> success() {
+        return new SingleCheckerResult<T>(ExecInfo.success, null,null);
+    }
+
     public static <T> SingleCheckerResult<T> success(T data, String info) {
         return new SingleCheckerResult<T>(ExecInfo.success, data,info);
     }

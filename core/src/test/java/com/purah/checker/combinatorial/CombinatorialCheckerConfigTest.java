@@ -3,7 +3,6 @@ package com.purah.checker.combinatorial;
 import com.google.common.collect.Maps;
 import com.purah.PurahContext;
 import com.purah.Util;
-import com.purah.checker.BaseChecker;
 import com.purah.checker.CheckInstance;
 import com.purah.checker.Checker;
 import com.purah.checker.Checkers;
@@ -14,15 +13,11 @@ import com.purah.matcher.clazz.ClassNameMatcher;
 import com.purah.matcher.multilevel.GeneralMultilevelFieldMatcher;
 import com.purah.matcher.singleLevel.WildCardMatcher;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class CombinatorialCheckerConfigTest {
     PurahContext purahContext = new PurahContext();
@@ -76,10 +71,10 @@ class CombinatorialCheckerConfigTest {
 
 
         CheckerResult result = checker.check(CheckInstance.create(Util.initiator));
-        Assertions.assertTrue(result.success());
+        Assertions.assertTrue(result.isSuccess());
 
         result = checker.check(CheckInstance.create(Util.recipients));
-        Assertions.assertFalse(result.success());
+        Assertions.assertFalse(result.isSuccess());
     }
 
     /**
@@ -103,7 +98,7 @@ class CombinatorialCheckerConfigTest {
 
 
         CheckerResult result = multiLevelchecker.check(CheckInstance.create(Util.trade));
-        Assertions.assertTrue(result.success());
+        Assertions.assertTrue(result.isSuccess());
     }
 
     @Test

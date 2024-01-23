@@ -127,11 +127,11 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
                 /*
                    有错误直接返回
                  */
-                if (ruleResult.error()) {
+                if (ruleResult.isError()) {
                     execInfo = ExecInfo.error;
                     return false;
                 }
-                if (ruleResult.failed()) {
+                if (ruleResult.isFailed()) {
                     if (mainExecType == ExecType.Main.all_success) {
                         // 有错误 而要求必须要全部成功，才算成功
                         execInfo = ExecInfo.failed;

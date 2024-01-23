@@ -1,7 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.vajva.spring.spring.EasyRuleConfiguration,\
-com.vajva.spring.spring.RuleProperties,\
-com.vajva.spring.aop.RuleAspect,\
-com.vajva.spring.aop.RuleCachesAspect,\
-com.vajva.cache.BaseObjectRuleCaches
+org.purah.springboot.core.PurahConfiguration,\
+org.purah.springboot.config.PurahConfigProperties,\
+org.purah.springboot.aop.CheckItAspect
 

@@ -31,7 +31,7 @@ import java.util.List;
  * @author vajva
  */
 @Configuration
-public class ImportClientRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
+public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
 
 
     protected Environment environment;

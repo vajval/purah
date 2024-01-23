@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * 装载类
  */
 @Configuration
+
 public class PurahConfiguration implements ApplicationContextAware {
 
     ApplicationContext applicationContext;
@@ -27,6 +28,7 @@ public class PurahConfiguration implements ApplicationContextAware {
 
 
     @Override
+
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

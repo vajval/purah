@@ -2,11 +2,19 @@ package com.purah.checker.combinatorial;
 
 public class ExecType {
     public enum Main {
-        all_success,
-        all_success_but_must_check_all,
-        at_least_one,
-        at_least_one_but_must_check_all;
+        all_success(0),
+        all_success_but_must_check_all(1),
+        at_least_one(2),
+        at_least_one_but_must_check_all(3);
+        final int value;
 
+
+        Main(int value) {
+            this.value = value;
+        }
+        public int value(){
+            return value;
+        }
         public static Main valueOf(int value) {
 
             if (value == 0) {
@@ -24,8 +32,17 @@ public class ExecType {
     }
 
     public enum Matcher {
-        rule_instance,
-        instance_instance
+        checker_instance(1),
+        instance_checker(2);
+        final int value;
 
+
+        Matcher(int value) {
+            this.value = value;
+        }
+
+        public int value(){
+            return value;
+        }
     }
 }

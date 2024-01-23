@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class MethodCheckerTest {
 
 
@@ -43,11 +41,11 @@ class MethodCheckerTest {
         TestCheckers testCheckers = new TestCheckers();
         Method testMethod = TestCheckers.class.getMethod("checkById", Long.class);
         MethodChecker methodChecker = new MethodChecker(testCheckers, testMethod);
-        Assertions.assertTrue(methodChecker.check(CheckInstance.create(1L)).success());
+        Assertions.assertTrue(methodChecker.check(CheckInstance.create(1L)).isSuccess());
 
         testMethod = TestCheckers.class.getMethod("checkById", CheckInstance.class);
         methodChecker = new MethodChecker(testCheckers, testMethod);
-        Assertions.assertTrue(methodChecker.check(CheckInstance.create(1L)).success());
+        Assertions.assertTrue(methodChecker.check(CheckInstance.create(1L)).isSuccess());
 
     }
     @Test
@@ -68,12 +66,12 @@ class MethodCheckerTest {
         methodChecker = new MethodChecker(testCheckers, TestCheckers.class.getMethod("checkByUser", Util.User.class));
         checkerManager.reg(methodChecker);
         ExecChecker execChecker = checkerManager.get("id为1");
-        Assertions.assertTrue(execChecker.check(CheckInstance.create(Util.initiator)).success());
-        Assertions.assertFalse(execChecker.check(CheckInstance.create(Util.recipients)).success());
+        Assertions.assertTrue(execChecker.check(CheckInstance.create(Util.initiator)).isSuccess());
+        Assertions.assertFalse(execChecker.check(CheckInstance.create(Util.recipients)).isSuccess());
 
 
-        Assertions.assertTrue(execChecker.check(CheckInstance.create(1L)).success());
-        Assertions.assertFalse(execChecker.check(CheckInstance.create(2L)).success());
+        Assertions.assertTrue(execChecker.check(CheckInstance.create(1L)).isSuccess());
+        Assertions.assertFalse(execChecker.check(CheckInstance.create(2L)).isSuccess());
     }
 
     @Test

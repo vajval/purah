@@ -4,10 +4,7 @@ import com.google.common.collect.Lists;
 
 import com.purah.PurahContext;
 import com.purah.base.Name;
-import com.purah.checker.BaseChecker;
-import com.purah.checker.CheckInstance;
-import com.purah.checker.Checker;
-import com.purah.checker.CheckerManager;
+import com.purah.checker.*;
 import com.purah.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import com.purah.checker.context.CheckerResult;
 import com.purah.checker.context.SingleCheckerResult;
@@ -31,10 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -70,6 +64,7 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
         this.initMatcherManager(purahContext.matcherManager());
         this.initArgResolverManager(purahContext.argResolverManager());
         this.initCheckerManager(purahContext.checkManager());
+        this.initPurahConfigProperties(purahContext);
 
         return purahContext;
 
@@ -100,8 +95,6 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
     }
 
 
-
-
     /**
      * 1 从spring 容器中找到 Checker bean 并且注册
      * 2 从spring 容器中找到 被 MethodsToCheckers 类注册的对象，并且将其中的函数构造为checker注册
@@ -123,11 +116,12 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
 
         for (Object bean : methodsToCheckersBeans) {
             Class<?> clazz = AopUtils.getTargetClass(bean);
-            List<Method> methodList = Lists.newArrayList(clazz.getMethods()).stream()
-                    .filter(i -> i.getDeclaredAnnotation(Name.class) != null)
-                    .filter(i -> i.getParameters().length == 1)
-                    .filter(i -> i.getReturnType().isAssignableFrom(CheckerResult.class) || i.getReturnType().equals(Boolean.class) || i.getReturnType().equals(boolean.class))
-                    .toList();
+            for (Method method : clazz.getMethods()) {
+                if (MethodChecker.enable(bean, method)) {
+                    MethodChecker methodChecker = new MethodChecker(bean, method);
+                    checkerManager.reg(methodChecker);
+                }
+            }
 
 
         }
@@ -136,14 +130,11 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
     }
 
 
-
-
     /**
      * 根据配置文件生成 CombinatorialChecker 并且注册注
      *
      * @param purahContext
      */
-
     public void initPurahConfigProperties(PurahContext purahContext) {
         for (CombinatorialCheckerConfigProperties properties : purahConfigProperties.toCombinatorialCheckerConfigPropertiesList()) {
             purahContext.regNewCombinatorialChecker(properties);
