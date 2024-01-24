@@ -41,6 +41,7 @@ public class PurahContext {
 
 
         CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(this);
+        config.setMainExecType(properties.getMainExecType());
         config.setExtendCheckerNames(properties.getUseCheckerNames());
         config.setName(properties.getCheckerName());
         for (Map.Entry<String, Map<String, String>> entry : properties.getMatcherFieldCheckerMapping().entrySet()) {

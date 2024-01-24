@@ -5,7 +5,6 @@ import com.purah.checker.CheckInstance;
 import com.purah.checker.Checker;
 import com.purah.checker.CheckerManager;
 import com.purah.checker.context.*;
-import com.purah.checker.context.ExecType;
 import com.purah.resolver.ArgResolver;
 import com.purah.resolver.ArgResolverManager;
 
@@ -14,24 +13,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
 /**
- *
- *
  * 配置的多个规则像结合形成的规则
  * easy-rule:
- *   rules:
- *     - name: 贷款申请
- *       mapping:
- *         product_city_rate_wild_card:
- *           "[{直辖市}_rate}]": 直辖市利率标准检测
- *           "[{一线城市}_rate}]": 一线城市市利率标准检测
- *           "[{北方城市}_rate}]": 北方城市市利率标准检测
- *
- *         wild_card:
- *           "[num_*]" : 取值范围检测
- *         type_by_ann:
- *           "[短文本]" : 敏感词检查
- *           "[长文本]" : 敏感词检查
+ * rules:
+ * - name: 贷款申请
+ * mapping:
+ * product_city_rate_wild_card:
+ * "[{直辖市}_rate}]": 直辖市利率标准检测
+ * "[{一线城市}_rate}]": 一线城市市利率标准检测
+ * "[{北方城市}_rate}]": 北方城市市利率标准检测
+ * <p>
+ * wild_card:
+ * "[num_*]" : 取值范围检测
+ * type_by_ann:
+ * "[短文本]" : 敏感词检查
+ * "[长文本]" : 敏感词检查
  */
 public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
@@ -89,12 +87,10 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
          * 对入参对象中FieldMatcher 匹配的字段进行对应的检查
          */
 
-
         for (FieldMatcherCheckerConfig fieldMatcherCheckerConfig : fieldMatcherCheckerConfigList) {
             FieldMatcherCheckerConfigExecutor fieldMatcherCheckerConfigExecutor = new FieldMatcherCheckerConfigExecutor(fieldMatcherCheckerConfig);
             supplierList.add(() -> fieldMatcherCheckerConfigExecutor.check(checkInstance));
         }
-
         executor.exec(supplierList);
         return executor.result();
 
@@ -120,6 +116,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
         public boolean exec(List<Supplier<CheckerResult>> ruleResultSupplierList) {
             boolean result = true;
+
             for (Supplier<CheckerResult> supplier : ruleResultSupplierList) {
                 CheckerResult ruleResult = supplier.get();
                 this.combinatorialCheckerResult.addResult(ruleResult);
@@ -175,7 +172,6 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
     }
 
 
-
     /**
      * 对一个 fieldMatcher匹配到的所有字段，进行检查
      * 检查顺序有两种
@@ -218,10 +214,9 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
                         supplierList.add(() -> checker.check(entry.getValue()));
                     }
                 }
-            }else{
+            } else {
                 throw new RuntimeException();
             }
-
 
             MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor();
             multiCheckerExecutor.exec(supplierList);

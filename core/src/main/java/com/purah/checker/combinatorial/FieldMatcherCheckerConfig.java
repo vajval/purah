@@ -2,11 +2,9 @@ package com.purah.checker.combinatorial;
 
 import com.purah.checker.Checker;
 import com.purah.checker.CheckerManager;
-import com.purah.checker.context.ExecType;
 import com.purah.matcher.intf.FieldMatcher;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class FieldMatcherCheckerConfig {
@@ -29,5 +27,15 @@ public class FieldMatcherCheckerConfig {
     public FieldMatcherCheckerConfig(FieldMatcher fieldMatcher, List<String> ruleNames) {
         this.fieldMatcher = fieldMatcher;
         this.checkerNames = ruleNames;
+    }
+
+    @Override
+    public String toString() {
+        return "FieldMatcherCheckerConfig{" +
+                "execType=" + execType +
+                ", fieldMatcher=" + fieldMatcher +
+                ", checkerNames=" + checkerNames +
+                ", checkers=" + checkers +
+                '}';
     }
 }

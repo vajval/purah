@@ -25,6 +25,7 @@ public class CombinatorialCheckerResult implements CheckerResult<List<CheckerRes
     }
 
     public void  addResult(CheckerResult checkerResult){
+
         if(checkerResult instanceof  CombinatorialCheckerResult){
             singleCheckerResultList.addAll  (((CombinatorialCheckerResult)checkerResult).singleCheckerResultList);
         }else{

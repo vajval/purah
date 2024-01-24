@@ -134,6 +134,7 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
 
         static CheckClass byClass(Class<?> clazz) {
             CheckClass checkClass = new CheckClass();
+            if(clazz==null)clazz=Object.class;
             checkClass.clazz = clazz;
             return checkClass;
         }

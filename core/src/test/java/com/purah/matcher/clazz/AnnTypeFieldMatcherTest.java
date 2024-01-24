@@ -27,6 +27,13 @@ public class AnnTypeFieldMatcherTest {
         Assertions.assertFalse(fieldMatcher.match("recipients", trade));
         Assertions.assertFalse(fieldMatcher.match("money", trade));
     }
+    @Test
+    void resolver2() {
+        DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
+        Map<String, CheckInstance> map = defaultArgResolver.getMatchFieldObjectMap(trade,  new AnnTypeFieldMatcher("短文本"));
+        Assertions.assertEquals(map.get("title").instance(), trade.getTitle());
+        Assertions.assertNull(map.get("recipients"));
+    }
 
 
 

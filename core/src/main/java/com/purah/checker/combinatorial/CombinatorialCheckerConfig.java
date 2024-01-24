@@ -1,7 +1,6 @@
 package com.purah.checker.combinatorial;
 
 import com.purah.PurahContext;
-import com.purah.checker.context.ExecType;
 import com.purah.matcher.intf.FieldMatcher;
 
 import java.util.ArrayList;

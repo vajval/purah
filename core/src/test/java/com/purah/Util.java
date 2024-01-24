@@ -16,18 +16,13 @@ public class Util {
         purahContext.matcherManager().regBaseStrMatcher(WildCardMatcher.class);
 
 
-
-
-
-
-
-
         return purahContext;
     }
 
 
     public static class Trade {
-
+        @FieldType("短文本")
+        String title;
         @FieldType("需要检测")
 
         User initiator;
@@ -35,10 +30,11 @@ public class Util {
 
         double money;
 
-        public Trade(User initiator, User recipients, double money) {
+        public Trade(User initiator, User recipients, double money, String title) {
             this.initiator = initiator;
             this.recipients = recipients;
             this.money = money;
+            this.title = title;
         }
 
         public User getInitiator() {
@@ -63,6 +59,14 @@ public class Util {
 
         public void setMoney(double money) {
             this.money = money;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
     }
 
@@ -96,5 +100,5 @@ public class Util {
     public static User initiator = new User(1L, "张三");
     public static User recipients = new User(2L, "李四");
     public static double money = 1.25;
-    public static Trade trade = new Trade(initiator, recipients, money);
+    public static Trade trade = new Trade(initiator, recipients, money,"sb 啊");
 }
