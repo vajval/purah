@@ -10,6 +10,6 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Documented
 @Import(ImportPurahRegistrar.class)
-public @interface EnableOnContext {
+public @interface EnablePurah {
 
 }

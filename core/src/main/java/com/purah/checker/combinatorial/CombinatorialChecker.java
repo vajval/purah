@@ -205,7 +205,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
             Object instance = checkInstance.instance();
 
             ArgResolver argResolver = getArgResolverManager().getArgResolver(instance.getClass());
-            Map<String, Object> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(instance, fieldMatcherCheckerConfig.fieldMatcher);
+            Map<String, CheckInstance> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(instance, fieldMatcherCheckerConfig.fieldMatcher);
 
             List<Supplier<CheckerResult>> supplierList = new ArrayList<>();
             ExecType.Matcher execType = fieldMatcherCheckerConfig.execType;
@@ -214,14 +214,14 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
             if (execType == ExecType.Matcher.checker_instance) {
                 for (Checker checker : checkerList) {
-                    for (Map.Entry<String, Object> entry : matchFieldObjectMap.entrySet()) {
-                        supplierList.add(() -> checker.check(CheckInstance.create(entry.getValue())));
+                    for (Map.Entry<String, CheckInstance> entry : matchFieldObjectMap.entrySet()) {
+                        supplierList.add(() -> checker.check(entry.getValue()));
                     }
                 }
             } else if (execType == ExecType.Matcher.instance_checker) {
-                for (Map.Entry<String, Object> entry : matchFieldObjectMap.entrySet()) {
+                for (Map.Entry<String, CheckInstance> entry : matchFieldObjectMap.entrySet()) {
                     for (Checker checker : checkerList) {
-                        supplierList.add(() -> checker.check(CheckInstance.create(entry.getValue())));
+                        supplierList.add(() -> checker.check(entry.getValue()));
                     }
                 }
             }else{

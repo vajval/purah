@@ -1,5 +1,6 @@
 package com.purah.resolver;
 
+import com.purah.checker.CheckInstance;
 import com.purah.checker.Checker;
 import org.springframework.core.ResolvableType;
 
@@ -12,8 +13,8 @@ public class MapStringObjectArgResolver extends AbstractMatchArgResolver<Map<Str
 
 
     @Override
-    public Map<String, Object> getFieldsObjectMap(Map<String, Object> stringObjectMap, Set<String> matchFieldList) {
-        return matchFieldList.stream().collect(Collectors.toMap(matchField -> matchField, stringObjectMap::get));
+    public Map<String, CheckInstance> getFieldsObjectMap(Map<String, Object> stringObjectMap, Set<String> matchFieldList) {
+        return matchFieldList.stream().collect(Collectors.toMap(matchField -> matchField, i -> CheckInstance.create(stringObjectMap.get(i))));
     }
 
     @Override

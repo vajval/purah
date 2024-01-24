@@ -4,7 +4,7 @@ package org.purah.springboot.core;
 import com.purah.PurahContext;
 import com.purah.matcher.BaseStringMatcher;
 import com.purah.matcher.intf.FieldMatcher;
-import org.purah.springboot.ann.EnableOnContext;
+import org.purah.springboot.ann.EnableOnPurahContext;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -17,9 +17,13 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.type.classreading.MetadataReader;
+import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.util.ClassUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,14 +43,12 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     protected ResourceLoader resourceLoader;
 
 
-
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry, BeanNameGenerator importBeanNameGenerator) {
 //
-        List<Class<? extends FieldMatcher>> baseStringMatcherClass = this.scanStringMatcherClass(metadata);
+        LinkedHashSet<BeanDefinition> beanDefinitions = enableOnPurahContextCandidateComponent(metadata);
 
-
-        AbstractBeanDefinition purahContextBeanDefinition = purahContextBeanDefinition(baseStringMatcherClass);
+        AbstractBeanDefinition purahContextBeanDefinition = purahContextBeanDefinition(beanDefinitions);
 
 
         BeanDefinitionHolder holder = new BeanDefinitionHolder(purahContextBeanDefinition, PurahContext.class.getName());
@@ -56,10 +58,10 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     }
 
 
-    public AbstractBeanDefinition purahContextBeanDefinition(List<Class<? extends FieldMatcher>> baseStringMatcherClass) {
+    public AbstractBeanDefinition purahContextBeanDefinition(LinkedHashSet<BeanDefinition> beanDefinitions) {
         BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(PurahContextFactoryBean.class);
-
-        definitionBuilder.addPropertyValue("baseStringMatcherClass", baseStringMatcherClass);
+        List<Class<BaseStringMatcher>> classes = scanStringMatcherClass(beanDefinitions, BaseStringMatcher.class);
+        definitionBuilder.addPropertyValue("baseStringMatcherClass", classes);
         definitionBuilder.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
 
 
@@ -70,21 +72,25 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
         return beanDefinition;
     }
 
-    private List<Class<? extends FieldMatcher>> scanStringMatcherClass(AnnotationMetadata metadata) {
+
+    private LinkedHashSet<BeanDefinition> enableOnPurahContextCandidateComponent(AnnotationMetadata metadata) {
         ClassPathScanningCandidateComponentProvider scanner = this.getScanner();
         scanner.setResourceLoader(resourceLoader);
-
-        scanner.addIncludeFilter(new AnnotationTypeFilter(EnableOnContext.class));
+        scanner.addIncludeFilter(new AnnotationTypeFilter(EnableOnPurahContext.class));
 
         String packageName = ClassUtils.getPackageName(metadata.getClassName());
-        LinkedHashSet<BeanDefinition> candidateComponents = new LinkedHashSet<>(scanner.findCandidateComponents(packageName));
+        return new LinkedHashSet<>(scanner.findCandidateComponents(packageName));
+    }
 
-        List<Class<? extends FieldMatcher>> result = new ArrayList<>();
+    private <T> List<Class<T>> scanStringMatcherClass(LinkedHashSet<BeanDefinition> candidateComponents, Class<T> matchClazz) {
+
+
+        List<Class<T>> result = new ArrayList<>();
         for (BeanDefinition beanDefinition : candidateComponents) {
             try {
                 Class<?> clazz = Class.forName(beanDefinition.getBeanClassName());
-                if ((BaseStringMatcher.class.isAssignableFrom(clazz))) {
-                    result.add((Class<? extends FieldMatcher>) clazz);
+                if ((matchClazz.isAssignableFrom(clazz))) {
+                    result.add((Class) clazz);
                 }
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
@@ -117,7 +123,6 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     }
 
 
-
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         ImportBeanDefinitionRegistrar.super.registerBeanDefinitions(importingClassMetadata, registry);
@@ -132,8 +137,6 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
-
-
 
 
 }

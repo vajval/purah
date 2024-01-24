@@ -1,11 +1,12 @@
-package spring;
+package org.purah;
 
-import org.purah.springboot.ann.EnableOnContext;
+import org.purah.springboot.ann.EnablePurah;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@EnableOnContext
+@EnablePurah
 public class ExampleApplication {
 
     public static void main(String[] args) {

@@ -1,6 +1,7 @@
 package com.purah.resolver;
 
 import com.google.common.collect.Sets;
+import com.purah.checker.CheckInstance;
 import com.purah.matcher.intf.FieldMatcher;
 
 import java.util.HashMap;
@@ -18,7 +19,7 @@ public class DefaultArgResolver implements ArgResolver<Object> {
 
 
     @Override
-    public Map<String, Object> getMatchFieldObjectMap(Object o, FieldMatcher fieldMatcher) {
+    public Map<String, CheckInstance> getMatchFieldObjectMap(Object o, FieldMatcher fieldMatcher) {
         if(o==null){
             throw new RuntimeException();
         }

@@ -1,5 +1,6 @@
 package com.purah.resolver;
 
+import com.purah.checker.CheckInstance;
 import com.purah.matcher.intf.FieldMatcher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BaseArgResolverTest {
     static class TestBaseArgResolver extends BaseArgResolver<Map>{
         @Override
-        public Map<String, Object> getMatchFieldObjectMap(Map s, FieldMatcher fieldMatcher) {
+        public Map<String, CheckInstance> getMatchFieldObjectMap(Map s, FieldMatcher fieldMatcher) {
             return Collections.emptyMap();
         }
     }

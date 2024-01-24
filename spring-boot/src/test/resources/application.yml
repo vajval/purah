@@ -8,3 +8,11 @@ purah:
           "[\\*******a\\*]": A,B
         re:
           "[.*]": A,B
+
+    - name: 发表博客
+      exec_type: 0
+      mapping:
+        wild_card:
+          "[\\*******a\\*]": A,B
+        re:
+          "[.*]": A,B

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,6 +56,13 @@ public class FieldGetMethodUtil {
                 .filter(method -> usefulMethod(method.getName()))
                 .filter(method -> method.getParameterCount() == 0)
                 .collect(Collectors.toMap(method -> methodNameToFieldName(method.getName()), method -> method));
+    }
+
+    public Map<String, Field> fieldNameFieldMap(Class<?> instanceClass, Set<String> fieldStrSet) {
+        return Stream.of(instanceClass.getDeclaredFields()).filter(i -> fieldStrSet.contains(i.getName()))
+                .collect(Collectors.toMap(Field::getName, field -> field));
+
+
     }
 
 

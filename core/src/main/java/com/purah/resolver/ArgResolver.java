@@ -1,6 +1,7 @@
 package com.purah.resolver;
 
 
+import com.purah.checker.CheckInstance;
 import com.purah.matcher.intf.FieldMatcher;
 
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.Set;
  */
 public interface ArgResolver<INSTANCE> {
 
-    Map<String,Object> getMatchFieldObjectMap(INSTANCE instance, FieldMatcher fieldMatcher);
+    Map<String, CheckInstance> getMatchFieldObjectMap(INSTANCE instance, FieldMatcher fieldMatcher);
 
     Set<Class<?>> supportTypes();
 

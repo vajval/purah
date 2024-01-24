@@ -1,6 +1,7 @@
 package com.purah.resolver;
 
 import com.google.common.collect.Sets;
+import com.purah.checker.CheckInstance;
 import com.purah.matcher.singleLevel.WildCardMatcher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -23,14 +24,15 @@ class DefaultArgResolverTest {
         ReflectArgResolverTest.TestObject testObject = ReflectArgResolverTest.TestObject.create();
 
 
-        Map<String, Object> getFromMap = defaultArgResolver.getMatchFieldObjectMap(testStringObjectMap,wildCardMatcher);
+        Map<String, CheckInstance> getFromMap = defaultArgResolver.getMatchFieldObjectMap(testStringObjectMap,wildCardMatcher);
 
-        Map<String, Object> getFromObject = defaultArgResolver.getMatchFieldObjectMap(testObject,wildCardMatcher);
+        Map<String, CheckInstance> getFromObject = defaultArgResolver.getMatchFieldObjectMap(testObject,wildCardMatcher);
+
 
         Assertions.assertEquals(getFromMap, getFromObject);
 
         Assertions.assertEquals(getFromMap.size(),1);
-        Assertions.assertEquals(getFromMap.get("ab"),"ab");
+        Assertions.assertEquals(getFromMap.get("ab").instance(),"ab");
 
     }
 

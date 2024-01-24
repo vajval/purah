@@ -27,6 +27,7 @@ public class ClassNameMatcher extends AbstractInstanceFieldMatcher implements Fi
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException e) {
+
             throw new RuntimeException(e);
         }
         fieldGetMethodUtil = new FieldGetMethodUtil();

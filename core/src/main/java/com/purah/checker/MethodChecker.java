@@ -31,33 +31,56 @@ public class MethodChecker extends BaseChecker {
 
 
     public static boolean enable(Object methodsToCheckersBean, Method method) {
+        return errorMsg(methodsToCheckersBean, method) == null;
+    }
+
+
+    private static String errorMsg(Object methodsToCheckersBean, Method method) {
         Name nameAnnotation = method.getAnnotation(Name.class);
         if (nameAnnotation == null) {
-            return false;
+            return "必须要给规则一个名字 请在对应method上增加 @Name注解" + method;
         }
         if (method.getParameters().length != 1) {
-            return false;
+            return "入参只能有一个参数" + method;
         }
         Class<?> returnType = method.getReturnType();
-        if (!(returnType.isAssignableFrom(CheckerResult.class)) &&
-                !(returnType.isAssignableFrom(Boolean.class)) &&
-                !(returnType.isAssignableFrom(boolean.class))) {
-            return false;
+        if (!(CheckerResult.class.isAssignableFrom(returnType)) &&
+                !(Boolean.class.isAssignableFrom(returnType)) &&
+                !(boolean.class.isAssignableFrom(returnType))) {
+            return "返回值必须是 CheckerResult Boolean 或者 boolean " + method;
 
         }
-        return true;
+        return null;
     }
-
-
 
     public MethodChecker(Object methodsToCheckersBean, Method method) {
+        String errorMsg = errorMsg(methodsToCheckersBean, method);
+        if (errorMsg != null) {
+            throw new RuntimeException(errorMsg);
+        }
 
-        if (enable(methodsToCheckersBean, method)) {
+        this.method = method;
 
-            throw new RuntimeException();
+
+        this.name = method.getAnnotation(Name.class).value();
+        this.methodsToCheckersBean = methodsToCheckersBean;
+        this.resultClass = method.getReturnType();
+        if ((!this.resultClass.equals(Boolean.class)) && (!this.resultClass.equals(boolean.class))) {
+
+            ParameterizedType genericReturnType = (ParameterizedType) method.getGenericReturnType();
+            resultClass = (Class) genericReturnType.getActualTypeArguments()[0];
+
+            resultIsCheckResultClass = true;
+        }
+        this.inputCheckInstanceClass = method.getParameterTypes()[0];
+        if (this.inputCheckInstanceClass.equals(CheckInstance.class)) {
+            ParameterizedType genericReturnType = (ParameterizedType) method.getGenericParameterTypes()[0];
+            this.inputCheckInstanceClass = (Class) genericReturnType.getActualTypeArguments()[0];
+            argIsCheckInstanceClass = true;
         }
 
     }
+
 
     @Override
     public String name() {
@@ -95,6 +118,7 @@ public class MethodChecker extends BaseChecker {
             }
 
         } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

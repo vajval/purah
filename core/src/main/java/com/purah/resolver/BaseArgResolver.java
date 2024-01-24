@@ -1,6 +1,7 @@
 package com.purah.resolver;
 
 import com.google.common.collect.Sets;
+import com.purah.checker.CheckInstance;
 import com.purah.matcher.intf.FieldMatcher;
 import org.springframework.core.ResolvableType;
 
@@ -24,7 +25,7 @@ public abstract class BaseArgResolver<INSTANCE> implements ArgResolver<INSTANCE>
     }
 
     @Override
-    public abstract Map<String, Object> getMatchFieldObjectMap(INSTANCE instance, FieldMatcher fieldMatcher);
+    public abstract Map<String, CheckInstance> getMatchFieldObjectMap(INSTANCE instance, FieldMatcher fieldMatcher);
 
 
     protected void initSupport() {

@@ -3,14 +3,14 @@ package com.purah.resolver;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.purah.Util;
+import com.purah.checker.CheckInstance;
+import com.purah.matcher.ann.FieldType;
 import com.purah.matcher.singleLevel.WildCardMatcher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,16 +23,20 @@ class ReflectArgResolverTest {
     void getMatchFieldObjectMap() {
         WildCardMatcher wildCardMatcher = new WildCardMatcher("?b");
 
-        Map<String, Object> matchFieldObjectMap = reflectArgResolver.getMatchFieldObjectMap(testObject, wildCardMatcher);
+        Map<String, CheckInstance> matchFieldObjectMap = reflectArgResolver.getMatchFieldObjectMap(testObject, wildCardMatcher);
         Assertions.assertEquals(matchFieldObjectMap.size(), 1);
-        Assertions.assertEquals(matchFieldObjectMap.get("ab"), testObject.ab);
+        Assertions.assertEquals(matchFieldObjectMap.get("ab").instance(), testObject.ab);
     }
 
 
     @Test
     void getObject() {
-        Object getValue = reflectArgResolver.getObject(testObject, "a");
-        Assertions.assertEquals(testObject.a, getValue);
+        CheckInstance<Object> checkInstance = reflectArgResolver.getCheckInstance(testObject, "a");
+        Assertions.assertEquals(testObject.a, checkInstance.instance());
+
+        FieldType fieldType = checkInstance.annOf(FieldType.class);
+
+        Assertions.assertEquals(Arrays.stream(fieldType.value()).findFirst().get(), "123");
 
     }
 
@@ -72,7 +76,8 @@ class ReflectArgResolverTest {
 
     }
 
-  public   static class TestObject {
+    public static class TestObject {
+        @FieldType("123")
         protected String a;
 
         protected String ab;

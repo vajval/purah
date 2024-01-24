@@ -3,6 +3,7 @@ package com.purah.resolver;
 
 import com.google.common.collect.Lists;
 import com.purah.base.NameUtil;
+import com.purah.checker.CheckInstance;
 import com.purah.exception.ArgResolverException;
 import com.purah.matcher.intf.FieldMatcher;
 import com.purah.matcher.multilevel.MultilevelFieldMatcher;
@@ -25,7 +26,7 @@ public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver
      * 详情见单元测试
      */
     @Override
-    public Map<String, Object> getMatchFieldObjectMap(INSTANCE instance, FieldMatcher fieldMatcher) {
+    public Map<String, CheckInstance> getMatchFieldObjectMap(INSTANCE instance, FieldMatcher fieldMatcher) {
         this.baseCheck(instance);
         if (fieldMatcher instanceof MultilevelFieldMatcher multilevelFieldMatcher) {
             return this.getMultiLevelMap(instance, multilevelFieldMatcher);
@@ -38,32 +39,33 @@ public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver
     /**
      * 获取多级 matcher  从 instance中获取多级对象，
      */
-    protected Map<String, Object> getMultiLevelMap(INSTANCE instance, MultilevelFieldMatcher multilevelFieldMatcher) {
+    protected Map<String, CheckInstance> getMultiLevelMap(INSTANCE instance, MultilevelFieldMatcher multilevelFieldMatcher) {
 
         Set<String> matchFieldList = this.matchFieldList(instance, multilevelFieldMatcher);
         String levelSplitStr = multilevelFieldMatcher.levelSplitStr();
-        Map<String, Object> result = new HashMap<>();
-        Map<String, Object> fieldsObjectMap = this.getFieldsObjectMap(instance, matchFieldList);
+        Map<String, CheckInstance> result = new HashMap<>();
+        Map<String, CheckInstance> fieldsObjectMap = this.getFieldsObjectMap(instance, matchFieldList);
 
 
-        for (Map.Entry<String, Object> entry : fieldsObjectMap.entrySet()) {
+        for (Map.Entry<String, CheckInstance> entry : fieldsObjectMap.entrySet()) {
             String field = entry.getKey();
-            Object innObject = entry.getValue();
+            CheckInstance innCheckInstance = entry.getValue();
 
             FieldMatcher childFieldMatcher = multilevelFieldMatcher.childFieldMatcher(field);
 
             //不需要往底层看
             if (childFieldMatcher == null) {
-                result.put(field, innObject);
+                result.put(field, innCheckInstance);
                 continue;
             }
 
+
             //不需要往底层看
-            if (innObject != null && supportChildGet(innObject.getClass())) {
-                Map<String, Object> childMap = this.getChildMap(innObject, childFieldMatcher);
-                for (Map.Entry<String, Object> childEntry : childMap.entrySet()) {
+            if (innCheckInstance != null && supportChildGet(innCheckInstance.instance().getClass())) {
+                Map<String, CheckInstance> childMap = this.getChildMap(innCheckInstance.instance(), childFieldMatcher);
+                for (Map.Entry<String, CheckInstance> childEntry : childMap.entrySet()) {
                     String childResultKey = childEntry.getKey();
-                    Object childResultValue = childEntry.getValue();
+                    CheckInstance childResultValue = childEntry.getValue();
                     result.put(field + levelSplitStr + childResultKey, childResultValue);
                 }
             }
@@ -73,17 +75,17 @@ public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver
         return result;
     }
 
-    protected Map<String, Object> getChildMap(Object innObject, FieldMatcher childFieldMatcher) {
+    protected Map<String, CheckInstance> getChildMap(Object innObject, FieldMatcher childFieldMatcher) {
         return this.getMatchFieldObjectMap((INSTANCE) innObject, childFieldMatcher);
     }
 
 
-    protected Map<String, Object> getSingleLevelMap(INSTANCE instance, FieldMatcher fieldMatcher) {
+    protected Map<String, CheckInstance> getSingleLevelMap(INSTANCE instance, FieldMatcher fieldMatcher) {
         Set<String> matchFieldList = this.matchFieldList(instance, fieldMatcher);
         return getFieldsObjectMap(instance, matchFieldList);
     }
 
-    public abstract Map<String, Object> getFieldsObjectMap(INSTANCE instance, Set<String> matchFieldList);
+    public abstract Map<String, CheckInstance> getFieldsObjectMap(INSTANCE instance, Set<String> matchFieldList);
 
     protected Set<String> matchFieldList(INSTANCE instance, FieldMatcher fieldMatcher) {
         return fieldMatcher.matchFields(fields(instance));

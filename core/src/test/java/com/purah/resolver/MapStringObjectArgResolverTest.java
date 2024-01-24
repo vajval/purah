@@ -1,6 +1,7 @@
 package com.purah.resolver;
 
 import com.google.common.collect.Sets;
+import com.purah.checker.CheckInstance;
 import com.purah.matcher.singleLevel.WildCardMatcher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,11 +34,11 @@ class MapStringObjectArgResolverTest {
         TestStringObjectMap map = new TestStringObjectMap();
         map.put("a", "a");
         map.put("ab", "ab");
-        Map<String, Object> fieldsObjectMap = resolver.getFieldsObjectMap(map, Sets.newHashSet("ab"));
+        Map<String, CheckInstance> fieldsObjectMap = resolver.getFieldsObjectMap(map, Sets.newHashSet("ab"));
 
 
         assertEquals(1, fieldsObjectMap.size());
-        assertEquals("ab", fieldsObjectMap.get("ab"));
+        assertEquals("ab", fieldsObjectMap.get("ab").instance());
 
     }
 

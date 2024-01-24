@@ -2,10 +2,13 @@ package com.purah.resolver;
 
 import com.google.common.collect.Maps;
 import com.purah.base.FieldGetMethodUtil;
+import com.purah.checker.CheckInstance;
 import com.purah.exception.ArgResolverException;
 import com.purah.matcher.intf.FieldMatcher;
 import com.purah.matcher.intf.FieldMatcherWithInstance;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -23,7 +26,7 @@ import java.util.stream.Collectors;
 
 public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
 
-    Map<Class<?>, ClassConfigCache> classClassConfigCacheMap = new ConcurrentHashMap<>();
+    ConcurrentHashMap<Class<?>, ClassConfigCache> classClassConfigCacheMap = new ConcurrentHashMap<>();
     FieldGetMethodUtil fieldGetMethodUtil;
 
     public ReflectArgResolver() {
@@ -37,14 +40,12 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
 
 
     @Override
-    public Map<String, Object> getFieldsObjectMap(Object instance, Set<String> matchFieldList) {
-
-        Map<String, Method> methodMap = this.fieldMethodMap(instance.getClass());
-        Map<String, Object> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
+    public Map<String, CheckInstance> getFieldsObjectMap(Object instance, Set<String> matchFieldList) {
+        ClassConfigCache classConfigCache = initClassIfNecessary(instance.getClass());
+        Map<String, CheckInstance> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
         for (String matchField : matchFieldList) {
-            Method method = methodMap.get(matchField);
-            result.put(matchField, invoke(instance, method));
-
+            CheckInstance objectCheckInstance = classConfigCache.invoke(instance, matchField);
+            result.put(matchField, objectCheckInstance);
         }
         return result;
     }
@@ -56,22 +57,12 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
      * 会报错而不是 返回null
      */
 
-    public Object getObject(Object instance, String field) {
-        Method method = this.fieldMethodMap(instance.getClass()).get(field);
-        if (method == null) {
-            throw new ArgResolverException("反射解析器" + this.getClass() + "找不到" + instance.getClass() + "字段" + field + "的get方法");
-        }
-        return this.invoke(instance, method);
+    public CheckInstance getCheckInstance(Object instance, String field) {
+        ClassConfigCache classConfigCache = initClassIfNecessary(instance.getClass());
+
+        return classConfigCache.invoke(instance, field);
     }
 
-    private Object invoke(Object instance, Method method) {
-        try {
-            return method.invoke(instance);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            throw new ArgResolverException("反射解析器:" + this.getClass() + "在使用时出现异常 :" + instance.getClass() + "使用get方法出现异常" + e.getMessage());
-        }
-    }
 
     @Override
     protected Set<String> fields(Object o) {
@@ -101,15 +92,35 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
         return classClassConfigCacheMap.computeIfAbsent(instanceClass, i -> new ClassConfigCache(instanceClass));
     }
 
-    private Map<String, Method> fieldMethodMap(Class<?> instanceClass) {
-        return initClassIfNecessary(instanceClass).fieldGetMethodMap;
-    }
+//    private Map<String, Method> fieldMethodMap(Class<?> instanceClass) {
+//        return initClassIfNecessary(instanceClass).fieldGetMethodMap;
+//    }
 
     protected class ClassConfigCache {
         Class<?> instanceClass;
         Set<String> fieldSet;
+        Map<String, Annotation[]> fieldAnnMap;
+        Map<String, Field> fieldMap;
         Map<String, Method> fieldGetMethodMap;
         Map<FieldMatcher, Set<String>> matchFieldCacheMap = new ConcurrentHashMap<>();
+
+
+        private CheckInstance invoke(Object instance, String fieldStr) {
+            try {
+                Method method = fieldGetMethodMap.get(fieldStr);
+                if (method == null) {
+                    throw new ArgResolverException("反射解析器" + this.getClass() + "找不到" + instance.getClass() + "字段" + fieldStr + "的get方法");
+                }
+                Field field = fieldMap.get(fieldStr);
+                Annotation[] annotations = fieldAnnMap.get(fieldStr);
+
+                Object fieldObject = method.invoke(instance);
+                return CheckInstance.create(fieldObject, field, annotations);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+                throw new ArgResolverException("反射解析器:" + this.getClass() + "在使用时出现异常 :" + instance.getClass() + "使用get方法出现异常" + e.getMessage());
+            }
+        }
 
         public ClassConfigCache(Class<?> instanceClass) {
             this.instanceClass = instanceClass;
@@ -121,7 +132,12 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
 
             fieldGetMethodMap = fieldGetMethodUtil.fieldNameGetMethodMap(instanceClass);
             fieldSet = fieldGetMethodMap.keySet();
+            fieldMap = fieldGetMethodUtil.fieldNameFieldMap(instanceClass, fieldGetMethodMap.keySet());
+            fieldAnnMap = new ConcurrentHashMap<>();
 
+            for (Map.Entry<String, Field> entry : fieldMap.entrySet()) {
+                fieldAnnMap.put(entry.getKey(), entry.getValue().getDeclaredAnnotations());
+            }
 
         }
 
