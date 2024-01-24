@@ -7,11 +7,9 @@ import org.springframework.core.ResolvableType;
 
 public interface Checker<CHECK_INSTANCE, RESULT> extends IName {
 
-     String DEFAULT_SUCCESS_INFO = "success";
-     String DEFAULT_FAILED_INFO = "failed";
-     String DEFAULT_ERROR_INFO = "error";
-
-
+    String DEFAULT_SUCCESS_INFO = "success";
+    String DEFAULT_FAILED_INFO = "failed";
+    String DEFAULT_ERROR_INFO = "error";
 
 
     /**
@@ -22,11 +20,19 @@ public interface Checker<CHECK_INSTANCE, RESULT> extends IName {
 
 
     default Class<?> inputCheckInstanceClass() {
-        return generics()[0].resolve();
+        Class<?> result = generics()[0].resolve();
+        if (result == null) {
+            return Object.class;
+        }
+        return result;
     }
 
     default Class<?> resultClass() {
-        return generics()[1].resolve();
+        Class<?> result = generics()[1].resolve();
+        if (result == null) {
+            return Object.class;
+        }
+        return result;
     }
 
 

@@ -47,9 +47,15 @@ public class CheckerManager {
         if (result == null) {
             for (CheckerFactory checkerFactory : checkerFactoryList) {
                 if (checkerFactory.match(name)) {
-                    Checker checker = checkerFactory.createChecker(name);
-                    //todo
-                    return this.reg(checker);
+                    Checker factoryCreatechecker = checkerFactory.createChecker(name);
+                    CheckerProxy checkerProxy = new CheckerProxy(factoryCreatechecker) {
+                        @Override
+                        public String name() {
+                            return name;
+                        }
+                    };
+
+                    return this.reg(checkerProxy);
 
                 }
             }
