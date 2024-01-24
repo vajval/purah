@@ -51,7 +51,6 @@ class MethodCheckerTest {
     @Test
     void e() throws NoSuchMethodException {
         Method testMethod = TestCheckers.class.getMethod("checkById", Long.class);
-        System.out.println(testMethod.getDeclaredAnnotation(com.purah.base.Name.class).value());
     }
     @Test
     void inputCheckInstanceClass() throws NoSuchMethodException {

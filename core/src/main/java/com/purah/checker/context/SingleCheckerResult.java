@@ -29,13 +29,7 @@ public class SingleCheckerResult<T> implements CheckerResult<T> {
         return e;
     }
 
-    public T getData() {
-        return data;
-    }
 
-    public String getInfo() {
-        return info;
-    }
 
     public static <T> SingleCheckerResult<T> success() {
         return new SingleCheckerResult<T>(ExecInfo.success, null,null);
@@ -59,12 +53,28 @@ public class SingleCheckerResult<T> implements CheckerResult<T> {
 
     @Override
     public T value() {
-        return null;
+        return data;
     }
 
     @Override
     public Exception exception() {
-        return null;
+        return e;
+    }
+
+    @Override
+    public String toString() {
+        if(e!=null){
+            return "SingleCheckerResult{" +
+                    "execInfo=" + execInfo +
+                    ", exception=" + e +
+                    ", info='" + info + '\'' +
+                    '}';
+        }
+        return "SingleCheckerResult{" +
+                "execInfo=" + execInfo +
+                ", data=" + data +
+                ", info='" + info + '\'' +
+                '}';
     }
 }
 

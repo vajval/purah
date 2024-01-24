@@ -1,7 +1,12 @@
 package org.purah.springboot.aop;
 
 
+import com.purah.checker.context.CheckerResult;
+import com.purah.checker.context.CombinatorialCheckerResult;
+import com.purah.exception.ArgCheckException;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -23,13 +28,15 @@ public class CheckItAspect {
     @Autowired
     ApplicationContext applicationContext;
 
+
     @Pointcut("execution(* *(@org.purah.springboot.ann.CheckIt (*)))")
     public void pointcut() {
 
     }
 
-    @Before("pointcut()")
-    public void before(JoinPoint joinPoint) {
+    @Around("pointcut()")
+    public Object aroundAdvice(ProceedingJoinPoint joinPoint) {
+
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
 
@@ -40,35 +47,34 @@ public class CheckItAspect {
         CheckItMethodHandler.CheckOnMethod checkOnMethod = checkItMethodHandler.ofAutoReg(method);
 
 
-//        boolean checkByCache = checkByCache();
-//        if (checkByCache) {
-//            return;
-//        }
-        checkOnMethod.check(joinPoint.getArgs());
-//        RuleCacheThreadContext ruleCacheThreadContext = RuleCacheThreadContext.get();
-//        if (ruleCacheThreadContext != null) {
-//            this.checkByCache(ruleCacheThreadContext, checkOnMethod, joinPoint.getArgs());
-//        } else {
-//            checkOnMethod.check(joinPoint.getArgs());
-//        }
+        CombinatorialCheckerResult checkerResult = checkOnMethod.check(joinPoint.getArgs());
 
+
+        if (checkerResult.isError()) {
+            throw new ArgCheckException(checkerResult);
+        }
+
+
+        Object result;
+        try {
+            result = joinPoint.proceed();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        if (!checkOnMethod.fillToMethodResult) {
+            if (checkerResult.isFailed()) {
+                throw new ArgCheckException(checkerResult);
+            }
+            return result;
+        }
+
+        if (checkOnMethod.returnType == Boolean.class || checkOnMethod.returnType == boolean.class) {
+            return checkerResult.isSuccess();
+        } else if (CheckerResult.class.isAssignableFrom(checkOnMethod.returnType)) {
+            return checkerResult;
+        }
+        throw new RuntimeException("不應該有錯誤");
     }
-//
-//    private boolean checkByCache(RuleCacheThreadContext ruleCacheThreadContext, CheckItAopCheckHandler.CheckOnMethod checkOnMethod, Object[] objects) {
-//
-//    }
 
-
-//    public void checkByCache(RuleCacheThreadContext ruleCacheThreadContext, CheckItAopCheckHandler.CheckOnMethod checkOnMethod, Object[] objects) {
-//        RuleCaches ruleCaches = ruleCacheThreadContext.getRuleCaches();
-//
-//        for (CheckItAopCheckHandler.RuleFieldConfig ruleFieldConfig : checkOnMethod.ruleFieldConfigList) {
-//            Object object = objects[ruleFieldConfig.index];
-//            for (Rule rule : ruleFieldConfig.ruleList) {
-//                ruleCaches.check(ruleCacheThreadContext, rule, object);
-//            }
-//        }
-//    }
-//
 
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.purah.base.FieldGetMethodUtil;
 import com.purah.base.Name;
 import com.purah.matcher.clazz.AbstractInstanceFieldMatcher;
+import com.purah.matcher.singleLevel.WildCardMatcher;
 import org.purah.springboot.ann.EnableOnPurahContext;
 import org.purah.springboot.custom.ann.NotEmpty;
 import org.purah.springboot.custom.ann.Range;
@@ -21,10 +22,13 @@ import java.util.Set;
 public class CustomAnnMatcher extends AbstractInstanceFieldMatcher {
     Set<Class<? extends Annotation>> customAnnList = Sets.newHashSet(NotEmpty.class, Range.class);
 
+    WildCardMatcher wildCardMatcher;
 
     public CustomAnnMatcher(String matchStr) {
 
         super(matchStr);
+        wildCardMatcher = new WildCardMatcher(matchStr);
+
     }
 
     @Override
@@ -34,8 +38,13 @@ public class CustomAnnMatcher extends AbstractInstanceFieldMatcher {
         fieldGetMethodUtil = new FieldGetMethodUtil();
         List<String> result = new ArrayList<>();
         Map<Field, Method> fieldMethodMap = fieldGetMethodUtil.fieldGetMethodMap(clazz);
+
+
         for (Map.Entry<Field, Method> entry : fieldMethodMap.entrySet()) {
             Field field = entry.getKey();
+            if(!wildCardMatcher.match(field.getName())){
+                continue;
+            }
             for (Annotation declaredAnnotation : field.getDeclaredAnnotations()) {
 
                 if (customAnnList.contains(declaredAnnotation.annotationType())) {

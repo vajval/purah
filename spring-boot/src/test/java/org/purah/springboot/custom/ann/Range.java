@@ -7,6 +7,8 @@ import java.lang.annotation.*;
 @Documented
 public @interface Range {
 
-    int min();
-    int max();
+    double min();
+    double max();
+
+    String errorMsg();
 }

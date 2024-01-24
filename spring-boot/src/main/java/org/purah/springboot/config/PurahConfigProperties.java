@@ -41,7 +41,7 @@ public class PurahConfigProperties {
     static class CombinatorialCheckerProperties {
 
         protected String name;
-        protected String useCheckers;
+        protected String useCheckers = "";
         protected int execType = ExecType.Main.all_success.value();
 
         protected LinkedHashMap<String, LinkedHashMap<String, String>> mapping = new LinkedHashMap<>(0);
@@ -71,7 +71,10 @@ public class PurahConfigProperties {
         }
 
         public void setUseCheckers(String useCheckers) {
-            this.useCheckers = useCheckers;
+            if (useCheckers != null) {
+                this.useCheckers = useCheckers;
+            }
+
         }
 
         public int getExecType() {
@@ -87,7 +90,9 @@ public class PurahConfigProperties {
         }
 
         public void setMapping(LinkedHashMap<String, LinkedHashMap<String, String>> mapping) {
-            this.mapping = mapping;
+            if (mapping != null) {
+                this.mapping = mapping;
+            }
         }
 
         @Override

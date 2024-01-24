@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class CombinatorialCheckerResult implements CheckerResult<List<CheckerResult>>{
 
     List<CheckerResult> singleCheckerResultList = new ArrayList<>();
-    ExecInfo execInfo;
+    ExecInfo execInfo=ExecInfo.success;
     Exception e;
 
     public void setExecInfo(ExecInfo execInfo) {
@@ -30,6 +30,12 @@ public class CombinatorialCheckerResult implements CheckerResult<List<CheckerRes
         }else{
             singleCheckerResultList.add(checkerResult);
         }
+        if(checkerResult.isFailed()){
+            setExecInfo(ExecInfo.failed);
+        }
+        if(checkerResult.isError()){
+            setExecInfo(ExecInfo.error);
+        }
     }
 
     public CombinatorialCheckerResult(List<CheckerResult> singleCheckerResultList) {
@@ -51,6 +57,15 @@ public class CombinatorialCheckerResult implements CheckerResult<List<CheckerRes
     @Override
     public ExecInfo execInfo() {
         return execInfo;
+    }
+
+    @Override
+    public String toString() {
+        return "CombinatorialCheckerResult{" +
+                "singleCheckerResultList=" + singleCheckerResultList +
+                ", execInfo=" + execInfo +
+                ", e=" + e +
+                '}';
     }
     //    List<SingleCheckerResult<?>> singleCheckerResultList = new ArrayList<>();
 //    public void addOtherRuleResult(CombinatorialCheckerResult ruleResult) {

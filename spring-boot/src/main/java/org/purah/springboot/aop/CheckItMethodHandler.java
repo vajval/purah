@@ -4,9 +4,11 @@ import com.google.common.collect.Lists;
 import com.purah.PurahContext;
 import com.purah.checker.CheckInstance;
 import com.purah.checker.Checker;
+import com.purah.checker.MethodChecker;
 import com.purah.checker.context.CheckerResult;
 import com.purah.checker.context.CombinatorialCheckerResult;
 import org.purah.springboot.ann.CheckIt;
+import org.purah.springboot.ann.FillToMethodResult;
 
 
 import java.lang.reflect.Method;
@@ -85,11 +87,27 @@ public class CheckItMethodHandler {
     public static class CheckOnMethod {
         Method method;
 
+
+        boolean fillToMethodResult;
+
+
+        Class<?> returnType;
+
         List<MethodArgCheckConfig> methodArgCheckConfigList;
 
         protected CheckOnMethod(Method method, List<MethodArgCheckConfig> methodArgCheckConfigList) {
             this.method = method;
             this.methodArgCheckConfigList = methodArgCheckConfigList;
+            this.returnType = this.method.getReturnType();
+            fillToMethodResult = (method.getDeclaredAnnotation(FillToMethodResult.class)) != null;
+            if (fillToMethodResult) {
+                if (!(CheckerResult.class.isAssignableFrom(returnType)) &&
+                        !(Boolean.class.isAssignableFrom(returnType)) &&
+                        !(boolean.class.isAssignableFrom(returnType))) {
+                    throw new RuntimeException("返回值必须是 CheckerResult Boolean 或者 boolean " + method);
+
+                }
+            }
         }
 
         public CombinatorialCheckerResult check(Object... args) {
@@ -99,19 +117,24 @@ public class CheckItMethodHandler {
                 for (CheckerResult childResult : childRusultList) {
                     result.addResult(childResult);
                 }
+                if(result.isFailed()){
+                    return result;
+                }
             }
             return result;
         }
 
 
         private List<CheckerResult> check(MethodArgCheckConfig methodArgCheckConfig, Object arg) {
-            List<CheckerResult> ruleResultList = new ArrayList<>();
+            List<CheckerResult> resultList = new ArrayList<>();
             List<Checker> checkerList = methodArgCheckConfig.checkerList;
             for (Checker checker : checkerList) {
                 CheckerResult ruleResult = checker.check(CheckInstance.create(arg));
-                ruleResultList.add(ruleResult);
+                resultList.add(ruleResult);
+                if(ruleResult.isFailed())return resultList;
+
             }
-            return ruleResultList;
+            return resultList;
 
         }
     }

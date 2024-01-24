@@ -1,10 +1,8 @@
 package com.purah.checker;
 
 
-import com.purah.base.BaseManager;
 import com.purah.checker.factory.CheckerFactory;
 import com.purah.exception.RuleRegException;
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,6 +57,7 @@ public class CheckerManager {
 
                 }
             }
+
 
             throw new RuleRegException("未经注册的规则:" + name);
         }

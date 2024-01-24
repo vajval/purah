@@ -6,19 +6,12 @@
     <file url="file://$PROJECT_DIR$/example/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/example/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/spring-boot/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/spring-boot/src/main/java/org/purah/springboot/ExampleApplication.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/spring-boot/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/spring-boot/src/test/java/org/purah/springboot/ExampleApplication.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/spring-boot/src/test/java/spring" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/spring-boot/src/test/java/spring/CheckerUtil.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/spring-boot/src/test/java/spring/ann/CheckersTest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/spring-boot/src/test/java/spring/help/User.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/spring-boot/src/test/java/spring/help/Vajva.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/spring-boot/src/test/java/spring/rule/SensitiveChecker.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/spring-boot/src/test/resources" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/spring-boot/src/test/resources/application-dev.yml" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spring-boot/src/test/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/spring-boot/src/test/resources/application.yml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

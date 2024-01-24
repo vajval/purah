@@ -1,5 +1,6 @@
 package com.purah.checker.combinatorial;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class CombinatorialCheckerConfigProperties {
@@ -17,7 +18,7 @@ public class CombinatorialCheckerConfigProperties {
         return useCheckerNames;
     }
 
-    public void setUseCheckerNames(List<String> useCheckerNames) {
+    public void setUseCheckerNames(@Nonnull List<String> useCheckerNames) {
         this.useCheckerNames = useCheckerNames;
     }
 

@@ -174,13 +174,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
         return config.purahContext.checkManager();
     }
 
-    public Checker getAndInit(String ruleName) {
-        Checker checker = getCheckerManager().get(ruleName);
-        if (checker instanceof CombinatorialChecker) {
-            return ((CombinatorialChecker) checker).init();
-        }
-        return checker;
-    }
+
 
     /**
      * 对一个 fieldMatcher匹配到的所有字段，进行检查

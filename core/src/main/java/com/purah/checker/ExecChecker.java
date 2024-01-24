@@ -22,13 +22,13 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
 
 
     public ExecChecker(String name) {
-        this.name=name;
+        this.name = name;
 
     }
 
 
     public void addNewChecker(Checker<?, ?> checker) {
-        if(singleChecker==null){
+        if (singleChecker == null) {
             this.singleChecker = checker;
             this.singleCheckClass = CheckClass.byChecker(checker);
         }
@@ -41,16 +41,16 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
     public CheckerResult check(CheckInstance<CHECK_INSTANCE> checkInstance) {
 
 
-
         CheckClass checkClass = CheckClass.byInstance(checkInstance.instance());
         Checker<?, ?> checker = getChecker(checkClass);
+
         if (checker == null) {
             throw new RuntimeException(this.name + "没有对该类的解析方法" + checkClass);
         }
         CheckerResult<?> checkerResult;
         try {
 
-            checkerResult = ((Checker) checker).check( checkInstance);
+            checkerResult = ((Checker) checker).check(checkInstance);
 
 
         } catch (BaseException exception) {
@@ -60,6 +60,15 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
     }
 
     protected Checker<?, ?> getChecker(CheckClass inputCheckClass) {
+
+        if (inputCheckClass.clazz == null) {
+
+            if (checkerMap.size() != 1) {
+                throw new RuntimeException();
+            }
+            return singleChecker;
+        }
+
         if (singleSupport(inputCheckClass)) return singleChecker;
         Checker<?, ?> result = checkerMap.get(inputCheckClass);
         if (result != null) return result;
@@ -111,6 +120,11 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
 
         }
 
+        @Override
+        public int hashCode() {
+            return Objects.hash(clazz);
+        }
+
         static CheckClass byInstance(Object instance) {
             if (instance != null) {
                 return byClass(instance.getClass());
@@ -134,6 +148,13 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
                             .as(Checker.class)
                             .getGenerics();
             return byClass(generics[0].resolve());
+        }
+
+        @Override
+        public String toString() {
+            return "CheckClass{" +
+                    "clazz=" + clazz +
+                    '}';
         }
     }
 

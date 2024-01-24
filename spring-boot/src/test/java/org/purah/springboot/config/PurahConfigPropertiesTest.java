@@ -15,7 +15,6 @@ class PurahConfigPropertiesTest {
     @Test
     void properties() {
 
-        System.out.println(properties);
     }
 
 
