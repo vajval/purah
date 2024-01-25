@@ -6,7 +6,7 @@ import java.util.*;
 public class CombinatorialCheckerConfigProperties {
     String checkerName;
 
-    ExecType.Main mainExecType;
+    ExecType.Main mainExecType=ExecType.Main.all_success;
     List<String> useCheckerNames = new ArrayList<>();
     LinkedHashMap<String, Map<String, String>> matcherFieldCheckerMapping = new LinkedHashMap<>();
 

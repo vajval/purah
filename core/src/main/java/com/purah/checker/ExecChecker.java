@@ -1,11 +1,10 @@
 package com.purah.checker;
 
-import com.purah.base.NameUtil;
 import com.purah.checker.context.CheckerResult;
-import com.purah.exception.BaseException;
+import com.purah.exception.CheckerException;
+import com.purah.exception.PurahException;
 import org.springframework.core.ResolvableType;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,7 +44,7 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
         Checker<?, ?> checker = getChecker(checkClass);
 
         if (checker == null) {
-            throw new RuntimeException(this.name + "没有对该类的解析方法" + checkClass);
+            throw new CheckerException(this, "checker " + this.name + "没有对该类的解析方法" + checkClass.getClass());
         }
         CheckerResult<?> checkerResult;
         try {
@@ -53,8 +52,8 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
             checkerResult = ((Checker) checker).check(checkInstance);
 
 
-        } catch (BaseException exception) {
-            throw new RuntimeException();
+        } catch (PurahException exception) {
+            throw exception;
         }
         return checkerResult;
     }
@@ -63,9 +62,9 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
 
         if (inputCheckClass.clazz == null) {
 
-            if (checkerMap.size() != 1) {
-                throw new RuntimeException();
-            }
+//            if (checkerMap.size() != 1) {
+//                throw new RuntimeException("入参为null，而尔");
+//            }
             return singleChecker;
         }
 
@@ -134,7 +133,7 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
 
         static CheckClass byClass(Class<?> clazz) {
             CheckClass checkClass = new CheckClass();
-            if(clazz==null)clazz=Object.class;
+            if (clazz == null) clazz = Object.class;
             checkClass.clazz = clazz;
             return checkClass;
         }

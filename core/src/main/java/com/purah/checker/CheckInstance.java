@@ -14,18 +14,21 @@ import java.util.stream.Stream;
 public class CheckInstance<INSTANCE> {
     INSTANCE instance;
 
+    String fieldStr;
 
     Field fieldInClass;
     List<Annotation> annotations;
 
 
-    public static <T> CheckInstance<T> create(T instance, Field fieldInClass, Annotation[] annotations) {
-        return new CheckInstance<>(instance, fieldInClass, annotations);
+    public static <T> CheckInstance<T> create(T instance,  String fieldStr,Field fieldInClass, Annotation[] annotations) {
+        return new CheckInstance<>(instance, fieldStr,fieldInClass, annotations);
     }
 
-    private CheckInstance(INSTANCE instance, Field fieldInClass, Annotation[] annotations) {
+    private CheckInstance(INSTANCE instance, String fieldStr, Field fieldInClass, Annotation[] annotations) {
         this.instance = instance;
         this.fieldInClass = fieldInClass;
+        this.fieldStr = fieldStr;
+
         this.annotations = Stream.of(annotations).collect(Collectors.toList());
     }
 

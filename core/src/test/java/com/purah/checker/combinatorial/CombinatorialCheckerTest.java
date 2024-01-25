@@ -123,7 +123,7 @@ class CombinatorialCheckerTest {
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
         CombinatorialCheckerResult checkerResult = (CombinatorialCheckerResult) checker.check(CheckInstance.create(Util.trade));
-        Assertions.assertTrue(checkerResult.isSuccess());
+        Assertions.assertFalse(checkerResult.isSuccess());
         Assertions.assertEquals(checkerResult.value().size(), 3);
     }
 

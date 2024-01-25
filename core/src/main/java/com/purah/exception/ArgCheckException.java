@@ -2,7 +2,7 @@ package com.purah.exception;
 
 import com.purah.checker.context.CheckerResult;
 
-public class ArgCheckException  extends BaseException{
+public class ArgCheckException  extends PurahException {
 
 
     CheckerResult checkerResult;

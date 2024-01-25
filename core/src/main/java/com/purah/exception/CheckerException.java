@@ -1,8 +1,13 @@
 package com.purah.exception;
 
-public class CheckerException  extends BaseException {
-    public CheckerException(String message) {
+import com.purah.checker.Checker;
 
+public class CheckerException extends PurahException {
+    Checker checker;
+
+    public CheckerException(Checker checker, String message) {
         super(message);
+        this.checker = checker;
+
     }
 }

@@ -50,7 +50,7 @@ public class BaseMatcherFactory implements MatcherFactory {
         } catch (InvocationTargetException | InstantiationException |
                  IllegalAccessException e) {
             //todo
-            throw new RuntimeException(e);
+            throw new FieldMatcherException(e);
         }
 
     }
