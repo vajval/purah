@@ -3,10 +3,8 @@ package com.purah.customAnn.checker;
 
 import com.purah.base.Name;
 import com.purah.checker.AbstractCustomAnnChecker;
-import com.purah.checker.BaseChecker;
 import com.purah.checker.CheckInstance;
 import com.purah.checker.context.CheckerResult;
-import com.purah.checker.context.SingleCheckerResult;
 import com.purah.customAnn.ann.CNPhoneNum;
 import com.purah.springboot.ann.EnableOnPurahContext;
 import com.purah.customAnn.ann.NotEmpty;
