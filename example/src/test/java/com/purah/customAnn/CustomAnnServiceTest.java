@@ -70,11 +70,11 @@ class CustomAnnServiceTest {
         CheckerResult goodCheckerResult = customAnnService.checkResult(goodCustomUser);
         Assertions.assertTrue(goodCheckerResult.isSuccess());
 
-        assertEquals(3, ((List) goodCheckerResult).size());
+        assertEquals(3, ((List) goodCheckerResult.value()).size());
         CheckerResult badCheckerResult = customAnnService.checkResult(badCustomUser);
-        Assertions.assertTrue(goodCheckerResult.isFailed());
+        Assertions.assertTrue(badCheckerResult.isFailed());
 
-        assertEquals(1, ((List) badCheckerResult).size());
+        assertEquals(1, ((List) badCheckerResult.value()).size());
 
 
     }

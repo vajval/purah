@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.purah.base.FieldGetMethodUtil;
 import com.purah.base.Name;
 import com.purah.customAnn.ann.CNPhoneNum;
+import com.purah.matcher.AbstractCustomAnnMatcher;
 import com.purah.matcher.clazz.AbstractInstanceFieldMatcher;
 import com.purah.matcher.singleLevel.WildCardMatcher;
 import com.purah.springboot.ann.EnableOnPurahContext;
@@ -20,41 +21,15 @@ import java.util.Set;
 
 @EnableOnPurahContext
 @Name("custom_ann")
-public class CustomAnnMatcher extends AbstractInstanceFieldMatcher {
+public class CustomAnnMatcher extends AbstractCustomAnnMatcher {
     Set<Class<? extends Annotation>> customAnnList = Sets.newHashSet(NotEmpty.class, Range.class, CNPhoneNum.class);
 
-    WildCardMatcher wildCardMatcher;
-
     public CustomAnnMatcher(String matchStr) {
-
         super(matchStr);
-        wildCardMatcher = new WildCardMatcher(matchStr);
-
     }
 
     @Override
-    public List<String> getFieldsByClass(Class<?> clazz) {
-
-
-        fieldGetMethodUtil = new FieldGetMethodUtil();
-        List<String> result = new ArrayList<>();
-        Map<Field, Method> fieldMethodMap = fieldGetMethodUtil.fieldGetMethodMap(clazz);
-
-
-        for (Map.Entry<Field, Method> entry : fieldMethodMap.entrySet()) {
-            Field field = entry.getKey();
-            if(!wildCardMatcher.match(field.getName())){
-                continue;
-            }
-            for (Annotation declaredAnnotation : field.getDeclaredAnnotations()) {
-
-                if (customAnnList.contains(declaredAnnotation.annotationType())) {
-                    result.add(field.getName());
-                    break;
-                }
-
-            }
-        }
-        return result;
+    public Set<Class<? extends Annotation>> customAnnList() {
+        return customAnnList;
     }
 }

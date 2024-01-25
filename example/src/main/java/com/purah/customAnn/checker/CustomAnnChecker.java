@@ -2,6 +2,7 @@ package com.purah.customAnn.checker;
 
 
 import com.purah.base.Name;
+import com.purah.checker.AbstractCustomAnnChecker;
 import com.purah.checker.BaseChecker;
 import com.purah.checker.CheckInstance;
 import com.purah.checker.context.CheckerResult;
@@ -13,42 +14,14 @@ import com.purah.customAnn.ann.Range;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
+
 
 @Name("自定义注解检测")
 @EnableOnPurahContext
 @Component
-public class CustomAnnChecker extends BaseChecker {
-    Map<Class<? extends Annotation>, BiFunction<Annotation, CheckInstance, CheckerResult>> map = new HashMap<>();
+public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
 
-    public CustomAnnChecker() {
-        map.put(Range.class, (a, b) -> range((Range) a, b));
-        map.put(NotEmpty.class, (a, b) -> notEmpty((NotEmpty) a, b));
-        map.put(CNPhoneNum.class, (a, b) -> cnPhoneNum((CNPhoneNum) a, b));
-    }
-
-    @Override
-    public CheckerResult doCheck(CheckInstance checkInstance) {
-
-        List<Annotation> annotations = ((CheckInstance<?>) checkInstance).getAnnotations();
-        for (Annotation annotation : annotations) {
-            BiFunction<Annotation, CheckInstance, CheckerResult> biFunction = map.get(annotation.annotationType());
-            if (biFunction == null) continue;
-            CheckerResult checkerResult = biFunction.apply(annotation, checkInstance);
-
-            if (checkerResult.isFailed()) {
-                return checkerResult;
-            }
-
-        }
-
-        return SingleCheckerResult.success();
-    }
 
 
     public CheckerResult cnPhoneNum(CNPhoneNum cnPhoneNum, CheckInstance<String> str) {
