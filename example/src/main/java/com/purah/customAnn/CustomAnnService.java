@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomAnnService {
+    @FillToMethodResult
+    public boolean booleanCheckDefaultCheckerByClassAnn(@CheckIt CustomUser customUser) {
+        return false;
+    }
 
     public void voidCheck(@CheckIt("所有字段自定义注解检测") CustomUser customUser) {
 

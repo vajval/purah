@@ -27,7 +27,7 @@ public class CheckItAspect {
     ApplicationContext applicationContext;
 
 
-    @Pointcut("execution(* *(@org.purah.springboot.ann.CheckIt (*)))")
+    @Pointcut("execution(* *(@com.purah.springboot.ann.CheckIt (*)))")
     public void pointcut() {
 
     }

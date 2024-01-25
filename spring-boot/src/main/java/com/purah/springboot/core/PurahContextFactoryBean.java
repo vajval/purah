@@ -12,6 +12,7 @@ import com.purah.matcher.singleLevel.ReMatcher;
 import com.purah.matcher.singleLevel.WildCardMatcher;
 import com.purah.resolver.ArgResolver;
 import com.purah.resolver.ArgResolverManager;
+import com.purah.springboot.ann.EnableOnPurahContext;
 import com.purah.springboot.ann.MethodsToCheckers;
 import com.purah.springboot.config.PurahConfigProperties;
 import org.springframework.aop.support.AopUtils;
@@ -61,26 +62,55 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
     }
 
 
+    private static <T> Set<T> filterByEnableAnn(Collection<T> inputValues) {
+        Set<T> result = new HashSet<>();
+
+        for (T t : inputValues) {
+            Class<?> clazz = t.getClass();
+            EnableOnPurahContext enableOnPurahContext = clazz.getDeclaredAnnotation(EnableOnPurahContext.class);
+            if (enableOnPurahContext == null) {
+                continue;
+            }
+            result.add(t);
+        }
+        return result;
+    }
+
     public void initMatcherManager(MatcherManager matcherManager) {
 
         Map<String, MatcherFactory> matcherFactoryMap = applicationContext.getBeansOfType(MatcherFactory.class);
-        for (MatcherFactory matcherFactory : matcherFactoryMap.values()) {
-            matcherManager.reg(matcherFactory);
-        }
+
+
+
         matcherManager.regBaseStrMatcher(AnnTypeFieldMatcher.class);
         matcherManager.regBaseStrMatcher(ClassNameMatcher.class);
         matcherManager.regBaseStrMatcher(ReMatcher.class);
         matcherManager.regBaseStrMatcher(WildCardMatcher.class);
+
+
+
+        Set<MatcherFactory> enableMatcherFactories = filterByEnableAnn(matcherFactoryMap.values());
+        for (MatcherFactory matcherFactory : enableMatcherFactories) {
+            matcherManager.reg(matcherFactory);
+        }
+
+
         baseStringMatcherClass.forEach(matcherManager::regBaseStrMatcher);
 
 
     }
 
     public void initArgResolverManager(ArgResolverManager argResolverManager) {
+
+
         Map<String, ArgResolver> argResolverMap = applicationContext.getBeansOfType(ArgResolver.class);
-        for (Map.Entry<String, ArgResolver> entry : argResolverMap.entrySet()) {
-            argResolverManager.reg(entry.getValue());
+
+
+        Set<ArgResolver> enableMatcherFactories = filterByEnableAnn(argResolverMap.values());
+        for (ArgResolver argResolver : enableMatcherFactories) {
+            argResolverManager.reg(argResolver);
         }
+
 
     }
 
@@ -99,12 +129,15 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
 
         Map<String, Checker> checkerMap = applicationContext.getBeansOfType(Checker.class);
 
-        checkerMap.values().forEach(checkerManager::reg);
 
+        Set<Checker> checkers = filterByEnableAnn(checkerMap.values());
+        for (Checker checker : checkers) {
+            checkerManager.reg(checker);
+        }
+        Collection<Object> values = applicationContext.getBeansWithAnnotation(MethodsToCheckers.class).values();
+        Set<Object> enableMethodsToCheckers = filterByEnableAnn(values);
 
-        Collection<Object> methodsToCheckersBeans = applicationContext.getBeansWithAnnotation(MethodsToCheckers.class).values();
-
-        for (Object bean : methodsToCheckersBeans) {
+        for (Object bean : enableMethodsToCheckers) {
             Class<?> clazz = AopUtils.getTargetClass(bean);
             for (Method method : clazz.getMethods()) {
                 if (MethodChecker.enable(bean, method)) {
@@ -115,6 +148,7 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
 
 
         }
+
 
 
     }

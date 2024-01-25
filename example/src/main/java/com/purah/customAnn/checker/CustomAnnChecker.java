@@ -37,9 +37,9 @@ public class CustomAnnChecker extends BaseChecker {
 
         List<Annotation> annotations = ((CheckInstance<?>) checkInstance).getAnnotations();
         for (Annotation annotation : annotations) {
-            CheckerResult checkerResult = map.get(annotation.annotationType()).apply(
-                    annotation, checkInstance
-            );
+            BiFunction<Annotation, CheckInstance, CheckerResult> biFunction = map.get(annotation.annotationType());
+            if (biFunction == null) continue;
+            CheckerResult checkerResult = biFunction.apply(annotation, checkInstance);
 
             if (checkerResult.isFailed()) {
                 return checkerResult;
@@ -51,10 +51,10 @@ public class CustomAnnChecker extends BaseChecker {
     }
 
 
-
     public CheckerResult cnPhoneNum(CNPhoneNum cnPhoneNum, CheckInstance<String> str) {
         String strValue = str.instance();
-        if (strValue.matches("^1[3|4|5|7|8][0-9]\\\\d{4,8}$")) {
+        //gpt 说的
+        if (strValue.matches("^1[3456789]\\d{9}$")) {
             return success("正确的");
         }
         return failed(cnPhoneNum.errorMsg());

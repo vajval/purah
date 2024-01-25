@@ -4,10 +4,44 @@ import java.lang.annotation.*;
 
 
 /**
- * 请放在参数上
+ *
+ * 使用方法 1
+ *
+ * public void voidCheck(@CheckIt("所有字段自定义注解检测") CustomUser customUser) {
+ *
+ *
+ * 使用方法 2
+ * @CheckIt("所有字段自定义注解检测")
+ * public class CustomUser {
+ *    A a;
+ *    B b;
+ *  }
+ * public void voidCheck(@CheckIt CustomUser customUser) {
+ *
+ *
+ *
+ * 两者的效果一样
+ *
+ * 注意 如果
+ * @CheckIt("AAA")
+ * public class CustomUser {
+ * public void voidCheck(@CheckIt("BBBB") CustomUser customUser) {
+ * 那么生效的只有BBBB
+ *
+ *
+ *
+ * 只用参数注解checkIt注解内容为空时例如
+ * @CheckIt("AAA")
+ * public class CustomUser {
+ * public void voidCheck(@CheckIt CustomUser customUser) {
+ *  AAA 才会生效
+ *
  */
+
+
+
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PARAMETER})
+@Target({ElementType.PARAMETER,ElementType.TYPE})
 @Documented
 public @interface CheckIt {
     /**

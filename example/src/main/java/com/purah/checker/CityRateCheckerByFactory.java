@@ -8,11 +8,11 @@ import java.util.function.Predicate;
 
 @EnableOnPurahContext
 @Component
-public class CityRateChecker2 implements EasyCheckFactory<Double> {
+public class CityRateCheckerByFactory implements EasyCheckFactory<Double> {
 
     @Override
     public boolean match(String needMatchCheckerName) {
-        return needMatchCheckerName.endsWith("利率标准检测");
+        return needMatchCheckerName.endsWith("市利率标准检测");
     }
 
     @Override

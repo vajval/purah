@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 对带有CheckIt的函数入参 进行校验检查
@@ -61,19 +62,31 @@ public class CheckItMethodHandler {
             /*
              * 找到有注解的参数
              */
+
+            List<String> useCheckerNameList = Stream.of(checkIt.value()).toList();
+            Class<?> argClazz = parameter.getType();
+            if (useCheckerNameList.size() == 0) {
+
+                CheckIt argClazzCheckIt = argClazz.getDeclaredAnnotation(CheckIt.class);
+                if (argClazzCheckIt == null) continue;
+                useCheckerNameList = Stream.of(argClazzCheckIt.value()).toList();
+
+            }
+            if (useCheckerNameList.size() == 0) continue;
+
+
             MethodArgCheckConfig methodArgCheckConfig = new MethodArgCheckConfig();
 
             methodArgCheckConfig.setCheckItAnn(checkIt);
-            methodArgCheckConfig.setClazz(parameter.getType());
+            methodArgCheckConfig.setClazz(argClazz);
             methodArgCheckConfig.setIndex(index);
-            methodArgCheckConfig.setCheckerList(
-                    Arrays.stream(checkIt.value()).map(i -> purahContext.checkManager().get(i)
-                    ).collect(Collectors.toList()));
+
+            List<Checker> checkerList = useCheckerNameList.stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
+            methodArgCheckConfig.setCheckerList(checkerList);
 
             methodArgCheckConfigs.add(methodArgCheckConfig);
         }
 
-        //        methodCheckerMap.put(method, checkOnMethod);
         return new CheckOnMethod(method, methodArgCheckConfigs);
     }
 
@@ -116,7 +129,7 @@ public class CheckItMethodHandler {
                 for (CheckerResult childResult : childRusultList) {
                     result.addResult(childResult);
                 }
-                if(result.isFailed()){
+                if (result.isFailed()) {
                     return result;
                 }
             }
@@ -130,7 +143,7 @@ public class CheckItMethodHandler {
             for (Checker checker : checkerList) {
                 CheckerResult ruleResult = checker.check(CheckInstance.create(arg));
                 resultList.add(ruleResult);
-                if(ruleResult.isFailed())return resultList;
+                if (ruleResult.isFailed()) return resultList;
 
             }
             return resultList;

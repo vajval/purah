@@ -33,6 +33,9 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
         }
         CheckClass checkClass = CheckClass.byChecker(checker);
         this.checkerMap.put(checkClass, checker);
+        if (checkClass.equals(singleCheckClass)) {
+            singleChecker = checker;
+        }
     }
 
 
