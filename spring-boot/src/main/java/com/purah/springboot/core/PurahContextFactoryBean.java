@@ -3,11 +3,13 @@ package com.purah.springboot.core;
 import com.purah.PurahContext;
 import com.purah.checker.*;
 import com.purah.checker.combinatorial.CombinatorialCheckerConfigProperties;
+import com.purah.checker.factory.CheckerFactory;
 import com.purah.matcher.MatcherManager;
 import com.purah.matcher.clazz.AnnTypeFieldMatcher;
 import com.purah.matcher.clazz.ClassNameMatcher;
 import com.purah.matcher.factory.MatcherFactory;
 import com.purah.matcher.intf.FieldMatcher;
+import com.purah.matcher.multilevel.GeneralMultilevelFieldMatcher;
 import com.purah.matcher.singleLevel.ReMatcher;
 import com.purah.matcher.singleLevel.WildCardMatcher;
 import com.purah.resolver.ArgResolver;
@@ -16,8 +18,11 @@ import com.purah.springboot.ann.EnableOnPurahContext;
 import com.purah.springboot.ann.MethodsToCheckers;
 import com.purah.springboot.config.PurahConfigProperties;
 import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.Method;
@@ -29,17 +34,6 @@ import java.util.*;
 public class PurahContextFactoryBean implements FactoryBean<Object> {
 
 
-    @Autowired
-    ApplicationContext applicationContext;
-
-    /**
-     * 使用者编写的规则校验参数
-     */
-
-    @Autowired
-    PurahConfigProperties purahConfigProperties;
-
-
     /**
      * 在启动时通过*****类 扫描根路径下的FieldMatcher 类
      * 将扫描到的类注册到此list
@@ -49,122 +43,22 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
 
     @Override
     public Object getObject() {
+        System.out.println("getObject");
+
 
         PurahContext purahContext = new PurahContext();
-
-        this.initMatcherManager(purahContext.matcherManager());
-        this.initArgResolverManager(purahContext.argResolverManager());
-        this.initCheckerManager(purahContext.checkManager());
-        this.initPurahConfigProperties(purahContext);
+        MatcherManager matcherManager = purahContext.matcherManager();
+        matcherManager.regBaseStrMatcher(AnnTypeFieldMatcher.class);
+        matcherManager.regBaseStrMatcher(ClassNameMatcher.class);
+        matcherManager.regBaseStrMatcher(ReMatcher.class);
+        matcherManager.regBaseStrMatcher(WildCardMatcher.class);
+        matcherManager.regBaseStrMatcher(GeneralMultilevelFieldMatcher.class);
+        baseStringMatcherClass.forEach(matcherManager::regBaseStrMatcher);
 
         return purahContext;
 
     }
 
-
-    private static <T> Set<T> filterByEnableAnn(Collection<T> inputValues) {
-        Set<T> result = new HashSet<>();
-
-        for (T t : inputValues) {
-            Class<?> clazz = t.getClass();
-            EnableOnPurahContext enableOnPurahContext = clazz.getDeclaredAnnotation(EnableOnPurahContext.class);
-            if (enableOnPurahContext == null) {
-                continue;
-            }
-            result.add(t);
-        }
-        return result;
-    }
-
-    public void initMatcherManager(MatcherManager matcherManager) {
-
-        Map<String, MatcherFactory> matcherFactoryMap = applicationContext.getBeansOfType(MatcherFactory.class);
-
-
-
-        matcherManager.regBaseStrMatcher(AnnTypeFieldMatcher.class);
-        matcherManager.regBaseStrMatcher(ClassNameMatcher.class);
-        matcherManager.regBaseStrMatcher(ReMatcher.class);
-        matcherManager.regBaseStrMatcher(WildCardMatcher.class);
-
-
-
-        Set<MatcherFactory> enableMatcherFactories = filterByEnableAnn(matcherFactoryMap.values());
-        for (MatcherFactory matcherFactory : enableMatcherFactories) {
-            matcherManager.reg(matcherFactory);
-        }
-
-
-        baseStringMatcherClass.forEach(matcherManager::regBaseStrMatcher);
-
-
-    }
-
-    public void initArgResolverManager(ArgResolverManager argResolverManager) {
-
-
-        Map<String, ArgResolver> argResolverMap = applicationContext.getBeansOfType(ArgResolver.class);
-
-
-        Set<ArgResolver> enableMatcherFactories = filterByEnableAnn(argResolverMap.values());
-        for (ArgResolver argResolver : enableMatcherFactories) {
-            argResolverManager.reg(argResolver);
-        }
-
-
-    }
-
-
-    /**
-     * 1 从spring 容器中找到 Checker bean 并且注册
-     * 2 从spring 容器中找到 被 MethodsToCheckers 类注册的对象，并且将其中的函数构造为checker注册
-     * 对于函数有两个要求
-     * （1）其中 方法类必须 只能有一个入参，这唯一的入参便是检查对象
-     * （2）返回结果只能是 CheckerResult Boolean  boolean 三种
-     *
-     * @param checkerManager
-     */
-
-    public void initCheckerManager(CheckerManager checkerManager) {
-
-        Map<String, Checker> checkerMap = applicationContext.getBeansOfType(Checker.class);
-
-
-        Set<Checker> checkers = filterByEnableAnn(checkerMap.values());
-        for (Checker checker : checkers) {
-            checkerManager.reg(checker);
-        }
-        Collection<Object> values = applicationContext.getBeansWithAnnotation(MethodsToCheckers.class).values();
-        Set<Object> enableMethodsToCheckers = filterByEnableAnn(values);
-
-        for (Object bean : enableMethodsToCheckers) {
-            Class<?> clazz = AopUtils.getTargetClass(bean);
-            for (Method method : clazz.getMethods()) {
-                if (MethodChecker.enable(bean, method)) {
-                    MethodChecker methodChecker = new MethodChecker(bean, method);
-                    checkerManager.reg(methodChecker);
-                }
-            }
-
-
-        }
-
-
-
-    }
-
-
-    /**
-     * 根据配置文件生成 CombinatorialChecker 并且注册注
-     *
-     * @param purahContext
-     */
-    public void initPurahConfigProperties(PurahContext purahContext) {
-        for (CombinatorialCheckerConfigProperties properties : purahConfigProperties.toCombinatorialCheckerConfigPropertiesList()) {
-            purahContext.regNewCombinatorialChecker(properties);
-        }
-
-    }
 
     public List<Class<? extends FieldMatcher>> getBaseStringMatcherClass() {
         return baseStringMatcherClass;

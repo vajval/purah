@@ -9,10 +9,38 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomAnnService {
+
+
+    /**
+     *
+     *
+     * 自定义语法 详情见  CustomSyntaxChecker
+     * - name: 所有字段自定义注解检测
+     *      mapping:
+     *        general:
+     *           "[i*]": 自定义注解检测
+     *
+     */
+    @FillToMethodResult
+    public boolean booleanCheckByCustomSyntax(@CheckIt("example:[][i*:自定义注解检测]") CustomUser customUser) {
+        return false;
+    }
+
+
+    /**
+     * - name: 所有字段自定义注解检测
+     *       mapping:
+     *         custom_ann:
+     *            "[*]": 自定义注解检测
+     *
+     */
+
     @FillToMethodResult
     public boolean booleanCheckDefaultCheckerByClassAnn(@CheckIt CustomUser customUser) {
         return false;
     }
+
+
 
     public void voidCheck(@CheckIt("所有字段自定义注解检测") CustomUser customUser) {
 

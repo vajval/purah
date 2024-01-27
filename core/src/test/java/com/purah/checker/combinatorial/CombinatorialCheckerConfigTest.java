@@ -64,7 +64,7 @@ class CombinatorialCheckerConfigTest {
         CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("用户id检测");
         LinkedHashMap<@Nullable String, @Nullable String> map = Maps.newLinkedHashMap();
         map.put("i*", "id为1");
-        properties.add("wild_card", map);
+        properties.addByStrMap("wild_card", map);
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
@@ -91,7 +91,7 @@ class CombinatorialCheckerConfigTest {
         CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("test_properties");
         LinkedHashMap<@Nullable String, @Nullable String> multiLevelMap = Maps.newLinkedHashMap();
         multiLevelMap.put("i*.i*", "id为1");
-        properties.add("general", multiLevelMap);
+        properties.addByStrMap("general", multiLevelMap);
 
 
         Checker multiLevelchecker = purahContext.regNewCombinatorialChecker(properties);

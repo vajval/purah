@@ -6,8 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.function.Predicate;
 
-@EnableOnPurahContext
-@Component
+
 public class CityRateCheckerByFactory implements EasyCheckFactory<Double> {
 
     @Override

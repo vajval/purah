@@ -2,7 +2,7 @@ package com.purah.customAnn.checker;
 
 
 import com.purah.base.Name;
-import com.purah.checker.AbstractCustomAnnChecker;
+import com.purah.checker.custom.AbstractCustomAnnChecker;
 import com.purah.checker.CheckInstance;
 import com.purah.checker.context.CheckerResult;
 import com.purah.customAnn.ann.CNPhoneNum;

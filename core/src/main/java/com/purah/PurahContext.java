@@ -37,26 +37,29 @@ public class PurahContext {
     }
 
 
-    public Checker regNewCombinatorialChecker(CombinatorialCheckerConfigProperties properties) {
+    public Checker createNewCombinatorialChecker(CombinatorialCheckerConfigProperties properties) {
 
 
         CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(this);
         config.setMainExecType(properties.getMainExecType());
         config.setExtendCheckerNames(properties.getUseCheckerNames());
         config.setName(properties.getCheckerName());
-        for (Map.Entry<String, Map<String, String>> entry : properties.getMatcherFieldCheckerMapping().entrySet()) {
+        for (Map.Entry<String, Map<String, List<String>>> entry : properties.getMatcherFieldCheckerMapping().entrySet()) {
             String matcherFactoryName = entry.getKey();
             MatcherFactory matcherFactory = matcherManager.factoryOf(matcherFactoryName);
-            for (Map.Entry<String, String> matcherStrChecker : entry.getValue().entrySet()) {
+            for (Map.Entry<String,  List<String>> matcherStrChecker : entry.getValue().entrySet()) {
                 String matcherStr = matcherStrChecker.getKey();
                 FieldMatcher fieldMatcher = matcherFactory.create(matcherStr);
-                String checkerNameListStr = matcherStrChecker.getValue();
-                List<String> checkerNameList = Splitter.on(",").splitToList(checkerNameListStr);
+                List<String> checkerNameList = matcherStrChecker.getValue();
                 config.addMatcherCheckerName(fieldMatcher, checkerNameList);
             }
         }
-        CombinatorialChecker checker = new CombinatorialChecker(config);
-        return checkManager.reg(checker);
+        return new CombinatorialChecker(config);
+    }
+
+    public Checker regNewCombinatorialChecker(CombinatorialCheckerConfigProperties properties) {
+        Checker newCombinatorialChecker = createNewCombinatorialChecker(properties);
+        return checkManager.reg(newCombinatorialChecker);
     }
 
 

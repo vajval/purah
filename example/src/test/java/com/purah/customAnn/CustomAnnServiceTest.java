@@ -5,12 +5,14 @@ import com.purah.PurahContext;
 import com.purah.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import com.purah.checker.context.CheckerResult;
 import com.purah.customAnn.pojo.CustomUser;
+import com.purah.customSyntax.CustomSyntaxChecker;
 import com.purah.exception.ArgCheckException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,9 +32,9 @@ class CustomAnnServiceTest {
     /**
      * 下面的 properties也可以通过 配置文件来编写
      * - name: 所有字段自定义注解检测
-     *      mapping:
-     *         custom_ann:
-     *            "[*]": 自定义注解检测
+     * mapping:
+     * custom_ann:
+     * "[*]": 自定义注解检测
      */
 
 
@@ -46,7 +48,7 @@ class CustomAnnServiceTest {
         CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("所有字段自定义注解检测");
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("*", "自定义注解检测");
-        properties.add("custom_ann", map);
+        properties.addByStrMap("custom_ann", map);
 
 
         purahContext.regNewCombinatorialChecker(properties);
@@ -80,7 +82,6 @@ class CustomAnnServiceTest {
     }
 
     @Test
-
     void booleanCheck() {
 
         Assertions.assertFalse(customAnnService.booleanCheck(badCustomUser));
@@ -88,10 +89,35 @@ class CustomAnnServiceTest {
 
 
     }
-    @Test
-    void  booleanCheckDefaultCheckerByClassAnn(){
-        Assertions.assertEquals(customAnnService.booleanCheck(goodCustomUser),customAnnService.booleanCheckDefaultCheckerByClassAnn(goodCustomUser));
 
-        Assertions.assertEquals(customAnnService.booleanCheck(badCustomUser),customAnnService.booleanCheckDefaultCheckerByClassAnn(badCustomUser));
+    @Test
+    void booleanCheckDefaultCheckerByClassAnn() {
+        Assertions.assertEquals(customAnnService.booleanCheck(goodCustomUser), customAnnService.booleanCheckDefaultCheckerByClassAnn(goodCustomUser));
+
+        Assertions.assertEquals(customAnnService.booleanCheck(badCustomUser), customAnnService.booleanCheckDefaultCheckerByClassAnn(badCustomUser));
+
+
+    }
+
+    /**
+     * example:[][i*:自定义注解检测]
+     * 等价于
+     * - name: 所有字段自定义注解检测
+     * mapping:
+     * general:
+     * "[i*]": 自定义注解检测
+     */
+
+
+    @Autowired
+    ApplicationContext applicationContext;
+
+    @Test
+    void booleanCheckByCustomSyntax() {
+
+        Assertions.assertEquals(customAnnService.booleanCheck(goodCustomUser), customAnnService.booleanCheckByCustomSyntax(goodCustomUser));
+
+        Assertions.assertEquals(customAnnService.booleanCheck(badCustomUser), customAnnService.booleanCheckByCustomSyntax(badCustomUser));
+
     }
 }

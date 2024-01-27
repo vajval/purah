@@ -19,8 +19,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class CombinatorialCheckerTest {
 
 
@@ -113,12 +111,12 @@ class CombinatorialCheckerTest {
         map.put("initia*.i*", "id为1");
         map.put("*ator.nam?", "必须姓张");
 
-        properties.add("general", map);
+        properties.addByStrMap("general", map);
 
         map = new LinkedHashMap<>();
         map.put("短文本", "敏感词检测");
 
-        properties.add("type_by_ann", map);
+        properties.addByStrMap("type_by_ann", map);
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
@@ -136,12 +134,12 @@ class CombinatorialCheckerTest {
         map.put("initia*.i*", "id为1");
         map.put("*ator.nam?", "必须姓李");
 
-        properties.add("general", map);
+        properties.addByStrMap("general", map);
 
         map = new LinkedHashMap<>();
         map.put("短文本", "敏感词检测");
         properties.setMainExecType(ExecType.Main.all_success_but_must_check_all);
-        properties.add("type_by_ann", map);
+        properties.addByStrMap("type_by_ann", map);
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
@@ -159,12 +157,12 @@ class CombinatorialCheckerTest {
         map.put("initia*.i*", "id为1");
         map.put("*ator.nam?", "必须姓李");
 
-        properties.add("general", map);
+        properties.addByStrMap("general", map);
 
         map = new LinkedHashMap<>();
         map.put("短文本", "敏感词检测");
         properties.setMainExecType(ExecType.Main.at_least_one);
-        properties.add("type_by_ann", map);
+        properties.addByStrMap("type_by_ann", map);
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
@@ -183,12 +181,12 @@ class CombinatorialCheckerTest {
         map.put("initia*.i*", "id为1");
         map.put("*ator.nam?", "必须姓李");
 
-        properties.add("general", map);
+        properties.addByStrMap("general", map);
 
         map = new LinkedHashMap<>();
         map.put("短文本", "敏感词检测");
         properties.setMainExecType(ExecType.Main.at_least_one_but_must_check_all);
-        properties.add("type_by_ann", map);
+        properties.addByStrMap("type_by_ann", map);
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
@@ -213,12 +211,12 @@ class CombinatorialCheckerTest {
         map.put("initia*.i*", "id为1");
         map.put("*ator.nam?", "必须姓李");
 
-        properties.add("general", map);
+        properties.addByStrMap("general", map);
 
         map = new LinkedHashMap<>();
         map.put("短文本", "敏感词检测");
         properties.setMainExecType(ExecType.Main.at_least_one_but_must_check_all);
-        properties.add("type_by_ann", map);
+        properties.addByStrMap("type_by_ann", map);
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);

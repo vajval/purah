@@ -44,7 +44,9 @@ public class CheckerManager {
 
         if (result == null) {
             for (CheckerFactory checkerFactory : checkerFactoryList) {
+
                 if (checkerFactory.match(name)) {
+
                     Checker factoryCreatechecker = checkerFactory.createChecker(name);
                     CheckerProxy checkerProxy = new CheckerProxy(factoryCreatechecker) {
                         @Override

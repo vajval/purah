@@ -52,7 +52,14 @@ public class PurahConfigProperties {
 
             result.setUseCheckerNames(split(useCheckers));
             for (Map.Entry<String, LinkedHashMap<String, String>> entry : mapping.entrySet()) {
-                result.add(entry.getKey(), new LinkedHashMap<>(entry.getValue()));
+
+                LinkedHashMap<String, List<String>> valueMap = new LinkedHashMap<>();
+                for (Map.Entry<String, String> listEntry : entry.getValue().entrySet()) {
+                    valueMap.put(listEntry.getKey(), Splitter.on(",").splitToList(listEntry.getValue()));
+                }
+
+
+                result.add(entry.getKey(), valueMap);
             }
             result.setMainExecType(ExecType.Main.valueOf(execType));
             return result;

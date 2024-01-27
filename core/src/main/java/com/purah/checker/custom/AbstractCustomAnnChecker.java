@@ -1,5 +1,7 @@
-package com.purah.checker;
+package com.purah.checker.custom;
 
+import com.purah.checker.BaseChecker;
+import com.purah.checker.CheckInstance;
 import com.purah.checker.context.CheckerResult;
 import com.purah.checker.context.SingleCheckerResult;
 
@@ -70,15 +72,6 @@ public class AbstractCustomAnnChecker extends BaseChecker {
     }
 
 
-//    public CheckerResult cnPhoneNum(CNPhoneNum cnPhoneNum, CheckInstance<String> str) {
-//        String strValue = str.instance();
-//        //gpt 说的
-//        if (strValue.matches("^1[3456789]\\d{9}$")) {
-//            return success("正确的");
-//        }
-//        return failed(cnPhoneNum.errorMsg());
-//
-//
-//    }
+
 
 }
