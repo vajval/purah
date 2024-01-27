@@ -62,6 +62,11 @@ public class SingleCheckerResult<T> implements CheckerResult<T> {
     }
 
     @Override
+    public String info() {
+        return info;
+    }
+
+    @Override
     public String toString() {
         if(e!=null){
             return "SingleCheckerResult{" +

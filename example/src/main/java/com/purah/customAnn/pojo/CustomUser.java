@@ -15,6 +15,9 @@ public class CustomUser {
     public String phone;
 
 
+
+    CustomUser  childCustomUser;
+
     public CustomUser(Long id, String name, String phone) {
         this.id = id;
         this.name = name;
@@ -43,6 +46,14 @@ public class CustomUser {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public CustomUser getChildCustomUser() {
+        return childCustomUser;
+    }
+
+    public void setChildCustomUser(CustomUser childCustomUser) {
+        this.childCustomUser = childCustomUser;
     }
 }
 

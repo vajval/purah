@@ -61,11 +61,12 @@ public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver
 
 
             //需要往底层看
-            if (innCheckInstance != null && supportChildGet(innCheckInstance.instance().getClass())) {
+            if (innCheckInstance.instance() != null && supportChildGet(innCheckInstance.instance().getClass())) {
                 Map<String, CheckInstance> childMap = this.getChildMap(innCheckInstance.instance(), childFieldMatcher);
                 for (Map.Entry<String, CheckInstance> childEntry : childMap.entrySet()) {
                     String childResultKey = childEntry.getKey();
                     CheckInstance childResultValue = childEntry.getValue();
+                    childResultValue.addFieldPreByParent(field + levelSplitStr);
                     result.put(field + levelSplitStr + childResultKey, childResultValue);
                 }
             }

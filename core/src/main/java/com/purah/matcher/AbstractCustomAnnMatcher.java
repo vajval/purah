@@ -2,6 +2,9 @@ package com.purah.matcher;
 
 import com.purah.base.FieldGetMethodUtil;
 import com.purah.matcher.clazz.AbstractInstanceFieldMatcher;
+import com.purah.matcher.intf.FieldMatcher;
+import com.purah.matcher.multilevel.GeneralMultilevelFieldMatcher;
+import com.purah.matcher.multilevel.MultilevelFieldMatcher;
 import com.purah.matcher.singleLevel.WildCardMatcher;
 
 import java.lang.annotation.Annotation;
@@ -12,15 +15,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractCustomAnnMatcher extends AbstractInstanceFieldMatcher {
+public abstract class AbstractCustomAnnMatcher extends AbstractInstanceFieldMatcher implements MultilevelFieldMatcher {
 //    Set<Class<? extends Annotation>> customAnnList = Sets.newHashSet(NotEmpty.class, Range.class, CNPhoneNum.class);
 
-    WildCardMatcher wildCardMatcher;
+    GeneralMultilevelFieldMatcher generalMultilevelFieldMatcher;
 
     public AbstractCustomAnnMatcher(String matchStr) {
 
         super(matchStr);
-        wildCardMatcher = new WildCardMatcher(matchStr);
+        generalMultilevelFieldMatcher = new GeneralMultilevelFieldMatcher(matchStr);
 
     }
 
@@ -37,7 +40,7 @@ public abstract class AbstractCustomAnnMatcher extends AbstractInstanceFieldMatc
         Set<Class<? extends Annotation>> customAnnList = customAnnList();
         for (Map.Entry<Field, Method> entry : fieldMethodMap.entrySet()) {
             Field field = entry.getKey();
-            if (!wildCardMatcher.match(field.getName())) {
+            if (!generalMultilevelFieldMatcher.match(field.getName())) {
                 continue;
             }
             for (Annotation declaredAnnotation : field.getDeclaredAnnotations()) {
@@ -50,5 +53,10 @@ public abstract class AbstractCustomAnnMatcher extends AbstractInstanceFieldMatc
             }
         }
         return result;
+    }
+
+    @Override
+    public FieldMatcher childFieldMatcher(String matchedField) {
+        return generalMultilevelFieldMatcher.childFieldMatcher(matchedField);
     }
 }

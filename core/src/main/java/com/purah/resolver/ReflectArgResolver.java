@@ -51,17 +51,17 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
     }
 
 
-    /**
-     * 反射解析器是这样的
-     * 不应该传入一个不存在的get方法
-     * 会报错而不是 返回null
-     */
-
-    public CheckInstance getCheckInstance(Object instance, String field) {
-        ClassConfigCache classConfigCache = initClassIfNecessary(instance.getClass());
-
-        return classConfigCache.invoke(instance, field);
-    }
+//    /**
+//     * 反射解析器是这样的
+//     * 不应该传入一个不存在的get方法
+//     * 会报错而不是 返回null
+//     */
+//
+//    public CheckInstance getCheckInstance(Object instance, String field) {
+//        ClassConfigCache classConfigCache = initClassIfNecessary(instance.getClass());
+//
+//        return classConfigCache.invoke(instance, field);
+//    }
 
 
     @Override

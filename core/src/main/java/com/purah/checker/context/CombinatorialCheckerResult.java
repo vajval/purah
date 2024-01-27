@@ -61,6 +61,11 @@ public class CombinatorialCheckerResult implements CheckerResult<List<CheckerRes
     }
 
     @Override
+    public String info() {
+        return execInfo.name();
+    }
+
+    @Override
     public String toString() {
         return "CombinatorialCheckerResult{" +
                 "singleCheckerResultList=" + singleCheckerResultList +

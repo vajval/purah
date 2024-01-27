@@ -29,16 +29,16 @@ class ReflectArgResolverTest {
     }
 
 
-    @Test
-    void getObject() {
-        CheckInstance<Object> checkInstance = reflectArgResolver.getCheckInstance(testObject, "a");
-        Assertions.assertEquals(testObject.a, checkInstance.instance());
-
-        FieldType fieldType = checkInstance.annOf(FieldType.class);
-
-        Assertions.assertEquals(Arrays.stream(fieldType.value()).findFirst().get(), "123");
-
-    }
+//    @Test
+//    void getObject() {
+//        CheckInstance<Object> checkInstance = reflectArgResolver.getCheckInstance(testObject, "a");
+//        Assertions.assertEquals(testObject.a, checkInstance.instance());
+//
+//        FieldType fieldType = checkInstance.annOf(FieldType.class);
+//
+//        Assertions.assertEquals(Arrays.stream(fieldType.value()).findFirst().get(), "123");
+//
+//    }
 
 
     @Test

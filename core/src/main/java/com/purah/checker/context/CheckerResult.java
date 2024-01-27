@@ -18,5 +18,7 @@ public interface CheckerResult<T> {
     Exception exception();
 
     ExecInfo execInfo();
+    String info();
+
 
 }

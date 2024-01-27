@@ -19,11 +19,11 @@ public class ExecType {
 
             if (value == 0) {
                 return all_success;
-            } else if (value == 2) {
+            } else if (value == 1) {
                 return all_success_but_must_check_all;
-            } else if (value == 3) {
+            } else if (value == 2) {
                 return at_least_one;
-            } else if (value == 4) {
+            } else if (value == 3) {
                 return at_least_one_but_must_check_all;
             } else {
                 throw new RuntimeException();

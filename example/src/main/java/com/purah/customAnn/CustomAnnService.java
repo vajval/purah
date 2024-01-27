@@ -22,10 +22,13 @@ public class CustomAnnService {
      *
      */
     @FillToMethodResult
-    public boolean booleanCheckByCustomSyntax(@CheckIt("example:[][i*:自定义注解检测]") CustomUser customUser) {
+    public boolean booleanCheckByCustomSyntax(@CheckIt("example:0[][i*:自定义注解检测]") CustomUser customUser) {
         return false;
     }
-
+    @FillToMethodResult
+    public CheckerResult checkByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
+        return null;
+    }
 
     /**
      * - name: 所有字段自定义注解检测

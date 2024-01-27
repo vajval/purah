@@ -20,8 +20,8 @@ public class CheckInstance<INSTANCE> {
     List<Annotation> annotations;
 
 
-    public static <T> CheckInstance<T> create(T instance,  String fieldStr,Field fieldInClass, Annotation[] annotations) {
-        return new CheckInstance<>(instance, fieldStr,fieldInClass, annotations);
+    public static <T> CheckInstance<T> create(T instance, String fieldStr, Field fieldInClass, Annotation[] annotations) {
+        return new CheckInstance<>(instance, fieldStr, fieldInClass, annotations);
     }
 
     private CheckInstance(INSTANCE instance, String fieldStr, Field fieldInClass, Annotation[] annotations) {
@@ -65,6 +65,19 @@ public class CheckInstance<INSTANCE> {
     @Override
     public int hashCode() {
         return Objects.hash(instance);
+    }
+
+
+    public String fieldStr() {
+        return fieldStr;
+    }
+
+    public void addFieldPreByParent(String Pre) {
+        this.fieldStr = Pre + this.fieldStr;
+    }
+
+    public Field fieldInClass() {
+        return fieldInClass;
     }
 }
 

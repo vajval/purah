@@ -28,7 +28,7 @@ public class CombinatorialCheckerConfigProperties {
         LinkedHashMap<String, List<String>> valueMap = new LinkedHashMap<>();
 
         for (Map.Entry<String, List<String>> entry : fieldCheckerMapping.entrySet()) {
-            ArrayList<String> checkerLists = new ArrayList<>(entry.getValue());
+            ArrayList<String> checkerLists = new ArrayList<>(entry.getValue().size());
             for (String checkerName : entry.getValue()) {
                 checkerLists.add(checkerName.trim());
             }

@@ -38,17 +38,20 @@ class CustomAnnServiceTest {
      */
 
 
-    CustomUser badCustomUser = new CustomUser(50L, null, "123");
-    CustomUser goodCustomUser = new CustomUser(3L, "vajva", "15509931234");
+    CustomUser badCustomUser ;
+    CustomUser goodCustomUser;
 
 
     @BeforeEach
     public void beforeEach() {
+         badCustomUser = new CustomUser(50L, null, "123");
+         goodCustomUser = new CustomUser(3L, "vajva", "15509931234");
+
 
         CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("所有字段自定义注解检测");
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("*", "自定义注解检测");
-        properties.addByStrMap("custom_ann", map);
+        properties.addByStrMap("general", map);
 
 
         purahContext.regNewCombinatorialChecker(properties);
@@ -72,7 +75,7 @@ class CustomAnnServiceTest {
         CheckerResult goodCheckerResult = customAnnService.checkResult(goodCustomUser);
         Assertions.assertTrue(goodCheckerResult.isSuccess());
 
-        assertEquals(3, ((List) goodCheckerResult.value()).size());
+        assertEquals(4, ((List) goodCheckerResult.value()).size());
         CheckerResult badCheckerResult = customAnnService.checkResult(badCustomUser);
         Assertions.assertTrue(badCheckerResult.isFailed());
 
@@ -120,4 +123,24 @@ class CustomAnnServiceTest {
         Assertions.assertEquals(customAnnService.booleanCheck(badCustomUser), customAnnService.booleanCheckByCustomSyntax(badCustomUser));
 
     }
+    @Test
+    void booleanCheckByCustomSyntaxWithMultiLevel(){
+        CheckerResult checkerResult = customAnnService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+
+        Assertions.assertTrue(checkerResult.isSuccess());
+        goodCustomUser.setChildCustomUser(badCustomUser);
+        checkerResult = customAnnService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+        Assertions.assertFalse(checkerResult.isSuccess());
+        List<CheckerResult> resultList = (List) checkerResult.value();
+//        value.stream().
+        String trim = resultList.stream().filter(CheckerResult::isFailed).map(CheckerResult::info)
+                .reduce("", (a, b) -> a + b).trim();
+
+        Assertions.assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
+        Assertions.assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
+        Assertions.assertTrue(trim.contains("childCustomUser.phone:移不动也联不通"));
+
+    }
+
+
 }
