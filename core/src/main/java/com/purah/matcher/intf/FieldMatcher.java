@@ -10,8 +10,13 @@ import java.util.Set;
  */
 public interface FieldMatcher {
 
-    default String cacheKey() {
-        return null;
+
+    /**
+     * 支持的话一定要重写 equal
+     * @return
+     */
+    default boolean supportCache() {
+        return false;
     }
 
 

@@ -4,6 +4,8 @@ package com.purah.matcher;
 import com.purah.base.NameUtil;
 import com.purah.matcher.intf.FieldMatcher;
 
+import java.util.Objects;
+
 /**
  * 基础的匹配器，内置一个简单的字符串创建
  * 从配置文件读取的数据都是将其中的内容 传入此类的构造器
@@ -23,5 +25,24 @@ public abstract class BaseStringMatcher implements FieldMatcher {
         return NameUtil.useName(this) + "{" +
                 "matchStr='" + matchStr + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean supportCache() {
+        return true;
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseStringMatcher that = (BaseStringMatcher) o;
+        return Objects.equals(matchStr, that.matchStr);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(matchStr);
     }
 }

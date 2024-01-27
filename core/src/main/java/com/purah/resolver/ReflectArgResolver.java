@@ -102,7 +102,7 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
         Map<String, Annotation[]> fieldAnnMap;
         Map<String, Field> fieldMap;
         Map<String, Method> fieldGetMethodMap;
-        Map<String, Set<String>> matchFieldCacheMap = new ConcurrentHashMap<>();
+        Map<FieldMatcher, Set<String>> matchFieldCacheMap = new ConcurrentHashMap<>();
 
 
         private CheckInstance invoke(Object instance, String fieldStr) {
@@ -143,13 +143,12 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
 
         protected Set<String> matchFieldList(Object instance, FieldMatcher fieldMatcher) {
 
-            String cacheKey= fieldMatcher.cacheKey();
+            boolean supportedCache = fieldMatcher.supportCache();
             Set<String> result = null;
-            if(cacheKey!=null){
-                result = matchFieldCacheMap.get(cacheKey);
+            if (supportedCache) {
+                result = matchFieldCacheMap.get(fieldMatcher);
             }
-
-
+System.out.println(matchFieldCacheMap.size());
 
             if (result != null) {
                 return result;
@@ -159,7 +158,10 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
             } else {
                 result = fieldMatcher.matchFields(fieldSet);
             }
-            matchFieldCacheMap.put(cacheKey, result);
+            if (supportedCache) {
+                matchFieldCacheMap.put(fieldMatcher, result);
+
+            }
             return result;
         }
 

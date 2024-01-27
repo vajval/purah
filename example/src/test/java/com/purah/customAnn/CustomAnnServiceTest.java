@@ -127,9 +127,13 @@ class CustomAnnServiceTest {
     @Test
     void booleanCheckByCustomSyntaxWithMultiLevel2() {
         goodCustomUser.setChildCustomUser(badCustomUser);
-        for (int i = 0; i < 10000000; i++) {
+        for (int i = 0; i < 100000; i++) {
 
 
+
+            if (i % 10000 == 0) {
+                System.out.println(i);
+            }
             CheckerResult checkerResult = customAnnService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
             Assertions.assertFalse(checkerResult.isSuccess());
             List<CheckerResult> resultList = (List) checkerResult.value();

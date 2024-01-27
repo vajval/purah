@@ -29,8 +29,5 @@ public class GeneralMultilevelFieldMatcher extends AbstractMultilevelFieldMatche
 
     }
 
-    @Override
-    public String cacheKey() {
-        return "general[" + this.matchStr + "]";
-    }
+
 }
