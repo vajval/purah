@@ -7,6 +7,7 @@ import com.purah.checker.custom.AbstractCustomAnnChecker;
 import com.purah.checker.CheckInstance;
 import com.purah.checker.context.CheckerResult;
 import com.purah.customAnn.ann.CNPhoneNum;
+import com.purah.customAnn.ann.NotNull;
 import com.purah.springboot.ann.EnableOnPurahContext;
 import com.purah.customAnn.ann.NotEmpty;
 import com.purah.customAnn.ann.Range;
@@ -19,6 +20,14 @@ import org.springframework.util.StringUtils;
 @Component
 public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
+    public boolean notNull(NotNull notNull, Integer age) {
+        if (age == null) {
+            return false;
+        }
+        return true;
+
+
+    }
 
     public CheckerResult cnPhoneNum(CNPhoneNum cnPhoneNum, CheckInstance<String> str) {
         String strValue = str.instance();

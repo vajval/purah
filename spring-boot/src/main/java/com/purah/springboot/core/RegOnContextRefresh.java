@@ -109,12 +109,10 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
         }
 
         Map<String, CheckerFactory> checkerFactoryMap = applicationContext.getBeansOfType(CheckerFactory.class);
-        System.out.println(checkerFactoryMap);
 
 
 
         Set<CheckerFactory> checkerFactories = filterByEnableAnn(checkerFactoryMap.values());
-        System.out.println(checkerFactories);
 
         for (CheckerFactory checkerFactory : checkerFactories) {
             checkerManager.addCheckerFactory(checkerFactory);

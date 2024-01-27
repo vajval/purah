@@ -44,8 +44,8 @@ class CustomAnnServiceTest {
 
     @BeforeEach
     public void beforeEach() {
-         badCustomUser = new CustomUser(50L, null, "123");
-         goodCustomUser = new CustomUser(3L, "vajva", "15509931234");
+         badCustomUser = new CustomUser(50L, null, "123",null);
+         goodCustomUser = new CustomUser(3L, "vajva", "15509931234",15);
 
 
         CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("所有字段自定义注解检测");
@@ -63,7 +63,6 @@ class CustomAnnServiceTest {
 
 
         ArgCheckException argCheckException = Assertions.assertThrows(ArgCheckException.class, () -> customAnnService.voidCheck(badCustomUser));
-        System.out.println(argCheckException);
 
         Assertions.assertDoesNotThrow(() -> customAnnService.voidCheck(goodCustomUser));
 
@@ -75,7 +74,7 @@ class CustomAnnServiceTest {
         CheckerResult goodCheckerResult = customAnnService.checkResult(goodCustomUser);
         Assertions.assertTrue(goodCheckerResult.isSuccess());
 
-        assertEquals(4, ((List) goodCheckerResult.value()).size());
+        assertEquals(5, ((List) goodCheckerResult.value()).size());
         CheckerResult badCheckerResult = customAnnService.checkResult(badCustomUser);
         Assertions.assertTrue(badCheckerResult.isFailed());
 

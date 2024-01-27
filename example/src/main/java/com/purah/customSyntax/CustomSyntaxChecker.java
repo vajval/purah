@@ -24,7 +24,6 @@ public class CustomSyntaxChecker extends AbstractCustomSyntaxChecker {
 
     @Override
     public PurahContext purahContext() {
-        System.out.println(purahContext);
         return purahContext;
     }
 

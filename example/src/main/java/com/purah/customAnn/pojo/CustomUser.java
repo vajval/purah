@@ -2,6 +2,7 @@ package com.purah.customAnn.pojo;
 
 import com.purah.customAnn.ann.CNPhoneNum;
 import com.purah.customAnn.ann.NotEmpty;
+import com.purah.customAnn.ann.NotNull;
 import com.purah.customAnn.ann.Range;
 import com.purah.springboot.ann.CheckIt;
 
@@ -15,13 +16,24 @@ public class CustomUser {
     public String phone;
 
 
+    @NotNull(errorMsg = "norBull")
+    public Integer age;
 
-    CustomUser  childCustomUser;
+    CustomUser childCustomUser;
 
-    public CustomUser(Long id, String name, String phone) {
+    public CustomUser(Long id, String name, String phone, Integer age) {
         this.id = id;
         this.name = name;
         this.phone = phone;
+        this.age = age;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public Long getId() {

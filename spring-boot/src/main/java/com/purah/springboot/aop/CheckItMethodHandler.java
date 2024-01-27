@@ -114,9 +114,9 @@ public class CheckItMethodHandler {
             fillToMethodResult = (method.getDeclaredAnnotation(FillToMethodResult.class)) != null;
             if (fillToMethodResult) {
                 if (!(CheckerResult.class.isAssignableFrom(returnType)) &&
-                        !(Boolean.class.isAssignableFrom(returnType)) &&
+
                         !(boolean.class.isAssignableFrom(returnType))) {
-                    throw new RuntimeException("返回值必须是 CheckerResult Boolean 或者 boolean " + method);
+                    throw new RuntimeException("返回值必须是 CheckerResult  或者 boolean " + method);
 
                 }
             }

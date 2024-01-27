@@ -43,7 +43,6 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
 
     @Override
     public Object getObject() {
-        System.out.println("getObject");
 
 
         PurahContext purahContext = new PurahContext();

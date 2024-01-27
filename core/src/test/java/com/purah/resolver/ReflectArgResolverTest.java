@@ -49,10 +49,7 @@ class ReflectArgResolverTest {
 
     @Test
     void matchFieldList() {
-//        WildCardMatcher matcher = new WildCardMatcher("i*");
-//
-//        Set<String> s = reflectArgResolver.matchFieldList(Util.initiator, matcher);
-//        System.out.println(s);
+
 
 
         WildCardMatcher wildCardMatcher = new WildCardMatcher("?b");

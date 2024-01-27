@@ -45,9 +45,9 @@ public class MethodChecker extends BaseChecker {
         }
         Class<?> returnType = method.getReturnType();
         if (!(CheckerResult.class.isAssignableFrom(returnType)) &&
-                !(Boolean.class.isAssignableFrom(returnType)) &&
+
                 !(boolean.class.isAssignableFrom(returnType))) {
-            return "返回值必须是 CheckerResult Boolean 或者 boolean " + method;
+            return "返回值必须是 CheckerResult  或者 boolean " + method;
 
         }
         return null;
@@ -65,7 +65,7 @@ public class MethodChecker extends BaseChecker {
         this.name = method.getAnnotation(Name.class).value();
         this.methodsToCheckersBean = methodsToCheckersBean;
         this.resultClass = method.getReturnType();
-        if ((!this.resultClass.equals(Boolean.class)) && (!this.resultClass.equals(boolean.class))) {
+        if ( !this.resultClass.equals(boolean.class)) {
 
             ParameterizedType genericReturnType = (ParameterizedType) method.getGenericReturnType();
             resultClass = (Class) genericReturnType.getActualTypeArguments()[0];
