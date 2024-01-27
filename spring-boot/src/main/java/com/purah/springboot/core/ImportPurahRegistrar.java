@@ -44,14 +44,22 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
         LinkedHashSet<BeanDefinition> beanDefinitions = enableOnPurahContextCandidateComponent(metadata);
 
         AbstractBeanDefinition purahContextBeanDefinition = purahContextBeanDefinition(beanDefinitions);
-
-
         BeanDefinitionHolder holder = new BeanDefinitionHolder(purahContextBeanDefinition, PurahContext.class.getName());
         BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
 
 
-    }
 
+
+    }
+//    public AbstractBeanDefinition test(LinkedHashSet<BeanDefinition> beanDefinitions) {
+//        List<Class<Object>> classes = intClazz(beanDefinitions);
+//        for (Class<Object> clazz : classes) {
+//            BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(clazz);
+//            AbstractBeanDefinition beanDefinition = definitionBuilder.getBeanDefinition();
+//            beanDefinition.setAutowireCandidate(true);
+//            beanDefinition.setPrimary(true);
+//        }
+//    }
 
     public AbstractBeanDefinition purahContextBeanDefinition(LinkedHashSet<BeanDefinition> beanDefinitions) {
         BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(PurahContextFactoryBean.class);
@@ -76,6 +84,24 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
         String packageName = ClassUtils.getPackageName(metadata.getClassName());
         return new LinkedHashSet<>(scanner.findCandidateComponents(packageName));
     }
+
+    private <T> List<Class<T>> intClazz(LinkedHashSet<BeanDefinition> candidateComponents) {
+        List<Class<T>> result = new ArrayList<>();
+        for (BeanDefinition beanDefinition : candidateComponents) {
+            try {
+                Class<?> clazz = Class.forName(beanDefinition.getBeanClassName());
+
+                if (clazz.isInterface()) {
+                    result.add((Class) clazz);
+                }
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return result;
+    }
+
+
 
     private <T> List<Class<T>> scanStringMatcherClass(LinkedHashSet<BeanDefinition> candidateComponents, Class<T> matchClazz) {
 

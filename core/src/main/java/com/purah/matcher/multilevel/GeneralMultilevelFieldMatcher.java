@@ -28,4 +28,9 @@ public class GeneralMultilevelFieldMatcher extends AbstractMultilevelFieldMatche
         return new WildCardMatcher(childMatchStr);
 
     }
+
+    @Override
+    public String cacheKey() {
+        return "general[" + this.matchStr + "]";
+    }
 }

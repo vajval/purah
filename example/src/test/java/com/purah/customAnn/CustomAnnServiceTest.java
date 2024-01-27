@@ -38,14 +38,15 @@ class CustomAnnServiceTest {
      */
 
 
-    CustomUser badCustomUser ;
+    CustomUser badCustomUser;
     CustomUser goodCustomUser;
 
 
     @BeforeEach
     public void beforeEach() {
-         badCustomUser = new CustomUser(50L, null, "123",null);
-         goodCustomUser = new CustomUser(3L, "vajva", "15509931234",15);
+        System.out.println("beforeEach");
+        badCustomUser = new CustomUser(50L, null, "123", null);
+        goodCustomUser = new CustomUser(3L, "vajva", "15509931234", 15);
 
 
         CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("所有字段自定义注解检测");
@@ -122,8 +123,28 @@ class CustomAnnServiceTest {
         Assertions.assertEquals(customAnnService.booleanCheck(badCustomUser), customAnnService.booleanCheckByCustomSyntax(badCustomUser));
 
     }
+
     @Test
-    void booleanCheckByCustomSyntaxWithMultiLevel(){
+    void booleanCheckByCustomSyntaxWithMultiLevel2() {
+        goodCustomUser.setChildCustomUser(badCustomUser);
+        for (int i = 0; i < 10000000; i++) {
+
+
+            CheckerResult checkerResult = customAnnService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+            Assertions.assertFalse(checkerResult.isSuccess());
+            List<CheckerResult> resultList = (List) checkerResult.value();
+//        value.stream().
+            String trim = resultList.stream().filter(CheckerResult::isFailed).map(CheckerResult::info)
+                    .reduce("", (a, b) -> a + b).trim();
+
+            Assertions.assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
+            Assertions.assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
+            Assertions.assertTrue(trim.contains("childCustomUser.phone:移不动也联不通"));
+        }
+    }
+
+    @Test
+    void booleanCheckByCustomSyntaxWithMultiLevel() {
         CheckerResult checkerResult = customAnnService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
 
         Assertions.assertTrue(checkerResult.isSuccess());

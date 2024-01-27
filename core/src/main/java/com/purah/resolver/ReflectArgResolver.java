@@ -102,7 +102,7 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
         Map<String, Annotation[]> fieldAnnMap;
         Map<String, Field> fieldMap;
         Map<String, Method> fieldGetMethodMap;
-        Map<FieldMatcher, Set<String>> matchFieldCacheMap = new ConcurrentHashMap<>();
+        Map<String, Set<String>> matchFieldCacheMap = new ConcurrentHashMap<>();
 
 
         private CheckInstance invoke(Object instance, String fieldStr) {
@@ -115,7 +115,7 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
                 Annotation[] annotations = fieldAnnMap.get(fieldStr);
 
                 Object fieldObject = method.invoke(instance);
-                return CheckInstance.create(fieldObject, fieldStr,field, annotations);
+                return CheckInstance.create(fieldObject, fieldStr, field, annotations);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
                 throw new ArgResolverException("反射解析器:" + this.getClass() + "在使用时出现异常 :" + instance.getClass() + "使用get方法出现异常" + e.getMessage());
@@ -142,7 +142,15 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
         }
 
         protected Set<String> matchFieldList(Object instance, FieldMatcher fieldMatcher) {
-            Set<String> result = matchFieldCacheMap.get(fieldMatcher);
+
+            String cacheKey= fieldMatcher.cacheKey();
+            Set<String> result = null;
+            if(cacheKey!=null){
+                result = matchFieldCacheMap.get(cacheKey);
+            }
+
+
+
             if (result != null) {
                 return result;
             }
@@ -151,7 +159,7 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
             } else {
                 result = fieldMatcher.matchFields(fieldSet);
             }
-            matchFieldCacheMap.put(fieldMatcher, result);
+            matchFieldCacheMap.put(cacheKey, result);
             return result;
         }
 

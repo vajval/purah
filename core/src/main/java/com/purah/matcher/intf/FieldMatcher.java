@@ -10,11 +10,9 @@ import java.util.Set;
  */
 public interface FieldMatcher {
 
-
-
-
-
-
+    default String cacheKey() {
+        return null;
+    }
 
 
     default Set<String> matchFields(Set<String> fields) {
