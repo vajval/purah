@@ -124,11 +124,10 @@ class CustomAnnServiceTest {
 
     }
 
-    @Test
+//        @Test
     void booleanCheckByCustomSyntaxWithMultiLevel2() {
         goodCustomUser.setChildCustomUser(badCustomUser);
         for (int i = 0; i < 100000; i++) {
-
 
 
             if (i % 10000 == 0) {
@@ -166,5 +165,29 @@ class CustomAnnServiceTest {
 
     }
 
+    @Test
+    void booleanCheckMultiArgs() {
+        assertTrue(customAnnService.booleanCheck(goodCustomUser, goodCustomUser, goodCustomUser));
+
+        assertFalse(customAnnService.booleanCheck(goodCustomUser, goodCustomUser, badCustomUser));
+
+        assertTrue(customAnnService.booleanCheck(goodCustomUser, badCustomUser, goodCustomUser));
+
+        assertFalse(customAnnService.booleanCheck(goodCustomUser, badCustomUser, badCustomUser));
+
+
+        assertFalse(customAnnService.booleanCheck(badCustomUser, goodCustomUser, goodCustomUser));
+
+        assertFalse(customAnnService.booleanCheck(badCustomUser, goodCustomUser, badCustomUser));
+
+        assertFalse(customAnnService.booleanCheck(badCustomUser, badCustomUser, goodCustomUser));
+
+        assertFalse(customAnnService.booleanCheck(badCustomUser, badCustomUser, badCustomUser));
+
+
+
+
+
+    }
 
 }

@@ -3,9 +3,10 @@ package com.purah.springboot.core;
 import com.purah.PurahContext;
 import com.purah.checker.Checker;
 import com.purah.checker.CheckerManager;
-import com.purah.checker.MethodChecker;
+import com.purah.checker.method.MethodToChecker;
 import com.purah.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import com.purah.checker.factory.CheckerFactory;
+import com.purah.checker.method.SingleMethodToChecker;
 import com.purah.matcher.MatcherManager;
 import com.purah.matcher.factory.MatcherFactory;
 import com.purah.resolver.ArgResolver;
@@ -125,9 +126,9 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
         for (Object bean : enableMethodsToCheckers) {
             Class<?> clazz = AopUtils.getTargetClass(bean);
             for (Method method : clazz.getMethods()) {
-                if (MethodChecker.enable(bean, method)) {
-                    MethodChecker methodChecker = new MethodChecker(bean, method);
-                    checkerManager.reg(methodChecker);
+                if (SingleMethodToChecker.enable(bean, method)) {
+                    MethodToChecker methodToChecker = new SingleMethodToChecker(bean, method);
+                    checkerManager.reg(methodToChecker);
                 }
             }
 

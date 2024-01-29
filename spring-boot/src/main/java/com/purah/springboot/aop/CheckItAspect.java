@@ -1,6 +1,7 @@
 package com.purah.springboot.aop;
 
 
+import com.purah.checker.CheckInstance;
 import com.purah.checker.context.CheckerResult;
 import com.purah.checker.context.CombinatorialCheckerResult;
 import com.purah.exception.ArgCheckException;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import java.lang.reflect.Method;
 
@@ -26,15 +28,16 @@ public class CheckItAspect {
     @Autowired
     ApplicationContext applicationContext;
 
-
-    @Pointcut("execution(* *(@com.purah.springboot.ann.CheckIt (*)))")
+    @Pointcut("execution(* *(.., @com.purah.springboot.ann.CheckIt (*), ..))")
     public void pointcut() {
+
 
     }
 
+    static int w = 0;
+
     @Around("pointcut()")
     public Object aroundAdvice(ProceedingJoinPoint joinPoint) {
-
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
 
@@ -42,10 +45,11 @@ public class CheckItAspect {
         /*
          * 找到对应函数使用的检查器材，然后检查
          */
-        CheckItMethodHandler.CheckOnMethod checkOnMethod = checkItMethodHandler.ofAutoReg(method);
+
+        MethodHandlerChecker methodHandlerChecker = checkItMethodHandler.checkerOf(joinPoint.getThis(), method);
 
 
-        CombinatorialCheckerResult checkerResult = checkOnMethod.check(joinPoint.getArgs());
+        CombinatorialCheckerResult checkerResult = methodHandlerChecker.check(CheckInstance.create(joinPoint.getArgs()));
 
 
         if (checkerResult.isError()) {
@@ -59,19 +63,19 @@ public class CheckItAspect {
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
-        if (!checkOnMethod.fillToMethodResult) {
+        if (!methodHandlerChecker.isFillToMethodResult()) {
             if (checkerResult.isFailed()) {
                 throw new ArgCheckException(checkerResult);
             }
             return result;
         }
+        boolean resultIsCheckResultClass = methodHandlerChecker.resultIsCheckResultClass();
 
-        if (checkOnMethod.returnType == Boolean.class || checkOnMethod.returnType == boolean.class) {
-            return checkerResult.isSuccess();
-        } else if (CheckerResult.class.isAssignableFrom(checkOnMethod.returnType)) {
+        if (resultIsCheckResultClass) {
             return checkerResult;
         }
-        throw new RuntimeException("不應該有錯誤");
+        return checkerResult.isSuccess();
+
     }
 
 

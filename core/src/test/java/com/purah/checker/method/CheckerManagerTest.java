@@ -1,5 +1,9 @@
-package com.purah.checker;
+package com.purah.checker.method;
 
+import com.purah.checker.CheckInstance;
+import com.purah.checker.Checker;
+import com.purah.checker.CheckerManager;
+import com.purah.checker.Checkers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

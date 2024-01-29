@@ -51,15 +51,7 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
 
 
     }
-//    public AbstractBeanDefinition test(LinkedHashSet<BeanDefinition> beanDefinitions) {
-//        List<Class<Object>> classes = intClazz(beanDefinitions);
-//        for (Class<Object> clazz : classes) {
-//            BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(clazz);
-//            AbstractBeanDefinition beanDefinition = definitionBuilder.getBeanDefinition();
-//            beanDefinition.setAutowireCandidate(true);
-//            beanDefinition.setPrimary(true);
-//        }
-//    }
+
 
     public AbstractBeanDefinition purahContextBeanDefinition(LinkedHashSet<BeanDefinition> beanDefinitions) {
         BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(PurahContextFactoryBean.class);

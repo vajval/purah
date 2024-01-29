@@ -32,7 +32,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
     public CheckerResult cnPhoneNum(CNPhoneNum cnPhoneNum, CheckInstance<String> str) {
         String strValue = str.instance();
 
-        //gpt 说的
+        //gpt小姐 说的
         if (strValue.matches("^1[3456789]\\d{9}$")) {
             return success("正确的");
         }

@@ -148,7 +148,6 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
             if (supportedCache) {
                 result = matchFieldCacheMap.get(fieldMatcher);
             }
-System.out.println(matchFieldCacheMap.size());
 
             if (result != null) {
                 return result;

@@ -11,6 +11,7 @@ public class CustomUser {
     @Range(min = 1, max = 10, errorMsg = "取值范围错误")
     public Long id;
     @NotEmpty(errorMsg = "这个字段不能为空")
+    @javax.validation.constraints.NotEmpty
     public String name;
     @CNPhoneNum(errorMsg = "移不动也联不通")
     public String phone;
