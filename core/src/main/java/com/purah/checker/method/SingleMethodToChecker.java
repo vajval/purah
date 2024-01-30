@@ -28,10 +28,6 @@ public class SingleMethodToChecker extends MethodToChecker {
         }
 
 
-
-
-
-
     }
 
     @Override
@@ -50,7 +46,7 @@ public class SingleMethodToChecker extends MethodToChecker {
                 if (resultValue) {
                     return SingleCheckerResult.success(true, "success");
                 } else {
-                    return SingleCheckerResult.failed(false, "success");
+                    return SingleCheckerResult.failed(false, "failed");
 
                 }
             }
@@ -60,6 +56,7 @@ public class SingleMethodToChecker extends MethodToChecker {
             throw new RuntimeException(e);
         }
     }
+
     public static boolean enable(Object methodsToCheckersBean, Method method) {
         return staticErrorMsg(methodsToCheckersBean, method) == null;
     }

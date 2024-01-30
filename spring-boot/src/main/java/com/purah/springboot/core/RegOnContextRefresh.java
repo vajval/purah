@@ -121,6 +121,8 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
 
 
         Collection<Object> values = applicationContext.getBeansWithAnnotation(MethodsToCheckers.class).values();
+
+
         Set<Object> enableMethodsToCheckers = filterByEnableAnn(values);
 
         for (Object bean : enableMethodsToCheckers) {
@@ -134,6 +136,8 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
 
 
         }
+
+
 
 
     }

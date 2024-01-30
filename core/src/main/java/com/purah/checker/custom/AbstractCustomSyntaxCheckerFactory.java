@@ -5,7 +5,7 @@ import com.purah.checker.Checker;
 import com.purah.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import com.purah.checker.factory.CheckerFactory;
 
-public abstract class AbstractCustomSyntaxChecker implements CheckerFactory {
+public abstract class AbstractCustomSyntaxCheckerFactory implements CheckerFactory {
 
     public abstract PurahContext purahContext();
 

@@ -4,7 +4,7 @@ import com.google.common.base.Splitter;
 import com.purah.PurahContext;
 import com.purah.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import com.purah.checker.combinatorial.ExecType;
-import com.purah.checker.custom.AbstractCustomSyntaxChecker;
+import com.purah.checker.custom.AbstractCustomSyntaxCheckerFactory;
 import com.purah.springboot.ann.EnableOnPurahContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @EnableOnPurahContext
 @Component
-public class CustomSyntaxChecker extends AbstractCustomSyntaxChecker {
+public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFactory {
 
 
     @Autowired
@@ -53,12 +53,12 @@ public class CustomSyntaxChecker extends AbstractCustomSyntaxChecker {
     public static CombinatorialCheckerConfigProperties expToProperties(String needMatchCheckerName) {
 
 
-        // example: [x,y][a:b,c;e:d,e]
+        // example: 0[x,y][a:b,c;e:d,e]
         String checkerExp = needMatchCheckerName.substring("example:".length()).trim();
 
         ExecType.Main mainExecType = ExecType.Main.valueOf(Integer.parseInt(String.valueOf(checkerExp.charAt(0))));
 
-        // [x,y][a:b,c;e:d,e]
+        // 0[x,y][a:b,c;e:d,e]
 
 
         CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties(needMatchCheckerName);

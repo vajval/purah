@@ -49,10 +49,10 @@ class CombinatorialCheckerConfigTest {
 
 //    }
 
-    /**
+    /*
      * - name: 用户id检测
-     * _____field_check_mapping:
-     * ________wild_card:
+     *    field_check_mapping:
+     *          wild_card:
      * ___________"i*": id为1
      */
 
@@ -77,11 +77,11 @@ class CombinatorialCheckerConfigTest {
         Assertions.assertFalse(result.isSuccess());
     }
 
-    /**
+    /*
      * - name: 交易发起者id检测
-     * ____field_check_mapping:
-     * _______general:
-     * ___________"i*.i*": id为1
+     *    field_check_mapping:
+     *        general:
+     *           "i*.i*": id为1
      */
 
 

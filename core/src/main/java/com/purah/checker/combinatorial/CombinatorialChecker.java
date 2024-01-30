@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-/**
+/*
  * 配置的多个规则像结合形成的规则
  * easy-rule:
  * rules:

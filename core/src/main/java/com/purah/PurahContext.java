@@ -3,6 +3,7 @@ package com.purah;
 import com.google.common.base.Splitter;
 import com.purah.checker.Checker;
 import com.purah.checker.CheckerManager;
+import com.purah.checker.ExecChecker;
 import com.purah.checker.combinatorial.CombinatorialChecker;
 import com.purah.checker.combinatorial.CombinatorialCheckerConfig;
 import com.purah.checker.combinatorial.CombinatorialCheckerConfigProperties;
@@ -13,6 +14,8 @@ import com.purah.resolver.ArgResolverManager;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 public class PurahContext {
 
@@ -37,7 +40,16 @@ public class PurahContext {
     }
 
 
-    public Checker createNewCombinatorialChecker(CombinatorialCheckerConfigProperties properties) {
+    public CombinatorialChecker combinatorialOf(String... checkerNames) {
+        List<String> checkerNameList = Stream.of(checkerNames).toList();
+
+        CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties = new CombinatorialCheckerConfigProperties(UUID.randomUUID().toString());
+        combinatorialCheckerConfigProperties.setUseCheckerNames(checkerNameList);
+        return createNewCombinatorialChecker(combinatorialCheckerConfigProperties);
+
+    }
+
+    public CombinatorialChecker createNewCombinatorialChecker(CombinatorialCheckerConfigProperties properties) {
 
 
         CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(this);
@@ -47,7 +59,7 @@ public class PurahContext {
         for (Map.Entry<String, Map<String, List<String>>> entry : properties.getMatcherFieldCheckerMapping().entrySet()) {
             String matcherFactoryName = entry.getKey();
             MatcherFactory matcherFactory = matcherManager.factoryOf(matcherFactoryName);
-            for (Map.Entry<String,  List<String>> matcherStrChecker : entry.getValue().entrySet()) {
+            for (Map.Entry<String, List<String>> matcherStrChecker : entry.getValue().entrySet()) {
                 String matcherStr = matcherStrChecker.getKey();
                 FieldMatcher fieldMatcher = matcherFactory.create(matcherStr);
                 List<String> checkerNameList = matcherStrChecker.getValue();

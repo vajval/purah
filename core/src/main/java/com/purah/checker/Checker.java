@@ -18,6 +18,9 @@ public interface Checker<CHECK_INSTANCE, RESULT> extends IName {
 
     CheckerResult<RESULT> check(CheckInstance<CHECK_INSTANCE> checkInstance);
 
+    default boolean booleanCheck(CheckInstance<CHECK_INSTANCE> checkInstance) {
+        return check(checkInstance).isSuccess();
+    }
 
     default Class<?> inputCheckInstanceClass() {
         Class<?> result = generics()[0].resolve();

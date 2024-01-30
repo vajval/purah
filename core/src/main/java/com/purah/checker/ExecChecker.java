@@ -47,7 +47,7 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
         Checker<?, ?> checker = getChecker(checkClass);
 
         if (checker == null) {
-            throw new CheckerException(this, "checker " + this.name + "没有对该类的解析方法" + checkClass.getClass());
+            throw new CheckerException(this, "checker " + this.name + "没有对该类的解析方法" + checkClass.clazz);
         }
         CheckerResult<?> checkerResult;
         try {

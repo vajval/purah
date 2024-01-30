@@ -4,8 +4,11 @@ import com.purah.ExampleApplication;
 import com.purah.PurahContext;
 import com.purah.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import com.purah.checker.context.CheckerResult;
+import com.purah.customAnn.ann.CNPhoneNum;
+import com.purah.customAnn.ann.NotEmpty;
+import com.purah.customAnn.ann.NotNull;
+import com.purah.customAnn.ann.Range;
 import com.purah.customAnn.pojo.CustomUser;
-import com.purah.customSyntax.CustomSyntaxChecker;
 import com.purah.exception.ArgCheckException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,21 +23,21 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = ExampleApplication.class)
-class CustomAnnServiceTest {
+class CustomServiceTest {
 
 
     @Autowired
-    CustomAnnService customAnnService;
+    CustomService customService;
 
     @Autowired
     PurahContext purahContext;
 
-    /**
+    /*
      * 下面的 properties也可以通过 配置文件来编写
-     * - name: 所有字段自定义注解检测
-     * mapping:
-     * custom_ann:
-     * "[*]": 自定义注解检测
+     *  - name: 所有字段自定义注解检测
+     *      mapping:
+     *         general:
+     *          "[*]": 自定义注解检测
      */
 
 
@@ -44,7 +47,6 @@ class CustomAnnServiceTest {
 
     @BeforeEach
     public void beforeEach() {
-        System.out.println("beforeEach");
         badCustomUser = new CustomUser(50L, null, "123", null);
         goodCustomUser = new CustomUser(3L, "vajva", "15509931234", 15);
 
@@ -63,20 +65,20 @@ class CustomAnnServiceTest {
     void voidCheck() {
 
 
-        ArgCheckException argCheckException = Assertions.assertThrows(ArgCheckException.class, () -> customAnnService.voidCheck(badCustomUser));
+        ArgCheckException argCheckException = Assertions.assertThrows(ArgCheckException.class, () -> customService.voidCheck(badCustomUser));
 
-        Assertions.assertDoesNotThrow(() -> customAnnService.voidCheck(goodCustomUser));
+        Assertions.assertDoesNotThrow(() -> customService.voidCheck(goodCustomUser));
 
 
     }
 
     @Test
     void checkResult() {
-        CheckerResult goodCheckerResult = customAnnService.checkResult(goodCustomUser);
+        CheckerResult goodCheckerResult = customService.checkResult(goodCustomUser);
         Assertions.assertTrue(goodCheckerResult.isSuccess());
 
         assertEquals(5, ((List) goodCheckerResult.value()).size());
-        CheckerResult badCheckerResult = customAnnService.checkResult(badCustomUser);
+        CheckerResult badCheckerResult = customService.checkResult(badCustomUser);
         Assertions.assertTrue(badCheckerResult.isFailed());
 
         assertEquals(1, ((List) badCheckerResult.value()).size());
@@ -87,28 +89,28 @@ class CustomAnnServiceTest {
     @Test
     void booleanCheck() {
 
-        Assertions.assertFalse(customAnnService.booleanCheck(badCustomUser));
-        Assertions.assertTrue(customAnnService.booleanCheck(goodCustomUser));
+        Assertions.assertFalse(customService.booleanCheck(badCustomUser));
+        Assertions.assertTrue(customService.booleanCheck(goodCustomUser));
 
 
     }
 
     @Test
     void booleanCheckDefaultCheckerByClassAnn() {
-        Assertions.assertEquals(customAnnService.booleanCheck(goodCustomUser), customAnnService.booleanCheckDefaultCheckerByClassAnn(goodCustomUser));
+        Assertions.assertEquals(customService.booleanCheck(goodCustomUser), customService.booleanCheckDefaultCheckerByClassAnn(goodCustomUser));
 
-        Assertions.assertEquals(customAnnService.booleanCheck(badCustomUser), customAnnService.booleanCheckDefaultCheckerByClassAnn(badCustomUser));
+        Assertions.assertEquals(customService.booleanCheck(badCustomUser), customService.booleanCheckDefaultCheckerByClassAnn(badCustomUser));
 
 
     }
 
-    /**
-     * example:[][i*:自定义注解检测]
-     * 等价于
-     * - name: 所有字段自定义注解检测
-     * mapping:
-     * general:
-     * "[i*]": 自定义注解检测
+    /*
+     * example:0[][i*:自定义注解检测]
+     *  等价于
+     *  - name: 所有字段自定义注解检测
+     *      mapping:
+     *        general:
+     *           "[i*]": 自定义注解检测
      */
 
 
@@ -118,22 +120,22 @@ class CustomAnnServiceTest {
     @Test
     void booleanCheckByCustomSyntax() {
 
-        Assertions.assertEquals(customAnnService.booleanCheck(goodCustomUser), customAnnService.booleanCheckByCustomSyntax(goodCustomUser));
+        Assertions.assertEquals(customService.booleanCheck(goodCustomUser), customService.booleanCheckByCustomSyntax(goodCustomUser));
 
-        Assertions.assertEquals(customAnnService.booleanCheck(badCustomUser), customAnnService.booleanCheckByCustomSyntax(badCustomUser));
+        Assertions.assertEquals(customService.booleanCheck(badCustomUser), customService.booleanCheckByCustomSyntax(badCustomUser));
 
     }
 
-//        @Test
+    //        @Test
     void booleanCheckByCustomSyntaxWithMultiLevel2() {
         goodCustomUser.setChildCustomUser(badCustomUser);
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 10000000; i++) {
 
 
             if (i % 10000 == 0) {
                 System.out.println(i);
             }
-            CheckerResult checkerResult = customAnnService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+            CheckerResult checkerResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
             Assertions.assertFalse(checkerResult.isSuccess());
             List<CheckerResult> resultList = (List) checkerResult.value();
 //        value.stream().
@@ -146,18 +148,50 @@ class CustomAnnServiceTest {
         }
     }
 
+    public Long id;
+    @NotEmpty(errorMsg = "这个字段不能为空")
+    public String name;
+    @CNPhoneNum(errorMsg = "移不动也联不通")
+    public String phone;
+
+
+    @NotNull(errorMsg = "norBull")
+    public Integer age;
+
+    CustomUser childCustomUser;
+
     @Test
     void booleanCheckByCustomSyntaxWithMultiLevel() {
-        CheckerResult checkerResult = customAnnService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+        CheckerResult checkerResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
 
         Assertions.assertTrue(checkerResult.isSuccess());
         goodCustomUser.setChildCustomUser(badCustomUser);
-        checkerResult = customAnnService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+        checkerResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
         Assertions.assertFalse(checkerResult.isSuccess());
         List<CheckerResult> resultList = (List) checkerResult.value();
 //        value.stream().
         String trim = resultList.stream().filter(CheckerResult::isFailed).map(CheckerResult::info)
                 .reduce("", (a, b) -> a + b).trim();
+        /*
+         * 检测
+         * id
+         * name
+         * phone
+         * age
+         * childCustomUser
+         *
+         * childCustomUser.id
+         * childCustomUser.name
+         * childCustomUser.phone
+         * childCustomUser.age
+         * childCustomUser.childCustomUser
+         *
+         */
+
+
+
+        Assertions.assertEquals(resultList.size(),10);
+
 
         Assertions.assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
         Assertions.assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
@@ -167,25 +201,22 @@ class CustomAnnServiceTest {
 
     @Test
     void booleanCheckMultiArgs() {
-        assertTrue(customAnnService.booleanCheck(goodCustomUser, goodCustomUser, goodCustomUser));
+        assertTrue(customService.booleanCheck(goodCustomUser, goodCustomUser, goodCustomUser));
 
-        assertFalse(customAnnService.booleanCheck(goodCustomUser, goodCustomUser, badCustomUser));
+        assertFalse(customService.booleanCheck(goodCustomUser, goodCustomUser, badCustomUser));
 
-        assertTrue(customAnnService.booleanCheck(goodCustomUser, badCustomUser, goodCustomUser));
+        assertTrue(customService.booleanCheck(goodCustomUser, badCustomUser, goodCustomUser));
 
-        assertFalse(customAnnService.booleanCheck(goodCustomUser, badCustomUser, badCustomUser));
-
-
-        assertFalse(customAnnService.booleanCheck(badCustomUser, goodCustomUser, goodCustomUser));
-
-        assertFalse(customAnnService.booleanCheck(badCustomUser, goodCustomUser, badCustomUser));
-
-        assertFalse(customAnnService.booleanCheck(badCustomUser, badCustomUser, goodCustomUser));
-
-        assertFalse(customAnnService.booleanCheck(badCustomUser, badCustomUser, badCustomUser));
+        assertFalse(customService.booleanCheck(goodCustomUser, badCustomUser, badCustomUser));
 
 
+        assertFalse(customService.booleanCheck(badCustomUser, goodCustomUser, goodCustomUser));
 
+        assertFalse(customService.booleanCheck(badCustomUser, goodCustomUser, badCustomUser));
+
+        assertFalse(customService.booleanCheck(badCustomUser, badCustomUser, goodCustomUser));
+
+        assertFalse(customService.booleanCheck(badCustomUser, badCustomUser, badCustomUser));
 
 
     }

@@ -91,15 +91,15 @@ class CombinatorialCheckerTest {
     }
 
 
-    /**
+    /*
      * 下面的 properties也可以通过 配置文件来编写
      * - name: 交易检测
-     * mapping:
-     * general:
-     * "[initia*.i*]":  id为1
-     * "[*ator.nam?]": 必须姓李
-     * type_by_ann:
-     * 短文本: 敏感词检测
+     *     mapping:
+     *        general:
+     *           "[initia*.i*]":  id为1
+     *           "[*ator.nam?]": 必须姓李
+     *        type_by_ann:
+     *              短文本: 敏感词检测
      */
 
     @Test
