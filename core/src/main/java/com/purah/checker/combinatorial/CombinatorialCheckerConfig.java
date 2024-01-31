@@ -14,11 +14,11 @@ public class CombinatorialCheckerConfig {
 
     public String name;
 
+    public boolean ignoreSuccessResult = true;
+
     public List<String> extendCheckerNames = new ArrayList<>();
 
     public List<FieldMatcherCheckerConfig> fieldMatcherCheckerConfigList = new ArrayList<>();
-
-
 
 
     private CombinatorialCheckerConfig(PurahContext purahContext) {
@@ -37,6 +37,10 @@ public class CombinatorialCheckerConfig {
     public void setExtendCheckerNames(List<String> extendCheckerNames) {
         this.extendCheckerNames = extendCheckerNames;
 
+    }
+
+    public void setIgnoreSuccessResult(boolean ignoreSuccessResult) {
+        this.ignoreSuccessResult = ignoreSuccessResult;
     }
 
     public void setName(String name) {

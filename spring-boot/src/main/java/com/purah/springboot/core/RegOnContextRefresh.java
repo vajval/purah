@@ -12,7 +12,7 @@ import com.purah.matcher.factory.MatcherFactory;
 import com.purah.resolver.ArgResolver;
 import com.purah.resolver.ArgResolverManager;
 import com.purah.springboot.ann.EnableOnPurahContext;
-import com.purah.springboot.ann.MethodsToCheckers;
+import com.purah.springboot.ann.PurahEnableMethods;
 import com.purah.springboot.config.PurahConfigProperties;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -120,13 +120,14 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
         }
 
 
-        Collection<Object> values = applicationContext.getBeansWithAnnotation(MethodsToCheckers.class).values();
+        Collection<Object> values = applicationContext.getBeansWithAnnotation(PurahEnableMethods.class).values();
 
 
         Set<Object> enableMethodsToCheckers = filterByEnableAnn(values);
 
         for (Object bean : enableMethodsToCheckers) {
             Class<?> clazz = AopUtils.getTargetClass(bean);
+
             for (Method method : clazz.getMethods()) {
                 if (SingleMethodToChecker.enable(bean, method)) {
                     MethodToChecker methodToChecker = new SingleMethodToChecker(bean, method);

@@ -1,6 +1,7 @@
 package com.purah.checker.method;
 
 import com.purah.base.Name;
+import com.purah.base.PurahEnableMethod;
 import com.purah.checker.BaseChecker;
 import com.purah.checker.CheckInstance;
 import com.purah.checker.context.CheckerResult;
@@ -33,13 +34,14 @@ public abstract class MethodToChecker extends BaseChecker {
 
     protected abstract String errorMsg(Object methodsToCheckersBean, Method method);
 
-
+    PurahEnableMethod purahEnableMethod;
     public MethodToChecker(Object methodsToCheckersBean, Method method) {
         String errorMsg = errorMsg(methodsToCheckersBean, method);
         if (errorMsg != null) {
             throw new RuntimeException(errorMsg);
         }
 
+        purahEnableMethod = new PurahEnableMethod(methodsToCheckersBean, method);
 
         this.methodsToCheckersBean = methodsToCheckersBean;
         this.method = method;

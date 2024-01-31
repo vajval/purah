@@ -5,10 +5,10 @@ import com.purah.checker.CheckInstance;
 import com.purah.checker.context.CheckerResult;
 import com.purah.checker.context.SingleCheckerResult;
 import com.purah.springboot.ann.EnableOnPurahContext;
-import com.purah.springboot.ann.MethodsToCheckers;
+import com.purah.springboot.ann.PurahEnableMethods;
 import org.springframework.util.StringUtils;
 
-@MethodsToCheckers
+@PurahEnableMethods
 @EnableOnPurahContext
 public class MethodsToCheckersTestBean {
 

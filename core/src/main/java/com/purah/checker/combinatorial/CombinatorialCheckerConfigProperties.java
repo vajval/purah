@@ -7,10 +7,20 @@ import java.util.*;
 
 public class CombinatorialCheckerConfigProperties {
     String checkerName;
+    boolean ignoreSuccessResult=true;
 
     ExecType.Main mainExecType = ExecType.Main.all_success;
     List<String> useCheckerNames = new ArrayList<>();
     LinkedHashMap<String, Map<String, List<String>>> matcherFieldCheckerMapping = new LinkedHashMap<>();
+
+
+    public boolean isIgnoreSuccessResult() {
+        return ignoreSuccessResult;
+    }
+
+    public void setIgnoreSuccessResult(boolean ignoreSuccessResult) {
+        this.ignoreSuccessResult = ignoreSuccessResult;
+    }
 
     public CombinatorialCheckerConfigProperties(String checkerName) {
         this.checkerName = checkerName;

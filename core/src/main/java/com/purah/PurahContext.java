@@ -56,6 +56,7 @@ public class PurahContext {
         config.setMainExecType(properties.getMainExecType());
         config.setExtendCheckerNames(properties.getUseCheckerNames());
         config.setName(properties.getCheckerName());
+        config.setIgnoreSuccessResult(properties.isIgnoreSuccessResult());
         for (Map.Entry<String, Map<String, List<String>>> entry : properties.getMatcherFieldCheckerMapping().entrySet()) {
             String matcherFactoryName = entry.getKey();
             MatcherFactory matcherFactory = matcherManager.factoryOf(matcherFactoryName);

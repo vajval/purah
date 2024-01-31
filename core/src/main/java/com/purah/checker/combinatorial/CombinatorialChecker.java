@@ -119,7 +119,15 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
             for (Supplier<CheckerResult> supplier : ruleResultSupplierList) {
                 CheckerResult ruleResult = supplier.get();
-                this.combinatorialCheckerResult.addResult(ruleResult);
+//                if (ruleResult.isSuccess()) {
+//                    if (!config.ignoreSuccessResult) {
+//                        this.combinatorialCheckerResult.addResult(ruleResult);
+//                    }
+//                }else{
+                    this.combinatorialCheckerResult.addResult(ruleResult);
+//                }
+
+
 
                 /*
                    有错误直接返回

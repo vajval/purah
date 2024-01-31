@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.LinkedHashMap;
 
 @SpringBootTest(classes = ExampleApplication.class)
-class MethodsToCheckersTest {
+class PurahEnableMethodsTest {
     /**
      * 在这里
      */

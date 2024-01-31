@@ -41,6 +41,7 @@ public class PurahConfigProperties {
     static class CombinatorialCheckerProperties {
 
         protected String name;
+        protected boolean ignoreSuccessResult = true;
         protected String useCheckers = "";
         protected int execType = ExecType.Main.all_success.value();
 
@@ -61,6 +62,7 @@ public class PurahConfigProperties {
 
                 result.add(entry.getKey(), valueMap);
             }
+            result.setIgnoreSuccessResult(ignoreSuccessResult);
             result.setMainExecType(ExecType.Main.valueOf(execType));
             return result;
         }
@@ -82,6 +84,14 @@ public class PurahConfigProperties {
                 this.useCheckers = useCheckers;
             }
 
+        }
+
+        public boolean isIgnoreSuccessResult() {
+            return ignoreSuccessResult;
+        }
+
+        public void setIgnoreSuccessResult(boolean ignoreSuccessResult) {
+            this.ignoreSuccessResult = ignoreSuccessResult;
         }
 
         public int getExecType() {

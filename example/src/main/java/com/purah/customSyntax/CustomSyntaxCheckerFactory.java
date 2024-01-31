@@ -63,6 +63,7 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
 
         CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties(needMatchCheckerName);
         properties.setMainExecType(mainExecType);
+        properties.setIgnoreSuccessResult(false);
         // x,y
         String useCheckersExp = checkerExp.substring(checkerExp.indexOf("[") + 1, checkerExp.indexOf("]"));
         if (StringUtils.hasText(useCheckersExp)) {
@@ -93,8 +94,6 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
 
             properties.add("general", fieldCheckerMap);
         }
-
-
 
 
         return properties;

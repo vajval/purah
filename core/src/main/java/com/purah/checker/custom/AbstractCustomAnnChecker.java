@@ -50,67 +50,6 @@ public class AbstractCustomAnnChecker extends BaseChecker {
         initMethods();
     }
 
-//    public Checker methodToChecker(Method declaredMethod, String useName) {
-//
-//        Parameter[] parameters = declaredMethod.getParameters();
-//        Class<?> annClazz = parameters[0].getType();
-//        Class<?> inputClazz = parameters[1].getType();
-//        boolean isInstance = false;
-//        boolean resultIsResult = !declaredMethod.getReturnType().equals(boolean.class);
-//
-//        if (CheckInstance.class.isAssignableFrom(parameters[1].getType())) {
-//            isInstance = true;
-//            inputClazz = (Class<?>) ((ParameterizedType) declaredMethod.getGenericParameterTypes()[1]).getActualTypeArguments()[0];
-//        }
-//
-//
-//        AbstractCustomAnnChecker thisChecker = this;
-//        Class<?> finalInputClazz = inputClazz;
-//        boolean finalIsInstance = isInstance;
-//        return new BaseChecker<>() {
-//            @Override
-//            public Class<?> inputCheckInstanceClass() {
-//                return finalInputClazz;
-//            }
-//
-//            @Override
-//            public CheckerResult doCheck(CheckInstance checkInstance) {
-//
-//                Annotation annotation = checkInstance.annOf(annClazz);
-//                try {
-//                    Object result;
-//                    if (finalIsInstance) {
-//                        result = declaredMethod.invoke(thisChecker, annotation, checkInstance);
-//                    } else {
-//                        result = declaredMethod.invoke(thisChecker, annotation, checkInstance.instance());
-//                    }
-//                    if (resultIsResult) {
-//                        return (CheckerResult) result;
-//                    } else {
-//                        boolean success = (boolean) result;
-//                        if (success) return SingleCheckerResult.success();
-//                        else {
-//                            return SingleCheckerResult.failed("failed", "failed");
-//                        }
-//                    }
-//
-//
-//                } catch (IllegalAccessException | InvocationTargetException e) {
-//                    throw new RuntimeException(e);
-//                }
-//
-//            }
-//
-//            @Override
-//            public String name() {
-//                return useName;
-//            }
-//        };
-//
-//    }
-
-
-
 
     @Override
     public CheckerResult doCheck(CheckInstance checkInstance) {
