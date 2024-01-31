@@ -13,17 +13,13 @@ public class PurahEnableMethodValidator {
     List<Class<?>> argList;
 
     List<Class<?>> allowReturnType;
-    int checkIndex = 0;
-
-    public static PurahEnableMethodValidator methodToCheckerValidator = new PurahEnableMethodValidator(Lists.newArrayList(Name.class),
-            Lists.newArrayList(Object.class), 0, Lists.newArrayList(boolean.class, CheckerResult.class)
-    );
 
 
-    public PurahEnableMethodValidator(List<Class<? extends Annotation>> annClassList, List<Class<?>> argList, int checkIndex, List<Class<?>> allowReturnType) {
+
+
+    public PurahEnableMethodValidator(List<Class<? extends Annotation>> annClassList, List<Class<?>> argList,  List<Class<?>> allowReturnType) {
         this.argList = argList;
         this.annClassList = annClassList;
-        this.checkIndex = checkIndex;
         this.allowReturnType = allowReturnType;
     }
 

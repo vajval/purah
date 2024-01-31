@@ -1,18 +1,23 @@
 package com.purah.springboot.core;
 
 import com.purah.PurahContext;
+import com.purah.base.PurahEnableMethod;
 import com.purah.checker.Checker;
 import com.purah.checker.CheckerManager;
 import com.purah.checker.method.MethodToChecker;
 import com.purah.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import com.purah.checker.factory.CheckerFactory;
+import com.purah.checker.method.MethodToCheckerFactory;
+import com.purah.checker.method.MethodToCheckerFactoryByResult;
 import com.purah.checker.method.SingleMethodToChecker;
 import com.purah.matcher.MatcherManager;
 import com.purah.matcher.factory.MatcherFactory;
 import com.purah.resolver.ArgResolver;
 import com.purah.resolver.ArgResolverManager;
+import com.purah.springboot.ann.ToChecker;
 import com.purah.springboot.ann.EnableOnPurahContext;
 import com.purah.springboot.ann.PurahEnableMethods;
+import com.purah.springboot.ann.ToCheckerFactory;
 import com.purah.springboot.config.PurahConfigProperties;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -23,10 +28,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Parameter;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Configuration
 public class RegOnContextRefresh implements ApplicationListener<ContextRefreshedEvent> {
@@ -35,6 +40,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
 
     @Autowired
     PurahContext purahContext;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         this.initMatcherManager(purahContext.matcherManager(), applicationContext);
@@ -42,9 +48,6 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
         this.initCheckerManager(purahContext.checkManager(), applicationContext);
         this.initPurahConfigProperties(purahContext, applicationContext);
     }
-
-
-
 
 
     private static <T> Set<T> filterByEnableAnn(Collection<T> inputValues) {
@@ -101,6 +104,16 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
 
     public void initCheckerManager(CheckerManager checkerManager, ListableBeanFactory applicationContext) {
 //
+
+
+        Collection<Object> values = applicationContext.getBeansWithAnnotation(PurahEnableMethods.class).values();
+        Set<Object> purahEnableMethodsBean = filterByEnableAnn(values);
+
+        regChecker(checkerManager, applicationContext, purahEnableMethodsBean);
+        regCheckerFactory(checkerManager, applicationContext, purahEnableMethodsBean);
+    }
+
+    public void regChecker(CheckerManager checkerManager, ListableBeanFactory applicationContext, Set<Object> purahEnableMethodsBean) {
         Map<String, Checker> checkerMap = applicationContext.getBeansOfType(Checker.class);
 
 
@@ -109,8 +122,22 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
             checkerManager.reg(checker);
         }
 
-        Map<String, CheckerFactory> checkerFactoryMap = applicationContext.getBeansOfType(CheckerFactory.class);
+        for (Object bean : purahEnableMethodsBean) {
+            Class<?> clazz = AopUtils.getTargetClass(bean);
+            List<Method> methodList = Stream.of(clazz.getMethods()).filter(i -> i.getDeclaredAnnotation(ToChecker.class) != null).collect(Collectors.toList());
 
+            for (Method method : methodList) {
+                MethodToChecker methodToChecker = new SingleMethodToChecker(bean, method);
+                checkerManager.reg(methodToChecker);
+
+            }
+
+
+        }
+    }
+
+    public void regCheckerFactory(CheckerManager checkerManager, ListableBeanFactory applicationContext, Set<Object> purahEnableMethodsBean) {
+        Map<String, CheckerFactory> checkerFactoryMap = applicationContext.getBeansOfType(CheckerFactory.class);
 
 
         Set<CheckerFactory> checkerFactories = filterByEnableAnn(checkerFactoryMap.values());
@@ -119,34 +146,59 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
             checkerManager.addCheckerFactory(checkerFactory);
         }
 
-
-        Collection<Object> values = applicationContext.getBeansWithAnnotation(PurahEnableMethods.class).values();
-
-
-        Set<Object> enableMethodsToCheckers = filterByEnableAnn(values);
-
-        for (Object bean : enableMethodsToCheckers) {
+        for (Object bean : purahEnableMethodsBean) {
             Class<?> clazz = AopUtils.getTargetClass(bean);
+            List<Method> methodList = Stream.of(clazz.getMethods()).filter(i -> i.getDeclaredAnnotation(ToCheckerFactory.class) != null).collect(Collectors.toList());
+            for (Method method : methodList) {
 
-            for (Method method : clazz.getMethods()) {
-                if (SingleMethodToChecker.enable(bean, method)) {
-                    MethodToChecker methodToChecker = new SingleMethodToChecker(bean, method);
-                    checkerManager.reg(methodToChecker);
-                }
+
+                checkerManager.addCheckerFactory(methodToCheckerFactory(bean, method));
+
             }
 
 
         }
-
-
-
-
     }
-//    @Autowired
-//    PurahConfigProperties purahConfigProperties;
-//
-//    @Override
-//    public void postProcessBeanFactory(ConfigurableListableBeanFactory applicationContext) throws BeansException {
+
+    protected static CheckerFactory methodToCheckerFactory(Object bean, Method method) {
+        ToCheckerFactory toCheckerFactory = method.getDeclaredAnnotation(ToCheckerFactory.class);
+        String match = toCheckerFactory.match();
+        int length = method.getParameters().length;
+        Class<?> returnType = method.getReturnType();
+        Parameter[] parameters = method.getParameters();
+
+
+        if (length == 2) {
+            Parameter parameter1 = parameters[0];
+            if (!parameter1.getType().equals(String.class)) {
+                throw new RuntimeException("第一个入参必须是 string 类型，将被填充为checker名字");
+            }
+            boolean valid = PurahEnableMethod.validReturnType(returnType);
+            if (!valid) {
+                throw new RuntimeException("返回必须是 Boolean.class 或者 checkerResult.class");
+            }
+
+
+            return new MethodToCheckerFactoryByResult(bean, method, match);
+
+
+        } else if (length == 1) {
+            Parameter parameter = parameters[0];
+            if (!parameter.getType().equals(String.class)) {
+                throw new RuntimeException("唯一的入参必须是 string 类型，将被填充为checker名字");
+            }
+            if (!Checker.class.isAssignableFrom(returnType)) {
+                throw new RuntimeException("返回值必须时checker");
+
+            }
+
+            return new MethodToCheckerFactory(bean, method, match);
+
+        } else {
+            throw new RuntimeException();
+        }
+    }
+
 
     /**
      * 根据配置文件生成 CombinatorialChecker 并且注册注

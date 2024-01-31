@@ -8,6 +8,7 @@ import com.purah.checker.context.CheckerResult;
 import com.purah.checker.factory.CheckerFactory;
 import com.purah.matcher.singleLevel.WildCardMatcher;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.function.Function;
 
@@ -18,11 +19,12 @@ public class MethodToCheckerFactoryByResult implements CheckerFactory {
 
     PurahEnableMethod purahEnableMethod;
 
-    public MethodToCheckerFactoryByResult(Method method, Object bean, String matchStr) {
-        PurahEnableMethod purahEnableMethod = new PurahEnableMethod(bean,method);
+    public MethodToCheckerFactoryByResult(Object bean, Method method, String matchStr) {
         this.wildCardMatcher = new WildCardMatcher(matchStr);
+        purahEnableMethod = new PurahEnableMethod(bean, method, 1);
 
     }
+
 
     @Override
     public boolean match(String needMatchCheckerName) {
@@ -31,19 +33,36 @@ public class MethodToCheckerFactoryByResult implements CheckerFactory {
 
     @Override
     public Checker createChecker(String needMatchCheckerName) {
-        return null;
+
+
+        return new BaseChecker() {
+            @Override
+            public CheckerResult doCheck(CheckInstance checkInstance) {
+
+                Object[] args = new Object[2];
+                args[0] = needMatchCheckerName;
+                args[1] = purahEnableMethod.checkInstanceToInputArg(checkInstance);
+
+
+                return purahEnableMethod.invoke(args);
+            }
+
+            @Override
+            public Class<?> inputCheckInstanceClass() {
+                return purahEnableMethod.needCheckArgClass();
+            }
+
+            @Override
+            public Class<?> resultClass() {
+                return purahEnableMethod.resultWrapperClass();
+            }
+
+            @Override
+            public String name() {
+                return needMatchCheckerName;
+            }
+        };
     }
-    //    @Override
-//    public Checker createChecker(String needMatchCheckerName) {
-//
-//        return new BaseChecker() {
-//            @Override
-//            public CheckerResult doCheck(CheckInstance checkInstance) {
-//
-//                return method.invoke(bean, checkInstance.instance());
-//
-//            }
-//        };
-//    }
+
 
 }

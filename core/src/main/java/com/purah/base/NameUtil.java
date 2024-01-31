@@ -14,11 +14,10 @@ public class NameUtil {
     private static Map<Class<?>, String> classAnnNameCacheMap = new ConcurrentHashMap<>();
 
 
-
     public static List<String> names(Object object, String... nameArray) {
         List<String> result = new ArrayList<>(nameArray.length + 3);
         result.addAll(NameUtil.allName(object));
-        Collections.addAll(result,nameArray);
+        Collections.addAll(result, nameArray);
         return result;
     }
 
@@ -39,8 +38,6 @@ public class NameUtil {
     }
 
 
-
-
     private static String nameByInterface(Object object) {
         if (object == null) return null;
         if (object instanceof IName IName) {
@@ -53,14 +50,13 @@ public class NameUtil {
         if (clazz == null) return null;
         String result = classAnnNameCacheMap.get(clazz);
         if (result != null) return result;
-       Name name = clazz.getDeclaredAnnotation(Name.class);
+        Name name = clazz.getDeclaredAnnotation(Name.class);
         if (name != null) {
             classAnnNameCacheMap.put(clazz, name.value());
             return name.value();
         }
         return null;
     }
-
 
 
     private static Set<String> allName(Object object) {

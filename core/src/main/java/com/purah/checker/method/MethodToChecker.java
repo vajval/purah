@@ -2,6 +2,7 @@ package com.purah.checker.method;
 
 import com.purah.base.Name;
 import com.purah.base.PurahEnableMethod;
+import com.purah.base.PurahEnableMethodValidator;
 import com.purah.checker.BaseChecker;
 import com.purah.checker.CheckInstance;
 import com.purah.checker.context.CheckerResult;
@@ -22,62 +23,75 @@ public abstract class MethodToChecker extends BaseChecker {
     protected Method method;
 
     protected Object methodsToCheckersBean;
+
     protected String name;
     protected Class<?> resultClass = boolean.class;
 
-    protected Class<?> inputCheckInstanceClass;
-
-
-    protected boolean argIsCheckInstanceClass = false;
     protected boolean resultIsCheckResultClass = false;
 
 
-    protected abstract String errorMsg(Object methodsToCheckersBean, Method method);
+    protected String errorMsgProtected(Object methodsToCheckersBean, Method method) {
+        return validator().errorMsg(methodsToCheckersBean, method);
+    }
+
 
     PurahEnableMethod purahEnableMethod;
+
     public MethodToChecker(Object methodsToCheckersBean, Method method) {
-        String errorMsg = errorMsg(methodsToCheckersBean, method);
+        String errorMsg = errorMsgProtected(methodsToCheckersBean, method);
+
         if (errorMsg != null) {
             throw new RuntimeException(errorMsg);
         }
 
-        purahEnableMethod = new PurahEnableMethod(methodsToCheckersBean, method);
+        purahEnableMethod = purahEnableMethod(methodsToCheckersBean, method);
 
         this.methodsToCheckersBean = methodsToCheckersBean;
         this.method = method;
         this.init();
     }
 
+    public abstract PurahEnableMethod purahEnableMethod(Object methodsToCheckersBean, Method method);
+
     protected void init() {
 
-        Type returnType = method.getGenericReturnType();
-        if (!returnType.equals(boolean.class)) {
-            if (returnType.getClass().equals(Class.class)) {
-                resultClass = Object.class;
-            } else {
-                resultClass = (Class) ((ParameterizedType) returnType).getActualTypeArguments()[0];
-            }
-            resultIsCheckResultClass = true;
-        }
+//        Type returnType = method.getGenericReturnType();
+//        if (!returnType.equals(boolean.class)) {
+//            if (returnType.getClass().equals(Class.class)) {
+//                resultClass = Object.class;
+//            } else {
+//                resultClass = (Class) ((ParameterizedType) returnType).getActualTypeArguments()[0];
+//            }
+//            resultIsCheckResultClass = true;
+//        }
 
 
     }
+
+    protected abstract PurahEnableMethodValidator validator();
+
 
     @Override
     public String name() {
         return name;
     }
 
+
     @Override
     public Class<?> inputCheckInstanceClass() {
-        return inputCheckInstanceClass;
+        return purahEnableMethod.needCheckArgClass();
     }
 
     @Override
     public Class<?> resultClass() {
-        return resultClass;
+        return purahEnableMethod.resultWrapperClass();
     }
 
     @Override
     public abstract CheckerResult doCheck(CheckInstance checkInstance);
+
+    @Override
+    public String logicFrom() {
+        return method.getName();
+    }
 }

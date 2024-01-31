@@ -46,5 +46,8 @@ public interface Checker<CHECK_INSTANCE, RESULT> extends IName {
                 .getGenerics();
     }
 
+    default String logicFrom() {
+        return this.getClass().getName();
+    }
 
 }

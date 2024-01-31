@@ -6,6 +6,7 @@ import com.purah.checker.context.CheckerResult;
 import com.purah.checker.context.SingleCheckerResult;
 import com.purah.springboot.ann.EnableOnPurahContext;
 import com.purah.springboot.ann.PurahEnableMethods;
+import com.purah.springboot.ann.ToChecker;
 import org.springframework.util.StringUtils;
 
 @PurahEnableMethods
@@ -13,11 +14,13 @@ import org.springframework.util.StringUtils;
 public class MethodsToCheckersTestBean {
 
     @Name("非空判断FromTestBean")
+    @ToChecker
     public boolean notEmpty(Object o) {
         return o != null;
     }
 
     @Name("有文本判断FromTestBean")
+    @ToChecker
     public CheckerResult hasTest(String text) {
         if (StringUtils.hasText(text)) {
             return SingleCheckerResult.success(null, "有文本");
@@ -27,6 +30,7 @@ public class MethodsToCheckersTestBean {
     }
 
     @Name("数值判断FromTestBean")
+    @ToChecker
     public CheckerResult range(CheckInstance<Number> checkInstance) {
         Integer value = checkInstance.instance().intValue();
         if (value < 0) {
