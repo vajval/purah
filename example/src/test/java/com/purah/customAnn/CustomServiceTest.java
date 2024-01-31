@@ -166,6 +166,7 @@ class CustomServiceTest {
 
         Assertions.assertTrue(checkerResult.isSuccess());
         goodCustomUser.setChildCustomUser(badCustomUser);
+        System.out.println("------------------------------------");
         checkerResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
         Assertions.assertFalse(checkerResult.isSuccess());
         List<CheckerResult> resultList = (List) checkerResult.value();
@@ -188,6 +189,11 @@ class CustomServiceTest {
          *
          */
 
+        for (CheckerResult result : resultList) {
+            System.out.println(result.isSuccess());
+            System.out.println(result.info());
+            System.out.println(result.logicFrom());
+        }
 
 
         Assertions.assertEquals(resultList.size(),10);
@@ -196,6 +202,12 @@ class CustomServiceTest {
         Assertions.assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
         Assertions.assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
         Assertions.assertTrue(trim.contains("childCustomUser.phone:移不动也联不通"));
+        for (CheckerResult result : resultList) {
+            System.out.println(result.isSuccess());
+            System.out.println(result.logicFrom());
+        }
+
+        System.out.println();
 
     }
 

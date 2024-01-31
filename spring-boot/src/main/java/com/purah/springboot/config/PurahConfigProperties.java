@@ -50,6 +50,7 @@ public class PurahConfigProperties {
 
         public CombinatorialCheckerConfigProperties toCombinatorialCheckerConfigProperties() {
             CombinatorialCheckerConfigProperties result = new CombinatorialCheckerConfigProperties(name);
+            result.setLogicFrom("PurahConfigProperties.CombinatorialCheckerProperties{" + this + "}");
 
             result.setUseCheckerNames(split(useCheckers));
             for (Map.Entry<String, LinkedHashMap<String, String>> entry : mapping.entrySet()) {

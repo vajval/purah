@@ -14,6 +14,8 @@ public class CombinatorialCheckerConfig {
 
     public String name;
 
+    public String logicFrom;
+
     public boolean ignoreSuccessResult = true;
 
     public List<String> extendCheckerNames = new ArrayList<>();
@@ -28,6 +30,10 @@ public class CombinatorialCheckerConfig {
 
     public static CombinatorialCheckerConfig create(PurahContext purahContext) {
         return new CombinatorialCheckerConfig(purahContext);
+    }
+
+    public String getLogicFrom() {
+        return logicFrom;
     }
 
     public void setMainExecType(ExecType.Main mainExecType) {

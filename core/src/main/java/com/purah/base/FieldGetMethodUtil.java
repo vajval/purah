@@ -76,7 +76,7 @@ public class FieldGetMethodUtil {
                 Field field = instanceClass.getDeclaredField(fieldName);
                 result.put(field, method);
             } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
 
         }

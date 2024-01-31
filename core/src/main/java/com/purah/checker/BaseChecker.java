@@ -13,36 +13,43 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
 
     @Override
     public CheckerResult<RESULT> check(CheckInstance<CHECK_INSTANCE> checkInstance) {
+        CheckerResult<RESULT> resultCheckerResult;
         try {
-            return this.doCheck(checkInstance);
+            resultCheckerResult = this.doCheck(checkInstance);
         } catch (Exception e) {
-            e.printStackTrace();
-            return this.error(e);
+            resultCheckerResult = this.error(e);
         }
+        setLogicFrom(resultCheckerResult);
+        return resultCheckerResult;
     }
 
+
+    public void setLogicFrom(CheckerResult checkerResult) {
+        checkerResult.setLogicFromByChecker(logicFrom());
+    }
 
 
 
     public abstract CheckerResult<RESULT> doCheck(CheckInstance<CHECK_INSTANCE> checkInstance);
 
 
-
     public CheckerResult<RESULT> success(RESULT result) {
 
-        return SingleCheckerResult.success(result, DEFAULT_SUCCESS_INFO);
-
+        SingleCheckerResult<RESULT> singleCheckerResult = SingleCheckerResult.success(result, DEFAULT_SUCCESS_INFO);
+        return singleCheckerResult;
     }
 
     public SingleCheckerResult<RESULT> failed(RESULT result) {
 
-        return SingleCheckerResult.failed(result, DEFAULT_FAILED_INFO);
+        SingleCheckerResult<RESULT> singleCheckerResult = SingleCheckerResult.failed(result, DEFAULT_FAILED_INFO);
 
+        return singleCheckerResult;
     }
 
     public CheckerResult<RESULT> error(Exception e) {
 
-        return SingleCheckerResult.error(e, DEFAULT_ERROR_INFO);
+        SingleCheckerResult<RESULT> singleCheckerResult = SingleCheckerResult.error(e, DEFAULT_ERROR_INFO);
+        return singleCheckerResult;
 
     }
 

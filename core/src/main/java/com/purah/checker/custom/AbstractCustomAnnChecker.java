@@ -5,8 +5,10 @@ import com.purah.checker.CheckInstance;
 import com.purah.checker.Checker;
 import com.purah.checker.ExecChecker;
 import com.purah.checker.context.CheckerResult;
+import com.purah.checker.context.CombinatorialCheckerResult;
 import com.purah.checker.context.SingleCheckerResult;
 import com.purah.checker.method.AnnMethodToChecker;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.core.ResolvableType;
 
 import java.lang.annotation.Annotation;
@@ -41,11 +43,15 @@ public class AbstractCustomAnnChecker extends BaseChecker {
             String name = this.name() + "[" + annClazz.getName() + "]";
             ExecChecker execChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> new ExecChecker(name));
             AnnMethodToChecker annMethodToChecker = new AnnMethodToChecker(this, declaredMethod, name);
+
             execChecker.addNewChecker(annMethodToChecker);
 
         }
 
     }
+
+
+
     public AbstractCustomAnnChecker() {
         initMethods();
     }
@@ -54,21 +60,25 @@ public class AbstractCustomAnnChecker extends BaseChecker {
     @Override
     public CheckerResult doCheck(CheckInstance checkInstance) {
         List<Annotation> annotations = ((CheckInstance<?>) checkInstance).getAnnotations();
+        CombinatorialCheckerResult result = new CombinatorialCheckerResult();
         for (Annotation annotation : annotations) {
             ExecChecker execChecker = map.get(annotation.annotationType());
 
             if (execChecker == null) continue;
             CheckerResult checkerResult = execChecker.check(checkInstance);
 
-            if (checkerResult.isFailed()) {
-                return checkerResult;
+            result.addResult(checkerResult);
+
+
+            if (result.isFailed()) {
+                return result;
             }
 
         }
 
-        return SingleCheckerResult.success();
-    }
 
+        return result;
+    }
 
 
 }

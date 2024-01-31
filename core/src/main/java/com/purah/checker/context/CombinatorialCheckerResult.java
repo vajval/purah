@@ -1,13 +1,15 @@
 package com.purah.checker.context;
 
+import com.purah.checker.Checker;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CombinatorialCheckerResult implements CheckerResult<List<CheckerResult>>{
+public class CombinatorialCheckerResult implements CheckerResult<List<CheckerResult>> {
 
     List<CheckerResult> singleCheckerResultList = new ArrayList<>();
-    ExecInfo execInfo=ExecInfo.success;
+    ExecInfo execInfo = ExecInfo.success;
     Exception e;
 
     public void setExecInfo(ExecInfo execInfo) {
@@ -19,22 +21,32 @@ public class CombinatorialCheckerResult implements CheckerResult<List<CheckerRes
 
     }
 
+    protected String logicFrom;
+
+    public void setLogicFromByChecker(String logicFrom) {
+        this.logicFrom = logicFrom;
+
+    }
+
+    public String logicFrom() {
+        return logicFrom;
+    }
 
     public CombinatorialCheckerResult(Exception e) {
         this.e = e;
     }
 
-    public void  addResult(CheckerResult checkerResult){
+    public void addResult(CheckerResult checkerResult) {
 
-        if(checkerResult instanceof  CombinatorialCheckerResult){
-            singleCheckerResultList.addAll  (((CombinatorialCheckerResult)checkerResult).singleCheckerResultList);
-        }else{
+        if (checkerResult instanceof CombinatorialCheckerResult) {
+            singleCheckerResultList.addAll(((CombinatorialCheckerResult) checkerResult).singleCheckerResultList);
+        } else {
             singleCheckerResultList.add(checkerResult);
         }
-        if(checkerResult.isFailed()){
+        if (checkerResult.isFailed()) {
             setExecInfo(ExecInfo.failed);
         }
-        if(checkerResult.isError()){
+        if (checkerResult.isError()) {
             setExecInfo(ExecInfo.error);
         }
     }
@@ -42,7 +54,6 @@ public class CombinatorialCheckerResult implements CheckerResult<List<CheckerRes
     public CombinatorialCheckerResult(List<CheckerResult> singleCheckerResultList) {
         this.singleCheckerResultList = singleCheckerResultList;
     }
-
 
 
     @Override

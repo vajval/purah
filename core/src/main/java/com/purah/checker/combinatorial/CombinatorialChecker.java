@@ -50,6 +50,12 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
         this.config = config;
     }
 
+
+    @Override
+    public String logicFrom() {
+        return config.getLogicFrom();
+    }
+
     @Override
     public String name() {
         return config.name;
@@ -124,7 +130,9 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 //                        this.combinatorialCheckerResult.addResult(ruleResult);
 //                    }
 //                }else{
-                    this.combinatorialCheckerResult.addResult(ruleResult);
+                ;
+                this.combinatorialCheckerResult.addResult(ruleResult);
+
 //                }
 
 

@@ -50,4 +50,5 @@ public interface Checker<CHECK_INSTANCE, RESULT> extends IName {
         return this.getClass().getName();
     }
 
+
 }

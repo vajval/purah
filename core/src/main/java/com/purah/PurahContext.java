@@ -45,6 +45,7 @@ public class PurahContext {
 
         CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties = new CombinatorialCheckerConfigProperties(UUID.randomUUID().toString());
         combinatorialCheckerConfigProperties.setUseCheckerNames(checkerNameList);
+        combinatorialCheckerConfigProperties.setLogicFrom("PurahContext.combinatorialOf" + checkerNameList);
         return createNewCombinatorialChecker(combinatorialCheckerConfigProperties);
 
     }

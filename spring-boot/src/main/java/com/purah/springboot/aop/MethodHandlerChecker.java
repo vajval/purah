@@ -13,6 +13,7 @@ import com.purah.checker.context.CombinatorialCheckerResult;
 import com.purah.checker.method.MethodToChecker;
 import com.purah.springboot.ann.CheckIt;
 import com.purah.springboot.ann.FillToMethodResult;
+import org.checkerframework.checker.units.qual.C;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -46,7 +47,6 @@ public class MethodHandlerChecker extends BaseChecker {
         this.init();
 
     }
-
 
 
     //    @Override
@@ -100,11 +100,14 @@ public class MethodHandlerChecker extends BaseChecker {
     }
 
 
-
-
     @Override
     public CombinatorialCheckerResult check(CheckInstance checkInstance) {
-        return (CombinatorialCheckerResult) super.check(checkInstance);
+        CheckerResult check = super.check(checkInstance);
+        CombinatorialCheckerResult result = new CombinatorialCheckerResult();
+        result.addResult(check);
+
+
+        return result;
     }
 
     @Override

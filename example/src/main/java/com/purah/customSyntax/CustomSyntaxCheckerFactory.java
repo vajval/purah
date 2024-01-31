@@ -47,7 +47,9 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
     @Override
     public CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties(String needMatchCheckerName) {
 
-        return expToProperties(needMatchCheckerName);
+        CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties = expToProperties(needMatchCheckerName);
+        combinatorialCheckerConfigProperties.setLogicFrom(this.getClass().getName() + "|||" + needMatchCheckerName);
+        return combinatorialCheckerConfigProperties;
     }
 
     public static CombinatorialCheckerConfigProperties expToProperties(String needMatchCheckerName) {
@@ -62,6 +64,7 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
 
 
         CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties(needMatchCheckerName);
+
         properties.setMainExecType(mainExecType);
         properties.setIgnoreSuccessResult(false);
         // x,y

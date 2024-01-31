@@ -90,8 +90,10 @@ public abstract class MethodToChecker extends BaseChecker {
     @Override
     public abstract CheckerResult doCheck(CheckInstance checkInstance);
 
+
     @Override
     public String logicFrom() {
-        return method.getName();
+
+        return method.toGenericString();
     }
 }

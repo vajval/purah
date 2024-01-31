@@ -54,7 +54,6 @@ public class AnnMethodToChecker extends MethodToChecker {
             Lists.newArrayList(Annotation.class, Object.class), Lists.newArrayList(boolean.class, CheckerResult.class)
     );
 
-
     @Override
     protected PurahEnableMethodValidator validator() {
         return annMethodToCheckerValidator;

@@ -79,6 +79,16 @@ public class CheckInstance<INSTANCE> {
     public Field fieldInClass() {
         return fieldInClass;
     }
+
+    @Override
+    public String toString() {
+        return "CheckInstance{" +
+                "instance=" + instance +
+                ", fieldStr='" + fieldStr + '\'' +
+                ", fieldInClass=" + fieldInClass +
+                ", annotations=" + annotations +
+                '}';
+    }
 }
 
 

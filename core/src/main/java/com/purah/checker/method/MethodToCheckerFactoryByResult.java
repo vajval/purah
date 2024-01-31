@@ -18,11 +18,12 @@ public class MethodToCheckerFactoryByResult implements CheckerFactory {
     WildCardMatcher wildCardMatcher;
 
     PurahEnableMethod purahEnableMethod;
+    Method method;
 
     public MethodToCheckerFactoryByResult(Object bean, Method method, String matchStr) {
         this.wildCardMatcher = new WildCardMatcher(matchStr);
         purahEnableMethod = new PurahEnableMethod(bean, method, 1);
-
+        this.method = method;
     }
 
 
@@ -45,6 +46,12 @@ public class MethodToCheckerFactoryByResult implements CheckerFactory {
 
 
                 return purahEnableMethod.invoke(args);
+            }
+
+            @Override
+            public String logicFrom() {
+
+                return method.toGenericString();
             }
 
             @Override

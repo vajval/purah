@@ -97,16 +97,18 @@ public class PurahEnableMethod {
                 return (CheckerResult) result;
             } else {
                 Boolean resultValue = (Boolean) result;
+                SingleCheckerResult singleCheckerResult;
                 if (resultValue) {
-                    return SingleCheckerResult.success(true, "success");
+                    singleCheckerResult = SingleCheckerResult.success(true, "success");
                 } else {
-                    return SingleCheckerResult.failed(false, "failed");
+                    singleCheckerResult = SingleCheckerResult.failed(false, "failed");
 
                 }
+                return singleCheckerResult;
             }
 
         } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

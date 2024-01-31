@@ -117,7 +117,7 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
                 Object fieldObject = method.invoke(instance);
                 return CheckInstance.create(fieldObject, fieldStr, field, annotations);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
                 throw new ArgResolverException("反射解析器:" + this.getClass() + "在使用时出现异常 :" + instance.getClass() + "使用get方法出现异常" + e.getMessage());
             }
         }

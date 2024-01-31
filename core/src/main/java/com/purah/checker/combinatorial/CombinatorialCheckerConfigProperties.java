@@ -8,11 +8,22 @@ import java.util.*;
 public class CombinatorialCheckerConfigProperties {
     String checkerName;
     boolean ignoreSuccessResult=true;
+    public String logicFrom;
+
+
 
     ExecType.Main mainExecType = ExecType.Main.all_success;
     List<String> useCheckerNames = new ArrayList<>();
     LinkedHashMap<String, Map<String, List<String>>> matcherFieldCheckerMapping = new LinkedHashMap<>();
 
+
+    public String getLogicFrom() {
+        return logicFrom;
+    }
+
+    public void setLogicFrom(String logicFrom) {
+        this.logicFrom = logicFrom;
+    }
 
     public boolean isIgnoreSuccessResult() {
         return ignoreSuccessResult;
