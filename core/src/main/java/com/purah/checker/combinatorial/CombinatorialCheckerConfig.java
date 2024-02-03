@@ -58,5 +58,7 @@ public class CombinatorialCheckerConfig {
         fieldMatcherCheckerConfigList.add(new FieldMatcherCheckerConfig(fieldMatcher, list));
     }
 
-
+    public void setLogicFrom(String logicFrom) {
+        this.logicFrom = logicFrom;
+    }
 }

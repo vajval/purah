@@ -35,7 +35,7 @@ class PurahEnableMethodsTest {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("name", "非空判断FromTestBean,有文本判断FromTestBean");
 
-        map.put("age", "1取值必须在[1-15]之间判断FromTestBean,2取值必须在[5-20]之间判断FromTestBean,3取值必须在[3-49]之间判断FromTestBean");
+        map.put("age", "1取值必须在[1-15]之间判断FromTestBean,2取值必须在[5-20]之间判断FromTestBean,3取值必须在[3-7]之间判断FromTestBean");
 
         map.put("id", "数值判断FromTestBean");
         properties.addByStrMap("general", map);
@@ -46,9 +46,12 @@ class PurahEnableMethodsTest {
         CustomUser badCustomUser = new CustomUser(-1L, null, null, 35);
 
         ExecChecker execChecker = purahContext.checkManager().get("测试MethodsToCheckers注解");
+        CheckerResult check = execChecker.check(CheckInstance.create(badCustomUser));
+        System.out.println(check);
         CombinatorialCheckerResult checkerResult = (CombinatorialCheckerResult) execChecker.check(CheckInstance.create(badCustomUser));
         System.out.println(checkerResult.logicFrom());
         for (CheckerResult result : checkerResult.value()) {
+            System.out.println(result);
             System.out.println(result.logicFrom());
         }
 

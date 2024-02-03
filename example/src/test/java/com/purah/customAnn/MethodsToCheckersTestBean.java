@@ -35,7 +35,7 @@ public class MethodsToCheckersTestBean {
     @ToCheckerFactory(match = "1取值必须在[*-*]之间判断FromTestBean")
     public boolean range(String name, Number value) {
 
-        String[] split = name.substring(name.indexOf("["), name.indexOf("]")).split("-");
+        String[] split = name.substring(name.indexOf("[") + 1, name.indexOf("]")).split("-");
         double min = Double.parseDouble(split[0]);
         double max = Double.parseDouble(split[1]);
         return value.doubleValue() >= min && value.doubleValue() <= max;
@@ -44,7 +44,7 @@ public class MethodsToCheckersTestBean {
     @ToCheckerFactory(match = "2取值必须在[*-*]之间判断FromTestBean")
     public CheckerResult range2(String name, Number value) {
 
-        String[] split = name.substring(name.indexOf("["), name.indexOf("]")).split("-");
+        String[] split = name.substring(name.indexOf("[") + 1, name.indexOf("]")).split("-");
         double min = Double.parseDouble(split[0]);
         double max = Double.parseDouble(split[1]);
         boolean success = value.doubleValue() >= min && value.doubleValue() <= max;
@@ -52,7 +52,8 @@ public class MethodsToCheckersTestBean {
         if (success) {
             return SingleCheckerResult.success();
         }
-        return SingleCheckerResult.failed(null, "failed");
+//        return null;
+        return SingleCheckerResult.failed(null, name + "取值错误" + value);
     }
 
     @ToCheckerFactory(match = "3取值必须在[*-*]之间判断FromTestBean")
@@ -61,6 +62,7 @@ public class MethodsToCheckersTestBean {
         return new BaseChecker<Number, Object>() {
             @Override
             public CheckerResult doCheck(CheckInstance<Number> checkInstance) {
+//                return null;
                 return range2(name, checkInstance.instance());
             }
         };

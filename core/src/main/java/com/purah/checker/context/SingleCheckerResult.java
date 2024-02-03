@@ -85,9 +85,8 @@ public class SingleCheckerResult<T> implements CheckerResult<T> {
                 ", e=" + e +
                 ", data=" + data +
                 ", info='" + info + '\'' +
+                ", logicFrom='" + logicFrom + '\'' +
                 '}';
     }
-
-
 }
 

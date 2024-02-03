@@ -16,9 +16,13 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
         CheckerResult<RESULT> resultCheckerResult;
         try {
             resultCheckerResult = this.doCheck(checkInstance);
+            if (resultCheckerResult == null) {
+                throw new RuntimeException("result cannot be Null " + this.logicFrom());
+            }
         } catch (Exception e) {
             resultCheckerResult = this.error(e);
         }
+
         setLogicFrom(resultCheckerResult);
         return resultCheckerResult;
     }
@@ -27,7 +31,6 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
     public void setLogicFrom(CheckerResult checkerResult) {
         checkerResult.setLogicFromByChecker(logicFrom());
     }
-
 
 
     public abstract CheckerResult<RESULT> doCheck(CheckInstance<CHECK_INSTANCE> checkInstance);

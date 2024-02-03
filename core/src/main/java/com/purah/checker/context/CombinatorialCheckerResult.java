@@ -24,6 +24,7 @@ public class CombinatorialCheckerResult implements CheckerResult<List<CheckerRes
     protected String logicFrom;
 
     public void setLogicFromByChecker(String logicFrom) {
+
         this.logicFrom = logicFrom;
 
     }

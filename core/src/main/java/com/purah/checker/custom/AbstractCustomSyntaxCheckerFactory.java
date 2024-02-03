@@ -22,6 +22,11 @@ public abstract class AbstractCustomSyntaxCheckerFactory implements CheckerFacto
         PurahContext purahContext = purahContext();
 
         CombinatorialCheckerConfigProperties properties = combinatorialCheckerConfigProperties(needMatchCheckerName);
+        String logicFrom = properties.getLogicFrom();
+        if (logicFrom == null) {
+            properties.setLogicFrom(this.getClass().getName());
+
+        }
 
         return purahContext.createNewCombinatorialChecker(properties);
 

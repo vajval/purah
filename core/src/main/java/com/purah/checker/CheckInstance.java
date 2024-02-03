@@ -1,6 +1,8 @@
 package com.purah.checker;
 
 import com.google.common.collect.Lists;
+import com.purah.checker.combinatorial.ExecType;
+import org.checkerframework.checker.units.qual.C;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -19,17 +21,27 @@ public class CheckInstance<INSTANCE> {
     Field fieldInClass;
     List<Annotation> annotations;
 
+    ExecType.Main execType = ExecType.Main.all_success;
 
-    public static <T> CheckInstance<T> create(T instance, String fieldStr, Field fieldInClass, Annotation[] annotations) {
+    public static CheckInstance copyAndNewExecType(CheckInstance source, ExecType.Main execType) {
+
+
+        CheckInstance result = new CheckInstance(source.instance, source.fieldStr, source.fieldInClass,source.annotations);
+        result.execType = execType;
+        return result;
+    }
+
+
+    public static <T> CheckInstance<T> create(T instance, String fieldStr, Field fieldInClass, List<Annotation> annotations) {
         return new CheckInstance<>(instance, fieldStr, fieldInClass, annotations);
     }
 
-    private CheckInstance(INSTANCE instance, String fieldStr, Field fieldInClass, Annotation[] annotations) {
+    private CheckInstance(INSTANCE instance, String fieldStr, Field fieldInClass, List<Annotation> annotations) {
         this.instance = instance;
         this.fieldInClass = fieldInClass;
         this.fieldStr = fieldStr;
 
-        this.annotations = Stream.of(annotations).collect(Collectors.toList());
+        this.annotations = annotations;
     }
 
     private CheckInstance(INSTANCE instance) {

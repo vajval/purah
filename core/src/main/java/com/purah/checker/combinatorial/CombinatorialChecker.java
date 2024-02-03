@@ -53,6 +53,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
     @Override
     public String logicFrom() {
+
         return config.getLogicFrom();
     }
 
@@ -74,10 +75,13 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
     }
 
     @Override
-    public CheckerResult doCheck(CheckInstance<Object> checkInstance) {
+    public CheckerResult doCheck(CheckInstance<Object> checkInstance2) {
         if (!init) {
             init();
         }
+        CheckInstance newExecTypeCheckInstance = CheckInstance.copyAndNewExecType(checkInstance2, config.mainExecType);
+
+
         MultiCheckerExecutor executor = new MultiCheckerExecutor();
         List<Supplier<CheckerResult>> supplierList = new ArrayList<>(rootInstanceCheckers.size() + fieldMatcherCheckerConfigList.size());
 
@@ -86,7 +90,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
           对入参对象的检查
          */
         for (Checker checker : rootInstanceCheckers) {
-            Supplier<CheckerResult> singleCheckerResultSupplier = () -> checker.check(checkInstance);
+            Supplier<CheckerResult> singleCheckerResultSupplier = () -> checker.check(newExecTypeCheckInstance);
             supplierList.add(singleCheckerResultSupplier);
         }
         /*
@@ -95,11 +99,26 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
         for (FieldMatcherCheckerConfig fieldMatcherCheckerConfig : fieldMatcherCheckerConfigList) {
             FieldMatcherCheckerConfigExecutor fieldMatcherCheckerConfigExecutor = new FieldMatcherCheckerConfigExecutor(fieldMatcherCheckerConfig);
-            supplierList.add(() -> fieldMatcherCheckerConfigExecutor.check(checkInstance));
+            supplierList.add(() -> fieldMatcherCheckerConfigExecutor.check(newExecTypeCheckInstance));
         }
         executor.exec(supplierList);
-        return executor.result();
 
+        CombinatorialCheckerResult result = executor.result();
+        SingleCheckerResult<Object> thisResult;
+        if (result.isSuccess()) {
+            thisResult = SingleCheckerResult.success(null,this.name() +"success");
+
+        } else if (result.isFailed()) {
+            thisResult = SingleCheckerResult.failed(null, this.name() + "failed");
+
+
+        } else {
+            thisResult = SingleCheckerResult.error(result.exception(), this.name() +"error");
+
+        }
+        thisResult.setLogicFromByChecker(this.logicFrom());
+        result.addResult(thisResult);
+        return result;
 
     }
 

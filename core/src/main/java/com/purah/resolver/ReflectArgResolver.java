@@ -12,10 +12,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -112,7 +114,7 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
                     throw new ArgResolverException("反射解析器" + this.getClass() + "找不到" + instance.getClass() + "字段" + fieldStr + "的get方法");
                 }
                 Field field = fieldMap.get(fieldStr);
-                Annotation[] annotations = fieldAnnMap.get(fieldStr);
+                List<Annotation> annotations = Stream.of(fieldAnnMap.get(fieldStr)).collect(Collectors.toList());
 
                 Object fieldObject = method.invoke(instance);
                 return CheckInstance.create(fieldObject, fieldStr, field, annotations);

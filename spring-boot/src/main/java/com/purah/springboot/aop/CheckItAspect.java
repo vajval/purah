@@ -48,7 +48,6 @@ public class CheckItAspect {
 
         MethodHandlerChecker methodHandlerChecker = checkItMethodHandler.checkerOf(joinPoint.getThis(), method);
 
-
         CombinatorialCheckerResult checkerResult = methodHandlerChecker.check(CheckInstance.create(joinPoint.getArgs()));
 
 

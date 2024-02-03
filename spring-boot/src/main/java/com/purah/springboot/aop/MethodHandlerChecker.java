@@ -103,9 +103,10 @@ public class MethodHandlerChecker extends BaseChecker {
     @Override
     public CombinatorialCheckerResult check(CheckInstance checkInstance) {
         CheckerResult check = super.check(checkInstance);
+
         CombinatorialCheckerResult result = new CombinatorialCheckerResult();
         result.addResult(check);
-
+        result.setLogicFromByChecker(check.logicFrom());
 
         return result;
     }
