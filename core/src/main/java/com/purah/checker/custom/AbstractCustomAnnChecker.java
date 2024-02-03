@@ -22,6 +22,25 @@ import java.util.function.BiFunction;
 public class AbstractCustomAnnChecker extends BaseChecker {
 
     Map<Class<? extends Annotation>, ExecChecker> map = new HashMap<>();
+    /**
+     * 过滤出能用的函数
+     * 第一个 参数 是自定义的注解
+     * 第二个是要检查的对象 arg
+     * 返回值只能是boolean或者 CheckerResult.class
+     * ExecChecker 会对不同class 的入参 传递到指定的的函数中
+     *
+     * 例如写了两个
+     *
+     * rangeLong ( Range range ,Long num)
+     *
+     * rangeInteger ( Range range ,CheckInstance<Integer> num)
+     *
+     * 需要检验的参数是Long类型会总动选择rangeLong
+     * 需要检验的参数是Integer类型会总动选择rangeInteger
+     * CheckInstance 没写泛型的算Object 类型
+     *
+     */
+
 
 
     protected void initMethods() {

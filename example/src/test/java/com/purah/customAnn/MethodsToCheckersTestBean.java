@@ -12,8 +12,10 @@ import com.purah.springboot.ann.ToChecker;
 import com.purah.springboot.ann.ToCheckerFactory;
 import org.springframework.util.StringUtils;
 
-@PurahEnableMethods
-@EnableOnPurahContext
+
+
+@PurahEnableMethods//将这个对象的函数转化为核对器
+@EnableOnPurahContext//使之生效
 public class MethodsToCheckersTestBean {
 
     @Name("非空判断FromTestBean")
@@ -21,6 +23,15 @@ public class MethodsToCheckersTestBean {
     public boolean notEmpty(Object o) {
         return o != null;
     }
+    @ToCheckerFactory(match = "取值必须在[*-*]之间判断FromTestBean")
+    public boolean range(String name, Number value) {
+
+        String[] split = name.substring(name.indexOf("[") + 1, name.indexOf("]")).split("-");
+        double min = Double.parseDouble(split[0]);
+        double max = Double.parseDouble(split[1]);
+        return value.doubleValue() >= min && value.doubleValue() <= max;
+    }
+
 
     @Name("有文本判断FromTestBean")
     @ToChecker
@@ -32,16 +43,9 @@ public class MethodsToCheckersTestBean {
         }
     }
 
-    @ToCheckerFactory(match = "1取值必须在[*-*]之间判断FromTestBean")
-    public boolean range(String name, Number value) {
 
-        String[] split = name.substring(name.indexOf("[") + 1, name.indexOf("]")).split("-");
-        double min = Double.parseDouble(split[0]);
-        double max = Double.parseDouble(split[1]);
-        return value.doubleValue() >= min && value.doubleValue() <= max;
-    }
 
-    @ToCheckerFactory(match = "2取值必须在[*-*]之间判断FromTestBean")
+    @ToCheckerFactory(match = "取值必须在[*-*]之间判断FromTestBean")
     public CheckerResult range2(String name, Number value) {
 
         String[] split = name.substring(name.indexOf("[") + 1, name.indexOf("]")).split("-");
@@ -52,17 +56,15 @@ public class MethodsToCheckersTestBean {
         if (success) {
             return SingleCheckerResult.success();
         }
-//        return null;
         return SingleCheckerResult.failed(null, name + "取值错误" + value);
     }
 
-    @ToCheckerFactory(match = "3取值必须在[*-*]之间判断FromTestBean")
+    @ToCheckerFactory(match = "取值必须在[*-*]之间判断FromTestBean")
     public Checker range3(String name) {
 
         return new BaseChecker<Number, Object>() {
             @Override
             public CheckerResult doCheck(CheckInstance<Number> checkInstance) {
-//                return null;
                 return range2(name, checkInstance.instance());
             }
         };

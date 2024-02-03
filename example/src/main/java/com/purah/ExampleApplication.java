@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@EnablePurah
+@EnablePurah //启动类上加这个注解使之生效
 public class ExampleApplication {
 
     public static void main(String[] args) {
