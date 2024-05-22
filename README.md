@@ -238,7 +238,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
 ## 自定义规则的字段匹配器
 
 
-在 core 的 com.purah.matcher下面 有几个自带的匹配器
+在 core 的 org.purah.matcher下面 有几个自带的匹配器
 
 使用请看具体类上的 Name注解
 

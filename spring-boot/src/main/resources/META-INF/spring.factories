@@ -1,5 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.purah.springboot.core.PurahConfiguration,\
-com.purah.springboot.config.PurahConfigProperties,\
-com.purah.springboot.aop.CheckItAspect
-
