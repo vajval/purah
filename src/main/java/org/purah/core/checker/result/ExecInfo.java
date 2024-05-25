@@ -1,6 +1,7 @@
 package org.purah.core.checker.result;
 
 public enum ExecInfo {
+    ignore("IGNORE"),
     success("SUCCESS"),
     failed("FAILED"),
     error("ERROR");

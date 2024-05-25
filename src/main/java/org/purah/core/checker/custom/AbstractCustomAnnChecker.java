@@ -91,7 +91,7 @@ public class AbstractCustomAnnChecker extends BaseChecker {
 
         multiCheckerExecutor.exec(ruleResultSupplierList);
         String log = "[root." + checkInstance.fieldStr() + "]: " + this.name();
-        return multiCheckerExecutor.result(log);
+        return multiCheckerExecutor.toCombinatorialCheckerResult(log);
 
 
     }

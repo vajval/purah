@@ -6,32 +6,32 @@ import java.util.List;
 
 public class MethodArgCheckConfig {
 
-        /**
-         * 注解内容
-         */
-        CheckIt checkItAnn;
-        /**
-         * 校验用的规则
-         */
+    /**
+     * 注解内容
+     */
+    CheckIt checkItAnn;
+    /**
+     * 校验用的规则
+     */
 
-        List<String> checkerNameList;
-        /**
-         * 入参类型
-         */
-        Class<?> clazz;
-        /**
-         * 入参的位置
-         */
+    List<String> checkerNameList;
+    /**
+     * 入参类型
+     */
+    Class<?> clazz;
+    /**
+     * 入参的位置
+     */
 
-        int index;
+    int index;
 
-        public CheckIt getCheckItAnn() {
-            return checkItAnn;
-        }
+    public CheckIt getCheckItAnn() {
+        return checkItAnn;
+    }
 
-        public void setCheckItAnn(CheckIt checkItAnn) {
-            this.checkItAnn = checkItAnn;
-        }
+    public void setCheckItAnn(CheckIt checkItAnn) {
+        this.checkItAnn = checkItAnn;
+    }
 
     public List<String> getCheckerNameList() {
         return checkerNameList;
@@ -42,18 +42,18 @@ public class MethodArgCheckConfig {
     }
 
     public Class<?> getClazz() {
-            return clazz;
-        }
-
-        public void setClazz(Class<?> clazz) {
-            this.clazz = clazz;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public void setIndex(int index) {
-            this.index = index;
-        }
+        return clazz;
     }
+
+    public void setClazz(Class<?> clazz) {
+        this.clazz = clazz;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+}

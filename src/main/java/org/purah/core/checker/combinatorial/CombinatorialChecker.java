@@ -108,7 +108,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
         executor.exec(supplierList);
 
         String log = "[" + checkInstance2.fieldStr() + "]: " + this.name();
-        CombinatorialCheckerResult result = executor.result(log);
+        CombinatorialCheckerResult result = executor.toCombinatorialCheckerResult(log);
         result.setCheckLogicFrom(this.logicFrom());
         return result;
 
@@ -177,7 +177,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
             multiCheckerExecutor.exec(supplierList);
 
             String info = checkInstance.fieldStr() + " match:(" + fieldMatcher + ") checkers: " + checkerNamesStr;
-            CombinatorialCheckerResult result = multiCheckerExecutor.result(info);
+            CombinatorialCheckerResult result = multiCheckerExecutor.toCombinatorialCheckerResult(info);
 
             result.setCheckLogicFrom("combinatorial by config,see info");
             return result;

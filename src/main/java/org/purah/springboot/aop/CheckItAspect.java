@@ -1,7 +1,6 @@
 package org.purah.springboot.aop;
 
 
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -9,7 +8,9 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.purah.core.checker.CheckInstance;
 import org.purah.core.checker.result.CombinatorialCheckerResult;
-import org.purah.core.exception.ArgCheckException;
+import org.purah.core.checker.result.ResultLevel;
+import org.purah.core.exception.MethodArgCheckException;
+import org.purah.springboot.result.MethodCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
@@ -39,41 +40,36 @@ public class CheckItAspect {
     public Object aroundAdvice(ProceedingJoinPoint joinPoint) {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
-
-
         /*
          * 找到对应函数使用的检查器材，然后检查
          */
 
         MethodHandlerChecker methodHandlerChecker = checkItMethodHandler.checkerOf(joinPoint.getThis(), method);
 
-        CombinatorialCheckerResult checkerResult = (CombinatorialCheckerResult)methodHandlerChecker.check(CheckInstance.create(joinPoint.getArgs()));
+        MethodCheckResult methodCheckResult = (MethodCheckResult) methodHandlerChecker.check(CheckInstance.create(joinPoint.getArgs()));
 
 
-        if (checkerResult.isError()) {
-            checkerResult.exception().printStackTrace();
-            throw new ArgCheckException(checkerResult);
+        if (methodCheckResult.isError()) {
+            methodCheckResult.exception().printStackTrace();
+            throw new MethodArgCheckException(methodCheckResult);
         }
 
 
-        Object result;
+        Object invokeObject;
         try {
-            result = joinPoint.proceed();
+            invokeObject = joinPoint.proceed();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
         if (!methodHandlerChecker.isFillToMethodResult()) {
-            if (checkerResult.isFailed()) {
-                throw new ArgCheckException(checkerResult);
+            if (methodCheckResult.isFailed()) {
+                throw new MethodArgCheckException(methodCheckResult);
             }
-            return result;
+            return invokeObject;
+        } else {
+            return methodHandlerChecker.fillObject(methodCheckResult);
         }
-        boolean resultIsCheckResultClass = methodHandlerChecker.resultIsCheckResultClass();
 
-        if (resultIsCheckResultClass) {
-            return checkerResult;
-        }
-        return checkerResult.isSuccess();
 
     }
 

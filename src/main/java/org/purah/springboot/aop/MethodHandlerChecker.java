@@ -2,6 +2,7 @@ package org.purah.springboot.aop;
 
 import com.google.common.collect.Lists;
 
+import org.checkerframework.checker.units.qual.C;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.BaseChecker;
 import org.purah.core.checker.CheckInstance;
@@ -9,16 +10,18 @@ import org.purah.core.checker.Checker;
 import org.purah.core.checker.ExecChecker;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.combinatorial.MultiCheckerExecutor;
-import org.purah.core.checker.result.CheckerResult;
-import org.purah.core.checker.result.CombinatorialCheckerResult;
-import org.purah.core.checker.result.ResultLevel;
+import org.purah.core.checker.result.*;
 import org.purah.springboot.ann.CheckIt;
 import org.purah.springboot.ann.FillToMethodResult;
+import org.purah.springboot.result.ArgCheckResult;
+import org.purah.springboot.result.MethodCheckResult;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -30,19 +33,16 @@ public class MethodHandlerChecker extends BaseChecker {
     protected List<MethodArgCheckConfig> methodArgCheckConfigList;
 
     protected boolean fillToMethodResult;
-    Object methodsToCheckersBean;
-    Method method;
-    boolean resultIsCheckResultClass = false;
+    protected Object methodsToCheckersBean;
+    protected Method method;
+    protected Type returnType;
 
 
     public MethodHandlerChecker(Object methodsToCheckersBean, Method method, PurahContext purahContext) {
         this.purahContext = purahContext;
         this.methodsToCheckersBean = methodsToCheckersBean;
         this.method = method;
-        Type returnType = method.getGenericReturnType();
-        if (!returnType.equals(boolean.class)) {
-            resultIsCheckResultClass = true;
-        }
+        this.returnType = method.getGenericReturnType();
 
         this.init();
 
@@ -90,14 +90,106 @@ public class MethodHandlerChecker extends BaseChecker {
     }
 
 
+    @Override
+    public MethodCheckResult doCheck(CheckInstance checkInstance) {
+        Object[] args = (Object[]) checkInstance.instance();
+        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(ExecType.Main.all_success, ResultLevel.failedIgnoreMatch);
+        List<Supplier<CheckerResult>> execList = new ArrayList<>();
+
+        for (MethodArgCheckConfig methodArgCheckConfig : methodArgCheckConfigList) {
+            execList.add(() -> this.checkSingleArgByConfig(methodArgCheckConfig, args[methodArgCheckConfig.index]));
+
+        }
+        multiCheckerExecutor.exec(execList);
+        String log = methodsToCheckersBean.getClass() + "|method:" + method.getName();
+        MultiCheckResult<ArgCheckResult> multiCheckResult = (MultiCheckResult) multiCheckerExecutor.multiCheckResult(log);
+
+
+        return new MethodCheckResult(
+                multiCheckResult.mainCheckResult(),
+                multiCheckResult.value(), methodsToCheckersBean, method
+        );
+
+
+    }
+
+
+    private ArgCheckResult checkSingleArgByConfig(MethodArgCheckConfig methodArgCheckConfig, Object checkArg) {
+
+        CheckIt checkIt = methodArgCheckConfig.checkItAnn;
+
+
+        MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.execType(), checkIt.resultLevel());
+
+
+        List<Supplier<CheckerResult>> execList = new ArrayList<>();
+
+        List<? extends ExecChecker<?, ?>> checkerList = methodArgCheckConfig.checkerNameList.stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
+
+        for (Checker checker : checkerList) {
+            execList.add(() -> checker.check(CheckInstance.create(checkArg)));
+        }
+
+        executor.exec(execList);
+        String log = "method:" + method.getName() + "|arg" + methodArgCheckConfig.index;
+
+
+        MultiCheckResult<CheckerResult> multiCheckResult = executor.multiCheckResult(log);
+
+
+        return ArgCheckResult.create(multiCheckResult.mainCheckResult(), methodArgCheckConfig.checkerNameList,
+                multiCheckResult.value(),
+                checkIt, checkArg);
+
+
+    }
+
+
+    public Object fillObject(MethodCheckResult methodCheckResult) {
+        System.out.println(returnType);
+        if (this.isMethodCheckResultType()) {
+            return methodCheckResult;
+        } else if (this.isArgCheckResultType()) {
+            return methodCheckResult.value().get(0);
+        } else if (this.isCombinatorialCheckerResultType()) {
+            return CombinatorialCheckerResult.create(methodCheckResult, ResultLevel.all);
+
+        } else if (this.isSingleResultType()) {
+            return methodCheckResult.mainCheckResult();
+        } else if (this.isBooleanResultType()) {
+            return methodCheckResult.isSuccess();
+        } else {
+            throw new RuntimeException("asd");
+        }
+    }
+
+    private boolean isArgCheckResultType() {
+        return ArgCheckResult.class.equals(returnType);
+    }
+
+    private boolean isMethodCheckResultType() {
+        return MethodCheckResult.class.equals(returnType)||CheckerResult.class.equals(returnType);
+    }
+
+    private boolean isSingleResultType() {
+        return SingleCheckerResult.class.equals(returnType);
+    }
+
+    private boolean isBooleanResultType() {
+        return boolean.class.equals(returnType);
+    }
+
+    private boolean isCombinatorialCheckerResultType() {
+        return CombinatorialCheckerResult.class.equals(returnType);
+    }
+
     public boolean isFillToMethodResult() {
         return fillToMethodResult;
     }
 
 
-    public boolean resultIsCheckResultClass() {
-        return resultIsCheckResultClass;
-    }
+}
+
 
 //
 //    @Override
@@ -110,73 +202,3 @@ public class MethodHandlerChecker extends BaseChecker {
 //
 //        return result;
 //    }
-
-    @Override
-    public CombinatorialCheckerResult doCheck(CheckInstance checkInstance) {
-        Object[] args = (Object[]) checkInstance.instance();
-
-
-        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(ExecType.Main.all_success, ResultLevel.failedIgnoreMatch);
-
-
-        List<Supplier<CheckerResult>> execList = new ArrayList<>();
-
-        for (MethodArgCheckConfig methodArgCheckConfig : methodArgCheckConfigList) {
-            execList.add(() -> this.checkSingleArgByConfig(methodArgCheckConfig, args[methodArgCheckConfig.index]));
-
-        }
-        multiCheckerExecutor.exec(execList);
-        String log = methodsToCheckersBean.getClass() + "|method:" + method.getName();
-        return multiCheckerExecutor.result(log);
-    }
-
-    private CombinatorialCheckerResult checkSingleArgByConfig(MethodArgCheckConfig methodArgCheckConfig, Object arg) {
-        ExecType.Main execType = methodArgCheckConfig.checkItAnn.execType();
-        ResultLevel resultLevel = methodArgCheckConfig.checkItAnn.ignoreSuccessResult();
-        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(execType, resultLevel);
-        List<Supplier<CheckerResult>> execList = new ArrayList<>();
-
-
-        List<? extends ExecChecker<?, ?>> checkerList = methodArgCheckConfig.checkerNameList.stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
-
-
-        for (Checker checker : checkerList) {
-            execList.add(() -> checker.check(CheckInstance.create(arg)));
-        }
-        multiCheckerExecutor.exec(execList);
-        String log = "method:" + method.getName() + "|arg" + methodArgCheckConfig.index;
-        return multiCheckerExecutor.result(log);
-
-    }
-
-    private List<CheckerResult> checkArgByConfig(MethodArgCheckConfig methodArgCheckConfig, Object arg) {
-        List<CheckerResult> resultList = new ArrayList<>();
-
-        List<? extends ExecChecker<?, ?>> checkerList = methodArgCheckConfig.checkerNameList.stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
-        for (Checker checker : checkerList) {
-            CheckerResult ruleResult = checker.check(CheckInstance.create(arg));
-            resultList.add(ruleResult);
-            if (ruleResult.isFailed()) return resultList;
-
-        }
-        return resultList;
-    }
-
-
-    protected static String staticErrorMsg(Object methodsToCheckersBean, Method method) {
-
-
-        FillToMethodResult ann = method.getAnnotation(FillToMethodResult.class);
-        if (ann != null) {
-            Class<?> returnType = method.getReturnType();
-            if (!(CheckerResult.class.isAssignableFrom(returnType)) &&
-                    !(boolean.class.isAssignableFrom(returnType))) {
-                return "返回值必须是 CheckerResult  或者 boolean " + method;
-
-            }
-        }
-
-        return null;
-    }
-
-}

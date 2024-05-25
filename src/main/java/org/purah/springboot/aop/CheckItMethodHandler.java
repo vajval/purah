@@ -34,65 +34,6 @@ public class CheckItMethodHandler {
 
 
 
-    /**
-     * 在指定的函数被调用时，执行此类中的方法对入参进行校验
-     * 一个函数中可能对多个入参使用CheckIt 注解进行了检查
-     * 所以用list来保存配置
-     */
-//    public static class CheckOnMethod {
-//        Method method;
-//
-//
-//        boolean fillToMethodResult;
-//
-//
-//        Class<?> returnType;
-//
-//        List<MethodArgCheckConfig> methodArgCheckConfigList;
-//
-//        protected CheckOnMethod(Method method, List<MethodArgCheckConfig> methodArgCheckConfigList) {
-//            this.method = method;
-//            this.methodArgCheckConfigList = methodArgCheckConfigList;
-//            this.returnType = this.method.getReturnType();
-//            fillToMethodResult = (method.getDeclaredAnnotation(FillToMethodResult.class)) != null;
-//            if (fillToMethodResult) {
-//                if (!(CheckerResult.class.isAssignableFrom(returnType)) &&
-//
-//                        !(boolean.class.isAssignableFrom(returnType))) {
-//                    throw new RuntimeException("返回值必须是 CheckerResult  或者 boolean " + method);
-//
-//                }
-//            }
-//        }
-//
-//        public CombinatorialCheckerResult check(Object... args) {
-//            CombinatorialCheckerResult result = new CombinatorialCheckerResult();
-//            for (MethodArgCheckConfig methodArgCheckConfig : methodArgCheckConfigList) {
-//                List<CheckerResult> childRusultList = this.check(methodArgCheckConfig, args[methodArgCheckConfig.index]);
-//                for (CheckerResult childResult : childRusultList) {
-//                    result.addResult(childResult);
-//                }
-//                if (result.isFailed()) {
-//                    return result;
-//                }
-//            }
-//            return result;
-//        }
-//
-//
-//        private List<CheckerResult> check(MethodArgCheckConfig methodArgCheckConfig, Object arg) {
-//            List<CheckerResult> resultList = new ArrayList<>();
-//            List<Checker> checkerList = methodArgCheckConfig.checkerList;
-//            for (Checker checker : checkerList) {
-//                CheckerResult ruleResult = checker.check(CheckInstance.create(arg));
-//                resultList.add(ruleResult);
-//                if (ruleResult.isFailed()) return resultList;
-//
-//            }
-//            return resultList;
-//
-//        }
-//    }
 
 
 }

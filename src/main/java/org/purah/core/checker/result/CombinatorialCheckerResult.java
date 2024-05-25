@@ -1,107 +1,75 @@
 package org.purah.core.checker.result;
 
 
+import org.purah.core.checker.combinatorial.MultiCheckerExecutor;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class CombinatorialCheckerResult implements CheckerResult<List<CheckerResult>> {
+public class CombinatorialCheckerResult extends MultiCheckResult<SingleCheckerResult> {
 
-    boolean matchedResult;
-
-    SingleCheckerResult mainCheckResult;
-
-    List<CheckerResult> fieldCheckResultList;
-
-    private CombinatorialCheckerResult(SingleCheckerResult mainCheckResult, List<CheckerResult> fieldCheckResultList, boolean matchedResult) {
-        this.mainCheckResult = mainCheckResult;
-        this.fieldCheckResultList = fieldCheckResultList;
-        this.matchedResult = matchedResult;
+    private CombinatorialCheckerResult(SingleCheckerResult mainCheckResult, List<SingleCheckerResult> valueList) {
+        super(mainCheckResult, valueList);
     }
 
-    public static class Builder {
 
-        boolean matchedResult;
-        List<CheckerResult> fieldCheckResultList = new ArrayList<>();
+    public static CombinatorialCheckerResult create(MultiCheckResult multiCheckResult, ResultLevel resultLevel) {
 
-        private Builder(List<CheckerResult> beAddFieldCheckResultList, boolean matchedResult) {
-            this.matchedResult = matchedResult;
+        List<SingleCheckerResult> singleCheckerResultList = valueList(multiCheckResult, resultLevel);
 
-            for (CheckerResult beAddCheckerResult : beAddFieldCheckResultList) {
-                if (beAddCheckerResult instanceof CombinatorialCheckerResult) {
-                    fieldCheckResultList.addAll(((CombinatorialCheckerResult) beAddCheckerResult).fieldCheckResultList);
-                    fieldCheckResultList.add(((CombinatorialCheckerResult) beAddCheckerResult).getMainCheckResult());
-                } else {
-                    fieldCheckResultList.add(beAddCheckerResult);
-                }
-
+        for (Object o : multiCheckResult.valueList) {
+            if (o instanceof MultiCheckResult) {
+                MultiCheckResult childResult = (MultiCheckResult) o;
+                singleCheckerResultList.addAll(valueList(childResult, resultLevel));
             }
-
         }
 
-        public CombinatorialCheckerResult build(SingleCheckerResult mainCheckResult) {
 
-            return new CombinatorialCheckerResult(mainCheckResult, fieldCheckResultList, matchedResult);
+        return new CombinatorialCheckerResult(multiCheckResult.mainCheckResult, singleCheckerResultList);
 
+
+    }
+
+    public static List<SingleCheckerResult> valueList(MultiCheckResult multiCheckResult, ResultLevel resultLevel) {
+
+        List<SingleCheckerResult> resultList = new ArrayList<>();
+
+        boolean needAdd = MultiCheckerExecutor.needAdd(multiCheckResult, resultLevel);
+
+        if (needAdd) {
+            resultList.add(multiCheckResult.mainCheckResult());
         }
-    }
 
-    public static Builder builder(List<CheckerResult> fieldCheckResultList, boolean matchedResult) {
-        return new Builder(fieldCheckResultList, matchedResult);
-    }
+        for (Object o : multiCheckResult.valueList) {
+            if (o instanceof MultiCheckResult) {
+                MultiCheckResult childResult = (MultiCheckResult) o;
+                resultList.addAll(valueList(childResult, resultLevel));
+            }
+        }
 
-//    @Override
-//    public boolean isMatchedResult() {
-//        return matchedResult;
-//    }
 
-    public SingleCheckerResult getMainCheckResult() {
-        return mainCheckResult;
+        return resultList;
     }
 
 
-    public void setCheckLogicFrom(String logicFrom) {
-        this.mainCheckResult.setCheckLogicFrom(logicFrom);
 
 
-    }
-
-    public String checkLogicFrom() {
-        return this.mainCheckResult.checkLogicFrom();
-    }
 
 
-    public CombinatorialCheckerResult(List<CheckerResult> fieldCheckResultList) {
-        this.fieldCheckResultList = fieldCheckResultList;
-    }
 
 
-    @Override
-    public List<CheckerResult> value() {
-        return fieldCheckResultList;
-    }
 
-    @Override
-    public Exception exception() {
-        return mainCheckResult.exception();
-    }
-
-    @Override
-    public ExecInfo execInfo() {
-        return mainCheckResult.execInfo();
-    }
-
-    @Override
-    public String log() {
-
-        return mainCheckResult.log();
-    }
 
 
     @Override
     public String toString() {
         return "CombinatorialCheckerResult{" +
                 "mainCheckResult=" + mainCheckResult +
-                ", fieldCheckResultList=" + fieldCheckResultList +
+                ", value=" + valueList +
                 '}';
     }
+
+
 }
+
+

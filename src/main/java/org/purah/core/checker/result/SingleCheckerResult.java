@@ -58,7 +58,12 @@ public class SingleCheckerResult<T> implements CheckerResult<T> {
         return new SingleCheckerResult<T>(ExecInfo.failed, data, log);
 
     }
+    public static <T> SingleCheckerResult<T> ignore(String log) {
+        SingleCheckerResult<T> result = new SingleCheckerResult<>(ExecInfo.ignore, null,log);
+        result.log = log;
+        return result;
 
+    }
     public static <T> SingleCheckerResult<T> error(Exception e, String log) {
         SingleCheckerResult<T> result = new SingleCheckerResult<>(ExecInfo.error, e);
         result.log = log;

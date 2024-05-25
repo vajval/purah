@@ -5,16 +5,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.purah.core.PurahContext;
+import org.purah.core.checker.combinatorial.CombinatorialChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.result.CheckerResult;
 import org.purah.core.checker.result.CombinatorialCheckerResult;
-import org.purah.core.exception.ArgCheckException;
+import org.purah.core.exception.MethodArgCheckException;
 import org.purah.ExampleApplication;
 import org.purah.example.customAnn.CustomService;
 import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmpty;
 import org.purah.example.customAnn.ann.NotNull;
 import org.purah.example.customAnn.pojo.CustomUser;
+import org.purah.springboot.result.ArgCheckResult;
+import org.purah.springboot.result.MethodCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -68,7 +71,7 @@ class CustomServiceTest {
     void voidCheck() {
 
 
-        ArgCheckException argCheckException = Assertions.assertThrows(ArgCheckException.class, () -> customService.voidCheck(badCustomUser));
+        MethodArgCheckException methodArgCheckException = Assertions.assertThrows(MethodArgCheckException.class, () -> customService.voidCheck(badCustomUser));
 
         Assertions.assertDoesNotThrow(() -> customService.voidCheck(goodCustomUser));
 
@@ -193,9 +196,13 @@ class CustomServiceTest {
          * childCustomUser.childCustomUser
          *
          */
-        System.out.println(((CombinatorialCheckerResult)checkerResult).getMainCheckResult());
+        System.out.println(((MethodCheckResult)checkerResult).mainCheckResult());
+
+
+
         for (CheckerResult result : resultList) {
-            System.out.println(result);
+            ArgCheckResult argCheckResult=(ArgCheckResult)result;
+            System.out.println(argCheckResult.checkResultMap());
         }
 
         Assertions.assertEquals(resultList.size(), 8);

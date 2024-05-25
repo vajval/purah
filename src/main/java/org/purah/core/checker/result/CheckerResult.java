@@ -17,6 +17,10 @@ public interface CheckerResult<T> {
         return execInfo() == ExecInfo.error;
     }
 
+    default boolean isIgnore() {
+        return execInfo() == ExecInfo.ignore;
+    }
+
 //    boolean isMatchedResult();
 
     Exception exception();

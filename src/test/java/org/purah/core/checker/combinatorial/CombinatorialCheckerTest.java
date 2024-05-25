@@ -202,7 +202,7 @@ class CombinatorialCheckerTest {
         for (CheckerResult result : checkerResult.value()) {
             System.out.println(result);
         }
-        System.out.println(checkerResult.getMainCheckResult());
+        System.out.println(checkerResult.mainCheckResult());
         Assertions.assertEquals(0, checkerResult.value().size());
 
     }
