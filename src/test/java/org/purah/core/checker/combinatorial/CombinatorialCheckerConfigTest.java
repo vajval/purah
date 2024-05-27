@@ -10,7 +10,7 @@ import org.purah.core.Util;
 import org.purah.core.checker.CheckInstance;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.Checkers;
-import org.purah.core.checker.result.CheckerResult;
+import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
 import org.purah.core.matcher.clazz.ClassNameMatcher;
@@ -71,7 +71,7 @@ class CombinatorialCheckerConfigTest {
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
 
 
-        CheckerResult result = checker.check(CheckInstance.create(Util.initiator));
+        CheckResult result = checker.check(CheckInstance.create(Util.initiator));
         Assertions.assertTrue(result.isSuccess());
 
         result = checker.check(CheckInstance.create(Util.recipients));
@@ -98,7 +98,7 @@ class CombinatorialCheckerConfigTest {
         Checker multiLevelchecker = purahContext.regNewCombinatorialChecker(properties);
 
 
-        CheckerResult result = multiLevelchecker.check(CheckInstance.create(Util.trade));
+        CheckResult result = multiLevelchecker.check(CheckInstance.create(Util.trade));
         Assertions.assertTrue(result.isSuccess());
     }
 

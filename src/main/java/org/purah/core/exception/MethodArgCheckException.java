@@ -1,20 +1,20 @@
 package org.purah.core.exception;
 
 
-import org.purah.core.checker.result.CheckerResult;
+import org.purah.core.checker.result.CheckResult;
 
 public class MethodArgCheckException extends PurahException {
 
 
-    CheckerResult checkerResult;
-    public MethodArgCheckException(CheckerResult checkerResult) {
+    CheckResult checkResult;
+    public MethodArgCheckException(CheckResult checkResult) {
 
-        super(checkerResult.execInfo().name());
-        this.checkerResult=checkerResult;
+        super(checkResult.execInfo().name());
+        this.checkResult = checkResult;
 
     }
 
-    public CheckerResult checkerResult() {
-        return checkerResult;
+    public CheckResult checkerResult() {
+        return checkResult;
     }
 }

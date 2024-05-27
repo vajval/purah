@@ -2,14 +2,14 @@ package org.purah.core.checker.result;
 
 import java.util.List;
 
-public class MultiCheckResult<T extends CheckerResult> implements CheckerResult<List<T>> {
+public class MultiCheckResult<T extends CheckResult> implements CheckResult<List<T>> {
 
 
-    protected  SingleCheckerResult mainCheckResult;
+    protected SingleCheckResult mainCheckResult;
 
    protected List<T> valueList;
 
-    public MultiCheckResult(SingleCheckerResult mainCheckResult, List<T> valueList) {
+    public MultiCheckResult(SingleCheckResult mainCheckResult, List<T> valueList) {
         this.mainCheckResult = mainCheckResult;
         this.valueList = valueList;
     }
@@ -47,7 +47,7 @@ public class MultiCheckResult<T extends CheckerResult> implements CheckerResult<
         return this.mainCheckResult.checkLogicFrom();
     }
 
-    public SingleCheckerResult mainCheckResult() {
+    public SingleCheckResult mainCheckResult() {
         return mainCheckResult;
     }
 }

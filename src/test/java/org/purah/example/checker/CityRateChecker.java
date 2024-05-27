@@ -3,7 +3,7 @@ package org.purah.example.checker;
 import org.purah.core.checker.BaseChecker;
 import org.purah.core.checker.CheckInstance;
 import org.purah.core.checker.Checker;
-import org.purah.core.checker.result.CheckerResult;
+import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.springboot.ann.EnableOnPurahContext;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ public class CityRateChecker implements CheckerFactory {
         double finalMax = max;
         return new BaseChecker<Double, Object>() {
             @Override
-            public CheckerResult doCheck(CheckInstance<Double> checkInstance) {
+            public CheckResult doCheck(CheckInstance<Double> checkInstance) {
                 Double rate = checkInstance.instance();
                 if (rate < min) {
                     return failed(checkInstance,"利率值过小为 " + rate);

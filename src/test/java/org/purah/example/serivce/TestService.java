@@ -1,7 +1,7 @@
 package org.purah.example.serivce;
 
 
-import org.purah.core.checker.result.CheckerResult;
+import org.purah.core.checker.result.CheckResult;
 import org.purah.example.customAnn.pojo.CustomUser;
 import org.purah.springboot.ann.CheckIt;
 import org.purah.springboot.ann.FillToMethodResult;
@@ -22,7 +22,7 @@ public class TestService {
 
     // 如果你自定义了返回内容的话，会将自定义的内容一并返回
     @FillToMethodResult
-    public CheckerResult checkResult(@CheckIt("非空判断FromTestBean") CustomUser customUser) {
+    public CheckResult checkResult(@CheckIt("非空判断FromTestBean") CustomUser customUser) {
         return null;
     }
     // 支持根据通配符匹配

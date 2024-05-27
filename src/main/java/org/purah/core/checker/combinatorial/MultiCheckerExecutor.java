@@ -17,7 +17,7 @@ public class MultiCheckerExecutor {
     ExecInfo execInfo = ExecInfo.success;
     Exception e;
 
-    List<CheckerResult> fieldCheckResultList = new ArrayList<>();
+    List<CheckResult> fieldCheckResultList = new ArrayList<>();
     ResultLevel resultLevel;
 
 
@@ -27,7 +27,7 @@ public class MultiCheckerExecutor {
 
     }
 
-    public static boolean needAdd(CheckerResult checkResult, ResultLevel resultLevel) {
+    public static boolean needAdd(CheckResult checkResult, ResultLevel resultLevel) {
         if (resultLevel == ResultLevel.all) {
             return true;
         } else if (resultLevel == ResultLevel.failed) {
@@ -48,15 +48,17 @@ public class MultiCheckerExecutor {
         return false;
     }
 
-    public ExecInfo exec(List<Supplier<CheckerResult>> ruleResultSupplierList) {
+    public ExecInfo exec(List<Supplier<CheckResult>> ruleResultSupplierList) {
         ExecInfo result = ExecInfo.success;
 
-        for (Supplier<? extends CheckerResult> supplier : ruleResultSupplierList) {
-            CheckerResult checkResult = supplier.get();
+        for (Supplier<? extends CheckResult> supplier : ruleResultSupplierList) {
+            CheckResult checkResult = supplier.get();
             if (needAdd(checkResult, resultLevel)) {
                 this.fieldCheckResultList.add(checkResult);
             }
-
+            if (checkResult.isIgnore()) {
+                continue;
+            }
             /*
                    有错误直接返回
                  */
@@ -92,17 +94,17 @@ public class MultiCheckerExecutor {
 
     }
 
-    public MultiCheckResult<CheckerResult> multiCheckResult(String log) {
+    public MultiCheckResult<CheckResult> multiCheckResult(String log) {
 
 
-        SingleCheckerResult<Object> mainResult = null;
+        SingleCheckResult<Object> mainResult = null;
         if (execInfo.equals(ExecInfo.success)) {
-            mainResult = SingleCheckerResult.success(null, execInfo.value() + " (" + log + ")");
+            mainResult = SingleCheckResult.success(null, execInfo.value() + " (" + log + ")");
         } else if (execInfo.equals(ExecInfo.failed)) {
-            mainResult = SingleCheckerResult.failed(null, execInfo.value() + " (" + log + ")");
+            mainResult = SingleCheckResult.failed(null, execInfo.value() + " (" + log + ")");
 
         } else if (execInfo.equals(ExecInfo.error)) {
-            mainResult = SingleCheckerResult.error(e, execInfo.value() + " (" + log + ")");
+            mainResult = SingleCheckResult.error(e, execInfo.value() + " (" + log + ")");
 
         }
         return new MultiCheckResult<>(mainResult, fieldCheckResultList);
@@ -110,9 +112,9 @@ public class MultiCheckerExecutor {
 
     }
 
-    public CombinatorialCheckerResult toCombinatorialCheckerResult(String log) {
-        MultiCheckResult<CheckerResult> checkerResultMultiCheckResult = multiCheckResult(log);
-        return CombinatorialCheckerResult.create(checkerResultMultiCheckResult, resultLevel);
+    public CombinatorialCheckResult toCombinatorialCheckerResult(String log) {
+        MultiCheckResult<CheckResult> multiCheckResult = multiCheckResult(log);
+        return CombinatorialCheckResult.create(multiCheckResult, resultLevel);
 
     }
 }

@@ -6,8 +6,8 @@ import org.purah.core.checker.BaseChecker;
 import org.purah.core.checker.CheckInstance;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.CheckerManager;
-import org.purah.core.checker.result.CheckerResult;
-import org.purah.core.checker.result.CombinatorialCheckerResult;
+import org.purah.core.checker.result.CheckResult;
+import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.matcher.intf.FieldMatcher;
 import org.purah.core.resolver.ArgResolver;
 import org.purah.core.resolver.ArgResolverManager;
@@ -79,7 +79,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
     }
 
     @Override
-    public CheckerResult doCheck(CheckInstance<Object> checkInstance2) {
+    public CheckResult doCheck(CheckInstance<Object> checkInstance2) {
         if (!init) {
             init();
         }
@@ -87,14 +87,14 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
 
         MultiCheckerExecutor executor = createMultiCheckerExecutor();
-        List<Supplier<CheckerResult>> supplierList = new ArrayList<>(rootInstanceCheckers.size() + fieldMatcherCheckerConfigList.size());
+        List<Supplier<CheckResult>> supplierList = new ArrayList<>(rootInstanceCheckers.size() + fieldMatcherCheckerConfigList.size());
 
 
         /*
           对入参对象的检查
          */
         for (Checker checker : rootInstanceCheckers) {
-            Supplier<CheckerResult> singleCheckerResultSupplier = () -> checker.check(newExecTypeCheckInstance);
+            Supplier<CheckResult> singleCheckerResultSupplier = () -> checker.check(newExecTypeCheckInstance);
             supplierList.add(singleCheckerResultSupplier);
         }
         /*
@@ -108,7 +108,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
         executor.exec(supplierList);
 
         String log = "[" + checkInstance2.fieldStr() + "]: " + this.name();
-        CombinatorialCheckerResult result = executor.toCombinatorialCheckerResult(log);
+        CombinatorialCheckResult result = executor.toCombinatorialCheckerResult(log);
         result.setCheckLogicFrom(this.logicFrom());
         return result;
 
@@ -142,14 +142,14 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
         }
 
 
-        public CheckerResult check(CheckInstance<Object> checkInstance) {
+        public CheckResult check(CheckInstance<Object> checkInstance) {
 
             Object instance = checkInstance.instance();
 
             ArgResolver argResolver = getArgResolverManager().getArgResolver(instance.getClass());
             Map<String, CheckInstance> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(instance, fieldMatcherCheckerConfig.fieldMatcher);
 
-            List<Supplier<CheckerResult>> supplierList = new ArrayList<>();
+            List<Supplier<CheckResult>> supplierList = new ArrayList<>();
             ExecType.Matcher execType = fieldMatcherCheckerConfig.execType;
 
             // 对每个匹配到的字段
@@ -177,7 +177,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
             multiCheckerExecutor.exec(supplierList);
 
             String info = checkInstance.fieldStr() + " match:(" + fieldMatcher + ") checkers: " + checkerNamesStr;
-            CombinatorialCheckerResult result = multiCheckerExecutor.toCombinatorialCheckerResult(info);
+            CombinatorialCheckResult result = multiCheckerExecutor.toCombinatorialCheckerResult(info);
 
             result.setCheckLogicFrom("combinatorial by config,see info");
             return result;

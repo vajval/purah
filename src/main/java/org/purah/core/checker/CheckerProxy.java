@@ -1,7 +1,7 @@
 package org.purah.core.checker;
 
 
-import org.purah.core.checker.result.CheckerResult;
+import org.purah.core.checker.result.CheckResult;
 
 public class CheckerProxy implements Checker {
     Checker checker;
@@ -26,9 +26,9 @@ public class CheckerProxy implements Checker {
     }
 
     @Override
-    public CheckerResult check(CheckInstance checkInstance) {
+    public CheckResult check(CheckInstance checkInstance) {
 
-        CheckerResult result = checker.check(checkInstance);
+        CheckResult result = checker.check(checkInstance);
 
         result.setCheckLogicFrom(this.logicFrom());
         return result;

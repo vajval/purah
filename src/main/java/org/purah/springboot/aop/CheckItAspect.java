@@ -7,8 +7,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.purah.core.checker.CheckInstance;
-import org.purah.core.checker.result.CombinatorialCheckerResult;
-import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.exception.MethodArgCheckException;
 import org.purah.springboot.result.MethodCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;

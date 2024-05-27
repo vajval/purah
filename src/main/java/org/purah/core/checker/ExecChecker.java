@@ -1,7 +1,7 @@
 package org.purah.core.checker;
 
 
-import org.purah.core.checker.result.CheckerResult;
+import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckerException;
 import org.purah.core.exception.PurahException;
 import org.springframework.core.ResolvableType;
@@ -45,7 +45,7 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
     }
 
     @Override
-    public CheckerResult check(CheckInstance<CHECK_INSTANCE> checkInstance) {
+    public CheckResult check(CheckInstance<CHECK_INSTANCE> checkInstance) {
 
 
         CheckClass checkClass = CheckClass.byInstance(checkInstance.instance());
@@ -54,16 +54,16 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
         if (checker == null) {
             throw new CheckerException(this, "checker " + this.name + "没有对该类的解析方法" + checkClass.clazz);
         }
-        CheckerResult<?> checkerResult;
+        CheckResult<?> checkResult;
         try {
 
-            checkerResult = ((Checker) checker).check(checkInstance);
+            checkResult = ((Checker) checker).check(checkInstance);
 
 
         } catch (PurahException exception) {
             throw exception;
         }
-        return checkerResult;
+        return checkResult;
     }
 
     protected Checker<?, ?> getChecker(CheckClass inputCheckClass) {

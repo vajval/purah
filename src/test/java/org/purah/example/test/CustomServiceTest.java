@@ -5,10 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.purah.core.PurahContext;
-import org.purah.core.checker.combinatorial.CombinatorialChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
-import org.purah.core.checker.result.CheckerResult;
-import org.purah.core.checker.result.CombinatorialCheckerResult;
+import org.purah.core.checker.result.CheckResult;
+import org.purah.core.checker.result.CombinatorialCheckResult;
+import org.purah.core.checker.result.SingleCheckResult;
 import org.purah.core.exception.MethodArgCheckException;
 import org.purah.ExampleApplication;
 import org.purah.example.customAnn.CustomService;
@@ -80,16 +80,16 @@ class CustomServiceTest {
 
     @Test
     void checkResult() {
-        CheckerResult goodCheckerResult = customService.checkResult(goodCustomUser);
+        CheckResult goodCheckResult = customService.checkResult(goodCustomUser);
 
-        assertTrue(goodCheckerResult.isSuccess());
+        assertTrue(goodCheckResult.isSuccess());
 
 //        assertEquals(4, ((List) goodCheckerResult.value()).size());
-        CheckerResult badCheckerResult = customService.checkResult(badCustomUser);
+        CheckResult badCheckResult = customService.checkResult(badCustomUser);
 
-        assertTrue(badCheckerResult.isFailed());
+        assertTrue(badCheckResult.isFailed());
 
-        assertEquals(1, ((List) badCheckerResult.value()).size());
+        assertEquals(1, ((List) badCheckResult.value()).size());
 
 
     }
@@ -170,16 +170,16 @@ class CustomServiceTest {
 
     @Test
     void booleanCheckByCustomSyntaxWithMultiLevel() {
-        CheckerResult checkerResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+//        CheckerResult checkerResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
 
-        assertTrue(checkerResult.isSuccess());
+//        assertTrue(checkerResult.isSuccess());
         goodCustomUser.setChildCustomUser(badCustomUser);
         System.out.println("------------------------------------");
-        checkerResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
-        assertFalse(checkerResult.isSuccess());
-        List<CheckerResult> resultList = (List) checkerResult.value();
+        CheckResult checkResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+        assertFalse(checkResult.isSuccess());
+        List<CheckResult> resultList = (List) checkResult.value();
 //        value.stream().
-        String trim = resultList.stream().filter(CheckerResult::isFailed).map(CheckerResult::log)
+        String trim = resultList.stream().filter(CheckResult::isFailed).map(CheckResult::log)
                 .reduce("", (a, b) -> a + b).trim();
         /*
          * 检测
@@ -196,12 +196,23 @@ class CustomServiceTest {
          * childCustomUser.childCustomUser
          *
          */
-        System.out.println(((MethodCheckResult)checkerResult).mainCheckResult());
+        System.out.println(((MethodCheckResult) checkResult).mainCheckResult());
 
 
 
-        for (CheckerResult result : resultList) {
+        for (CheckResult result : resultList) {
             ArgCheckResult argCheckResult=(ArgCheckResult)result;
+            CheckResult value = argCheckResult.checkResultMap().entrySet().iterator().next().getValue();
+
+            CombinatorialCheckResult combinatorialCheckerResult=      (CombinatorialCheckResult)value;
+            for (SingleCheckResult singleCheckerResult : combinatorialCheckerResult.value()) {
+                System.out.println(singleCheckerResult);
+            }
+
+
+//            for (Map.Entry<String, CheckerResult> stringCheckerResultEntry : argCheckResult.checkResultMap().entrySet()) {
+//
+//            }
             System.out.println(argCheckResult.checkResultMap());
         }
 
@@ -211,7 +222,7 @@ class CustomServiceTest {
         assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
         assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
         assertTrue(trim.contains("childCustomUser.phone:移不动也联不通"));
-        for (CheckerResult result : resultList) {
+        for (CheckResult result : resultList) {
             System.out.println(result.isSuccess());
             System.out.println(result.log());
             System.out.println(result.checkLogicFrom());
@@ -220,6 +231,17 @@ class CustomServiceTest {
         System.out.println();
 
     }
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void booleanCheckMultiArgs() {

@@ -9,8 +9,8 @@ import org.purah.core.checker.BaseChecker;
 import org.purah.core.checker.CheckInstance;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.Checkers;
-import org.purah.core.checker.result.CheckerResult;
-import org.purah.core.checker.result.CombinatorialCheckerResult;
+import org.purah.core.checker.result.CheckResult;
+import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
 import org.purah.core.matcher.clazz.ClassNameMatcher;
@@ -73,7 +73,7 @@ class CombinatorialCheckerTest {
         purahContext.checkManager().reg(
                 new BaseChecker<String, String>() {
                     @Override
-                    public CheckerResult<String> doCheck(CheckInstance<String> checkInstance) {
+                    public CheckResult<String> doCheck(CheckInstance<String> checkInstance) {
                         if (checkInstance.instance().contains("sb")) {
                             return failed(checkInstance, "有敏感词");
                         } else {
@@ -121,8 +121,8 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckerResult checkerResult = (CombinatorialCheckerResult) checker.check(CheckInstance.create(Util.trade));
-        for (CheckerResult result : checkerResult.value()) {
+        CombinatorialCheckResult checkerResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
+        for (CheckResult result : checkerResult.value()) {
             System.out.println(result);
         }
 
@@ -148,9 +148,9 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckerResult checkerResult = (CombinatorialCheckerResult) checker.check(CheckInstance.create(Util.trade));
+        CombinatorialCheckResult checkerResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
         Assertions.assertFalse(checkerResult.isSuccess());
-        for (CheckerResult result : checkerResult.value()) {
+        for (CheckResult result : checkerResult.value()) {
             System.out.println(result);
         }
         Assertions.assertEquals(checkerResult.value().size(), 4);
@@ -173,7 +173,7 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckerResult checkerResult = (CombinatorialCheckerResult) checker.check(CheckInstance.create(Util.trade));
+        CombinatorialCheckResult checkerResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
         Assertions.assertTrue(checkerResult.isSuccess());
         Assertions.assertEquals(checkerResult.value().size(), 1);
 
@@ -197,9 +197,9 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckerResult checkerResult = (CombinatorialCheckerResult) checker.check(CheckInstance.create(Util.trade));
+        CombinatorialCheckResult checkerResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
         Assertions.assertTrue(checkerResult.isSuccess());
-        for (CheckerResult result : checkerResult.value()) {
+        for (CheckResult result : checkerResult.value()) {
             System.out.println(result);
         }
         System.out.println(checkerResult.mainCheckResult());
@@ -231,7 +231,7 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckerResult checkerResult = (CombinatorialCheckerResult) checker.check(CheckInstance.create(Util.trade));
+        CombinatorialCheckResult checkerResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
         Assertions.assertTrue(checkerResult.isSuccess());
         Assertions.assertEquals(checkerResult.value().size(), 3);
 

@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SingleCheckerResult<T> implements CheckerResult<T> {
+public class SingleCheckResult<T> implements CheckResult<T> {
 
     protected ExecInfo execInfo;
 
@@ -15,7 +15,7 @@ public class SingleCheckerResult<T> implements CheckerResult<T> {
 
     protected String log;
 
-    private SingleCheckerResult(ExecInfo execInfo, T data, String log) {
+    private SingleCheckResult(ExecInfo execInfo, T data, String log) {
         this.execInfo = execInfo;
         this.data = data;
         this.log = log;
@@ -32,7 +32,7 @@ public class SingleCheckerResult<T> implements CheckerResult<T> {
         return checkLogicFrom;
     }
 
-    private SingleCheckerResult(ExecInfo execInfo, Exception e) {
+    private SingleCheckResult(ExecInfo execInfo, Exception e) {
         this.execInfo = execInfo;
         this.e = e;
     }
@@ -46,26 +46,26 @@ public class SingleCheckerResult<T> implements CheckerResult<T> {
     }
 
 
-    public static <T> SingleCheckerResult<T> success() {
-        return new SingleCheckerResult<T>(ExecInfo.success, null, null);
+    public static <T> SingleCheckResult<T> success() {
+        return new SingleCheckResult<T>(ExecInfo.success, null, null);
     }
 
-    public static <T> SingleCheckerResult<T> success(T data, String log) {
-        return new SingleCheckerResult<T>(ExecInfo.success, data, log);
+    public static <T> SingleCheckResult<T> success(T data, String log) {
+        return new SingleCheckResult<T>(ExecInfo.success, data, log);
     }
 
-    public static <T> SingleCheckerResult<T> failed(T data, String log) {
-        return new SingleCheckerResult<T>(ExecInfo.failed, data, log);
+    public static <T> SingleCheckResult<T> failed(T data, String log) {
+        return new SingleCheckResult<T>(ExecInfo.failed, data, log);
 
     }
-    public static <T> SingleCheckerResult<T> ignore(String log) {
-        SingleCheckerResult<T> result = new SingleCheckerResult<>(ExecInfo.ignore, null,log);
+    public static <T> SingleCheckResult<T> ignore(String log) {
+        SingleCheckResult<T> result = new SingleCheckResult<>(ExecInfo.ignore, null,log);
         result.log = log;
         return result;
 
     }
-    public static <T> SingleCheckerResult<T> error(Exception e, String log) {
-        SingleCheckerResult<T> result = new SingleCheckerResult<>(ExecInfo.error, e);
+    public static <T> SingleCheckResult<T> error(Exception e, String log) {
+        SingleCheckResult<T> result = new SingleCheckResult<>(ExecInfo.error, e);
         result.log = log;
         return result;
 

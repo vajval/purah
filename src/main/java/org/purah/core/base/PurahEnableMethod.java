@@ -1,8 +1,8 @@
 package org.purah.core.base;
 
 import org.purah.core.checker.CheckInstance;
-import org.purah.core.checker.result.CheckerResult;
-import org.purah.core.checker.result.SingleCheckerResult;
+import org.purah.core.checker.result.CheckResult;
+import org.purah.core.checker.result.SingleCheckResult;
 import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.InvocationTargetException;
@@ -39,7 +39,7 @@ public class PurahEnableMethod {
 
 
         Type returnType = method.getGenericReturnType();
-        ResolvableType[] generics = ResolvableType.forType(returnType).as(CheckerResult.class).getGenerics();
+        ResolvableType[] generics = ResolvableType.forType(returnType).as(CheckResult.class).getGenerics();
 
         if(generics.length!=0){
             Class<?> resolve = generics[0].resolve();
@@ -83,19 +83,19 @@ public class PurahEnableMethod {
         return checkInstance.instance();
     }
 
-    public CheckerResult invoke(Object[] args) {
+    public CheckResult invoke(Object[] args) {
         try {
 
             Object result = method.invoke(bean, args);
             if (resultIsCheckResultClass) {
-                return (CheckerResult) result;
+                return (CheckResult) result;
             } else {
                 Boolean resultValue = (Boolean) result;
-                SingleCheckerResult singleCheckerResult;
+                SingleCheckResult singleCheckerResult;
                 if (resultValue) {
-                    singleCheckerResult = SingleCheckerResult.success(true, "success");
+                    singleCheckerResult = SingleCheckResult.success(true, "success");
                 } else {
-                    singleCheckerResult = SingleCheckerResult.failed(false, "failed");
+                    singleCheckerResult = SingleCheckResult.failed(false, "failed");
 
                 }
                 return singleCheckerResult;
@@ -117,7 +117,7 @@ public class PurahEnableMethod {
     }
 
     public static boolean validReturnType(Class<?> clazz) {
-        if (clazz.equals(boolean.class) || CheckerResult.class.isAssignableFrom(clazz)) {
+        if (clazz.equals(boolean.class) || CheckResult.class.isAssignableFrom(clazz)) {
             return true;
         }
         return false;

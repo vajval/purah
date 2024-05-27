@@ -1,8 +1,8 @@
 package org.purah.core.checker;
 
 
-import org.purah.core.checker.result.CheckerResult;
-import org.purah.core.checker.result.SingleCheckerResult;
+import org.purah.core.checker.result.CheckResult;
+import org.purah.core.checker.result.SingleCheckResult;
 
 /**
  * @param <CHECK_INSTANCE>
@@ -12,11 +12,11 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
 
 
     @Override
-    public CheckerResult<RESULT> check(CheckInstance<CHECK_INSTANCE> checkInstance) {
-        CheckerResult<RESULT> resultCheckerResult;
+    public CheckResult<RESULT> check(CheckInstance<CHECK_INSTANCE> checkInstance) {
+        CheckResult<RESULT> resultCheckResult;
         try {
-            resultCheckerResult = this.doCheck(checkInstance);
-            if (resultCheckerResult == null) {
+            resultCheckResult = this.doCheck(checkInstance);
+            if (resultCheckResult == null) {
                 throw new RuntimeException("result cannot be Null " + this.logicFrom());
             }
         } catch (Exception e) {
@@ -24,19 +24,19 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
 //            resultCheckerResult = this.error(checkInstance, e);
         }
 
-        setLogicFrom(resultCheckerResult);
-        return resultCheckerResult;
+        setLogicFrom(resultCheckResult);
+        return resultCheckResult;
     }
 
 
-    public void setLogicFrom(CheckerResult checkerResult) {
+    public void setLogicFrom(CheckResult checkResult) {
 
 
-        checkerResult.setCheckLogicFrom(logicFrom());
+        checkResult.setCheckLogicFrom(logicFrom());
     }
 
 
-    public abstract CheckerResult<RESULT> doCheck(CheckInstance<CHECK_INSTANCE> checkInstance);
+    public abstract CheckResult<RESULT> doCheck(CheckInstance<CHECK_INSTANCE> checkInstance);
 
     private String logStr(CheckInstance<CHECK_INSTANCE> checkInstance, String pre) {
         Class<?> clazz = this.inputCheckInstanceClass();
@@ -50,22 +50,22 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
     }
 
 
-    public CheckerResult<RESULT> success(CheckInstance<CHECK_INSTANCE> checkInstance, RESULT result) {
+    public CheckResult<RESULT> success(CheckInstance<CHECK_INSTANCE> checkInstance, RESULT result) {
         String log = logStr(checkInstance, DEFAULT_SUCCESS_INFO);
-        SingleCheckerResult<RESULT> singleCheckerResult = SingleCheckerResult.success(result, log);
+        SingleCheckResult<RESULT> singleCheckerResult = SingleCheckResult.success(result, log);
         return singleCheckerResult;
     }
 
-    public SingleCheckerResult<RESULT> failed(CheckInstance<CHECK_INSTANCE> checkInstance, RESULT result) {
+    public SingleCheckResult<RESULT> failed(CheckInstance<CHECK_INSTANCE> checkInstance, RESULT result) {
         String log = logStr(checkInstance, DEFAULT_FAILED_INFO);
-        SingleCheckerResult<RESULT> singleCheckerResult = SingleCheckerResult.failed(result, log);
+        SingleCheckResult<RESULT> singleCheckerResult = SingleCheckResult.failed(result, log);
 
         return singleCheckerResult;
     }
 
-    public CheckerResult<RESULT> error(CheckInstance<CHECK_INSTANCE> checkInstance, Exception e) {
+    public CheckResult<RESULT> error(CheckInstance<CHECK_INSTANCE> checkInstance, Exception e) {
         String log = logStr(checkInstance, DEFAULT_ERROR_INFO);
-        SingleCheckerResult<RESULT> singleCheckerResult = SingleCheckerResult.error(e, log);
+        SingleCheckResult<RESULT> singleCheckerResult = SingleCheckResult.error(e, log);
         return singleCheckerResult;
 
     }

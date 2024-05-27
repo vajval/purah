@@ -5,7 +5,7 @@ import org.purah.core.base.Name;
 import org.purah.core.base.PurahEnableMethod;
 import org.purah.core.base.PurahEnableMethodValidator;
 import org.purah.core.checker.CheckInstance;
-import org.purah.core.checker.result.CheckerResult;
+import org.purah.core.checker.result.CheckResult;
 
 import java.lang.reflect.Method;
 
@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 public class SingleMethodToChecker extends MethodToChecker {
 
     public static PurahEnableMethodValidator methodToCheckerValidator = new PurahEnableMethodValidator(Lists.newArrayList(Name.class),
-            Lists.newArrayList(Object.class), Lists.newArrayList(boolean.class, CheckerResult.class)
+            Lists.newArrayList(Object.class), Lists.newArrayList(boolean.class, CheckResult.class)
     );
 
     public SingleMethodToChecker(Object methodsToCheckersBean, Method method) {
@@ -34,7 +34,7 @@ public class SingleMethodToChecker extends MethodToChecker {
     }
 
     @Override
-    public CheckerResult doCheck(CheckInstance checkInstance) {
+    public CheckResult doCheck(CheckInstance checkInstance) {
         Object[] args = new Object[1];
         args[0] = purahEnableMethod.checkInstanceToInputArg(checkInstance);
 

@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import org.purah.core.base.PurahEnableMethod;
 import org.purah.core.base.PurahEnableMethodValidator;
 import org.purah.core.checker.CheckInstance;
-import org.purah.core.checker.result.CheckerResult;
+import org.purah.core.checker.result.CheckResult;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -23,7 +23,7 @@ public class AnnMethodToChecker extends MethodToChecker {
     }
 
     @Override
-    public CheckerResult doCheck(CheckInstance checkInstance) {
+    public CheckResult doCheck(CheckInstance checkInstance) {
 
 
         Annotation annotation = checkInstance.annOf(annClazz);
@@ -44,7 +44,7 @@ public class AnnMethodToChecker extends MethodToChecker {
     }
 
     public static PurahEnableMethodValidator annMethodToCheckerValidator = new PurahEnableMethodValidator(Lists.newArrayList(),
-            Lists.newArrayList(Annotation.class, Object.class), Lists.newArrayList(boolean.class, CheckerResult.class)
+            Lists.newArrayList(Annotation.class, Object.class), Lists.newArrayList(boolean.class, CheckResult.class)
     );
 
     @Override

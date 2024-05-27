@@ -1,6 +1,6 @@
 package org.purah.core.checker.result;
 
-public interface CheckerResult<T> {
+public interface CheckResult<T> {
 
 
     T value();

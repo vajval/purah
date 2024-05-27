@@ -7,7 +7,7 @@ import org.purah.core.base.Name;
 import org.purah.core.checker.CheckInstance;
 import org.purah.core.checker.CheckerManager;
 import org.purah.core.checker.ExecChecker;
-import org.purah.core.checker.result.SingleCheckerResult;
+import org.purah.core.checker.result.SingleCheckResult;
 
 import java.lang.reflect.Method;
 
@@ -21,17 +21,17 @@ class MethodToCheckerTest {
         }
 
         @Name("id为1")
-        public SingleCheckerResult<String> checkById(CheckInstance<Long> id) {
+        public SingleCheckResult<String> checkById(CheckInstance<Long> id) {
             boolean test = checkById(id.instance());
             if (test) {
-                return SingleCheckerResult.success("success", "success");
+                return SingleCheckResult.success("success", "success");
             } else {
-                return SingleCheckerResult.failed("failed", "failed");
+                return SingleCheckResult.failed("failed", "failed");
             }
         }
 
         @Name("id为1")
-        public SingleCheckerResult checkByUser(Util.User user) {
+        public SingleCheckResult checkByUser(Util.User user) {
             return checkById(CheckInstance.create(user.getId()));
 
         }

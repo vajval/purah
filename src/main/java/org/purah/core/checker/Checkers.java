@@ -1,7 +1,7 @@
 package org.purah.core.checker;
 
 
-import org.purah.core.checker.result.CheckerResult;
+import org.purah.core.checker.result.CheckResult;
 
 import java.util.function.Predicate;
 
@@ -27,7 +27,7 @@ public class Checkers {
                 return name;
             }
             @Override
-            public CheckerResult<String> doCheck(CheckInstance checkInstance) {
+            public CheckResult<String> doCheck(CheckInstance checkInstance) {
                 boolean test;
                 try {
                     test = predicate.test((T)checkInstance.instance());

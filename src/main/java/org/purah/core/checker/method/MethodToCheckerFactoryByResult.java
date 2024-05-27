@@ -5,7 +5,7 @@ import org.purah.core.base.PurahEnableMethod;
 import org.purah.core.checker.BaseChecker;
 import org.purah.core.checker.CheckInstance;
 import org.purah.core.checker.Checker;
-import org.purah.core.checker.result.CheckerResult;
+import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;
 
@@ -37,7 +37,7 @@ public class MethodToCheckerFactoryByResult implements CheckerFactory {
 
         return new BaseChecker() {
             @Override
-            public CheckerResult doCheck(CheckInstance checkInstance) {
+            public CheckResult doCheck(CheckInstance checkInstance) {
 
                 Object[] args = new Object[2];
                 args[0] = needMatchCheckerName;

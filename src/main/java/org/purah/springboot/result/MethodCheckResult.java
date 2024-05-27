@@ -9,7 +9,7 @@ public class MethodCheckResult extends MultiCheckResult<ArgCheckResult> {
     Object belongBean;
     Method method;
 
-    public MethodCheckResult(SingleCheckerResult mainCheckResult, List<ArgCheckResult> valueList, Object belongBean, Method method) {
+    public MethodCheckResult(SingleCheckResult mainCheckResult, List<ArgCheckResult> valueList, Object belongBean, Method method) {
         super(mainCheckResult, valueList);
         this.belongBean = belongBean;
         this.method = method;

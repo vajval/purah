@@ -7,20 +7,19 @@ import org.purah.springboot.ann.CheckIt;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class ArgCheckResult extends MultiCheckResult<CheckerResult> {
+public class ArgCheckResult extends MultiCheckResult<CheckResult> {
 
 
     CheckIt checkItAnn;
     Object checkArg;
 
-    LinkedHashMap<String, CheckerResult> checkResultMap;
+    LinkedHashMap<String, CheckResult> checkResultMap;
 
 
 
-    private ArgCheckResult(SingleCheckerResult mainCheckResult, LinkedHashMap<String, CheckerResult> checkResultMap,
-                           List<CheckerResult> valueList, CheckIt checkItAnn, Object checkArg) {
+    private ArgCheckResult(SingleCheckResult mainCheckResult, LinkedHashMap<String, CheckResult> checkResultMap,
+                           List<CheckResult> valueList, CheckIt checkItAnn, Object checkArg) {
 
         super(mainCheckResult, valueList);
         this.checkItAnn = checkItAnn;
@@ -28,13 +27,13 @@ public class ArgCheckResult extends MultiCheckResult<CheckerResult> {
         this.checkArg = checkArg;
     }
 
-    public LinkedHashMap<String, CheckerResult> checkResultMap() {
+    public LinkedHashMap<String, CheckResult> checkResultMap() {
         return checkResultMap;
     }
 
-    public static ArgCheckResult create(SingleCheckerResult mainCheckResult,
+    public static ArgCheckResult create(SingleCheckResult mainCheckResult,
                                         List<String> checkNameList,
-                                        List<CheckerResult> valueList,
+                                        List<CheckResult> valueList,
                                         CheckIt checkItAnn, Object checkArg
 
     ) {
@@ -42,9 +41,9 @@ public class ArgCheckResult extends MultiCheckResult<CheckerResult> {
         Iterator<String> iterator = checkNameList.iterator();
 
 
-        LinkedHashMap<String, CheckerResult> checkResultMap = new LinkedHashMap<>();
-        for (CheckerResult checkerResult : valueList) {
-            checkResultMap.put(iterator.next(), checkerResult);
+        LinkedHashMap<String, CheckResult> checkResultMap = new LinkedHashMap<>();
+        for (CheckResult checkResult : valueList) {
+            checkResultMap.put(iterator.next(), checkResult);
 
         }
 
@@ -59,17 +58,17 @@ public class ArgCheckResult extends MultiCheckResult<CheckerResult> {
 
 
 
-    public static SingleCheckerResult fill(CheckIt checkIt) {
+    public static SingleCheckResult fill(CheckIt checkIt) {
         if (checkIt.execType() == ExecType.Main.at_least_one) {
-            return SingleCheckerResult.ignore( " at_least_one 已经有一个成功了，所以没有检测 被忽视 ");
+            return SingleCheckResult.ignore( " at_least_one 已经有一个成功了，所以没有检测 被忽视 ");
         } else if (checkIt.execType() == ExecType.Main.all_success) {
-            return SingleCheckerResult.ignore("all_success 已经有一个失败了，所以没有检测  被忽视");
+            return SingleCheckResult.ignore("all_success 已经有一个失败了，所以没有检测  被忽视");
         } else {
             throw new RuntimeException();
         }
     }
 
-    public CheckerResult resultOf(String name) {
+    public CheckResult resultOf(String name) {
         return checkResultMap.get(name);
 
     }

@@ -6,7 +6,7 @@ import org.purah.core.base.PurahEnableMethod;
 import org.purah.core.base.PurahEnableMethodValidator;
 import org.purah.core.checker.BaseChecker;
 import org.purah.core.checker.CheckInstance;
-import org.purah.core.checker.result.CheckerResult;
+import org.purah.core.checker.result.CheckResult;
 
 import java.lang.reflect.Method;
 
@@ -76,7 +76,7 @@ public abstract class MethodToChecker extends BaseChecker {
     }
 
     @Override
-    public abstract CheckerResult doCheck(CheckInstance checkInstance);
+    public abstract CheckResult doCheck(CheckInstance checkInstance);
 
 
     @Override

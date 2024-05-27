@@ -2,7 +2,6 @@ package org.purah.springboot.aop;
 
 import com.google.common.collect.Lists;
 
-import org.checkerframework.checker.units.qual.C;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.BaseChecker;
 import org.purah.core.checker.CheckInstance;
@@ -20,8 +19,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -43,7 +40,6 @@ public class MethodHandlerChecker extends BaseChecker {
         this.methodsToCheckersBean = methodsToCheckersBean;
         this.method = method;
         this.returnType = method.getGenericReturnType();
-
         this.init();
 
     }
@@ -94,7 +90,7 @@ public class MethodHandlerChecker extends BaseChecker {
     public MethodCheckResult doCheck(CheckInstance checkInstance) {
         Object[] args = (Object[]) checkInstance.instance();
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(ExecType.Main.all_success, ResultLevel.failedIgnoreMatch);
-        List<Supplier<CheckerResult>> execList = new ArrayList<>();
+        List<Supplier<CheckResult>> execList = new ArrayList<>();
 
         for (MethodArgCheckConfig methodArgCheckConfig : methodArgCheckConfigList) {
             execList.add(() -> this.checkSingleArgByConfig(methodArgCheckConfig, args[methodArgCheckConfig.index]));
@@ -122,7 +118,8 @@ public class MethodHandlerChecker extends BaseChecker {
         MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.execType(), checkIt.resultLevel());
 
 
-        List<Supplier<CheckerResult>> execList = new ArrayList<>();
+        List<Supplier<CheckResult>> execList = new ArrayList<>();
+        System.out.println();
 
         List<? extends ExecChecker<?, ?>> checkerList = methodArgCheckConfig.checkerNameList.stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
 
@@ -134,7 +131,7 @@ public class MethodHandlerChecker extends BaseChecker {
         String log = "method:" + method.getName() + "|arg" + methodArgCheckConfig.index;
 
 
-        MultiCheckResult<CheckerResult> multiCheckResult = executor.multiCheckResult(log);
+        MultiCheckResult<CheckResult> multiCheckResult = executor.multiCheckResult(log);
 
 
         return ArgCheckResult.create(multiCheckResult.mainCheckResult(), methodArgCheckConfig.checkerNameList,
@@ -152,7 +149,7 @@ public class MethodHandlerChecker extends BaseChecker {
         } else if (this.isArgCheckResultType()) {
             return methodCheckResult.value().get(0);
         } else if (this.isCombinatorialCheckerResultType()) {
-            return CombinatorialCheckerResult.create(methodCheckResult, ResultLevel.all);
+            return CombinatorialCheckResult.create(methodCheckResult, ResultLevel.all);
 
         } else if (this.isSingleResultType()) {
             return methodCheckResult.mainCheckResult();
@@ -168,11 +165,11 @@ public class MethodHandlerChecker extends BaseChecker {
     }
 
     private boolean isMethodCheckResultType() {
-        return MethodCheckResult.class.equals(returnType)||CheckerResult.class.equals(returnType);
+        return MethodCheckResult.class.equals(returnType) || CheckResult.class.equals(returnType);
     }
 
     private boolean isSingleResultType() {
-        return SingleCheckerResult.class.equals(returnType);
+        return SingleCheckResult.class.equals(returnType);
     }
 
     private boolean isBooleanResultType() {
@@ -180,7 +177,7 @@ public class MethodHandlerChecker extends BaseChecker {
     }
 
     private boolean isCombinatorialCheckerResultType() {
-        return CombinatorialCheckerResult.class.equals(returnType);
+        return CombinatorialCheckResult.class.equals(returnType);
     }
 
     public boolean isFillToMethodResult() {

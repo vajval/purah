@@ -44,7 +44,7 @@ public class AbstractCustomAnnChecker extends BaseChecker {
     protected void initMethods() {
 
         for (Method declaredMethod : this.getClass().getDeclaredMethods()) {
-            if ((!CheckerResult.class.isAssignableFrom(declaredMethod.getReturnType())) && (!declaredMethod.getReturnType().equals(boolean.class))) {
+            if ((!CheckResult.class.isAssignableFrom(declaredMethod.getReturnType())) && (!declaredMethod.getReturnType().equals(boolean.class))) {
                 continue;
             }
 
@@ -74,13 +74,13 @@ public class AbstractCustomAnnChecker extends BaseChecker {
 
 
     @Override
-    public CheckerResult doCheck(CheckInstance checkInstance) {
+    public CheckResult doCheck(CheckInstance checkInstance) {
         List<Annotation> annotations = ((CheckInstance<?>) checkInstance).getAnnotations();
 
 
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(ExecType.Main.all_success, ResultLevel.failedIgnoreMatch);
 
-        List<Supplier<CheckerResult>> ruleResultSupplierList = new ArrayList<>();
+        List<Supplier<CheckResult>> ruleResultSupplierList = new ArrayList<>();
 
 
         for (Annotation annotation : annotations) {
@@ -90,6 +90,18 @@ public class AbstractCustomAnnChecker extends BaseChecker {
         }
 
         multiCheckerExecutor.exec(ruleResultSupplierList);
+        MultiCheckResult<CheckResult> checkerResultMultiCheckResult = multiCheckerExecutor.multiCheckResult("123");
+        System.out.println("-----------------------------------------------------");
+        for (CheckResult checkResult : checkerResultMultiCheckResult.value()) {
+            System.out.println(1231);
+            System.out.println(checkResult);
+        }
+
+
+        System.out.println(checkInstance);
+        System.out.println(ruleResultSupplierList.size());
+        System.out.println(multiCheckerExecutor.toCombinatorialCheckerResult("456"));
+
         String log = "[root." + checkInstance.fieldStr() + "]: " + this.name();
         return multiCheckerExecutor.toCombinatorialCheckerResult(log);
 

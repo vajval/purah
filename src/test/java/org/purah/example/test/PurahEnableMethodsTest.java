@@ -9,8 +9,8 @@ import org.purah.core.checker.CheckInstance;
 import org.purah.core.checker.ExecChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.combinatorial.ExecType;
-import org.purah.core.checker.result.CheckerResult;
-import org.purah.core.checker.result.CombinatorialCheckerResult;
+import org.purah.core.checker.result.CheckResult;
+import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.example.customAnn.pojo.CustomUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,18 +46,18 @@ class PurahEnableMethodsTest {
         CustomUser badCustomUser = new CustomUser(-1L, null, null, 35);
 
         ExecChecker execChecker = purahContext.checkManager().get("测试MethodsToCheckers注解");
-        CheckerResult check = execChecker.check(CheckInstance.create(badCustomUser));
+        CheckResult check = execChecker.check(CheckInstance.create(badCustomUser));
         System.out.println(check);
 
 
 
 
-        CheckerResult checkerResult = execChecker.check(CheckInstance.create(badCustomUser));
-        Assertions.assertFalse(checkerResult.isError());
+        CheckResult checkResult = execChecker.check(CheckInstance.create(badCustomUser));
+        Assertions.assertFalse(checkResult.isError());
 
 
-        System.out.println(checkerResult.checkLogicFrom());
-        for (CheckerResult result :( (CombinatorialCheckerResult)checkerResult).value()) {
+        System.out.println(checkResult.checkLogicFrom());
+        for (CheckResult result :( (CombinatorialCheckResult) checkResult).value()) {
             System.out.println(result);
             System.out.println(result.checkLogicFrom());
         }

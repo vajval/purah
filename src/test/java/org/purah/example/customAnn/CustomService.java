@@ -1,10 +1,14 @@
 package org.purah.example.customAnn;
 
-import org.purah.core.checker.result.CheckerResult;
+import org.purah.core.checker.result.CheckResult;
+import org.purah.core.checker.result.CombinatorialCheckResult;
+import org.purah.core.checker.result.SingleCheckResult;
 import org.purah.example.customAnn.pojo.CustomUser;
 import org.purah.springboot.ann.CheckIt;
 
 import org.purah.springboot.ann.FillToMethodResult;
+import org.purah.springboot.result.ArgCheckResult;
+import org.purah.springboot.result.MethodCheckResult;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -55,9 +59,32 @@ public class CustomService {
      *
      */
     @FillToMethodResult
-    public CheckerResult checkByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
+    public MethodCheckResult methodCheckByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
         return null;
     }
+
+    @FillToMethodResult
+    public ArgCheckResult argCheckByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
+        return null;
+    }
+
+    @FillToMethodResult
+    public CombinatorialCheckResult combinatorialCheckByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
+        return null;
+    }
+
+    @FillToMethodResult
+    public SingleCheckResult singleCheckByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
+        return null;
+    }
+
+
+    @FillToMethodResult
+    public CheckResult checkByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
+        return null;
+    }
+
+
 
     /*
      * - name: 所有字段自定义注解检测
@@ -77,7 +104,7 @@ public class CustomService {
     }
 
     @FillToMethodResult
-    public CheckerResult checkResult(@CheckIt("所有字段自定义注解检测") CustomUser customUser) {
+    public CheckResult checkResult(@CheckIt("所有字段自定义注解检测") CustomUser customUser) {
         return null;
     }
 
