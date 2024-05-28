@@ -6,7 +6,7 @@ import org.purah.core.checker.BaseChecker;
 import org.purah.core.checker.CheckInstance;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.checker.result.SingleCheckResult;
+import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.springboot.ann.EnableOnPurahContext;
 import org.purah.springboot.ann.PurahEnableMethods;
 import org.purah.springboot.ann.ToChecker;
@@ -38,9 +38,9 @@ public class MethodsToCheckersTestBean {
     @ToChecker
     public CheckResult hasTest(String text) {
         if (StringUtils.hasText(text)) {
-            return SingleCheckResult.success(null, "有文本");
+            return BaseLogicCheckResult.success(null, "有文本");
         } else {
-            return SingleCheckResult.failed(null, "无文本");
+            return BaseLogicCheckResult.failed(null, "无文本");
         }
     }
 
@@ -55,9 +55,9 @@ public class MethodsToCheckersTestBean {
         boolean success = value.doubleValue() >= min && value.doubleValue() <= max;
 
         if (success) {
-            return SingleCheckResult.success();
+            return BaseLogicCheckResult.success();
         }
-        return SingleCheckResult.failed(null, name + "取值错误" + value);
+        return BaseLogicCheckResult.failed(null, name + "取值错误" + value);
     }
 
     @ToCheckerFactory(match = "3取值必须在[*-*]之间判断FromTestBean")
@@ -76,9 +76,9 @@ public class MethodsToCheckersTestBean {
     public CheckResult range(CheckInstance<Number> checkInstance) {
         Integer value = checkInstance.instance().intValue();
         if (value < 0) {
-            return SingleCheckResult.failed(null, checkInstance.fieldStr() + ":取值错误:" + value);
+            return BaseLogicCheckResult.failed(null, checkInstance.fieldStr() + ":取值错误:" + value);
         } else {
-            return SingleCheckResult.success(null, checkInstance.fieldStr() + ":取值正确:" + value);
+            return BaseLogicCheckResult.success(null, checkInstance.fieldStr() + ":取值正确:" + value);
         }
     }
 }

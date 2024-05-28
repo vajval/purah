@@ -14,8 +14,8 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
 
 
     String name;
-    CheckClass singleCheckClass;
-    Checker<?, ?> singleChecker;
+    CheckClass BaseLogicCheckClass;
+    Checker<?, ?> BaseLogicChecker;
 
 
     Map<CheckClass, Checker<?, ?>> checkerMap = new ConcurrentHashMap<>();
@@ -28,14 +28,14 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
 
 
     public void addNewChecker(Checker<?, ?> checker) {
-        if (singleChecker == null) {
-            this.singleChecker = checker;
-            this.singleCheckClass = CheckClass.byChecker(checker);
+        if (BaseLogicChecker == null) {
+            this.BaseLogicChecker = checker;
+            this.BaseLogicCheckClass = CheckClass.byChecker(checker);
         }
         CheckClass checkClass = CheckClass.byChecker(checker);
         this.checkerMap.put(checkClass, checker);
-        if (checkClass.equals(singleCheckClass)) {
-            singleChecker = checker;
+        if (checkClass.equals(BaseLogicCheckClass)) {
+            BaseLogicChecker = checker;
         }
     }
 
@@ -73,10 +73,10 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
 //            if (checkerMap.size() != 1) {
 //                throw new RuntimeException("入参为null，而尔");
 //            }
-            return singleChecker;
+            return BaseLogicChecker;
         }
 
-        if (singleSupport(inputCheckClass)) return singleChecker;
+        if (BaseLogicSupport(inputCheckClass)) return BaseLogicChecker;
         Checker<?, ?> result = checkerMap.get(inputCheckClass);
         if (result != null) return result;
         for (Map.Entry<CheckClass, Checker<?, ?>> entry : checkerMap.entrySet()) {
@@ -90,8 +90,8 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
         return null;
     }
 
-    protected boolean singleSupport(CheckClass checkClass) {
-        return singleCheckClass.support(checkClass);
+    protected boolean BaseLogicSupport(CheckClass checkClass) {
+        return BaseLogicCheckClass.support(checkClass);
     }
 
 

@@ -53,10 +53,10 @@ public class PurahEnableMethodValidator {
                 return null;
             }
         }
-//        if (!(CheckerResult.class.isAssignableFrom(returnType)) &&
+//        if (!(CheckResult.class.isAssignableFrom(returnType)) &&
 //
 //                !(boolean.class.isAssignableFrom(returnType))) {
-//            return "返回值必须是 CheckerResult  或者 boolean " + method;
+//            return "返回值必须是 CheckResult  或者 boolean " + method;
 //
 //        }
 //        return null;

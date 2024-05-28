@@ -121,13 +121,13 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckResult checkerResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
-        for (CheckResult result : checkerResult.value()) {
+        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
+        for (CheckResult result : CheckResult.value()) {
             System.out.println(result);
         }
 
-        Assertions.assertFalse(checkerResult.isSuccess());
-        Assertions.assertEquals(2, checkerResult.value().size());
+        Assertions.assertFalse(CheckResult.isSuccess());
+        Assertions.assertEquals(2, CheckResult.value().size());
     }
 
     @Test
@@ -148,12 +148,12 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckResult checkerResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
-        Assertions.assertFalse(checkerResult.isSuccess());
-        for (CheckResult result : checkerResult.value()) {
+        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
+        Assertions.assertFalse(CheckResult.isSuccess());
+        for (CheckResult result : CheckResult.value()) {
             System.out.println(result);
         }
-        Assertions.assertEquals(checkerResult.value().size(), 4);
+        Assertions.assertEquals(CheckResult.value().size(), 4);
     }
 
     @Test
@@ -173,9 +173,9 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckResult checkerResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
-        Assertions.assertTrue(checkerResult.isSuccess());
-        Assertions.assertEquals(checkerResult.value().size(), 1);
+        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
+        Assertions.assertTrue(CheckResult.isSuccess());
+        Assertions.assertEquals(CheckResult.value().size(), 1);
 
     }
 
@@ -197,13 +197,13 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckResult checkerResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
-        Assertions.assertTrue(checkerResult.isSuccess());
-        for (CheckResult result : checkerResult.value()) {
+        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
+        Assertions.assertTrue(CheckResult.isSuccess());
+        for (CheckResult result : CheckResult.value()) {
             System.out.println(result);
         }
-        System.out.println(checkerResult.mainCheckResult());
-        Assertions.assertEquals(0, checkerResult.value().size());
+        System.out.println(CheckResult.mainCheckResult());
+        Assertions.assertEquals(0, CheckResult.value().size());
 
     }
 
@@ -231,9 +231,9 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckResult checkerResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
-        Assertions.assertTrue(checkerResult.isSuccess());
-        Assertions.assertEquals(checkerResult.value().size(), 3);
+        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
+        Assertions.assertTrue(CheckResult.isSuccess());
+        Assertions.assertEquals(CheckResult.value().size(), 3);
 
     }
 }

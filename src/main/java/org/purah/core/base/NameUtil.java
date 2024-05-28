@@ -40,8 +40,8 @@ public class NameUtil {
 
     private static String nameByInterface(Object object) {
         if (object == null) return null;
-        if (object instanceof IName ) {
-            IName i=(IName) object;
+        if (object instanceof IName) {
+            IName i = (IName) object;
             return i.name();
         }
         return null;
@@ -65,6 +65,7 @@ public class NameUtil {
             return Collections.singleton(NULL_OBJECT_SHOW_NAME);
         }
         Set<String> result = new HashSet<>();
+
         String nameByClassNameAnn = nameByClassNameAnn(object.getClass());
         String nameByInterface = nameByInterface(object);
         if (nameByClassNameAnn != null) {
@@ -76,6 +77,7 @@ public class NameUtil {
         result.add(object.getClass().getName());
         return result;
     }
+
 
 
 }

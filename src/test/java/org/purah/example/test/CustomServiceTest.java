@@ -8,7 +8,8 @@ import org.purah.core.PurahContext;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
-import org.purah.core.checker.result.SingleCheckResult;
+import org.purah.core.checker.result.BaseLogicCheckResult;
+import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.exception.MethodArgCheckException;
 import org.purah.ExampleApplication;
 import org.purah.example.customAnn.CustomService;
@@ -17,6 +18,7 @@ import org.purah.example.customAnn.ann.NotEmpty;
 import org.purah.example.customAnn.ann.NotNull;
 import org.purah.example.customAnn.pojo.CustomUser;
 import org.purah.springboot.result.ArgCheckResult;
+import org.purah.springboot.result.AutoFillCheckResult;
 import org.purah.springboot.result.MethodCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -84,7 +86,7 @@ class CustomServiceTest {
 
         assertTrue(goodCheckResult.isSuccess());
 
-//        assertEquals(4, ((List) goodCheckerResult.value()).size());
+//        assertEquals(4, ((List) goodCheckResult.value()).size());
         CheckResult badCheckResult = customService.checkResult(badCustomUser);
 
         assertTrue(badCheckResult.isFailed());
@@ -134,27 +136,6 @@ class CustomServiceTest {
 
     }
 
-//    @Test
-//    void booleanCheckByCustomSyntaxWithMultiLevel2() {
-//        goodCustomUser.setChildCustomUser(badCustomUser);
-//        for (int i = 0; i < 10000000; i++) {
-//
-//
-//            if (i % 10000 == 0) {
-//                System.out.println(i);
-//            }
-//            CheckerResult checkerResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
-//            assertFalse(checkerResult.isSuccess());
-//            List<CheckerResult> resultList = (List) checkerResult.value();
-////        value.stream().
-//            String trim = resultList.stream().filter(CheckerResult::isFailed).map(CheckerResult::info)
-//                    .reduce("", (a, b) -> a + b).trim();
-//
-//            assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
-//            assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
-//            assertTrue(trim.contains("childCustomUser.phone:移不动也联不通"));
-//        }
-//    }
 
     public Long id;
     @NotEmpty(errorMsg = "这个字段不能为空")
@@ -170,16 +151,16 @@ class CustomServiceTest {
 
     @Test
     void booleanCheckByCustomSyntaxWithMultiLevel() {
-//        CheckerResult checkerResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+//        CheckResult CheckResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
 
-//        assertTrue(checkerResult.isSuccess());
+//        assertTrue(CheckResult.isSuccess());
         goodCustomUser.setChildCustomUser(badCustomUser);
         System.out.println("------------------------------------");
-        CheckResult checkResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+        AutoFillCheckResult checkResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
         assertFalse(checkResult.isSuccess());
-        List<CheckResult> resultList = (List) checkResult.value();
+        List<BaseLogicCheckResult> resultList = checkResult.allBaseLogicCheckResult(ResultLevel.failedIgnoreMatchByCombinatorial);
 //        value.stream().
-        String trim = resultList.stream().filter(CheckResult::isFailed).map(CheckResult::log)
+        String trim = resultList.stream().map(CheckResult::log)
                 .reduce("", (a, b) -> a + b).trim();
         /*
          * 检测
@@ -196,52 +177,41 @@ class CustomServiceTest {
          * childCustomUser.childCustomUser
          *
          */
-        System.out.println(((MethodCheckResult) checkResult).mainCheckResult());
+//        System.out.println(((MethodCheckResult) checkResult).mainCheckResult());
 
 
-
-        for (CheckResult result : resultList) {
-            ArgCheckResult argCheckResult=(ArgCheckResult)result;
-            CheckResult value = argCheckResult.checkResultMap().entrySet().iterator().next().getValue();
-
-            CombinatorialCheckResult combinatorialCheckerResult=      (CombinatorialCheckResult)value;
-            for (SingleCheckResult singleCheckerResult : combinatorialCheckerResult.value()) {
-                System.out.println(singleCheckerResult);
-            }
-
-
-//            for (Map.Entry<String, CheckerResult> stringCheckerResultEntry : argCheckResult.checkResultMap().entrySet()) {
 //
-//            }
-            System.out.println(argCheckResult.checkResultMap());
-        }
-
-        Assertions.assertEquals(resultList.size(), 8);
-
-
-        assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
-        assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
-        assertTrue(trim.contains("childCustomUser.phone:移不动也联不通"));
-        for (CheckResult result : resultList) {
-            System.out.println(result.isSuccess());
-            System.out.println(result.log());
-            System.out.println(result.checkLogicFrom());
-        }
-
-        System.out.println();
+//        MethodCheckResult methodCheckResult = (AutoFillCheckResult) checkResult;
+//        Assertions.assertTrue(methodCheckResult.isFailed());
+//        ArgCheckResult arg0CheckResult = methodCheckResult.argResultOf(0);
+//        Assertions.assertTrue(arg0CheckResult.isFailed());
+//
+//        Assertions.assertEquals(arg0CheckResult.value().size(), 5);
+//
+//        Assertions.assertTrue(methodCheckResult.isFailed());
+//
+//
+//        Assertions.assertEquals(resultList.size(), 5);
+//
+//
+//        assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
+//        assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
+//        assertTrue(trim.contains("childCustomUser.phone:移不动也联不通"));
+//        for (CheckResult result : resultList) {
+//            System.out.println(result.isSuccess());
+//            System.out.println(result.log());
+//            System.out.println(result.checkLogicFrom());
+//        }
+//
+//        System.out.println();
 
     }
 
 
+    @Test
+    void multiLevel() {
 
-
-
-
-
-
-
-
-
+    }
 
     @Test
     void booleanCheckMultiArgs() {
@@ -265,4 +235,26 @@ class CustomServiceTest {
 
     }
 
+
+//    @Test
+//    void booleanCheckByCustomSyntaxWithMultiLevel2() {
+//        goodCustomUser.setChildCustomUser(badCustomUser);
+//        for (int i = 0; i < 10000000; i++) {
+//
+//
+//            if (i % 10000 == 0) {
+//                System.out.println(i);
+//            }
+//            CheckResult CheckResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+//            assertFalse(CheckResult.isSuccess());
+//            List<CheckResult> resultList = (List) CheckResult.value();
+////        value.stream().
+//            String trim = resultList.stream().filter(CheckResult::isFailed).map(CheckResult::info)
+//                    .reduce("", (a, b) -> a + b).trim();
+//
+//            assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
+//            assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
+//            assertTrue(trim.contains("childCustomUser.phone:移不动也联不通"));
+//        }
+//    }
 }

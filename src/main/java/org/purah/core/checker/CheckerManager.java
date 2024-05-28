@@ -69,7 +69,7 @@ public class CheckerManager {
                             if (clazz.isAnonymousClass()) {
                                 clazzStr = "anonymous class from " + clazz.getName();
                             }
-                            return "[" + name + "] " + clazzStr;
+                            return clazzStr+" create    "+ name ;
                         }
                     };
 

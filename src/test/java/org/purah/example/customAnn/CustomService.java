@@ -2,12 +2,13 @@ package org.purah.example.customAnn;
 
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
-import org.purah.core.checker.result.SingleCheckResult;
+import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.example.customAnn.pojo.CustomUser;
 import org.purah.springboot.ann.CheckIt;
 
 import org.purah.springboot.ann.FillToMethodResult;
 import org.purah.springboot.result.ArgCheckResult;
+import org.purah.springboot.result.AutoFillCheckResult;
 import org.purah.springboot.result.MethodCheckResult;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -74,13 +75,13 @@ public class CustomService {
     }
 
     @FillToMethodResult
-    public SingleCheckResult singleCheckByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
+    public BaseLogicCheckResult BaseLogicCheckByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
         return null;
     }
 
 
     @FillToMethodResult
-    public CheckResult checkByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
+    public AutoFillCheckResult checkByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
         return null;
     }
 

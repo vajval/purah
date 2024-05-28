@@ -9,7 +9,7 @@ import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.checker.method.MethodToChecker;
 import org.purah.core.checker.method.MethodToCheckerFactory;
 import org.purah.core.checker.method.MethodToCheckerFactoryByResult;
-import org.purah.core.checker.method.SingleMethodToChecker;
+import org.purah.core.checker.method.BaseLogicMethodToChecker;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.factory.MatcherFactory;
 import org.purah.core.resolver.ArgResolver;
@@ -97,7 +97,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
      * 2 从spring 容器中找到 被 MethodsToCheckers 类注册的对象，并且将其中的函数构造为checker注册
      * 对于函数有两个要求
      * （1）其中 方法类必须 只能有一个入参，这唯一的入参便是检查对象
-     * （2）返回结果只能是 CheckerResult Boolean  boolean 三种
+     * （2）返回结果只能是 CheckResult Boolean  boolean 三种
      *
      * @param checkerManager
      */
@@ -128,7 +128,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
             List<Method> methodList = Stream.of(clazz.getMethods()).filter(i -> i.getDeclaredAnnotation(ToChecker.class) != null).collect(Collectors.toList());
 
             for (Method method : methodList) {
-                MethodToChecker methodToChecker = new SingleMethodToChecker(bean, method);
+                MethodToChecker methodToChecker = new BaseLogicMethodToChecker(bean, method);
                 checkerManager.reg(methodToChecker);
 
             }
@@ -176,7 +176,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
             }
             boolean valid = PurahEnableMethod.validReturnType(returnType);
             if (!valid) {
-                throw new RuntimeException("返回必须是 Boolean.class 或者 checkerResult.class");
+                throw new RuntimeException("返回必须是 Boolean.class 或者 CheckResult.class");
             }
 
 

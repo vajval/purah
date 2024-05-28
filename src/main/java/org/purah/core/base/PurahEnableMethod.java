@@ -2,7 +2,7 @@ package org.purah.core.base;
 
 import org.purah.core.checker.CheckInstance;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.checker.result.SingleCheckResult;
+import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.InvocationTargetException;
@@ -36,26 +36,22 @@ public class PurahEnableMethod {
         this.bean = bean;
 
 
-
-
         Type returnType = method.getGenericReturnType();
         ResolvableType[] generics = ResolvableType.forType(returnType).as(CheckResult.class).getGenerics();
 
-        if(generics.length!=0){
+        if (generics.length != 0) {
             Class<?> resolve = generics[0].resolve();
-            resultClass =resolve;
-            if(resolve==null){
-                resultClass=Object.class;
+            resultClass = resolve;
+            if (resolve == null) {
+                resultClass = Object.class;
             }
             resultIsCheckResultClass = true;
-        }else if(returnType.equals(boolean.class)){
+        } else if (returnType.equals(boolean.class)) {
             resultIsCheckResultClass = false;
 
-        }else{
+        } else {
             throw new RuntimeException("返回类型不合适");
         }
-
-
 
 
 //todo
@@ -91,14 +87,14 @@ public class PurahEnableMethod {
                 return (CheckResult) result;
             } else {
                 Boolean resultValue = (Boolean) result;
-                SingleCheckResult singleCheckerResult;
+                BaseLogicCheckResult baseLogicCheckResult;
                 if (resultValue) {
-                    singleCheckerResult = SingleCheckResult.success(true, "success");
+                    baseLogicCheckResult = BaseLogicCheckResult.success(true, "success");
                 } else {
-                    singleCheckerResult = SingleCheckResult.failed(false, "failed");
+                    baseLogicCheckResult = BaseLogicCheckResult.failed(false, "failed");
 
                 }
-                return singleCheckerResult;
+                return baseLogicCheckResult;
             }
 
         } catch (IllegalAccessException | InvocationTargetException e) {

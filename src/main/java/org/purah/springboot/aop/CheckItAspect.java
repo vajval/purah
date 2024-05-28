@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.purah.core.checker.CheckInstance;
 import org.purah.core.exception.MethodArgCheckException;
+import org.purah.springboot.result.AutoFillCheckResult;
 import org.purah.springboot.result.MethodCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -31,8 +32,6 @@ public class CheckItAspect {
 
 
     }
-
-    static int w = 0;
 
     @Around("pointcut()")
     public Object aroundAdvice(ProceedingJoinPoint joinPoint) {
@@ -65,7 +64,9 @@ public class CheckItAspect {
             }
             return invokeObject;
         } else {
-            return methodHandlerChecker.fillObject(methodCheckResult);
+            AutoFillCheckResult autoFillCheckResult = new AutoFillCheckResult(methodCheckResult);
+
+            return methodHandlerChecker.fillObject(autoFillCheckResult);
         }
 
 

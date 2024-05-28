@@ -24,11 +24,18 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
     @Autowired
     PurahContext purahContext;
 
+    final static Splitter fieldSplitter = Splitter.on(";");
+    final static Splitter iSplitter = Splitter.on(":");
+    final static Splitter checkerSplitter = Splitter.on(",");
+
 
     @Override
     public PurahContext purahContext() {
         return purahContext;
     }
+
+
+
 
     @Override
     public boolean match(String needMatchCheckerName) {
@@ -36,9 +43,7 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
     }
 
 
-    final static Splitter fieldSplitter = Splitter.on(";");
-    final static Splitter iSplitter = Splitter.on(":");
-    final static Splitter checkerSplitter = Splitter.on(",");
+
 
     /**
      * example: [a:b,c;e:d,e]
@@ -69,7 +74,7 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
         CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties(needMatchCheckerName);
 
         properties.setMainExecType(mainExecType);
-        properties.setResultLevel(ResultLevel.failedIgnoreMatch.value());
+        properties.setResultLevel(ResultLevel.failedIgnoreMatchByCombinatorial.value());
         // x,y
         String useCheckersExp = checkerExp.substring(checkerExp.indexOf("[") + 1, checkerExp.indexOf("]"));
         if (StringUtils.hasText(useCheckersExp)) {

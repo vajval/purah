@@ -1,6 +1,5 @@
 package org.purah.core.matcher.singleLevel;
 
-
 import com.google.common.collect.Sets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

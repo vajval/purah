@@ -3,7 +3,7 @@ package org.purah.core.checker.result;
 public enum ResultLevel {
     all(0),
     failed(1),
-    failedIgnoreMatch(2),
+    failedIgnoreMatchByCombinatorial(2),
     error(3);
 
 //    errorIgnoreMatch(4);
@@ -25,7 +25,7 @@ public enum ResultLevel {
         } else if (value == 1) {
             return failed;
         } else if (value == 2) {
-            return failedIgnoreMatch;
+            return failedIgnoreMatchByCombinatorial;
         } else if (value == 3) {
             return error;
         }

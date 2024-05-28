@@ -15,26 +15,28 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult> {
     Object checkArg;
 
     LinkedHashMap<String, CheckResult> checkResultMap;
+    protected ExecType.Main methodExecType;
 
 
-
-    private ArgCheckResult(SingleCheckResult mainCheckResult, LinkedHashMap<String, CheckResult> checkResultMap,
-                           List<CheckResult> valueList, CheckIt checkItAnn, Object checkArg) {
+    private ArgCheckResult(BaseLogicCheckResult mainCheckResult, LinkedHashMap<String, CheckResult> checkResultMap,
+                           List<CheckResult> valueList, CheckIt checkItAnn, Object checkArg, ExecType.Main methodExecType
+    ) {
 
         super(mainCheckResult, valueList);
         this.checkItAnn = checkItAnn;
         this.checkResultMap = checkResultMap;
         this.checkArg = checkArg;
+        this.methodExecType = methodExecType;
     }
 
     public LinkedHashMap<String, CheckResult> checkResultMap() {
         return checkResultMap;
     }
 
-    public static ArgCheckResult create(SingleCheckResult mainCheckResult,
+    public static ArgCheckResult create(BaseLogicCheckResult mainCheckResult,
                                         List<String> checkNameList,
                                         List<CheckResult> valueList,
-                                        CheckIt checkItAnn, Object checkArg
+                                        CheckIt checkItAnn, Object checkArg, ExecType.Main methodExecType
 
     ) {
 
@@ -50,19 +52,51 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult> {
         while (iterator.hasNext()) {
             checkResultMap.put(iterator.next(), fill(checkItAnn));
         }
-
-        return new ArgCheckResult(mainCheckResult, checkResultMap, valueList, checkItAnn, checkArg);
+        return new ArgCheckResult(mainCheckResult, checkResultMap, valueList, checkItAnn, checkArg, methodExecType);
 
     }
 
 
+    @Override
+    public boolean isSuccess() {
+        if (isIgnore()) {
+            ignoreError();
+        }
+        return super.isSuccess();
+    }
+
+    @Override
+    public boolean isFailed() {
+        if (isIgnore()) {
+            ignoreError();
+        }
+        return super.isFailed();
+    }
+
+    @Override
+    public boolean isError() {
+        if (isIgnore()) {
+            ignoreError();
+        }
+        return super.isError();
+    }
 
 
-    public static SingleCheckResult fill(CheckIt checkIt) {
+    public void ignoreError() {
+        if (methodExecType == ExecType.Main.at_least_one) {
+            throw new RuntimeException("无法检测 at_least_one 已经有一个成功了，所以此参数没有检测被忽视，若无论如何也要检测，请@MethodCheckExecType设置为 at_least_one_but_must_check_all");
+        } else if (methodExecType == ExecType.Main.all_success) {
+            throw new RuntimeException("无法检测 all_success 已经有一个失败了，所以此参数没有检测被忽视，若无论如何也要检测，请@MethodCheckExecType设置为 all_success_but_must_check_all");
+        } else {
+            throw new RuntimeException("不该出错");
+        }
+    }
+
+    public static BaseLogicCheckResult fill(CheckIt checkIt) {
         if (checkIt.execType() == ExecType.Main.at_least_one) {
-            return SingleCheckResult.ignore( " at_least_one 已经有一个成功了，所以没有检测 被忽视 ");
+            return BaseLogicCheckResult.ignore(" at_least_one 已经有一个成功了，所以没有检测 被忽视 ");
         } else if (checkIt.execType() == ExecType.Main.all_success) {
-            return SingleCheckResult.ignore("all_success 已经有一个失败了，所以没有检测  被忽视");
+            return BaseLogicCheckResult.ignore("all_success 已经有一个失败了，所以没有检测  被忽视");
         } else {
             throw new RuntimeException();
         }

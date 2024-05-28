@@ -43,7 +43,7 @@ public class MethodsToCheckersTestBean {
    // 会根据需要检测对象的class 不同， 自动调用不同的函数
 
     @ToCheckerFactory(match = "取值必须在[*-*]之间判断FromTestBean")
-    public CheckerResult range2(String name, int value) {
+    public CheckResult range2(String name, int value) {
 
         String[] split = name.substring(name.indexOf("[") + 1, name.indexOf("]")).split("-");
         double min = Double.parseDouble(split[0]);
@@ -51,9 +51,9 @@ public class MethodsToCheckersTestBean {
         boolean success = value.doubleValue() >= min && value.doubleValue() <= max;
 
         if (success) {
-            return SingleCheckerResult.success();
+            return BaseLogicCheckResult.success();
         }
-        return SingleCheckerResult.failed(null, name + "取值错误" + value);
+        return BaseLogicCheckResult.failed(null, name + "取值错误" + value);
     }
 }
   
@@ -77,7 +77,7 @@ public class TestService {
 
     // 如果你自定义了返回内容的话，会将自定义的内容一并返回
     @FillToMethodResult
-    public CheckerResult checkResult(@CheckIt("非空判断FromTestBean") CustomUser customUser) {
+    public CheckResult checkResult(@CheckIt("非空判断FromTestBean") CustomUser customUser) {
         return null;
     }
     // 支持根据通配符匹配
@@ -154,7 +154,7 @@ public class TestService {
      *
      */
     @FillToMethodResult
-    public CheckerResult checkByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
+    public CheckResult checkByCustomSyntaxWithMultiLevel(@CheckIt("example:1[][*:自定义注解检测;*.*:自定义注解检测]") CustomUser customUser) {
         return null;
     }
 ```
@@ -168,14 +168,14 @@ public class TestService {
 ### 要求
 第一个参数 必须是自定义的注解
 第二个 是需要检查的参数
-返回类型 必须是 CheckerResult或者boolean
+返回类型 必须是 CheckResult或者boolean
 
 需要检查的参数可以用 CheckInstance 封装，用CheckInstance 封装的参数可以获得部分上下文
 
 
 
 
-CheckerResult 中可以携带自定义的返回信息 ，boolean 的不行
+CheckResult 中可以携带自定义的返回信息 ，boolean 的不行
 
 通过继承AbstractCustomAnnChecker 类来实现 `自定义注解检测` 的函数 
 
@@ -198,33 +198,33 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
     }
 
-    public CheckerResult cnPhoneNum(CNPhoneNum cnPhoneNum, CheckInstance<String> str) {
+    public CheckResult cnPhoneNum(CNPhoneNum cnPhoneNum, CheckInstance<String> str) {
         String strValue = str.instance();
 
         //gpt小姐 说的
         if (strValue.matches("^1[3456789]\\d{9}$")) {
             return success("正确的");
         }
-        return SingleCheckerResult.failed(str.instance(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
+        return BaseLogicCheckResult.failed(str.instance(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
 
 
     }
 
-    public CheckerResult notEmpty(NotEmpty notEmpty, CheckInstance<String> str) {
+    public CheckResult notEmpty(NotEmpty notEmpty, CheckInstance<String> str) {
         String strValue = str.instance();
         if (StringUtils.hasText(strValue)) {
             return success("正确的");
         }
-        return SingleCheckerResult.failed(str.instance(), str.fieldStr() + ":" + notEmpty.errorMsg());
+        return BaseLogicCheckResult.failed(str.instance(), str.fieldStr() + ":" + notEmpty.errorMsg());
 
 
     }
 
 
-    public CheckerResult range(Range range, CheckInstance<Number> num) {
+    public CheckResult range(Range range, CheckInstance<Number> num) {
         Number numValue = num.instance();
         if (numValue.doubleValue() < range.min() || numValue.doubleValue() > range.max()) {
-            return SingleCheckerResult.failed(num.instance(), (num.fieldStr() + ":" + range.errorMsg()));
+            return BaseLogicCheckResult.failed(num.instance(), (num.fieldStr() + ":" + range.errorMsg()));
         }
         return success("参数合规");
 

@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AbstractCustomAnnChecker extends BaseChecker {
 
@@ -26,7 +28,7 @@ public class AbstractCustomAnnChecker extends BaseChecker {
      * 过滤出能用的函数
      * 第一个 参数 是自定义的注解
      * 第二个是要检查的对象 arg
-     * 返回值只能是boolean或者 CheckerResult.class
+     * 返回值只能是boolean或者 CheckResult.class
      * ExecChecker 会对不同class 的入参 传递到指定的的函数中
      * <p>
      * 例如写了两个
@@ -67,43 +69,43 @@ public class AbstractCustomAnnChecker extends BaseChecker {
 
     }
 
+    ExecType.Main mainExecType;
 
-    public AbstractCustomAnnChecker() {
+    ResultLevel resultLevel;
+
+    public AbstractCustomAnnChecker(ExecType.Main mainExecType, ResultLevel resultLevel) {
+        this.mainExecType = mainExecType;
+        this.resultLevel = resultLevel;
         initMethods();
     }
 
 
     @Override
     public CheckResult doCheck(CheckInstance checkInstance) {
-        List<Annotation> annotations = ((CheckInstance<?>) checkInstance).getAnnotations();
+        List<Annotation> enableAnnotations =
+                ((CheckInstance<?>) checkInstance).getAnnotations().stream().filter(i -> map.containsKey(i.annotationType())).collect(Collectors.toList());
 
 
-        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(ExecType.Main.all_success, ResultLevel.failedIgnoreMatch);
-
+        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel);
         List<Supplier<CheckResult>> ruleResultSupplierList = new ArrayList<>();
-
-
-        for (Annotation annotation : annotations) {
-            ExecChecker execChecker = map.get(annotation.annotationType());
-            if (execChecker == null) continue;
-            ruleResultSupplierList.add(() -> execChecker.check(checkInstance));
+        for (Annotation enableAnnotation : enableAnnotations) {
+            ruleResultSupplierList.add(() -> map.get(enableAnnotation.annotationType()).check(checkInstance));
         }
+        String annListLogStr = enableAnnotations.stream().map(i -> i.annotationType().getSimpleName()).collect(Collectors.joining(",", "[", "]"));
+
 
         multiCheckerExecutor.exec(ruleResultSupplierList);
-        MultiCheckResult<CheckResult> checkerResultMultiCheckResult = multiCheckerExecutor.multiCheckResult("123");
-        System.out.println("-----------------------------------------------------");
-        for (CheckResult checkResult : checkerResultMultiCheckResult.value()) {
-            System.out.println(1231);
-            System.out.println(checkResult);
-        }
 
 
         System.out.println(checkInstance);
-        System.out.println(ruleResultSupplierList.size());
-        System.out.println(multiCheckerExecutor.toCombinatorialCheckerResult("456"));
 
-        String log = "[root." + checkInstance.fieldStr() + "]: " + this.name();
-        return multiCheckerExecutor.toCombinatorialCheckerResult(log);
+
+        System.out.println(ruleResultSupplierList.size());
+
+
+        String log = "root." + checkInstance.fieldStr() + "  @Ann:" + annListLogStr + " : "+this.name();
+        System.out.println(multiCheckerExecutor.multiCheckResult(log));
+        return multiCheckerExecutor.multiCheckResult(log);
 
 
     }

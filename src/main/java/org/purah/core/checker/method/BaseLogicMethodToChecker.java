@@ -10,13 +10,13 @@ import org.purah.core.checker.result.CheckResult;
 import java.lang.reflect.Method;
 
 
-public class SingleMethodToChecker extends MethodToChecker {
+public class BaseLogicMethodToChecker extends MethodToChecker {
 
     public static PurahEnableMethodValidator methodToCheckerValidator = new PurahEnableMethodValidator(Lists.newArrayList(Name.class),
             Lists.newArrayList(Object.class), Lists.newArrayList(boolean.class, CheckResult.class)
     );
 
-    public SingleMethodToChecker(Object methodsToCheckersBean, Method method) {
+    public BaseLogicMethodToChecker(Object methodsToCheckersBean, Method method) {
         super(methodsToCheckersBean, method);
         this.name = method.getAnnotation(Name.class).value();
 

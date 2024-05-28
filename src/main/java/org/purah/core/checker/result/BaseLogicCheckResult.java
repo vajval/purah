@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SingleCheckResult<T> implements CheckResult<T> {
+public class BaseLogicCheckResult<T> implements CheckResult<T> {
 
     protected ExecInfo execInfo;
 
@@ -15,7 +15,7 @@ public class SingleCheckResult<T> implements CheckResult<T> {
 
     protected String log;
 
-    private SingleCheckResult(ExecInfo execInfo, T data, String log) {
+    private BaseLogicCheckResult(ExecInfo execInfo, T data, String log) {
         this.execInfo = execInfo;
         this.data = data;
         this.log = log;
@@ -32,7 +32,7 @@ public class SingleCheckResult<T> implements CheckResult<T> {
         return checkLogicFrom;
     }
 
-    private SingleCheckResult(ExecInfo execInfo, Exception e) {
+    private BaseLogicCheckResult(ExecInfo execInfo, Exception e) {
         this.execInfo = execInfo;
         this.e = e;
     }
@@ -46,26 +46,26 @@ public class SingleCheckResult<T> implements CheckResult<T> {
     }
 
 
-    public static <T> SingleCheckResult<T> success() {
-        return new SingleCheckResult<T>(ExecInfo.success, null, null);
+    public static <T> BaseLogicCheckResult<T> success() {
+        return new BaseLogicCheckResult<T>(ExecInfo.success, null, null);
     }
 
-    public static <T> SingleCheckResult<T> success(T data, String log) {
-        return new SingleCheckResult<T>(ExecInfo.success, data, log);
+    public static <T> BaseLogicCheckResult<T> success(T data, String log) {
+        return new BaseLogicCheckResult<T>(ExecInfo.success, data, log);
     }
 
-    public static <T> SingleCheckResult<T> failed(T data, String log) {
-        return new SingleCheckResult<T>(ExecInfo.failed, data, log);
+    public static <T> BaseLogicCheckResult<T> failed(T data, String log) {
+        return new BaseLogicCheckResult<T>(ExecInfo.failed, data, log);
 
     }
-    public static <T> SingleCheckResult<T> ignore(String log) {
-        SingleCheckResult<T> result = new SingleCheckResult<>(ExecInfo.ignore, null,log);
+    public static <T> BaseLogicCheckResult<T> ignore(String log) {
+        BaseLogicCheckResult<T> result = new BaseLogicCheckResult<>(ExecInfo.ignore, null,log);
         result.log = log;
         return result;
 
     }
-    public static <T> SingleCheckResult<T> error(Exception e, String log) {
-        SingleCheckResult<T> result = new SingleCheckResult<>(ExecInfo.error, e);
+    public static <T> BaseLogicCheckResult<T> error(Exception e, String log) {
+        BaseLogicCheckResult<T> result = new BaseLogicCheckResult<>(ExecInfo.error, e);
         result.log = log;
         return result;
 

@@ -94,8 +94,8 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
           对入参对象的检查
          */
         for (Checker checker : rootInstanceCheckers) {
-            Supplier<CheckResult> singleCheckerResultSupplier = () -> checker.check(newExecTypeCheckInstance);
-            supplierList.add(singleCheckerResultSupplier);
+            Supplier<CheckResult> BaseLogicCheckResultSupplier = () -> checker.check(newExecTypeCheckInstance);
+            supplierList.add(BaseLogicCheckResultSupplier);
         }
         /*
          * 对入参对象中FieldMatcher 匹配的字段进行对应的检查
@@ -108,7 +108,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
         executor.exec(supplierList);
 
         String log = "[" + checkInstance2.fieldStr() + "]: " + this.name();
-        CombinatorialCheckResult result = executor.toCombinatorialCheckerResult(log);
+        CombinatorialCheckResult result = executor.toCombinatorialCheckResult(log);
         result.setCheckLogicFrom(this.logicFrom());
         return result;
 
@@ -177,7 +177,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
             multiCheckerExecutor.exec(supplierList);
 
             String info = checkInstance.fieldStr() + " match:(" + fieldMatcher + ") checkers: " + checkerNamesStr;
-            CombinatorialCheckResult result = multiCheckerExecutor.toCombinatorialCheckerResult(info);
+            CombinatorialCheckResult result = multiCheckerExecutor.toCombinatorialCheckResult(info);
 
             result.setCheckLogicFrom("combinatorial by config,see info");
             return result;

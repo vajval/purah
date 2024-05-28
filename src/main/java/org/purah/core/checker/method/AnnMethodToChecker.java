@@ -56,10 +56,10 @@ public class AnnMethodToChecker extends MethodToChecker {
 //            return "入参必须有2个参数，第一个注解，第二个需要检测的对象或者附带对象的 checkInstance" + method;
 //        }
 //        Class<?> returnType = method.getReturnType();
-//        if (!(CheckerResult.class.isAssignableFrom(returnType)) &&
+//        if (!(CheckResult.class.isAssignableFrom(returnType)) &&
 //
 //                !(boolean.class.isAssignableFrom(returnType))) {
-//            return "返回值必须是 CheckerResult  或者 boolean " + method;
+//            return "返回值必须是 CheckResult  或者 boolean " + method;
 //
 //        }
 //        return null;
@@ -76,12 +76,12 @@ public class AnnMethodToChecker extends MethodToChecker {
 //                result = method.invoke(methodsToCheckersBean, annotation, checkInstance.instance());
 //            }
 //            if (resultIsCheckResultClass) {
-//                return (CheckerResult) result;
+//                return (CheckResult) result;
 //            } else {
 //                boolean success = (boolean) result;
-//                if (success) return SingleCheckerResult.success();
+//                if (success) return BaseLogicCheckResult.success();
 //                else {
-//                    return SingleCheckerResult.failed("failed", "failed");
+//                    return BaseLogicCheckResult.failed("failed", "failed");
 //                }
 //            }
 //

@@ -1,6 +1,5 @@
 package org.purah.core.matcher.singleLevel;
 
-
 import org.apache.commons.io.FilenameUtils;
 import org.purah.core.base.Name;
 import org.purah.core.matcher.BaseStringMatcher;

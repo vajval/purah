@@ -33,7 +33,7 @@ public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver
             MultilevelFieldMatcher multilevelFieldMatcher=( MultilevelFieldMatcher )fieldMatcher;
             return this.getMultiLevelMap(instance, multilevelFieldMatcher);
         } else {
-            return this.getSingleLevelMap(instance, fieldMatcher);
+            return this.getBaseLogicLevelMap(instance, fieldMatcher);
         }
     }
 
@@ -83,7 +83,7 @@ public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver
     }
 
 
-    protected Map<String, CheckInstance> getSingleLevelMap(INSTANCE instance, FieldMatcher fieldMatcher) {
+    protected Map<String, CheckInstance> getBaseLogicLevelMap(INSTANCE instance, FieldMatcher fieldMatcher) {
         Set<String> matchFieldList = this.matchFieldList(instance, fieldMatcher);
         return getFieldsObjectMap(instance, matchFieldList);
     }

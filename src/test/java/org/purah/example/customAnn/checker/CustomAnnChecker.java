@@ -3,9 +3,11 @@ package org.purah.example.customAnn.checker;
 
 import org.purah.core.base.Name;
 import org.purah.core.checker.CheckInstance;
+import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.checker.result.SingleCheckResult;
+import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.custom.AbstractCustomAnnChecker;
+import org.purah.core.checker.result.ResultLevel;
 import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmpty;
 import org.purah.example.customAnn.ann.NotNull;
@@ -19,6 +21,9 @@ import org.springframework.util.StringUtils;
 @EnableOnPurahContext
 @Component
 public class CustomAnnChecker extends AbstractCustomAnnChecker {
+    public CustomAnnChecker() {
+        super(ExecType.Main.all_success, ResultLevel.failedIgnoreMatchByCombinatorial);
+    }
 
     public boolean notNull(NotNull notNull, Integer age) {
         if (age == null) {
@@ -36,7 +41,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
         if (strValue.matches("^1[3456789]\\d{9}$")) {
             return success(str,"正确的");
         }
-        return SingleCheckResult.failed(str.instance(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
+        return BaseLogicCheckResult.failed(str.instance(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
 
 
     }
@@ -46,7 +51,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
         if (StringUtils.hasText(strValue)) {
             return success(str,"正确的");
         }
-        return SingleCheckResult.failed(str.instance(), str.fieldStr() + ":" + notEmpty.errorMsg());
+        return BaseLogicCheckResult.failed(str.instance(), str.fieldStr() + ":" + notEmpty.errorMsg());
 
 
     }
@@ -55,7 +60,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
     public CheckResult range(Range range, CheckInstance<Number> num) {
         Number numValue = num.instance();
         if (numValue.doubleValue() < range.min() || numValue.doubleValue() > range.max()) {
-            return SingleCheckResult.failed(num.instance(), (num.fieldStr() + ":" + range.errorMsg()));
+            return BaseLogicCheckResult.failed(num.instance(), (num.fieldStr() + ":" + range.errorMsg()));
         }
         return success(num,"参数合规");
 

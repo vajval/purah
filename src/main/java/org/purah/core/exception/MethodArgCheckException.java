@@ -14,7 +14,7 @@ public class MethodArgCheckException extends PurahException {
 
     }
 
-    public CheckResult checkerResult() {
+    public CheckResult CheckResult() {
         return checkResult;
     }
 }

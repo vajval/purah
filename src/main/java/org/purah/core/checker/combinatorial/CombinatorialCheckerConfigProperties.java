@@ -9,7 +9,7 @@ import java.util.*;
 
 public class CombinatorialCheckerConfigProperties {
     String checkerName;
-    int resultLevel = ResultLevel.failedIgnoreMatch.value();
+    int resultLevel = ResultLevel.failedIgnoreMatchByCombinatorial.value();
 
     public String logicFrom;
 

@@ -35,7 +35,7 @@ public class MultiCheckerExecutor {
                 return true;
             }
 
-        } else if (resultLevel == ResultLevel.failedIgnoreMatch) {
+        } else if (resultLevel == ResultLevel.failedIgnoreMatchByCombinatorial) {
             if ((!checkResult.isSuccess())) {
                 return true;
             }
@@ -97,14 +97,14 @@ public class MultiCheckerExecutor {
     public MultiCheckResult<CheckResult> multiCheckResult(String log) {
 
 
-        SingleCheckResult<Object> mainResult = null;
+        BaseLogicCheckResult<Object> mainResult = null;
         if (execInfo.equals(ExecInfo.success)) {
-            mainResult = SingleCheckResult.success(null, execInfo.value() + " (" + log + ")");
+            mainResult = BaseLogicCheckResult.success(null, execInfo.value() + " (" + log + ")");
         } else if (execInfo.equals(ExecInfo.failed)) {
-            mainResult = SingleCheckResult.failed(null, execInfo.value() + " (" + log + ")");
+            mainResult = BaseLogicCheckResult.failed(null, execInfo.value() + " (" + log + ")");
 
         } else if (execInfo.equals(ExecInfo.error)) {
-            mainResult = SingleCheckResult.error(e, execInfo.value() + " (" + log + ")");
+            mainResult = BaseLogicCheckResult.error(e, execInfo.value() + " (" + log + ")");
 
         }
         return new MultiCheckResult<>(mainResult, fieldCheckResultList);
@@ -112,7 +112,7 @@ public class MultiCheckerExecutor {
 
     }
 
-    public CombinatorialCheckResult toCombinatorialCheckerResult(String log) {
+    public CombinatorialCheckResult toCombinatorialCheckResult(String log) {
         MultiCheckResult<CheckResult> multiCheckResult = multiCheckResult(log);
         return CombinatorialCheckResult.create(multiCheckResult, resultLevel);
 

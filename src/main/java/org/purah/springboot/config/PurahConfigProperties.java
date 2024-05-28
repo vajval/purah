@@ -45,7 +45,7 @@ public class PurahConfigProperties {
     static class CombinatorialCheckerProperties {
 
         protected String name;
-        protected int resultLevel = ResultLevel.failedIgnoreMatch.value();
+        protected int resultLevel = ResultLevel.failedIgnoreMatchByCombinatorial.value();
         protected String useCheckers = "";
         protected int execType = ExecType.Main.all_success.value();
 

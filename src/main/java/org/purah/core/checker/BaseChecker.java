@@ -2,7 +2,7 @@ package org.purah.core.checker;
 
 
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.checker.result.SingleCheckResult;
+import org.purah.core.checker.result.BaseLogicCheckResult;
 
 /**
  * @param <CHECK_INSTANCE>
@@ -21,7 +21,7 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
             }
         } catch (Exception e) {
             throw e;
-//            resultCheckerResult = this.error(checkInstance, e);
+//            resultCheckResult = this.error(checkInstance, e);
         }
 
         setLogicFrom(resultCheckResult);
@@ -52,21 +52,21 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
 
     public CheckResult<RESULT> success(CheckInstance<CHECK_INSTANCE> checkInstance, RESULT result) {
         String log = logStr(checkInstance, DEFAULT_SUCCESS_INFO);
-        SingleCheckResult<RESULT> singleCheckerResult = SingleCheckResult.success(result, log);
-        return singleCheckerResult;
+        BaseLogicCheckResult<RESULT> baseLogicCheckResult = BaseLogicCheckResult.success(result, log);
+        return baseLogicCheckResult;
     }
 
-    public SingleCheckResult<RESULT> failed(CheckInstance<CHECK_INSTANCE> checkInstance, RESULT result) {
+    public BaseLogicCheckResult<RESULT> failed(CheckInstance<CHECK_INSTANCE> checkInstance, RESULT result) {
         String log = logStr(checkInstance, DEFAULT_FAILED_INFO);
-        SingleCheckResult<RESULT> singleCheckerResult = SingleCheckResult.failed(result, log);
+        BaseLogicCheckResult<RESULT> baseLogicCheckResult = BaseLogicCheckResult.failed(result, log);
 
-        return singleCheckerResult;
+        return baseLogicCheckResult;
     }
 
     public CheckResult<RESULT> error(CheckInstance<CHECK_INSTANCE> checkInstance, Exception e) {
         String log = logStr(checkInstance, DEFAULT_ERROR_INFO);
-        SingleCheckResult<RESULT> singleCheckerResult = SingleCheckResult.error(e, log);
-        return singleCheckerResult;
+        BaseLogicCheckResult<RESULT> baseLogicCheckResult = BaseLogicCheckResult.error(e, log);
+        return baseLogicCheckResult;
 
     }
 
