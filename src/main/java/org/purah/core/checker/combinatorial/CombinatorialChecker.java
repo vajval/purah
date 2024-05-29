@@ -142,8 +142,9 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
 
         public CheckResult check(CheckInstance<Object> checkInstance) {
+            System.out.println(checkInstance);
 
-
+            System.out.println(checkInstance.instanceClass());
             ArgResolver argResolver = getArgResolverManager().getArgResolver(checkInstance.instanceClass());
 
 

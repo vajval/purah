@@ -38,14 +38,10 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
     public abstract CheckResult<RESULT> doCheck(CheckInstance<CHECK_INSTANCE> checkInstance);
 
     private String logStr(CheckInstance<CHECK_INSTANCE> checkInstance, String pre) {
-        Class<?> clazz = this.inputCheckInstanceClass();
 
-        if (checkInstance.instance() != null) {
-            clazz = checkInstance.instance.getClass();
-        }
-        String clazzStr = clazz.getName();
+        String clazzStr = checkInstance.instanceClass().getName();
 
-        return pre + " (field [" + checkInstance.fieldStr() + "] type [" + clazzStr+ "]" + ")";
+        return pre + " (field [" + checkInstance.fieldStr() + "] type [" + clazzStr + "]" + ")";
     }
 
 

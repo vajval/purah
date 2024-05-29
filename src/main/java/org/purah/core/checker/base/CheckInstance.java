@@ -29,6 +29,7 @@ public class CheckInstance<INSTANCE> {
         if (clazzInContext == null) {
             throw new RuntimeException("不要将class设置为null,实在不行就Object.class");
         }
+        this.clazzInContext = clazzInContext;
 
     }
 
