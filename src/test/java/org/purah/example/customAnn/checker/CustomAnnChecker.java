@@ -2,7 +2,7 @@ package org.purah.example.customAnn.checker;
 
 
 import org.purah.core.base.Name;
-import org.purah.core.checker.CheckInstance;
+import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
@@ -22,7 +22,7 @@ import org.springframework.util.StringUtils;
 @Component
 public class CustomAnnChecker extends AbstractCustomAnnChecker {
     public CustomAnnChecker() {
-        super(ExecType.Main.all_success, ResultLevel.failedIgnoreMatchByCombinatorial);
+        super(ExecType.Main.all_success, ResultLevel.failedAndIgnoreNotBaseLogic);
     }
 
     public boolean notNull(NotNull notNull, Integer age) {

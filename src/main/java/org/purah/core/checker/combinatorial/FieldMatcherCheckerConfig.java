@@ -2,8 +2,8 @@ package org.purah.core.checker.combinatorial;
 
 
 
-import org.purah.core.checker.Checker;
-import org.purah.core.checker.CheckerManager;
+import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.base.CheckerManager;
 import org.purah.core.matcher.intf.FieldMatcher;
 
 import java.util.List;

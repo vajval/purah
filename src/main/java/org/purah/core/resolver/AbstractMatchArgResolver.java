@@ -3,7 +3,7 @@ package org.purah.core.resolver;
 
 import com.google.common.collect.Lists;
 import org.purah.core.base.NameUtil;
-import org.purah.core.checker.CheckInstance;
+import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.exception.ArgResolverException;
 import org.purah.core.matcher.intf.FieldMatcher;
 import org.purah.core.matcher.multilevel.MultilevelFieldMatcher;
@@ -16,6 +16,7 @@ import java.util.Set;
 
 
 /**
+ * 支持多级
  * @param <INSTANCE>
  */
 public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver<INSTANCE> {
@@ -29,7 +30,6 @@ public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver
     public Map<String, CheckInstance> getMatchFieldObjectMap(INSTANCE instance, FieldMatcher fieldMatcher) {
         this.baseCheck(instance);
         if (fieldMatcher instanceof MultilevelFieldMatcher ) {
-
             MultilevelFieldMatcher multilevelFieldMatcher=( MultilevelFieldMatcher )fieldMatcher;
             return this.getMultiLevelMap(instance, multilevelFieldMatcher);
         } else {

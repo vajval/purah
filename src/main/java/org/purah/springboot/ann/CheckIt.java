@@ -50,7 +50,7 @@ public @interface CheckIt {
 
     ExecType.Main execType() default ExecType.Main.all_success;
 
-    ResultLevel resultLevel() default ResultLevel.failedIgnoreMatchByCombinatorial;
+    ResultLevel resultLevel() default ResultLevel.failedAndIgnoreNotBaseLogic;
 
 
 

@@ -1,7 +1,7 @@
 package org.purah.core.exception;
 
 
-import org.purah.core.checker.Checker;
+import org.purah.core.checker.base.Checker;
 
 public class CheckerException extends PurahException {
     Checker checker;

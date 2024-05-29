@@ -1,6 +1,6 @@
-package org.purah.core.base;
+package org.purah.core.checker.method;
 
-import org.purah.core.checker.CheckInstance;
+import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.springframework.core.ResolvableType;
@@ -14,14 +14,12 @@ public class PurahEnableMethod {
 
     protected Method method;
 
-
     protected Object bean;
 
     protected String name;
     protected Class<?> resultClass = boolean.class;
 
     protected Class<?> needCheckArgClass;
-
 
     protected boolean argIsCheckInstanceClass = false;
     protected boolean resultIsCheckResultClass = false;

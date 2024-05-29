@@ -2,7 +2,7 @@ package org.purah.core.checker.custom;
 
 
 import org.purah.core.PurahContext;
-import org.purah.core.checker.Checker;
+import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.factory.CheckerFactory;
 

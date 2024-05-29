@@ -21,7 +21,9 @@ public interface CheckResult<T> {
         return execInfo() == ExecInfo.ignore;
     }
 
-//    boolean isMatchedResult();
+    default String info() {
+        return log();
+    }
 
     Exception exception();
 

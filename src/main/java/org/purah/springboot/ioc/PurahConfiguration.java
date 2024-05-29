@@ -2,10 +2,9 @@ package org.purah.springboot.ioc;
 
 
 import org.purah.core.PurahContext;
-import org.purah.core.checker.CheckerManager;
+import org.purah.core.checker.base.CheckerManager;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.resolver.ArgResolverManager;
-import org.purah.springboot.aop.CheckItMethodHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -23,8 +22,6 @@ public class PurahConfiguration implements ApplicationContextAware {
     ApplicationContext applicationContext;
 
 
-    @Autowired
-    PurahContext purahContext;
 
 
     @Override
@@ -49,8 +46,5 @@ public class PurahConfiguration implements ApplicationContextAware {
         return context.checkManager();
     }
 
-    @Bean
-    public CheckItMethodHandler checkItMethodHandler(PurahContext context) {
-        return new CheckItMethodHandler(context);
-    }
+
 }

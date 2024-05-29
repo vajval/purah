@@ -1,7 +1,7 @@
 package org.purah.core.resolver;
 
 import com.google.common.collect.Sets;
-import org.purah.core.checker.CheckInstance;
+import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.matcher.intf.FieldMatcher;
 import org.springframework.core.ResolvableType;
 

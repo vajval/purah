@@ -2,10 +2,10 @@ package org.purah.core.checker.combinatorial;
 
 
 import org.purah.core.base.IName;
-import org.purah.core.checker.BaseChecker;
-import org.purah.core.checker.CheckInstance;
-import org.purah.core.checker.Checker;
-import org.purah.core.checker.CheckerManager;
+import org.purah.core.checker.base.BaseChecker;
+import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.base.CheckerManager;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.matcher.intf.FieldMatcher;
@@ -79,11 +79,10 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
     }
 
     @Override
-    public CheckResult doCheck(CheckInstance<Object> checkInstance2) {
+    public CheckResult doCheck(CheckInstance<Object> checkInstance) {
         if (!init) {
             init();
         }
-        CheckInstance newExecTypeCheckInstance = CheckInstance.copyAndNewExecType(checkInstance2, config.mainExecType);
 
 
         MultiCheckerExecutor executor = createMultiCheckerExecutor();
@@ -94,7 +93,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
           对入参对象的检查
          */
         for (Checker checker : rootInstanceCheckers) {
-            Supplier<CheckResult> BaseLogicCheckResultSupplier = () -> checker.check(newExecTypeCheckInstance);
+            Supplier<CheckResult> BaseLogicCheckResultSupplier = () -> checker.check(checkInstance);
             supplierList.add(BaseLogicCheckResultSupplier);
         }
         /*
@@ -103,11 +102,11 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
         for (FieldMatcherCheckerConfig fieldMatcherCheckerConfig : fieldMatcherCheckerConfigList) {
             FieldMatcherCheckerConfigExecutor fieldMatcherCheckerConfigExecutor = new FieldMatcherCheckerConfigExecutor(fieldMatcherCheckerConfig);
-            supplierList.add(() -> fieldMatcherCheckerConfigExecutor.check(newExecTypeCheckInstance));
+            supplierList.add(() -> fieldMatcherCheckerConfigExecutor.check(checkInstance));
         }
         executor.exec(supplierList);
 
-        String log = "[" + checkInstance2.fieldStr() + "]: " + this.name();
+        String log = "[" + checkInstance.fieldStr() + "]: " + this.name();
         CombinatorialCheckResult result = executor.toCombinatorialCheckResult(log);
         result.setCheckLogicFrom(this.logicFrom());
         return result;
@@ -144,9 +143,16 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
         public CheckResult check(CheckInstance<Object> checkInstance) {
 
+
+            ArgResolver argResolver = getArgResolverManager().getArgResolver(checkInstance.instanceClass());
+
+
+
             Object instance = checkInstance.instance();
 
-            ArgResolver argResolver = getArgResolverManager().getArgResolver(instance.getClass());
+
+
+
             Map<String, CheckInstance> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(instance, fieldMatcherCheckerConfig.fieldMatcher);
 
             List<Supplier<CheckResult>> supplierList = new ArrayList<>();
@@ -179,7 +185,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
             String info = checkInstance.fieldStr() + " match:(" + fieldMatcher + ") checkers: " + checkerNamesStr;
             CombinatorialCheckResult result = multiCheckerExecutor.toCombinatorialCheckResult(info);
 
-            result.setCheckLogicFrom("combinatorial by config,see info");
+            result.setCheckLogicFrom("combinatorial by config,see log");
             return result;
         }
     }

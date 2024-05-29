@@ -1,4 +1,4 @@
-package org.purah.core.checker;
+package org.purah.core.checker.base;
 
 
 import org.purah.core.checker.result.CheckResult;
@@ -6,36 +6,46 @@ import org.purah.core.exception.CheckerException;
 import org.purah.core.exception.PurahException;
 import org.springframework.core.ResolvableType;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 对 同名  但是对支持的入参对象class不同的多个 checker封装
+ * 例如两个 checker 都叫“checkId”
+ * 但是一个支持的入参为String 另一个为Long
+ * 这两个 会被封装到 typeEnableCheckerCacheMap中
+ * 根据需要检查对象的
+ *
+ * @param <CHECK_INSTANCE>
+ * @param <RESULT>
+ */
 public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTANCE, RESULT> {
 
 
     String name;
-    CheckClass BaseLogicCheckClass;
-    Checker<?, ?> BaseLogicChecker;
+    CheckClass defaultCheckClass;
+    Checker<?, ?> defaultChecker;
+
+    Map<CheckClass, Checker<?, ?>> typeEnableCheckerCacheMap = new ConcurrentHashMap<>();
 
 
-    Map<CheckClass, Checker<?, ?>> checkerMap = new ConcurrentHashMap<>();
-
-
-    public ExecChecker(String name) {
+    public ExecChecker(String name, Checker<?, ?> checker) {
         this.name = name;
-
+        this.addNewChecker(checker);
     }
 
 
     public void addNewChecker(Checker<?, ?> checker) {
-        if (BaseLogicChecker == null) {
-            this.BaseLogicChecker = checker;
-            this.BaseLogicCheckClass = CheckClass.byChecker(checker);
+        if (defaultChecker == null) {
+            this.defaultChecker = checker;
+            this.defaultCheckClass = CheckClass.byChecker(checker);
         }
         CheckClass checkClass = CheckClass.byChecker(checker);
-        this.checkerMap.put(checkClass, checker);
-        if (checkClass.equals(BaseLogicCheckClass)) {
-            BaseLogicChecker = checker;
+        this.typeEnableCheckerCacheMap.put(checkClass, checker);
+        if (checkClass.equals(defaultCheckClass)) {
+            defaultChecker = checker;
         }
     }
 
@@ -48,7 +58,7 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
     public CheckResult check(CheckInstance<CHECK_INSTANCE> checkInstance) {
 
 
-        CheckClass checkClass = CheckClass.byInstance(checkInstance.instance());
+        CheckClass checkClass = CheckClass.byInstance(checkInstance);
         Checker<?, ?> checker = getChecker(checkClass);
 
         if (checker == null) {
@@ -73,17 +83,17 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
 //            if (checkerMap.size() != 1) {
 //                throw new RuntimeException("入参为null，而尔");
 //            }
-            return BaseLogicChecker;
+            return defaultChecker;
         }
 
-        if (BaseLogicSupport(inputCheckClass)) return BaseLogicChecker;
-        Checker<?, ?> result = checkerMap.get(inputCheckClass);
+        if (BaseLogicSupport(inputCheckClass)) return defaultChecker;
+        Checker<?, ?> result = typeEnableCheckerCacheMap.get(inputCheckClass);
         if (result != null) return result;
-        for (Map.Entry<CheckClass, Checker<?, ?>> entry : checkerMap.entrySet()) {
+        for (Map.Entry<CheckClass, Checker<?, ?>> entry : typeEnableCheckerCacheMap.entrySet()) {
             CheckClass entryKey = entry.getKey();
             if (support(inputCheckClass, entryKey)) {
                 result = entry.getValue();
-                checkerMap.put(inputCheckClass, result);
+                typeEnableCheckerCacheMap.put(inputCheckClass, result);
                 return result;
             }
         }
@@ -91,7 +101,7 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
     }
 
     protected boolean BaseLogicSupport(CheckClass checkClass) {
-        return BaseLogicCheckClass.support(checkClass);
+        return defaultCheckClass.support(checkClass);
     }
 
 
@@ -119,24 +129,23 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
             return this.clazz.isAssignableFrom(inputCheckClass.clazz);
         }
 
-
         @Override
-        public boolean equals(Object obj) {
-            if (obj == null) return false;
-            return Objects.equals(clazz, ((CheckClass) obj).clazz);
-
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            CheckClass that = (CheckClass) o;
+            return Objects.equals(clazz, that.clazz);
         }
+
 
         @Override
         public int hashCode() {
             return Objects.hash(clazz);
         }
 
-        static CheckClass byInstance(Object instance) {
-            if (instance != null) {
-                return byClass(instance.getClass());
-            }
-            return empty;
+        static CheckClass byInstance(CheckInstance checkInstance
+        ) {
+            return byClass(checkInstance.instanceClass());
         }
 
         static CheckClass byClass(Class<?> clazz) {
@@ -147,17 +156,7 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
         }
 
         static CheckClass byChecker(Checker<?, ?> checker) {
-            if (checker instanceof BaseChecker ) {
-
-                BaseChecker baseChecker=(BaseChecker) checker;
-                return byClass(baseChecker.inputCheckInstanceClass());
-            }
-            ResolvableType[] generics =
-                    ResolvableType
-                            .forClass(checker.getClass())
-                            .as(Checker.class)
-                            .getGenerics();
-            return byClass(generics[0].resolve());
+            return byClass(checker.inputCheckInstanceClass());
         }
 
         @Override

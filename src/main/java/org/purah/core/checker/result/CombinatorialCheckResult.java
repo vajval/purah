@@ -1,9 +1,7 @@
 package org.purah.core.checker.result;
 
 
-import org.purah.core.checker.combinatorial.MultiCheckerExecutor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CombinatorialCheckResult extends MultiCheckResult<BaseLogicCheckResult> {

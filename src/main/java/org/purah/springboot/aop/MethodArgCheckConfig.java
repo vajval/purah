@@ -4,6 +4,9 @@ import org.purah.springboot.ann.CheckIt;
 
 import java.util.List;
 
+/**
+ * 对函数的一个参数检验的配置
+ */
 public class MethodArgCheckConfig {
 
     /**

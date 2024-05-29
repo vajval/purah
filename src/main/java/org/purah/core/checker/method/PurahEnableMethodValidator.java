@@ -1,4 +1,4 @@
-package org.purah.core.base;
+package org.purah.core.checker.method;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

@@ -35,7 +35,7 @@ public class MultiCheckerExecutor {
                 return true;
             }
 
-        } else if (resultLevel == ResultLevel.failedIgnoreMatchByCombinatorial) {
+        } else if (resultLevel == ResultLevel.failedAndIgnoreNotBaseLogic) {
             if ((!checkResult.isSuccess())) {
                 return true;
             }

@@ -2,9 +2,9 @@ package org.purah.example.test;
 
 
 import org.purah.core.base.Name;
-import org.purah.core.checker.BaseChecker;
-import org.purah.core.checker.CheckInstance;
-import org.purah.core.checker.Checker;
+import org.purah.core.checker.base.BaseChecker;
+import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.springboot.ann.EnableOnPurahContext;

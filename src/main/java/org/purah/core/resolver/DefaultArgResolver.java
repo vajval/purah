@@ -1,9 +1,10 @@
 package org.purah.core.resolver;
 
 import com.google.common.collect.Sets;
-import org.purah.core.checker.CheckInstance;
+import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.matcher.intf.FieldMatcher;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +22,8 @@ public class DefaultArgResolver implements ArgResolver<Object> {
     @Override
     public Map<String, CheckInstance> getMatchFieldObjectMap(Object o, FieldMatcher fieldMatcher) {
         if(o==null){
-            throw new RuntimeException();
+            return Collections.emptyMap();
+//            throw new RuntimeException();
         }
         ArgResolver argResolver;
         if (Map.class.isAssignableFrom(o.getClass())) {

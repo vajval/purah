@@ -7,9 +7,7 @@ import java.util.List;
 
 public class MultiCheckResult<T extends CheckResult> implements CheckResult<List<T>> {
 
-
     protected BaseLogicCheckResult mainCheckResult;
-
     protected List<T> valueList;
 
     public MultiCheckResult(BaseLogicCheckResult mainCheckResult, List<T> valueList) {
@@ -19,6 +17,7 @@ public class MultiCheckResult<T extends CheckResult> implements CheckResult<List
 
 
     public List<BaseLogicCheckResult> allBaseLogicCheckResult(ResultLevel resultLevel) {
+
         List<BaseLogicCheckResult> baseLogicCheckResults = allBaseLogicCheckResultByRecursion(this, resultLevel);
 
         return baseLogicCheckResults;
@@ -69,8 +68,6 @@ public class MultiCheckResult<T extends CheckResult> implements CheckResult<List
     @Override
     public void setCheckLogicFrom(String logicFrom) {
         this.mainCheckResult.setCheckLogicFrom(logicFrom);
-
-
     }
 
     @Override

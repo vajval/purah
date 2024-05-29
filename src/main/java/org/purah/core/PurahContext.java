@@ -1,8 +1,8 @@
 package org.purah.core;
 
 
-import org.purah.core.checker.Checker;
-import org.purah.core.checker.CheckerManager;
+import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.base.CheckerManager;
 import org.purah.core.checker.combinatorial.CombinatorialChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;

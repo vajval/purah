@@ -1,4 +1,4 @@
-package org.purah.core.checker;
+package org.purah.core.checker.base;
 
 
 import org.purah.core.checker.result.CheckResult;
@@ -21,7 +21,6 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
             }
         } catch (Exception e) {
             throw e;
-//            resultCheckResult = this.error(checkInstance, e);
         }
 
         setLogicFrom(resultCheckResult);
@@ -46,7 +45,7 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
         }
         String clazzStr = clazz.getName();
 
-        return pre + "  (" + "object [" + clazzStr + "] from root [" + checkInstance.fieldStr() + "]" + ")";
+        return pre + " (field [" + checkInstance.fieldStr() + "] type [" + clazzStr+ "]" + ")";
     }
 
 

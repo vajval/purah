@@ -1,8 +1,7 @@
 package org.purah.core.checker.method;
 
-import org.purah.core.base.PurahEnableMethod;
-import org.purah.core.checker.Checker;
-import org.purah.core.checker.CheckerProxy;
+import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.base.CheckerProxy;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;
 
@@ -34,16 +33,14 @@ public class MethodToCheckerFactory implements CheckerFactory {
     @Override
     public Checker createChecker(String needMatchCheckerName) {
 
-        Method fMethod = method;
 
         try {
             Checker result = (Checker) method.invoke(bean, needMatchCheckerName);
-            return new CheckerProxy(result) {
-                @Override
-                public String logicFrom() {
-                    return fMethod.toGenericString();
-                }
-            };
+            String name = needMatchCheckerName;
+            if (result.name() != null) {
+                name = result.name();
+            }
+            return new CheckerProxy(result, name, method.toGenericString());
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

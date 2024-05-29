@@ -1,9 +1,9 @@
 package org.purah.springboot.ioc;
 
 import org.purah.core.PurahContext;
-import org.purah.core.base.PurahEnableMethod;
-import org.purah.core.checker.Checker;
-import org.purah.core.checker.CheckerManager;
+import org.purah.core.checker.method.PurahEnableMethod;
+import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.base.CheckerManager;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.checker.method.MethodToChecker;

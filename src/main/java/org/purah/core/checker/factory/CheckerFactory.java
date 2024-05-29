@@ -1,7 +1,7 @@
 package org.purah.core.checker.factory;
 
 
-import org.purah.core.checker.Checker;
+import org.purah.core.checker.base.Checker;
 
 public interface CheckerFactory<T> {
 
@@ -10,6 +10,9 @@ public interface CheckerFactory<T> {
 
     Checker createChecker(String needMatchCheckerName);
 
+    default boolean cacheBeCreatedChecker() {
+        return true;
+    }
 
 
 }

@@ -5,10 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.Util;
-import org.purah.core.checker.BaseChecker;
-import org.purah.core.checker.CheckInstance;
-import org.purah.core.checker.Checker;
-import org.purah.core.checker.Checkers;
+import org.purah.core.checker.base.BaseChecker;
+import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.base.Checkers;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
@@ -121,13 +121,13 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
-        for (CheckResult result : CheckResult.value()) {
+        CombinatorialCheckResult combinatorialCheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.createObjectInstance(Util.trade));
+        for (CheckResult result : combinatorialCheckResult.value()) {
             System.out.println(result);
         }
-
-        Assertions.assertFalse(CheckResult.isSuccess());
-        Assertions.assertEquals(2, CheckResult.value().size());
+        System.out.println(combinatorialCheckResult);
+        Assertions.assertFalse(combinatorialCheckResult.isSuccess());
+        Assertions.assertEquals(2, combinatorialCheckResult.value().size());
     }
 
     @Test
@@ -148,7 +148,7 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
+        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.createObjectInstance(Util.trade));
         Assertions.assertFalse(CheckResult.isSuccess());
         for (CheckResult result : CheckResult.value()) {
             System.out.println(result);
@@ -173,7 +173,7 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
+        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.createObjectInstance(Util.trade));
         Assertions.assertTrue(CheckResult.isSuccess());
         Assertions.assertEquals(CheckResult.value().size(), 1);
 
@@ -197,7 +197,7 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
+        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.createObjectInstance(Util.trade));
         Assertions.assertTrue(CheckResult.isSuccess());
         for (CheckResult result : CheckResult.value()) {
             System.out.println(result);
@@ -231,7 +231,7 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.create(Util.trade));
+        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.createObjectInstance(Util.trade));
         Assertions.assertTrue(CheckResult.isSuccess());
         Assertions.assertEquals(CheckResult.value().size(), 3);
 

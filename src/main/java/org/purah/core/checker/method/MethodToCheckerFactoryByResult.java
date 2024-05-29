@@ -1,10 +1,9 @@
 package org.purah.core.checker.method;
 
 
-import org.purah.core.base.PurahEnableMethod;
-import org.purah.core.checker.BaseChecker;
-import org.purah.core.checker.CheckInstance;
-import org.purah.core.checker.Checker;
+import org.purah.core.checker.base.BaseChecker;
+import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;

@@ -1,4 +1,4 @@
-package org.purah.core.checker;
+package org.purah.core.checker.base;
 
 
 import org.purah.core.base.IName;

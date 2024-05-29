@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.Util;
 import org.purah.core.base.Name;
-import org.purah.core.checker.CheckInstance;
-import org.purah.core.checker.CheckerManager;
-import org.purah.core.checker.ExecChecker;
+import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.CheckerManager;
+import org.purah.core.checker.base.ExecChecker;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 
 import java.lang.reflect.Method;
@@ -32,7 +32,7 @@ class MethodToCheckerTest {
 
         @Name("id为1")
         public BaseLogicCheckResult checkByUser(Util.User user) {
-            return checkById(CheckInstance.create(user.getId()));
+            return checkById(CheckInstance.createObjectInstance(user.getId()));
 
         }
 
@@ -46,12 +46,12 @@ class MethodToCheckerTest {
         TestCheckers testCheckers = new TestCheckers();
         Method testMethod = TestCheckers.class.getMethod("checkById", Long.class);
         MethodToChecker methodToChecker = new BaseLogicMethodToChecker(testCheckers, testMethod);
-        System.out.println(methodToChecker.check(CheckInstance.create(1L)));
-        Assertions.assertTrue(methodToChecker.check(CheckInstance.create(1L)).isSuccess());
+        System.out.println(methodToChecker.check(CheckInstance.createObjectInstance(1L)));
+        Assertions.assertTrue(methodToChecker.check(CheckInstance.createObjectInstance(1L)).isSuccess());
 
         testMethod = TestCheckers.class.getMethod("checkById", CheckInstance.class);
         methodToChecker = new BaseLogicMethodToChecker(testCheckers, testMethod);
-        Assertions.assertTrue(methodToChecker.check(CheckInstance.create(1L)).isSuccess());
+        Assertions.assertTrue(methodToChecker.check(CheckInstance.createObjectInstance(1L)).isSuccess());
 
     }
 
@@ -73,12 +73,12 @@ class MethodToCheckerTest {
         methodToChecker = new BaseLogicMethodToChecker(testCheckers, TestCheckers.class.getMethod("checkByUser", Util.User.class));
         checkerManager.reg(methodToChecker);
         ExecChecker execChecker = checkerManager.get("id为1");
-        Assertions.assertTrue(execChecker.check(CheckInstance.create(Util.initiator)).isSuccess());
-        Assertions.assertFalse(execChecker.check(CheckInstance.create(Util.recipients)).isSuccess());
+        Assertions.assertTrue(execChecker.check(CheckInstance.createObjectInstance(Util.initiator)).isSuccess());
+        Assertions.assertFalse(execChecker.check(CheckInstance.createObjectInstance(Util.recipients)).isSuccess());
 
 
-        Assertions.assertTrue(execChecker.check(CheckInstance.create(1L)).isSuccess());
-        Assertions.assertFalse(execChecker.check(CheckInstance.create(2L)).isSuccess());
+        Assertions.assertTrue(execChecker.check(CheckInstance.createObjectInstance(1L)).isSuccess());
+        Assertions.assertFalse(execChecker.check(CheckInstance.createObjectInstance(2L)).isSuccess());
     }
 
     @Test

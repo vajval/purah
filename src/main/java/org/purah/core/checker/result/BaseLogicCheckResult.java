@@ -15,6 +15,8 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
 
     protected String log;
 
+    protected String info;
+
     private BaseLogicCheckResult(ExecInfo execInfo, T data, String log) {
         this.execInfo = execInfo;
         this.data = data;
@@ -45,6 +47,20 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
         return e;
     }
 
+    public BaseLogicCheckResult<T> setInfo(String info) {
+        this.info = info;
+        return this;
+
+    }
+
+    @Override
+    public String info() {
+        if (info == null) {
+            return CheckResult.super.info();
+        }
+        return info;
+
+    }
 
     public static <T> BaseLogicCheckResult<T> success() {
         return new BaseLogicCheckResult<T>(ExecInfo.success, null, null);
@@ -58,12 +74,14 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
         return new BaseLogicCheckResult<T>(ExecInfo.failed, data, log);
 
     }
+
     public static <T> BaseLogicCheckResult<T> ignore(String log) {
-        BaseLogicCheckResult<T> result = new BaseLogicCheckResult<>(ExecInfo.ignore, null,log);
+        BaseLogicCheckResult<T> result = new BaseLogicCheckResult<>(ExecInfo.ignore, null, log);
         result.log = log;
         return result;
 
     }
+
     public static <T> BaseLogicCheckResult<T> error(Exception e, String log) {
         BaseLogicCheckResult<T> result = new BaseLogicCheckResult<>(ExecInfo.error, e);
         result.log = log;
@@ -99,14 +117,8 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
         }
         objectMap.put("log", log);
         objectMap.put("data", data);
-
-
         return gson.toJson(objectMap);
     }
 
-//    @Override
-//    public boolean isMatchedResult() {
-//        return false;
-//    }
 }
 

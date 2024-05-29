@@ -1,9 +1,9 @@
 package org.purah.core.checker.custom;
 
 
-import org.purah.core.checker.BaseChecker;
-import org.purah.core.checker.CheckInstance;
-import org.purah.core.checker.ExecChecker;
+import org.purah.core.checker.base.BaseChecker;
+import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.ExecChecker;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.combinatorial.MultiCheckerExecutor;
 import org.purah.core.checker.result.*;
@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class AbstractCustomAnnChecker extends BaseChecker {
 
@@ -60,8 +59,9 @@ public class AbstractCustomAnnChecker extends BaseChecker {
             }
 
             String name = this.name() + "[" + annClazz.getName() + "]";
-            ExecChecker execChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> new ExecChecker(name));
             AnnMethodToChecker annMethodToChecker = new AnnMethodToChecker(this, declaredMethod, name);
+
+            ExecChecker execChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> new ExecChecker(name, annMethodToChecker));
 
             execChecker.addNewChecker(annMethodToChecker);
 
@@ -83,7 +83,7 @@ public class AbstractCustomAnnChecker extends BaseChecker {
     @Override
     public CheckResult doCheck(CheckInstance checkInstance) {
         List<Annotation> enableAnnotations =
-                ((CheckInstance<?>) checkInstance).getAnnotations().stream().filter(i -> map.containsKey(i.annotationType())).collect(Collectors.toList());
+                ((CheckInstance<?>) checkInstance).annListOnField().stream().filter(i -> map.containsKey(i.annotationType())).collect(Collectors.toList());
 
 
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel);
@@ -96,15 +96,7 @@ public class AbstractCustomAnnChecker extends BaseChecker {
 
         multiCheckerExecutor.exec(ruleResultSupplierList);
 
-
-        System.out.println(checkInstance);
-
-
-        System.out.println(ruleResultSupplierList.size());
-
-
-        String log = "root." + checkInstance.fieldStr() + "  @Ann:" + annListLogStr + " : "+this.name();
-        System.out.println(multiCheckerExecutor.multiCheckResult(log));
+        String log = "root." + checkInstance.fieldStr() + "  @Ann:" + annListLogStr + " : " + this.name();
         return multiCheckerExecutor.multiCheckResult(log);
 
 

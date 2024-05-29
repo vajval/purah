@@ -2,7 +2,7 @@ package org.purah.core.resolver;
 
 
 
-import org.purah.core.checker.CheckInstance;
+import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.matcher.intf.FieldMatcher;
 
 import java.util.Map;

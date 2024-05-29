@@ -1,9 +1,7 @@
 package org.purah.core.checker.method;
 
 import com.google.common.collect.Lists;
-import org.purah.core.base.PurahEnableMethod;
-import org.purah.core.base.PurahEnableMethodValidator;
-import org.purah.core.checker.CheckInstance;
+import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.result.CheckResult;
 
 import java.lang.annotation.Annotation;

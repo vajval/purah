@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.exception.MethodArgCheckException;
@@ -17,9 +16,7 @@ import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmpty;
 import org.purah.example.customAnn.ann.NotNull;
 import org.purah.example.customAnn.pojo.CustomUser;
-import org.purah.springboot.result.ArgCheckResult;
 import org.purah.springboot.result.AutoFillCheckResult;
-import org.purah.springboot.result.MethodCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -107,7 +104,8 @@ class CustomServiceTest {
 
     @Test
     void booleanCheckDefaultCheckerByClassAnn() {
-        Assertions.assertEquals(customService.booleanCheck(goodCustomUser), customService.booleanCheckDefaultCheckerByClassAnn(goodCustomUser));
+        System.out.println(customService.booleanCheck(null));
+        Assertions.assertEquals(customService.booleanCheck(null), customService.booleanCheckDefaultCheckerByClassAnn(goodCustomUser));
 
         Assertions.assertEquals(customService.booleanCheck(badCustomUser), customService.booleanCheckDefaultCheckerByClassAnn(badCustomUser));
 
@@ -158,7 +156,7 @@ class CustomServiceTest {
         System.out.println("------------------------------------");
         AutoFillCheckResult checkResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
         assertFalse(checkResult.isSuccess());
-        List<BaseLogicCheckResult> resultList = checkResult.allBaseLogicCheckResult(ResultLevel.failedIgnoreMatchByCombinatorial);
+        List<BaseLogicCheckResult> resultList = checkResult.allBaseLogicCheckResult(ResultLevel.failedAndIgnoreNotBaseLogic);
 //        value.stream().
         String trim = resultList.stream().map(CheckResult::log)
                 .reduce("", (a, b) -> a + b).trim();

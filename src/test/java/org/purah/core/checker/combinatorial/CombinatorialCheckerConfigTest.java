@@ -7,9 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.Util;
-import org.purah.core.checker.CheckInstance;
-import org.purah.core.checker.Checker;
-import org.purah.core.checker.Checkers;
+import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.base.Checkers;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
@@ -71,10 +71,10 @@ class CombinatorialCheckerConfigTest {
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
 
 
-        CheckResult result = checker.check(CheckInstance.create(Util.initiator));
+        CheckResult result = checker.check(CheckInstance.createObjectInstance(Util.initiator));
         Assertions.assertTrue(result.isSuccess());
 
-        result = checker.check(CheckInstance.create(Util.recipients));
+        result = checker.check(CheckInstance.createObjectInstance(Util.recipients));
         Assertions.assertFalse(result.isSuccess());
     }
 
@@ -98,7 +98,7 @@ class CombinatorialCheckerConfigTest {
         Checker multiLevelchecker = purahContext.regNewCombinatorialChecker(properties);
 
 
-        CheckResult result = multiLevelchecker.check(CheckInstance.create(Util.trade));
+        CheckResult result = multiLevelchecker.check(CheckInstance.createObjectInstance(Util.trade));
         Assertions.assertTrue(result.isSuccess());
     }
 

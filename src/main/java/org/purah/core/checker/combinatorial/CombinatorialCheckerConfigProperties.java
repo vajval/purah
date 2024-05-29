@@ -8,15 +8,13 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 public class CombinatorialCheckerConfigProperties {
-    String checkerName;
-    int resultLevel = ResultLevel.failedIgnoreMatchByCombinatorial.value();
+    private String checkerName;
+    private int resultLevel = ResultLevel.failedAndIgnoreNotBaseLogic.value();
+    private String logicFrom;
 
-    public String logicFrom;
-
-
-    ExecType.Main mainExecType = ExecType.Main.all_success;
-    List<String> useCheckerNames = new ArrayList<>();
-    LinkedHashMap<String, Map<String, List<String>>> matcherFieldCheckerMapping = new LinkedHashMap<>();
+    private ExecType.Main mainExecType = ExecType.Main.all_success;
+    private List<String> useCheckerNames = new ArrayList<>();
+    private LinkedHashMap<String, Map<String, List<String>>> matcherFieldCheckerMapping = new LinkedHashMap<>();
 
 
     public String getLogicFrom() {
@@ -30,8 +28,6 @@ public class CombinatorialCheckerConfigProperties {
             objectMap.put("mainExecType", mainExecType);
             Gson gson = new Gson();
             String json = gson.toJson(objectMap);
-
-
             return "properties: " + json;
         }
         return logicFrom;

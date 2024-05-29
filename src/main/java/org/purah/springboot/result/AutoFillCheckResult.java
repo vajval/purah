@@ -24,7 +24,7 @@ public class AutoFillCheckResult implements CheckResult<MethodCheckResult> {
 
     public List<BaseLogicCheckResult> allBaseLogicCheckResult() {
 
-        return allBaseLogicCheckResult(ResultLevel.failedIgnoreMatchByCombinatorial);
+        return allBaseLogicCheckResult(ResultLevel.failedAndIgnoreNotBaseLogic);
     }
 
 
