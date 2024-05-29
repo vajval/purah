@@ -34,4 +34,26 @@ public enum ResultLevel {
 //        }
         throw new RuntimeException();
     }
+
+
+    public boolean needAddToFinalResult(CheckResult checkResult) {
+        if (this == ResultLevel.all) {
+            return true;
+        } else if (this == ResultLevel.failed) {
+            if (!checkResult.isSuccess()) {
+                return true;
+            }
+
+        } else if (this == ResultLevel.failedAndIgnoreNotBaseLogic) {
+            if ((!checkResult.isSuccess())) {
+                return true;
+            }
+
+        } else if (this == ResultLevel.error) {
+            if (checkResult.isError()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

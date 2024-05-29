@@ -89,16 +89,19 @@ public class AbstractCustomAnnChecker extends BaseChecker {
 
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel);
         List<Supplier<CheckResult<?>>> ruleResultSupplierList = new ArrayList<>();
+
         for (Annotation enableAnnotation : enableAnnotations) {
-            ruleResultSupplierList.add(() -> map.get(enableAnnotation.annotationType()).check(checkInstance));
+            multiCheckerExecutor.add(() -> map.get(enableAnnotation.annotationType()).check(checkInstance));
         }
         String annListLogStr = enableAnnotations.stream().map(i -> i.annotationType().getSimpleName()).collect(Collectors.joining(",", "[", "]"));
 
 
-        multiCheckerExecutor.exec(ruleResultSupplierList);
+
 
         String log = "root." + checkInstance.fieldStr() + "  @Ann:" + annListLogStr + " : " + this.name();
-        return multiCheckerExecutor.multiCheckResult(log);
+
+
+        return    multiCheckerExecutor.toMultiCheckResult(log);
 
 
     }

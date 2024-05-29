@@ -1,5 +1,7 @@
 package org.purah.core.checker.combinatorial;
 
+import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.result.*;
 
 import java.util.ArrayList;
@@ -17,44 +19,48 @@ public class MultiCheckerExecutor {
     ExecInfo execInfo = ExecInfo.success;
     Exception e;
 
-    List<CheckResult> fieldCheckResultList = new ArrayList<>();
+    List<CheckResult> finalExecResult = new ArrayList<>();
     ResultLevel resultLevel;
+    List<Supplier<CheckResult<?>>> ruleResultSupplierList = new ArrayList<>();
+    boolean exec = false;
 
-
-    public MultiCheckerExecutor(ExecType.Main mainExecType, ResultLevel resultLevel) {
+    public MultiCheckerExecutor(
+            ExecType.Main mainExecType, ResultLevel resultLevel) {
         this.mainExecType = mainExecType;
         this.resultLevel = resultLevel;
 
     }
 
-    public static boolean needAdd(CheckResult checkResult, ResultLevel resultLevel) {
-        if (resultLevel == ResultLevel.all) {
-            return true;
-        } else if (resultLevel == ResultLevel.failed) {
-            if (!checkResult.isSuccess()) {
-                return true;
-            }
 
-        } else if (resultLevel == ResultLevel.failedAndIgnoreNotBaseLogic) {
-            if ((!checkResult.isSuccess())) {
-                return true;
-            }
 
-        } else if (resultLevel == ResultLevel.error) {
-            if (checkResult.isError()) {
-                return true;
-            }
+    public MultiCheckerExecutor add(Supplier<CheckResult<?>> supplier) {
+        if (exec) {
+            throw new RuntimeException("已经执行玩了，不能在添加了");
         }
-        return false;
+        ruleResultSupplierList.add(supplier);
+
+        return this;
     }
 
-    public ExecInfo exec(List<Supplier<CheckResult<?>>> ruleResultSupplierList) {
+    public MultiCheckerExecutor add(CheckInstance checkInstance, Checker checker) {
+        if (exec) {
+            throw new RuntimeException("已经执行玩了，不能在添加了");
+        }
+        this.add(() -> checker.check(checkInstance));
+
+        return this;
+    }
+
+
+    private ExecInfo execIfNotExec(List<Supplier<CheckResult<?>>> ruleResultSupplierList) {
+        if (exec) return execInfo;
+        exec = true;
         ExecInfo result = ExecInfo.success;
 
         for (Supplier<? extends CheckResult<?>> supplier : ruleResultSupplierList) {
             CheckResult<?> checkResult = supplier.get();
-            if (needAdd(checkResult, resultLevel)) {
-                this.fieldCheckResultList.add(checkResult);
+            if (resultLevel.needAddToFinalResult(checkResult)) {
+                this.finalExecResult.add(checkResult);
             }
             if (checkResult.isIgnore()) {
                 continue;
@@ -94,7 +100,20 @@ public class MultiCheckerExecutor {
 
     }
 
-    public MultiCheckResult<CheckResult<?>> multiCheckResult(String log) {
+
+    public MultiCheckResult<CheckResult<?>> toMultiCheckResult(String log) {
+        execIfNotExec(ruleResultSupplierList);
+        return multiCheckResult(log);
+    }
+
+    public CombinatorialCheckResult toCombinatorialCheckResult(String log) {
+        execIfNotExec(ruleResultSupplierList);
+        MultiCheckResult<CheckResult<?>> multiCheckResult = multiCheckResult(log);
+        return CombinatorialCheckResult.create(multiCheckResult, resultLevel);
+    }
+
+
+    private MultiCheckResult<CheckResult<?>> multiCheckResult(String log) {
 
 
         BaseLogicCheckResult<Object> mainResult = null;
@@ -107,14 +126,10 @@ public class MultiCheckerExecutor {
             mainResult = BaseLogicCheckResult.error(e, execInfo.value() + " (" + log + ")");
 
         }
-        return new MultiCheckResult(mainResult, fieldCheckResultList);
+        return new MultiCheckResult(mainResult, finalExecResult);
 
 
     }
 
-    public CombinatorialCheckResult toCombinatorialCheckResult(String log) {
-        MultiCheckResult<CheckResult<?>> multiCheckResult = multiCheckResult(log);
-        return CombinatorialCheckResult.create(multiCheckResult, resultLevel);
 
-    }
 }

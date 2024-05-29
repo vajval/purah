@@ -121,12 +121,11 @@ public class MethodHandlerChecker extends BaseChecker {
         List<Supplier<CheckResult<?>>> execList = new ArrayList<>();
 
         for (MethodArgCheckConfig methodArgCheckConfig : methodArgCheckConfigList) {
-            execList.add(() -> this.checkBaseLogicArgByConfig(methodArgCheckConfig, args[methodArgCheckConfig.index]));
-
+            multiCheckerExecutor.add(() -> this.checkBaseLogicArgByConfig(methodArgCheckConfig, args[methodArgCheckConfig.index]));
         }
-        multiCheckerExecutor.exec(execList);
+
         String log = methodsToCheckersBean.getClass() + "|method:" + method.getName();
-        MultiCheckResult<ArgCheckResult> multiCheckResult = (MultiCheckResult) multiCheckerExecutor.multiCheckResult(log);
+        MultiCheckResult<ArgCheckResult> multiCheckResult = (MultiCheckResult) multiCheckerExecutor.toMultiCheckResult(log);
 
 
         return new MethodCheckResult(
@@ -146,19 +145,20 @@ public class MethodHandlerChecker extends BaseChecker {
         MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.execType(), checkIt.resultLevel());
 
 
-        List<Supplier<CheckResult<?>>> execList = new ArrayList<>();
+//        List<Supplier<CheckResult<?>>> execList = new ArrayList<>();
 
         List<? extends ExecChecker<?, ?>> checkerList = methodArgCheckConfig.checkerNameList.stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
 
         for (Checker checker : checkerList) {
-            execList.add(() -> checker.check(CheckInstance.create(checkArg, methodArgCheckConfig.clazz)));
+            executor.add(CheckInstance.create(checkArg, methodArgCheckConfig.clazz), checker);
+//            execList.add(() -> checker.check(CheckInstance.create(checkArg, methodArgCheckConfig.clazz)));
         }
 
-        executor.exec(execList);
+        ;
         String log = "method:" + method.getName() + "|arg" + methodArgCheckConfig.index;
 
 
-        MultiCheckResult<CheckResult<?>> multiCheckResult = executor.multiCheckResult(log);
+        MultiCheckResult<CheckResult<?>> multiCheckResult = executor.toMultiCheckResult(log);
 
 
         return ArgCheckResult.create(multiCheckResult.mainCheckResult(), methodArgCheckConfig.checkerNameList,

@@ -31,10 +31,10 @@ public class MultiCheckResult<T extends CheckResult> implements CheckResult<List
                 MultiCheckResult childResult = (MultiCheckResult) o;
                 resultList.addAll(allBaseLogicCheckResultByRecursion(childResult, resultLevel));
             } else if (o instanceof BaseLogicCheckResult) {
-                BaseLogicCheckResult BaseLogicCheckResult = (BaseLogicCheckResult) o;
-                boolean needAdd = MultiCheckerExecutor.needAdd(BaseLogicCheckResult, resultLevel);
+                BaseLogicCheckResult baseLogicCheckResult = (BaseLogicCheckResult) o;
+                boolean needAdd = resultLevel.needAddToFinalResult(baseLogicCheckResult);
                 if (needAdd) {
-                    resultList.add(BaseLogicCheckResult);
+                    resultList.add(baseLogicCheckResult);
                 }
             }
         }

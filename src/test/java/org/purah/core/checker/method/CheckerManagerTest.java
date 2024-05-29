@@ -28,6 +28,7 @@ class CheckerManagerTest {
         checkerManager.reg(userChecker);
 
         Checker checker = checkerManager.get("发起者张三检测");
+
         Assertions.assertTrue(checker.check(CheckInstance.createObjectInstance(trade)).isSuccess());
         Assertions.assertTrue(checker.check(CheckInstance.createObjectInstance(initiator)).isSuccess());
 
