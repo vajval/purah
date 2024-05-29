@@ -21,15 +21,18 @@ class DefaultArgResolverTest {
         ReflectArgResolverTest.TestObject testObject = ReflectArgResolverTest.TestObject.create();
 
 
-        Map<String, CheckInstance> getFromMap = defaultArgResolver.getMatchFieldObjectMap(testStringObjectMap,wildCardMatcher);
+        Map<String, CheckInstance> getFromMap = defaultArgResolver.getMatchFieldObjectMap(testStringObjectMap, wildCardMatcher);
 
-        Map<String, CheckInstance> getFromObject = defaultArgResolver.getMatchFieldObjectMap(testObject,wildCardMatcher);
+        Map<String, CheckInstance> getFromObject = defaultArgResolver.getMatchFieldObjectMap(testObject, wildCardMatcher);
 
+
+        System.out.println(getFromMap);
+        System.out.println(getFromObject);
 
         Assertions.assertEquals(getFromMap, getFromObject);
 
-        Assertions.assertEquals(getFromMap.size(),1);
-        Assertions.assertEquals(getFromMap.get("ab").instance(),"ab");
+        Assertions.assertEquals(getFromMap.size(), 1);
+        Assertions.assertEquals(getFromMap.get("ab").instance(), "ab");
 
     }
 

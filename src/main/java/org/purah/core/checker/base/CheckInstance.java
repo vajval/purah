@@ -23,8 +23,8 @@ public class CheckInstance<INSTANCE> {
     // 如果这个对象是父对象class的一个field ，此处保存field中的注解
     List<Annotation> annotations;
 
-    private CheckInstance(INSTANCE instance, Class<?> clazzInContext) {
-        this(instance, "root", null, Collections.emptyList());
+    private CheckInstance(INSTANCE instance, Class<?> clazzInContext, String fieldStr) {
+        this(instance, fieldStr, null, Collections.emptyList());
         this.instance = instance;
         if (clazzInContext == null) {
             throw new RuntimeException("不要将class设置为null,实在不行就Object.class");
@@ -54,9 +54,12 @@ public class CheckInstance<INSTANCE> {
     }
 
     public static <T> CheckInstance<T> create(T instance, Class<?> clazzInContext) {
-        return new CheckInstance<>(instance, clazzInContext);
+        return create(instance, clazzInContext, "root");
     }
 
+    public static <T> CheckInstance<T> create(T instance, Class<?> clazzInContext, String fieldStr) {
+        return new CheckInstance<>(instance, clazzInContext, fieldStr);
+    }
 
     public static <T> CheckInstance<T> createWithFieldConfig(T instance, String fieldStr, Field fieldInClass, List<Annotation> annotations) {
         return new CheckInstance<>(instance, fieldStr, fieldInClass, annotations);
@@ -87,13 +90,6 @@ public class CheckInstance<INSTANCE> {
         return instance;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CheckInstance<?> that = (CheckInstance<?>) o;
-        return Objects.equals(instance, that.instance);
-    }
 
     public Class<?> instanceClass() {
         if (instance != null) {
@@ -101,12 +97,6 @@ public class CheckInstance<INSTANCE> {
         }
         return clazzInContext;
 
-    }
-
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(instance);
     }
 
 
@@ -120,6 +110,24 @@ public class CheckInstance<INSTANCE> {
                 ", annotations=" + annotations +
                 '}';
     }
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CheckInstance<?> that = (CheckInstance<?>) o;
+        return Objects.equals(instance, that.instance) && Objects.equals(fieldStr, that.fieldStr);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(instance, fieldStr);
+    }
+
+
+
 }
 
 

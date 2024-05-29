@@ -18,7 +18,7 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
     protected ExecType.Main methodExecType;
 
 
-    private ArgCheckResult(BaseLogicCheckResult mainCheckResult, LinkedHashMap<String, CheckResult<?>> checkResultMap,
+    private ArgCheckResult(MainOfMultiCheckResult mainCheckResult, LinkedHashMap<String, CheckResult<?>> checkResultMap,
                            List<CheckResult<?>> valueList, CheckIt checkItAnn, Object checkArg, ExecType.Main methodExecType
     ) {
 
@@ -33,7 +33,7 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
         return checkResultMap;
     }
 
-    public static ArgCheckResult create(BaseLogicCheckResult mainCheckResult,
+    public static ArgCheckResult create(MainOfMultiCheckResult mainCheckResult,
                                         List<String> checkNameList,
                                         List<CheckResult<?>> valueList,
                                         CheckIt checkItAnn, Object checkArg, ExecType.Main methodExecType

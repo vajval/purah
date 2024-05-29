@@ -2,10 +2,7 @@ package org.purah.core.checker.combinatorial;
 
 
 import org.purah.core.base.IName;
-import org.purah.core.checker.base.BaseChecker;
-import org.purah.core.checker.base.CheckInstance;
-import org.purah.core.checker.base.Checker;
-import org.purah.core.checker.base.CheckerManager;
+import org.purah.core.checker.base.*;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.matcher.intf.FieldMatcher;
@@ -143,9 +140,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
 
         public CheckResult check(CheckInstance<Object> checkInstance) {
-            System.out.println(checkInstance);
 
-            System.out.println(checkInstance.instanceClass());
             ArgResolver argResolver = getArgResolverManager().getArgResolver(checkInstance.instanceClass());
 
 

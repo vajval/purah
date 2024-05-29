@@ -1,47 +1,50 @@
 package org.purah.core.checker.result;
 
-import org.purah.core.checker.combinatorial.MultiCheckerExecutor;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class MultiCheckResult<T extends CheckResult> implements CheckResult<List<T>> {
 
-    protected BaseLogicCheckResult mainCheckResult;
+    protected MainOfMultiCheckResult mainCheckResult;
     protected List<T> valueList;
 
-    public MultiCheckResult(BaseLogicCheckResult mainCheckResult, List<T> valueList) {
+    public MultiCheckResult(MainOfMultiCheckResult mainCheckResult, List<T> valueList) {
         this.mainCheckResult = mainCheckResult;
         this.valueList = valueList;
     }
 
 
     public List<BaseLogicCheckResult> allBaseLogicCheckResult(ResultLevel resultLevel) {
-
-        return allBaseLogicCheckResultByRecursion(this, resultLevel);
+        List<BaseLogicCheckResult> resultList = new ArrayList<>();
+        List<MainOfMultiCheckResult> multiCheckResultList = new ArrayList<>();
+        allBaseLogicCheckResultByRecursion(this, resultLevel, resultList, multiCheckResultList);
+        return resultList;
     }
 
-    protected static List<BaseLogicCheckResult> allBaseLogicCheckResultByRecursion(MultiCheckResult multiCheckResult, ResultLevel resultLevel) {
-
-        List<BaseLogicCheckResult> resultList = new ArrayList<>();
-
+    protected static void allBaseLogicCheckResultByRecursion(MultiCheckResult multiCheckResult, ResultLevel resultLevel, List<BaseLogicCheckResult> baseLogicCheckResultList, List<MainOfMultiCheckResult> multiCheckResultList) {
 
         for (Object o : multiCheckResult.valueList) {
             if (o instanceof MultiCheckResult) {
                 MultiCheckResult childResult = (MultiCheckResult) o;
-                resultList.addAll(allBaseLogicCheckResultByRecursion(childResult, resultLevel));
+
+                if (resultLevel.needAddToFinalResult(childResult)) {
+                    if (resultLevel == ResultLevel.failedAndIgnoreNotBaseLogic) {
+                        multiCheckResultList.add(childResult.mainCheckResult);
+                    }
+                }
+                allBaseLogicCheckResultByRecursion(childResult, resultLevel, baseLogicCheckResultList, multiCheckResultList);
+
+
             } else if (o instanceof BaseLogicCheckResult) {
                 BaseLogicCheckResult baseLogicCheckResult = (BaseLogicCheckResult) o;
                 boolean needAdd = resultLevel.needAddToFinalResult(baseLogicCheckResult);
                 if (needAdd) {
-                    resultList.add(baseLogicCheckResult);
+                    baseLogicCheckResultList.add(baseLogicCheckResult);
                 }
             }
         }
-        return resultList;
-
-
     }
+
 
     @Override
     public List<T> value() {
@@ -73,7 +76,7 @@ public class MultiCheckResult<T extends CheckResult> implements CheckResult<List
         return this.mainCheckResult.checkLogicFrom();
     }
 
-    public BaseLogicCheckResult mainCheckResult() {
+    public MainOfMultiCheckResult mainCheckResult() {
         return mainCheckResult;
     }
 

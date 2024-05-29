@@ -17,7 +17,7 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
 
     protected String info;
 
-    private BaseLogicCheckResult(ExecInfo execInfo, T data, String log) {
+    protected BaseLogicCheckResult(ExecInfo execInfo, T data, String log) {
         this.execInfo = execInfo;
         this.data = data;
         this.log = log;
@@ -34,7 +34,7 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
         return checkLogicFrom;
     }
 
-    private BaseLogicCheckResult(ExecInfo execInfo, Exception e) {
+    protected BaseLogicCheckResult(ExecInfo execInfo, Exception e) {
         this.execInfo = execInfo;
         this.e = e;
     }

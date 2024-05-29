@@ -9,7 +9,7 @@ import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.ExecChecker;
 import org.purah.core.checker.combinatorial.ExecType;
-import org.purah.core.checker.combinatorial.MultiCheckerExecutor;
+import org.purah.core.checker.base.MultiCheckerExecutor;
 import org.purah.core.checker.result.*;
 import org.purah.springboot.ann.CheckIt;
 import org.purah.springboot.ann.FillToMethodResult;

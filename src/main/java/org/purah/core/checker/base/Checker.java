@@ -18,12 +18,9 @@ public interface Checker<CHECK_INSTANCE, RESULT> extends IName {
 
     CheckResult<RESULT> check(CheckInstance<CHECK_INSTANCE> checkInstance);
 
-    default boolean booleanCheck(CheckInstance<CHECK_INSTANCE> checkInstance) {
-        return check(checkInstance).isSuccess();
-    }
 
     default Class<?> inputCheckInstanceClass() {
-        Class<?> result = generics()[0].resolve();
+        Class<?> result = ResolvableType.forClass(this.getClass()).as(Checker.class).getGenerics()[0].resolve();
         if (result == null) {
             return Object.class;
         }
@@ -31,20 +28,13 @@ public interface Checker<CHECK_INSTANCE, RESULT> extends IName {
     }
 
     default Class<?> resultClass() {
-        Class<?> result = generics()[1].resolve();
+        Class<?> result = ResolvableType.forClass(this.getClass()).as(Checker.class).getGenerics()[1].resolve();
         if (result == null) {
             return Object.class;
         }
         return result;
     }
 
-
-    default ResolvableType[] generics() {
-        return ResolvableType
-                .forClass(this.getClass())
-                .as(Checker.class)
-                .getGenerics();
-    }
 
     default String logicFrom() {
         Class<? extends Checker> clazz = this.getClass();

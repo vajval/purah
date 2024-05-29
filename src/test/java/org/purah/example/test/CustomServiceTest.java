@@ -1,10 +1,12 @@
 package org.purah.example.test;
 
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.purah.core.PurahContext;
+import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
@@ -213,6 +215,7 @@ class CustomServiceTest {
 
     @Test
     void booleanCheckMultiArgs() {
+
         assertTrue(customService.booleanCheck(goodCustomUser, goodCustomUser, goodCustomUser));
 
         assertFalse(customService.booleanCheck(goodCustomUser, goodCustomUser, badCustomUser));
@@ -230,29 +233,32 @@ class CustomServiceTest {
 
         assertFalse(customService.booleanCheck(badCustomUser, badCustomUser, badCustomUser));
 
+//
 
     }
 
 
-//    @Test
-//    void booleanCheckByCustomSyntaxWithMultiLevel2() {
-//        goodCustomUser.setChildCustomUser(badCustomUser);
-//        for (int i = 0; i < 10000000; i++) {
-//
-//
-//            if (i % 10000 == 0) {
-//                System.out.println(i);
-//            }
-//            CheckResult CheckResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
-//            assertFalse(CheckResult.isSuccess());
-//            List<CheckResult> resultList = (List) CheckResult.value();
-////        value.stream().
-//            String trim = resultList.stream().filter(CheckResult::isFailed).map(CheckResult::info)
-//                    .reduce("", (a, b) -> a + b).trim();
-//
-//            assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
-//            assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
-//            assertTrue(trim.contains("childCustomUser.phone:移不动也联不通"));
-//        }
-//    }
+    @Test
+    void booleanCheckByCustomSyntaxWithMultiLevel2() {
+        PurahCheckInstanceCacheContext.createEnableOnAop();
+        goodCustomUser.setChildCustomUser(badCustomUser);
+        for (int i = 0; i < 1000000; i++) {
+
+
+            if (i % 10000 == 0) {
+                System.out.println(i);
+            }
+            AutoFillCheckResult autoFillCheckResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+            assertFalse(autoFillCheckResult.isSuccess());
+
+
+            String trim =  autoFillCheckResult.allBaseLogicCheckResult().stream().filter(w->w.isFailed()).map(w->w.log())
+                    .reduce("", (a, b) -> a + b).trim();
+
+            assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
+            assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
+            assertTrue(trim.contains("childCustomUser.phone:移不动也联不通"));
+        }
+        PurahCheckInstanceCacheContext.closeThisThreadContextLocalCacheIfNotNeedOnAop();
+    }
 }

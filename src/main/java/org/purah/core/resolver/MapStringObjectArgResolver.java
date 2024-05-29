@@ -15,7 +15,7 @@ public class MapStringObjectArgResolver extends AbstractMatchArgResolver<Map<Str
     public Map<String, CheckInstance> getFieldsObjectMap(Map<String, Object> stringObjectMap, Set<String> matchFieldList) {
         return matchFieldList.stream().collect(
                 Collectors.toMap(matchField -> matchField,
-                        i -> CheckInstance.create(stringObjectMap.get(i), Object.class)));
+                        i -> CheckInstance.create(stringObjectMap.get(i), Object.class,i)));
     }
 
     @Override

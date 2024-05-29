@@ -1,11 +1,14 @@
-package org.purah.core.checker.combinatorial;
+package org.purah.core.checker.base;
 
-import org.purah.core.checker.base.CheckInstance;
-import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.cache.InstanceCheckCacheKey;
+import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
+import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
@@ -15,22 +18,26 @@ import java.util.function.Supplier;
 public class MultiCheckerExecutor {
 
 
-    ExecType.Main mainExecType;
-    ExecInfo execInfo = ExecInfo.success;
-    Exception e;
+    private final ExecType.Main mainExecType;
+    private ExecInfo execInfo = ExecInfo.success;
 
-    List<CheckResult> finalExecResult = new ArrayList<>();
-    ResultLevel resultLevel;
-    List<Supplier<CheckResult<?>>> ruleResultSupplierList = new ArrayList<>();
-    boolean exec = false;
+    private final ResultLevel resultLevel;
+    private Exception e;
 
-    public MultiCheckerExecutor(
-            ExecType.Main mainExecType, ResultLevel resultLevel) {
+    private boolean exec = false;
+
+    private final List<CheckResult> finalExecResult = new ArrayList<>();
+
+    private final Map<Supplier<CheckResult<?>>, InstanceCheckCacheKey> resultCacheMap = new ConcurrentHashMap<>();
+
+    private final List<Supplier<CheckResult<?>>> ruleResultSupplierList = new ArrayList<>();
+
+
+    public MultiCheckerExecutor(ExecType.Main mainExecType, ResultLevel resultLevel) {
         this.mainExecType = mainExecType;
         this.resultLevel = resultLevel;
 
     }
-
 
 
     public MultiCheckerExecutor add(Supplier<CheckResult<?>> supplier) {
@@ -42,11 +49,26 @@ public class MultiCheckerExecutor {
         return this;
     }
 
+
     public MultiCheckerExecutor add(CheckInstance checkInstance, Checker checker) {
         if (exec) {
             throw new RuntimeException("已经执行玩了，不能在添加了");
         }
-        this.add(() -> checker.check(checkInstance));
+        Supplier<CheckResult<?>> supplier = () -> checker.check(checkInstance);
+
+        if (PurahCheckInstanceCacheContext.isEnableOnThisContext()) {
+
+            CheckResult checkResult = PurahCheckInstanceCacheContext.get(checkInstance, checker.name());
+            if (checkResult != null) {
+                supplier = (() -> checkResult);
+            } else {
+                resultCacheMap.put(supplier, new InstanceCheckCacheKey(checkInstance, checker.name()));
+            }
+
+        }
+
+        this.add((supplier));
+
 
         return this;
     }
@@ -56,9 +78,19 @@ public class MultiCheckerExecutor {
         if (exec) return execInfo;
         exec = true;
         ExecInfo result = ExecInfo.success;
+        boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableOnThisContext();
+
 
         for (Supplier<? extends CheckResult<?>> supplier : ruleResultSupplierList) {
             CheckResult<?> checkResult = supplier.get();
+            if (enableOnThisContext) {
+                InstanceCheckCacheKey instanceCheckCacheKey = resultCacheMap.get(supplier);
+                if (instanceCheckCacheKey != null) {
+                    PurahCheckInstanceCacheContext.put(instanceCheckCacheKey, checkResult);
+
+                }
+            }
+
             if (resultLevel.needAddToFinalResult(checkResult)) {
                 this.finalExecResult.add(checkResult);
             }
@@ -116,14 +148,14 @@ public class MultiCheckerExecutor {
     private MultiCheckResult<CheckResult<?>> multiCheckResult(String log) {
 
 
-        BaseLogicCheckResult<Object> mainResult = null;
+        MainOfMultiCheckResult<Object> mainResult = null;
         if (execInfo.equals(ExecInfo.success)) {
-            mainResult = BaseLogicCheckResult.success(null, execInfo.value() + " (" + log + ")");
+            mainResult = MainOfMultiCheckResult.success(null, execInfo.value() + " (" + log + ")");
         } else if (execInfo.equals(ExecInfo.failed)) {
-            mainResult = BaseLogicCheckResult.failed(null, execInfo.value() + " (" + log + ")");
+            mainResult = MainOfMultiCheckResult.failed(null, execInfo.value() + " (" + log + ")");
 
         } else if (execInfo.equals(ExecInfo.error)) {
-            mainResult = BaseLogicCheckResult.error(e, execInfo.value() + " (" + log + ")");
+            mainResult = MainOfMultiCheckResult.error(e, execInfo.value() + " (" + log + ")");
 
         }
         return new MultiCheckResult(mainResult, finalExecResult);

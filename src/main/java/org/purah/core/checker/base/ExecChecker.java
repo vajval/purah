@@ -62,7 +62,7 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
         try {
             return ((Checker) checker).check(checkInstance);
         } catch (PurahException exception) {
-            System.out.println(123);
+//            System.out.println(123);
             throw exception;
         }
     }

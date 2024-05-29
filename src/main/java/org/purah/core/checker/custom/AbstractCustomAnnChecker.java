@@ -5,18 +5,16 @@ import org.purah.core.checker.base.BaseChecker;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.ExecChecker;
 import org.purah.core.checker.combinatorial.ExecType;
-import org.purah.core.checker.combinatorial.MultiCheckerExecutor;
+import org.purah.core.checker.base.MultiCheckerExecutor;
 import org.purah.core.checker.result.*;
 import org.purah.core.checker.method.AnnMethodToChecker;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class AbstractCustomAnnChecker extends BaseChecker {
@@ -83,12 +81,12 @@ public class AbstractCustomAnnChecker extends BaseChecker {
 
     @Override
     public CheckResult<?> doCheck(CheckInstance checkInstance) {
-        List<Annotation> enableAnnotations =
-                ((CheckInstance<?>) checkInstance).annListOnField().stream().filter(i -> map.containsKey(i.annotationType())).collect(Collectors.toList());
+//        System.out.println(checkInstance);
+//        System.out.println(456);
+        List<Annotation> enableAnnotations = ((CheckInstance<?>) checkInstance).annListOnField().stream().filter(i -> map.containsKey(i.annotationType())).collect(Collectors.toList());
 
 
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel);
-        List<Supplier<CheckResult<?>>> ruleResultSupplierList = new ArrayList<>();
 
         for (Annotation enableAnnotation : enableAnnotations) {
             multiCheckerExecutor.add(() -> map.get(enableAnnotation.annotationType()).check(checkInstance));
@@ -98,7 +96,7 @@ public class AbstractCustomAnnChecker extends BaseChecker {
 
 
 
-        String log = "root." + checkInstance.fieldStr() + "  @Ann:" + annListLogStr + " : " + this.name();
+        String log = checkInstance.fieldStr() + "  @Ann:" + annListLogStr + " : " + this.name();
 
 
         return    multiCheckerExecutor.toMultiCheckResult(log);

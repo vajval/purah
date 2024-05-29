@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.exception.MethodArgCheckException;
 import org.purah.springboot.result.AutoFillCheckResult;
 import org.purah.springboot.result.MethodCheckResult;
@@ -39,6 +40,24 @@ public class CheckItAspect {
 
     @Around("pointcut()")
     public Object aroundAdvice(ProceedingJoinPoint joinPoint) {
+
+        boolean haveCacheOnThreadContextConfigInThisMethod = false;
+        if (haveCacheOnThreadContextConfigInThisMethod) {
+            PurahCheckInstanceCacheContext.createEnableOnAop();
+        }
+        try {
+            return pointcut(joinPoint);
+        } finally {
+            if (haveCacheOnThreadContextConfigInThisMethod) {
+                PurahCheckInstanceCacheContext.closeThisThreadContextLocalCacheIfNotNeedOnAop();
+            }
+        }
+    }
+
+
+    public Object pointcut(ProceedingJoinPoint joinPoint) {
+
+
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
         /*
