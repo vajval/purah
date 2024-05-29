@@ -47,7 +47,7 @@ public class CheckItAspect {
         MethodHandlerChecker methodHandlerChecker = this.checkerOf(joinPoint.getThis(), method);
         CheckInstance<Object[]> checkInstance = CheckInstance.create(joinPoint.getArgs(), Object[].class);
 
-        MethodCheckResult methodCheckResult = (MethodCheckResult) methodHandlerChecker.check(checkInstance);
+        MethodCheckResult methodCheckResult = methodHandlerChecker.check(checkInstance);
 
 
         if (methodCheckResult.isError()) {

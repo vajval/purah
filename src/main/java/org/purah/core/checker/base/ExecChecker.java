@@ -4,9 +4,7 @@ package org.purah.core.checker.base;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckerException;
 import org.purah.core.exception.PurahException;
-import org.springframework.core.ResolvableType;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,10 +23,9 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
 
 
     String name;
-    CheckClass defaultCheckClass;
+    InputArgClass defaultInputArgClass;
     Checker<?, ?> defaultChecker;
-
-    Map<CheckClass, Checker<?, ?>> typeEnableCheckerCacheMap = new ConcurrentHashMap<>();
+    Map<InputArgClass, Checker<?, ?>> typeEnableCheckerCacheMap = new ConcurrentHashMap<>();
 
 
     public ExecChecker(String name, Checker<?, ?> checker) {
@@ -36,17 +33,20 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
         this.addNewChecker(checker);
     }
 
-
     public void addNewChecker(Checker<?, ?> checker) {
+        InputArgClass checkerSupportInputArgClass = InputArgClass.byChecker(checker);
         if (defaultChecker == null) {
             this.defaultChecker = checker;
-            this.defaultCheckClass = CheckClass.byChecker(checker);
+            this.defaultInputArgClass = checkerSupportInputArgClass;
+        }else{
+            if (checkerSupportInputArgClass.equals(defaultInputArgClass)) {
+                defaultChecker = checker;
+            }
         }
-        CheckClass checkClass = CheckClass.byChecker(checker);
-        this.typeEnableCheckerCacheMap.put(checkClass, checker);
-        if (checkClass.equals(defaultCheckClass)) {
-            defaultChecker = checker;
-        }
+
+        this.typeEnableCheckerCacheMap.put(checkerSupportInputArgClass, checker);
+
+
     }
 
     @Override
@@ -58,82 +58,82 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
     public CheckResult check(CheckInstance<CHECK_INSTANCE> checkInstance) {
 
 
-        CheckClass checkClass = CheckClass.byInstance(checkInstance);
-        Checker<?, ?> checker = getChecker(checkClass);
-
-        if (checker == null) {
-            throw new CheckerException(this, "checker " + this.name + "没有对该类的解析方法" + checkClass.clazz);
-        }
-        CheckResult<?> checkResult;
+        Checker<?, ?> checker = getChecker(checkInstance);
         try {
-
-            checkResult = ((Checker) checker).check(checkInstance);
-
-
+            return ((Checker) checker).check(checkInstance);
         } catch (PurahException exception) {
+            System.out.println(123);
             throw exception;
         }
-        return checkResult;
     }
 
-    protected Checker<?, ?> getChecker(CheckClass inputCheckClass) {
+    protected Checker<?, ?> getChecker(CheckInstance<CHECK_INSTANCE> checkInstance) {
+        InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(checkInstance);
 
-        if (inputCheckClass.clazz == null) {
 
-//            if (checkerMap.size() != 1) {
-//                throw new RuntimeException("入参为null，而尔");
-//            }
+        if (defaultInputArgClass.support(inputCheckInstanceArgClass)) {
             return defaultChecker;
         }
 
-        if (BaseLogicSupport(inputCheckClass)) return defaultChecker;
-        Checker<?, ?> result = typeEnableCheckerCacheMap.get(inputCheckClass);
-        if (result != null) return result;
-        for (Map.Entry<CheckClass, Checker<?, ?>> entry : typeEnableCheckerCacheMap.entrySet()) {
-            CheckClass entryKey = entry.getKey();
-            if (support(inputCheckClass, entryKey)) {
+        Checker<?, ?> result = typeEnableCheckerCacheMap.get(inputCheckInstanceArgClass);
+        if (result != null) {
+            return result;
+        }
+        for (Map.Entry<InputArgClass, Checker<?, ?>> entry : typeEnableCheckerCacheMap.entrySet()) {
+            InputArgClass cacheInputArgClass = entry.getKey();
+
+            if (cacheInputArgClass.support(inputCheckInstanceArgClass)) {
                 result = entry.getValue();
-                typeEnableCheckerCacheMap.put(inputCheckClass, result);
+                typeEnableCheckerCacheMap.put(inputCheckInstanceArgClass, result);
                 return result;
             }
         }
-        return null;
-    }
+        throw new CheckerException(this, "checker " + this.name + "没有对该类的解析方法" + inputCheckInstanceArgClass.clazz);
 
-    protected boolean BaseLogicSupport(CheckClass checkClass) {
-        return defaultCheckClass.support(checkClass);
     }
 
 
-    protected boolean support(CheckClass inputCheckClass, CheckClass checkClass) {
-        if (inputCheckClass.clazz == checkClass.clazz) return true;
-        return checkClass.support(inputCheckClass);
-    }
-
-    static class CheckClass {
-
-        final static CheckClass empty = new CheckClass();
+    static class InputArgClass {
 
         Class<?> clazz;
 
+        private InputArgClass(Class<?> clazz) {
+            if (clazz == null) {
+                throw new RuntimeException("不该出现这个错误");
+            }
+            this.clazz = clazz;
+        }
 
-        public boolean support(CheckClass inputCheckClass) {
-            if (this == inputCheckClass) return true;
-            if (this.clazz == inputCheckClass.clazz) return true;
-            if (inputCheckClass.clazz == null) {
+        public static InputArgClass byChecker(Checker<?, ?> checker) {
+            Class<?> clazz = checker.inputCheckInstanceClass();
+            if (clazz == null) {
+                return new InputArgClass(Object.class);
+            }
+            return new InputArgClass(clazz);
+        }
+
+        public static InputArgClass byInstance(CheckInstance<?> checkInstance) {
+            return new InputArgClass(checkInstance.instanceClass());
+        }
+
+
+        public boolean support(InputArgClass inputInputArgClass) {
+            if (this == inputInputArgClass) return true;
+            if (this.clazz == inputInputArgClass.clazz) return true;
+            if (inputInputArgClass.clazz == null) {
                 return false;
             }
             /*
              * 能处理Map 就一定能处理 HashMap
              */
-            return this.clazz.isAssignableFrom(inputCheckClass.clazz);
+            return this.clazz.isAssignableFrom(inputInputArgClass.clazz);
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            CheckClass that = (CheckClass) o;
+            InputArgClass that = (InputArgClass) o;
             return Objects.equals(clazz, that.clazz);
         }
 
@@ -143,25 +143,9 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
             return Objects.hash(clazz);
         }
 
-        static CheckClass byInstance(CheckInstance checkInstance
-        ) {
-            return byClass(checkInstance.instanceClass());
-        }
-
-        static CheckClass byClass(Class<?> clazz) {
-            CheckClass checkClass = new CheckClass();
-            if (clazz == null) clazz = Object.class;
-            checkClass.clazz = clazz;
-            return checkClass;
-        }
-
-        static CheckClass byChecker(Checker<?, ?> checker) {
-            return byClass(checker.inputCheckInstanceClass());
-        }
-
         @Override
         public String toString() {
-            return "CheckClass{" +
+            return "InputArgClass{" +
                     "clazz=" + clazz +
                     '}';
         }

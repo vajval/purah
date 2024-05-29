@@ -48,11 +48,11 @@ public class MultiCheckerExecutor {
         return false;
     }
 
-    public ExecInfo exec(List<Supplier<CheckResult>> ruleResultSupplierList) {
+    public ExecInfo exec(List<Supplier<CheckResult<?>>> ruleResultSupplierList) {
         ExecInfo result = ExecInfo.success;
 
-        for (Supplier<? extends CheckResult> supplier : ruleResultSupplierList) {
-            CheckResult checkResult = supplier.get();
+        for (Supplier<? extends CheckResult<?>> supplier : ruleResultSupplierList) {
+            CheckResult<?> checkResult = supplier.get();
             if (needAdd(checkResult, resultLevel)) {
                 this.fieldCheckResultList.add(checkResult);
             }
@@ -94,7 +94,7 @@ public class MultiCheckerExecutor {
 
     }
 
-    public MultiCheckResult<CheckResult> multiCheckResult(String log) {
+    public MultiCheckResult<CheckResult<?>> multiCheckResult(String log) {
 
 
         BaseLogicCheckResult<Object> mainResult = null;
@@ -107,13 +107,13 @@ public class MultiCheckerExecutor {
             mainResult = BaseLogicCheckResult.error(e, execInfo.value() + " (" + log + ")");
 
         }
-        return new MultiCheckResult<>(mainResult, fieldCheckResultList);
+        return new MultiCheckResult(mainResult, fieldCheckResultList);
 
 
     }
 
     public CombinatorialCheckResult toCombinatorialCheckResult(String log) {
-        MultiCheckResult<CheckResult> multiCheckResult = multiCheckResult(log);
+        MultiCheckResult<CheckResult<?>> multiCheckResult = multiCheckResult(log);
         return CombinatorialCheckResult.create(multiCheckResult, resultLevel);
 
     }

@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
 
 public class AbstractCustomAnnChecker extends BaseChecker {
 
-    Map<Class<? extends Annotation>, ExecChecker> map = new HashMap<>();
+    Map<Class<? extends Annotation>, ExecChecker<?,?>> map = new HashMap<>();
+
 
     /**
      * 过滤出能用的函数
@@ -81,13 +82,13 @@ public class AbstractCustomAnnChecker extends BaseChecker {
 
 
     @Override
-    public CheckResult doCheck(CheckInstance checkInstance) {
+    public CheckResult<?> doCheck(CheckInstance checkInstance) {
         List<Annotation> enableAnnotations =
                 ((CheckInstance<?>) checkInstance).annListOnField().stream().filter(i -> map.containsKey(i.annotationType())).collect(Collectors.toList());
 
 
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel);
-        List<Supplier<CheckResult>> ruleResultSupplierList = new ArrayList<>();
+        List<Supplier<CheckResult<?>>> ruleResultSupplierList = new ArrayList<>();
         for (Annotation enableAnnotation : enableAnnotations) {
             ruleResultSupplierList.add(() -> map.get(enableAnnotation.annotationType()).check(checkInstance));
         }

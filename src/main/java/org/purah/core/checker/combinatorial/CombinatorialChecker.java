@@ -86,14 +86,14 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
 
         MultiCheckerExecutor executor = createMultiCheckerExecutor();
-        List<Supplier<CheckResult>> supplierList = new ArrayList<>(rootInstanceCheckers.size() + fieldMatcherCheckerConfigList.size());
+        List<Supplier<CheckResult<?>>> supplierList = new ArrayList<>(rootInstanceCheckers.size() + fieldMatcherCheckerConfigList.size());
 
 
         /*
           对入参对象的检查
          */
         for (Checker checker : rootInstanceCheckers) {
-            Supplier<CheckResult> BaseLogicCheckResultSupplier = () -> checker.check(checkInstance);
+            Supplier<CheckResult<?>> BaseLogicCheckResultSupplier = () -> checker.check(checkInstance);
             supplierList.add(BaseLogicCheckResultSupplier);
         }
         /*
@@ -154,21 +154,21 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
 
 
 
-            Map<String, CheckInstance> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(instance, fieldMatcherCheckerConfig.fieldMatcher);
+            Map<String, CheckInstance<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(instance, fieldMatcherCheckerConfig.fieldMatcher);
 
-            List<Supplier<CheckResult>> supplierList = new ArrayList<>();
+            List<Supplier<CheckResult<?>>> supplierList = new ArrayList<>();
             ExecType.Matcher execType = fieldMatcherCheckerConfig.execType;
 
             // 对每个匹配到的字段
 
             if (execType == ExecType.Matcher.checker_instance) {
                 for (Checker checker : checkerList) {
-                    for (Map.Entry<String, CheckInstance> entry : matchFieldObjectMap.entrySet()) {
+                    for (Map.Entry<String, CheckInstance<?>> entry : matchFieldObjectMap.entrySet()) {
                         supplierList.add(() -> checker.check(entry.getValue()));
                     }
                 }
             } else if (execType == ExecType.Matcher.instance_checker) {
-                for (Map.Entry<String, CheckInstance> entry : matchFieldObjectMap.entrySet()) {
+                for (Map.Entry<String, CheckInstance<?>> entry : matchFieldObjectMap.entrySet()) {
                     for (Checker checker : checkerList) {
                         supplierList.add(() -> checker.check(entry.getValue()));
                     }

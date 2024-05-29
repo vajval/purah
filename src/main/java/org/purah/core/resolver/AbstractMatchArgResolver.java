@@ -80,7 +80,9 @@ public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver
 
     protected Map<String, CheckInstance> getChildMap(Object innObject, FieldMatcher childFieldMatcher) {
         return this.getMatchFieldObjectMap((INSTANCE) innObject, childFieldMatcher);
+
     }
+
 
 
     protected Map<String, CheckInstance> getBaseLogicLevelMap(INSTANCE instance, FieldMatcher fieldMatcher) {

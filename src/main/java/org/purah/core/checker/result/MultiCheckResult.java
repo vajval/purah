@@ -18,9 +18,7 @@ public class MultiCheckResult<T extends CheckResult> implements CheckResult<List
 
     public List<BaseLogicCheckResult> allBaseLogicCheckResult(ResultLevel resultLevel) {
 
-        List<BaseLogicCheckResult> baseLogicCheckResults = allBaseLogicCheckResultByRecursion(this, resultLevel);
-
-        return baseLogicCheckResults;
+        return allBaseLogicCheckResultByRecursion(this, resultLevel);
     }
 
     protected static List<BaseLogicCheckResult> allBaseLogicCheckResultByRecursion(MultiCheckResult multiCheckResult, ResultLevel resultLevel) {

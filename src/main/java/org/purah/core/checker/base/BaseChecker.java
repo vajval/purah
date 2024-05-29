@@ -14,13 +14,9 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
     @Override
     public CheckResult<RESULT> check(CheckInstance<CHECK_INSTANCE> checkInstance) {
         CheckResult<RESULT> resultCheckResult;
-        try {
-            resultCheckResult = this.doCheck(checkInstance);
-            if (resultCheckResult == null) {
-                throw new RuntimeException("result cannot be Null " + this.logicFrom());
-            }
-        } catch (Exception e) {
-            throw e;
+        resultCheckResult = this.doCheck(checkInstance);
+        if (resultCheckResult == null) {
+            throw new RuntimeException("result cannot be Null " + this.logicFrom());
         }
 
         setLogicFrom(resultCheckResult);
@@ -47,21 +43,18 @@ public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
 
     public CheckResult<RESULT> success(CheckInstance<CHECK_INSTANCE> checkInstance, RESULT result) {
         String log = logStr(checkInstance, DEFAULT_SUCCESS_INFO);
-        BaseLogicCheckResult<RESULT> baseLogicCheckResult = BaseLogicCheckResult.success(result, log);
-        return baseLogicCheckResult;
+        return BaseLogicCheckResult.success(result, log);
     }
 
     public BaseLogicCheckResult<RESULT> failed(CheckInstance<CHECK_INSTANCE> checkInstance, RESULT result) {
         String log = logStr(checkInstance, DEFAULT_FAILED_INFO);
-        BaseLogicCheckResult<RESULT> baseLogicCheckResult = BaseLogicCheckResult.failed(result, log);
 
-        return baseLogicCheckResult;
+        return BaseLogicCheckResult.failed(result, log);
     }
 
     public CheckResult<RESULT> error(CheckInstance<CHECK_INSTANCE> checkInstance, Exception e) {
         String log = logStr(checkInstance, DEFAULT_ERROR_INFO);
-        BaseLogicCheckResult<RESULT> baseLogicCheckResult = BaseLogicCheckResult.error(e, log);
-        return baseLogicCheckResult;
+        return BaseLogicCheckResult.error(e, log);
 
     }
 

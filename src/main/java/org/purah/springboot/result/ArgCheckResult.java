@@ -8,18 +8,18 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class ArgCheckResult extends MultiCheckResult<CheckResult> {
+public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
 
 
     CheckIt checkItAnn;
     Object checkArg;
 
-    LinkedHashMap<String, CheckResult> checkResultMap;
+    LinkedHashMap<String, CheckResult<?>> checkResultMap;
     protected ExecType.Main methodExecType;
 
 
-    private ArgCheckResult(BaseLogicCheckResult mainCheckResult, LinkedHashMap<String, CheckResult> checkResultMap,
-                           List<CheckResult> valueList, CheckIt checkItAnn, Object checkArg, ExecType.Main methodExecType
+    private ArgCheckResult(BaseLogicCheckResult mainCheckResult, LinkedHashMap<String, CheckResult<?>> checkResultMap,
+                           List<CheckResult<?>> valueList, CheckIt checkItAnn, Object checkArg, ExecType.Main methodExecType
     ) {
 
         super(mainCheckResult, valueList);
@@ -29,13 +29,13 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult> {
         this.methodExecType = methodExecType;
     }
 
-    public LinkedHashMap<String, CheckResult> checkResultMap() {
+    public LinkedHashMap<String, CheckResult<?>> checkResultMap() {
         return checkResultMap;
     }
 
     public static ArgCheckResult create(BaseLogicCheckResult mainCheckResult,
                                         List<String> checkNameList,
-                                        List<CheckResult> valueList,
+                                        List<CheckResult<?>> valueList,
                                         CheckIt checkItAnn, Object checkArg, ExecType.Main methodExecType
 
     ) {
@@ -43,8 +43,8 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult> {
         Iterator<String> iterator = checkNameList.iterator();
 
 
-        LinkedHashMap<String, CheckResult> checkResultMap = new LinkedHashMap<>();
-        for (CheckResult checkResult : valueList) {
+        LinkedHashMap<String, CheckResult<?>> checkResultMap = new LinkedHashMap<>();
+        for (CheckResult<?> checkResult : valueList) {
             checkResultMap.put(iterator.next(), checkResult);
 
         }

@@ -62,7 +62,7 @@ class CombinatorialCheckerTest {
                     @Override
                     public Checker createChecker(String needMatchCheckerName) {
                         String namePre = needMatchCheckerName.replace("必须姓", "");
-                        return Checkers.<String>autoStringChecker(needMatchCheckerName, str
+                        return Checkers.autoStringChecker(needMatchCheckerName, str
                                 -> str.startsWith(namePre), String.class);
                     }
 

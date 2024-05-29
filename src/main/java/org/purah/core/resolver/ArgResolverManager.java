@@ -70,7 +70,7 @@ public class ArgResolverManager {
         updateAllEmpty();
     }
 
-    public ArgResolver getArgResolver(Class<?> argClass) {
+    public ArgResolver<?> getArgResolver(Class<?> argClass) {
 
         return cacheMap.computeIfAbsent(argClass, this::doGetArgResolver);
     }

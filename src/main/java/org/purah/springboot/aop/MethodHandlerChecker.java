@@ -118,7 +118,7 @@ public class MethodHandlerChecker extends BaseChecker {
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(
                 methodExecType,
                 ResultLevel.failedAndIgnoreNotBaseLogic);
-        List<Supplier<CheckResult>> execList = new ArrayList<>();
+        List<Supplier<CheckResult<?>>> execList = new ArrayList<>();
 
         for (MethodArgCheckConfig methodArgCheckConfig : methodArgCheckConfigList) {
             execList.add(() -> this.checkBaseLogicArgByConfig(methodArgCheckConfig, args[methodArgCheckConfig.index]));
@@ -146,7 +146,7 @@ public class MethodHandlerChecker extends BaseChecker {
         MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.execType(), checkIt.resultLevel());
 
 
-        List<Supplier<CheckResult>> execList = new ArrayList<>();
+        List<Supplier<CheckResult<?>>> execList = new ArrayList<>();
 
         List<? extends ExecChecker<?, ?>> checkerList = methodArgCheckConfig.checkerNameList.stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
 
@@ -158,7 +158,7 @@ public class MethodHandlerChecker extends BaseChecker {
         String log = "method:" + method.getName() + "|arg" + methodArgCheckConfig.index;
 
 
-        MultiCheckResult<CheckResult> multiCheckResult = executor.multiCheckResult(log);
+        MultiCheckResult<CheckResult<?>> multiCheckResult = executor.multiCheckResult(log);
 
 
         return ArgCheckResult.create(multiCheckResult.mainCheckResult(), methodArgCheckConfig.checkerNameList,
