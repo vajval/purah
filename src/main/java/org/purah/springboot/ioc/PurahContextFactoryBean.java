@@ -2,6 +2,7 @@ package org.purah.springboot.ioc;
 
 
 import org.purah.core.PurahContext;
+import org.purah.core.PurahContextConfig;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
 import org.purah.core.matcher.clazz.ClassNameMatcher;
@@ -10,6 +11,7 @@ import org.purah.core.matcher.multilevel.GeneralMultilevelFieldMatcher;
 
 import org.purah.core.matcher.singleLevel.ReMatcher;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;
+import org.purah.springboot.ann.EnablePurah;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.util.List;
@@ -27,11 +29,15 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
     List<Class<? extends FieldMatcher>> baseStringMatcherClass;
 
 
+    EnablePurah enablePurah;
+
+
     @Override
     public Object getObject() {
+        PurahContextConfig purahContextConfig = new PurahContextConfig(enablePurah);
 
+        PurahContext purahContext = new PurahContext(purahContextConfig);
 
-        PurahContext purahContext = new PurahContext();
         MatcherManager matcherManager = purahContext.matcherManager();
         matcherManager.regBaseStrMatcher(AnnTypeFieldMatcher.class);
         matcherManager.regBaseStrMatcher(ClassNameMatcher.class);
@@ -59,5 +65,12 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
         return PurahContext.class;
     }
 
+    public EnablePurah getEnablePurah() {
 
+        return enablePurah;
+    }
+
+    public void setEnablePurah(EnablePurah enablePurah) {
+        this.enablePurah = enablePurah;
+    }
 }

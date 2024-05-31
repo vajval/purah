@@ -32,6 +32,9 @@ public class CheckerManager {
             throw new RuleRegException("注册规则不能为空");
         }
         String name = checker.name();
+        if (name == null) {
+            throw new RuntimeException();
+        }
         ExecChecker<?, ?> execChecker = cacheMap.get(name);
         if (execChecker == null) {
             execChecker = new ExecChecker<>(name, checker);

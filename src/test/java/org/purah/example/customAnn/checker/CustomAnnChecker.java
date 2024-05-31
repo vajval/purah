@@ -3,7 +3,9 @@ package org.purah.example.customAnn.checker;
 
 import org.purah.core.base.Name;
 import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.combinatorial.ExecType;
+import org.purah.core.checker.method.toChecker.CheckerByAnnMethod;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.custom.AbstractCustomAnnChecker;
@@ -16,6 +18,8 @@ import org.purah.springboot.ann.EnableOnPurahContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Method;
+
 
 @Name("自定义注解检测")
 @EnableOnPurahContext
@@ -26,6 +30,11 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
     public CustomAnnChecker() {
         super(ExecType.Main.all_success, ResultLevel.failedAndIgnoreNotBaseLogic);
+    }
+
+    @Override
+    public Checker methodToChecker(Object methodsToCheckersBean, Method method, String name) {
+        return new CheckerByAnnMethod(methodsToCheckersBean, method, name);
     }
 
     public boolean notNull(NotNull notNull, Integer age) {

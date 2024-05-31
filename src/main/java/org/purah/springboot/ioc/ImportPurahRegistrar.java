@@ -4,6 +4,7 @@ package org.purah.springboot.ioc;
 import org.purah.core.PurahContext;
 import org.purah.core.matcher.BaseStringMatcher;
 import org.purah.springboot.ann.EnableOnPurahContext;
+import org.purah.springboot.ann.EnablePurah;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.type.StandardAnnotationMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ClassUtils;
 
@@ -40,11 +42,15 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry, BeanNameGenerator importBeanNameGenerator) {
+
+
+
+
 //
         LinkedHashSet<BeanDefinition> beanDefinitions = enableOnPurahContextCandidateComponent(metadata);
 
 
-        AbstractBeanDefinition purahContextBeanDefinition = purahContextBeanDefinition(beanDefinitions);
+        AbstractBeanDefinition purahContextBeanDefinition = purahContextBeanDefinition( metadata,beanDefinitions);
         BeanDefinitionHolder holder = new BeanDefinitionHolder(purahContextBeanDefinition, PurahContext.class.getName());
         BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
 
@@ -54,10 +60,20 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     }
 
 
-    public AbstractBeanDefinition purahContextBeanDefinition(LinkedHashSet<BeanDefinition> beanDefinitions) {
+    public AbstractBeanDefinition purahContextBeanDefinition(AnnotationMetadata metadata,LinkedHashSet<BeanDefinition> beanDefinitions) {
+
+
         BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(PurahContextFactoryBean.class);
+
+        EnablePurah enablePurah = ((StandardAnnotationMetadata) metadata).getIntrospectedClass().getDeclaredAnnotation(EnablePurah.class);
+
+
+
         List<Class<BaseStringMatcher>> classes = scanStringMatcherClass(beanDefinitions, BaseStringMatcher.class);
         definitionBuilder.addPropertyValue("baseStringMatcherClass", classes);
+
+        definitionBuilder.addPropertyValue("enablePurah", enablePurah);
+
         definitionBuilder.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
 
 

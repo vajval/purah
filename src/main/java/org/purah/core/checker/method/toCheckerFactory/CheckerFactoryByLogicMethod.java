@@ -4,25 +4,23 @@ package org.purah.core.checker.method.toCheckerFactory;
 import org.purah.core.checker.base.BaseSupportCacheChecker;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.Checker;
-import org.purah.core.checker.method.toChecker.PurahEnableMethod;
+import org.purah.core.checker.method.PurahEnableMethod;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;
 
 import java.lang.reflect.Method;
 
-public class LogicMethodToCheckerFactory implements CheckerFactory {
+public class CheckerFactoryByLogicMethod implements CheckerFactory {
 
 
     WildCardMatcher wildCardMatcher;
 
     PurahEnableMethod purahEnableMethod;
-    Method method;
 
-    public LogicMethodToCheckerFactory(Object bean, Method method, String matchStr) {
+    public CheckerFactoryByLogicMethod(Object bean, Method method, String matchStr) {
         this.wildCardMatcher = new WildCardMatcher(matchStr);
         purahEnableMethod = new PurahEnableMethod(bean, method, 1);
-        this.method = method;
     }
 
 
@@ -50,7 +48,7 @@ public class LogicMethodToCheckerFactory implements CheckerFactory {
             @Override
             public String logicFrom() {
 
-                return method.toGenericString();
+                return purahEnableMethod.wrapperMethod().toGenericString();
             }
 
             @Override

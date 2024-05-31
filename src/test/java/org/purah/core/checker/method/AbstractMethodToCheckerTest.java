@@ -7,7 +7,7 @@ import org.purah.core.base.Name;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.CheckerManager;
 import org.purah.core.checker.base.ExecChecker;
-import org.purah.core.checker.method.toChecker.LogicMethodToChecker;
+import org.purah.core.checker.method.toChecker.CheckerByLogicMethod;
 import org.purah.core.checker.method.toChecker.AbstractMethodToChecker;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 
@@ -47,12 +47,12 @@ class AbstractMethodToCheckerTest {
 
         TestCheckers testCheckers = new TestCheckers();
         Method testMethod = TestCheckers.class.getMethod("checkById", Long.class);
-        AbstractMethodToChecker abstractMethodToChecker = new LogicMethodToChecker(testCheckers, testMethod);
+        AbstractMethodToChecker abstractMethodToChecker = new CheckerByLogicMethod(testCheckers, testMethod);
         System.out.println(abstractMethodToChecker.check(CheckInstance.createObjectInstance(1L)));
         Assertions.assertTrue(abstractMethodToChecker.check(CheckInstance.createObjectInstance(1L)).isSuccess());
 
         testMethod = TestCheckers.class.getMethod("checkById", CheckInstance.class);
-        abstractMethodToChecker = new LogicMethodToChecker(testCheckers, testMethod);
+        abstractMethodToChecker = new CheckerByLogicMethod(testCheckers, testMethod);
         Assertions.assertTrue(abstractMethodToChecker.check(CheckInstance.createObjectInstance(1L)).isSuccess());
 
     }
@@ -67,12 +67,12 @@ class AbstractMethodToCheckerTest {
         CheckerManager checkerManager = new CheckerManager();
         TestCheckers testCheckers = new TestCheckers();
 
-        AbstractMethodToChecker abstractMethodToChecker = new LogicMethodToChecker(testCheckers, TestCheckers.class.getMethod("checkById", Long.class));
+        AbstractMethodToChecker abstractMethodToChecker = new CheckerByLogicMethod(testCheckers, TestCheckers.class.getMethod("checkById", Long.class));
         checkerManager.reg(abstractMethodToChecker);
 
-        abstractMethodToChecker = new LogicMethodToChecker(testCheckers, TestCheckers.class.getMethod("checkById", CheckInstance.class));
+        abstractMethodToChecker = new CheckerByLogicMethod(testCheckers, TestCheckers.class.getMethod("checkById", CheckInstance.class));
         checkerManager.reg(abstractMethodToChecker);
-        abstractMethodToChecker = new LogicMethodToChecker(testCheckers, TestCheckers.class.getMethod("checkByUser", Util.User.class));
+        abstractMethodToChecker = new CheckerByLogicMethod(testCheckers, TestCheckers.class.getMethod("checkByUser", Util.User.class));
         checkerManager.reg(abstractMethodToChecker);
         ExecChecker execChecker = checkerManager.get("id为1");
         Assertions.assertTrue(execChecker.check(CheckInstance.createObjectInstance(Util.initiator)).isSuccess());

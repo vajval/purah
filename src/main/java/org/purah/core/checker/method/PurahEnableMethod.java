@@ -1,5 +1,6 @@
-package org.purah.core.checker.method.toChecker;
+package org.purah.core.checker.method;
 
+import org.purah.core.base.Name;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
@@ -32,8 +33,12 @@ public class PurahEnableMethod {
     public PurahEnableMethod(Object bean, Method method, int needCheckArgIndex) {
         this.method = method;
         this.bean = bean;
-
-
+        Name nameAnn = method.getDeclaredAnnotation(Name.class);
+        if (nameAnn != null) {
+            this.name = nameAnn.value();
+        } else {
+            this.name = this.method.toGenericString();
+        }
         Type returnType = method.getGenericReturnType();
         ResolvableType[] generics = ResolvableType.forType(returnType).as(CheckResult.class).getGenerics();
 
@@ -52,9 +57,6 @@ public class PurahEnableMethod {
         }
 
 
-//todo
-
-
         this.needCheckArgClass = method.getParameterTypes()[needCheckArgIndex];
         if (this.needCheckArgClass.equals(CheckInstance.class)) {
             ParameterizedType genericReturnType = (ParameterizedType) method.getGenericParameterTypes()[needCheckArgIndex];
@@ -66,12 +68,8 @@ public class PurahEnableMethod {
     }
 
 
-    protected boolean argIsCheckInstanceClass() {
-        return argIsCheckInstanceClass;
-    }
-
     public Object checkInstanceToInputArg(CheckInstance checkInstance) {
-        if (argIsCheckInstanceClass()) {
+        if (argIsCheckInstanceClass) {
             return checkInstance;
         }
         return checkInstance.instance();
@@ -101,6 +99,10 @@ public class PurahEnableMethod {
         }
     }
 
+    public Method wrapperMethod() {
+        return method;
+    }
+
     public Class<?> needCheckArgClass() {
         return needCheckArgClass;
     }
@@ -110,10 +112,11 @@ public class PurahEnableMethod {
 
     }
 
+    public String name() {
+        return name;
+    }
+
     public static boolean validReturnType(Class<?> clazz) {
-        if (clazz.equals(boolean.class) || CheckResult.class.isAssignableFrom(clazz)) {
-            return true;
-        }
-        return false;
+        return clazz.equals(boolean.class) || CheckResult.class.isAssignableFrom(clazz);
     }
 }

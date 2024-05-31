@@ -1,13 +1,11 @@
 package org.purah.core.checker.custom;
 
 
-import org.purah.core.checker.base.BaseSupportCacheChecker;
-import org.purah.core.checker.base.CheckInstance;
-import org.purah.core.checker.base.ExecChecker;
+import org.purah.core.checker.base.*;
 import org.purah.core.checker.combinatorial.ExecType;
-import org.purah.core.checker.base.MultiCheckerExecutor;
+import org.purah.core.checker.method.toChecker.MethodToChecker;
 import org.purah.core.checker.result.*;
-import org.purah.core.checker.method.toChecker.AnnMethodToChecker;
+import org.purah.core.checker.method.toChecker.CheckerByAnnMethod;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -58,15 +56,18 @@ public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
             }
 
             String name = this.name() + "[" + annClazz.getName() + "]";
-            AnnMethodToChecker annMethodToChecker = new AnnMethodToChecker(this, declaredMethod, name);
+            Checker checkerByAnnMethod = methodToChecker(this, declaredMethod, name);
 
-            ExecChecker execChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> new ExecChecker(name, annMethodToChecker));
+            ExecChecker execChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> new ExecChecker(name, checkerByAnnMethod));
 
-            execChecker.addNewChecker(annMethodToChecker);
+            execChecker.addNewChecker(checkerByAnnMethod);
 
         }
 
     }
+
+
+    public abstract Checker methodToChecker(Object methodsToCheckersBean, Method method, String name);
 
     ExecType.Main mainExecType;
 

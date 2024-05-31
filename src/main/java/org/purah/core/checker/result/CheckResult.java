@@ -9,7 +9,7 @@ public interface CheckResult<T> {
         return execInfo() == ExecInfo.success;
     }
 
-    default public boolean isFromCache() {
+    default boolean isFromCache() {
         return false;
     }
 

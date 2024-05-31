@@ -3,6 +3,7 @@ package org.purah.core.checker.method.toChecker;
 
 import org.purah.core.checker.base.BaseSupportCacheChecker;
 import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.method.PurahEnableMethod;
 import org.purah.core.checker.result.CheckResult;
 
 import java.lang.reflect.Method;
@@ -14,20 +15,11 @@ import java.lang.reflect.Method;
 public abstract class AbstractMethodToChecker extends BaseSupportCacheChecker {
 
 
-    protected Method method;
-    protected Object methodsToCheckersBean;
-
-    protected String name;
     protected PurahEnableMethod purahEnableMethod;
 
 
-    protected String errorMsgProtected(Object methodsToCheckersBean, Method method) {
-        return validator().errorMsg(methodsToCheckersBean, method);
-    }
-
-
     public AbstractMethodToChecker(Object methodsToCheckersBean, Method method) {
-        String errorMsg = errorMsgProtected(methodsToCheckersBean, method);
+        String errorMsg = validReturnErrorMsg(methodsToCheckersBean, method);
 
         if (errorMsg != null) {
             throw new RuntimeException(errorMsg);
@@ -35,25 +27,20 @@ public abstract class AbstractMethodToChecker extends BaseSupportCacheChecker {
 
         purahEnableMethod = purahEnableMethod(methodsToCheckersBean, method);
 
-        this.methodsToCheckersBean = methodsToCheckersBean;
-        this.method = method;
-        this.init();
     }
 
-    public abstract PurahEnableMethod purahEnableMethod(Object methodsToCheckersBean, Method method);
-
-    protected void init() {
+    protected abstract PurahEnableMethod purahEnableMethod(Object methodsToCheckersBean, Method method);
 
 
-    }
-
-    protected abstract PurahEnableMethodValidator validator();
+    protected abstract String validReturnErrorMsg(Object methodsToCheckersBean, Method method);
 
 
     @Override
-    public String name() {
-        return name;
-    }
+    public abstract CheckResult doCheck(CheckInstance checkInstance);
+
+    @Override
+    public abstract String name();
+
 
 
     @Override
@@ -66,13 +53,13 @@ public abstract class AbstractMethodToChecker extends BaseSupportCacheChecker {
         return purahEnableMethod.resultWrapperClass();
     }
 
-    @Override
-    public abstract CheckResult doCheck(CheckInstance checkInstance);
-
 
     @Override
     public String logicFrom() {
-
-        return method.toGenericString();
+        return purahEnableMethod.wrapperMethod().toGenericString();
     }
+
+
+
+
 }

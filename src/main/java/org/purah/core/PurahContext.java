@@ -20,12 +20,26 @@ import java.util.stream.Stream;
 
 public class PurahContext {
 
+    public PurahContextConfig config;
+
 
     private CheckerManager checkManager = new CheckerManager();
 
     private ArgResolverManager argResolverManager = new ArgResolverManager();
 
     private MatcherManager matcherManager = new MatcherManager();
+
+    public PurahContext(PurahContextConfig config) {
+        this.config = config;
+    }
+
+    public PurahContext() {
+        this(new PurahContextConfig());
+    }
+
+    public PurahContextConfig config() {
+        return config;
+    }
 
     public CheckerManager checkManager() {
         return checkManager;
