@@ -1,16 +1,17 @@
-package org.purah.core.checker.method;
+package org.purah.core.checker.method.toCheckerFactory;
 
 
-import org.purah.core.checker.base.BaseCheckerWithCache;
+import org.purah.core.checker.base.BaseSupportCacheChecker;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.method.toChecker.PurahEnableMethod;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;
 
 import java.lang.reflect.Method;
 
-public class MethodToCheckerFactoryByResult implements CheckerFactory {
+public class LogicMethodToCheckerFactory implements CheckerFactory {
 
 
     WildCardMatcher wildCardMatcher;
@@ -18,7 +19,7 @@ public class MethodToCheckerFactoryByResult implements CheckerFactory {
     PurahEnableMethod purahEnableMethod;
     Method method;
 
-    public MethodToCheckerFactoryByResult(Object bean, Method method, String matchStr) {
+    public LogicMethodToCheckerFactory(Object bean, Method method, String matchStr) {
         this.wildCardMatcher = new WildCardMatcher(matchStr);
         purahEnableMethod = new PurahEnableMethod(bean, method, 1);
         this.method = method;
@@ -34,7 +35,7 @@ public class MethodToCheckerFactoryByResult implements CheckerFactory {
     public Checker createChecker(String needMatchCheckerName) {
 
 
-        return new BaseCheckerWithCache() {
+        return new BaseSupportCacheChecker() {
             @Override
             public CheckResult doCheck(CheckInstance checkInstance) {
 

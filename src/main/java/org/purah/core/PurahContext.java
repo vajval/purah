@@ -3,7 +3,7 @@ package org.purah.core;
 
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.CheckerManager;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerWithCache;
+import org.purah.core.checker.combinatorial.CombinatorialChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.result.ResultLevel;
@@ -41,7 +41,7 @@ public class PurahContext {
     }
 
 
-    public CombinatorialCheckerWithCache combinatorialOf(String... checkerNames) {
+    public CombinatorialChecker combinatorialOf(String... checkerNames) {
         List<String> checkerNameList = Stream.of(checkerNames).collect(Collectors.toList());
 
         CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties = new CombinatorialCheckerConfigProperties(UUID.randomUUID().toString());
@@ -51,7 +51,7 @@ public class PurahContext {
 
     }
 
-    public CombinatorialCheckerWithCache createNewCombinatorialChecker(CombinatorialCheckerConfigProperties properties) {
+    public CombinatorialChecker createNewCombinatorialChecker(CombinatorialCheckerConfigProperties properties) {
 
 
         CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(this);
@@ -71,7 +71,7 @@ public class PurahContext {
                 config.addMatcherCheckerName(fieldMatcher, checkerNameList);
             }
         }
-        return new CombinatorialCheckerWithCache(config);
+        return new CombinatorialChecker(config);
     }
 
     public Checker regNewCombinatorialChecker(CombinatorialCheckerConfigProperties properties) {

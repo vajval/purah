@@ -1,4 +1,4 @@
-package org.purah.core.checker.method;
+package org.purah.core.checker.method.toChecker;
 
 import com.google.common.collect.Lists;
 import org.purah.core.checker.base.CheckInstance;
@@ -8,11 +8,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-public class AnnMethodToCheckerWithCache extends MethodToCheckerWithCache {
+public class AnnMethodToChecker extends AbstractMethodToChecker {
 
     Class<?> annClazz;
 
-    public AnnMethodToCheckerWithCache(Object methodsToCheckersBean, Method method, String name) {
+    public AnnMethodToChecker(Object methodsToCheckersBean, Method method, String name) {
 
         super(methodsToCheckersBean, method);
         this.name = name;

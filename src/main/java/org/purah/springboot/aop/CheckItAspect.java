@@ -27,7 +27,7 @@ public class CheckItAspect {
 
     @Autowired
     PurahContext purahContext;
-    private final Map<Method, MethodHandlerCheckerWithCache> methodCheckerMap = new ConcurrentHashMap<>();
+    private final Map<Method, MethodHandlerChecker> methodCheckerMap = new ConcurrentHashMap<>();
 
 
     @Pointcut("execution(* *(.., @org.purah.springboot.ann.CheckIt (*), ..))")
@@ -62,7 +62,7 @@ public class CheckItAspect {
         /*
          * 找到对应函数使用的检查器材，然后检查
          */
-        MethodHandlerCheckerWithCache methodHandlerChecker = this.checkerOf(joinPoint.getThis(), method);
+        MethodHandlerChecker methodHandlerChecker = this.checkerOf(joinPoint.getThis(), method);
         CheckInstance<Object[]> checkInstance = CheckInstance.create(joinPoint.getArgs(), Object[].class);
 
         MethodCheckResult methodCheckResult = methodHandlerChecker.check(checkInstance);
@@ -94,9 +94,9 @@ public class CheckItAspect {
 
     }
 
-    public MethodHandlerCheckerWithCache checkerOf(Object bean, Method method) {
+    public MethodHandlerChecker checkerOf(Object bean, Method method) {
 
-        MethodHandlerCheckerWithCache methodHandlerChecker = methodCheckerMap.computeIfAbsent(method, i -> new MethodHandlerCheckerWithCache(bean, method, purahContext));
+        MethodHandlerChecker methodHandlerChecker = methodCheckerMap.computeIfAbsent(method, i -> new MethodHandlerChecker(bean, method, purahContext));
 
         purahContext.checkManager().reg(methodHandlerChecker);
 

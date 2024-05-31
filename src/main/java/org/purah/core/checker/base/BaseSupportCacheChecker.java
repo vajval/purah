@@ -1,7 +1,6 @@
 package org.purah.core.checker.base;
 
 
-import jdk.jshell.spi.ExecutionControl;
 import org.purah.core.checker.cache.InstanceCheckCacheKey;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.checker.result.CheckResult;
@@ -11,7 +10,7 @@ import org.purah.core.checker.result.BaseLogicCheckResult;
  * @param <CHECK_INSTANCE>
  */
 
-public abstract class BaseCheckerWithCache<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTANCE, RESULT> {
+public abstract class BaseSupportCacheChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTANCE, RESULT> {
 
 
     @Override
@@ -34,16 +33,32 @@ public abstract class BaseCheckerWithCache<CHECK_INSTANCE, RESULT> implements Ch
         return resultCheckResult;
     }
 
+
+    public boolean enableCache() {
+        return true;
+    }
+
     private void putCacheIfNeed(CheckInstance<CHECK_INSTANCE> checkInstance, CheckResult<RESULT> checkResult) {
-        boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableOnThisThreadContext();
-        if (!enableOnThisContext) {
+        if (!enableCache()) {
             return;
         }
-        InstanceCheckCacheKey instanceCheckCacheKey = new InstanceCheckCacheKey(checkInstance, this.name());
-        PurahCheckInstanceCacheContext.put(instanceCheckCacheKey, checkResult);
+        try {
+            boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableOnThisThreadContext();
+            if (!enableOnThisContext) {
+                return;
+            }
+
+            InstanceCheckCacheKey instanceCheckCacheKey = new InstanceCheckCacheKey(checkInstance, this.name());
+            PurahCheckInstanceCacheContext.put(instanceCheckCacheKey, checkResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private CheckResult<RESULT> readCacheIfNeed(CheckInstance<CHECK_INSTANCE> checkInstance) {
+        if (!enableCache()) {
+            return null;
+        }
         try {
             boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableOnThisThreadContext();
             if (enableOnThisContext) {
@@ -52,6 +67,7 @@ public abstract class BaseCheckerWithCache<CHECK_INSTANCE, RESULT> implements Ch
             }
             return null;
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

@@ -1,8 +1,9 @@
-package org.purah.core.checker.method;
+package org.purah.core.checker.method.toCheckerFactory;
 
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.CheckerProxy;
 import org.purah.core.checker.factory.CheckerFactory;
+import org.purah.core.checker.method.toChecker.PurahEnableMethod;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;
 
 import java.lang.reflect.InvocationTargetException;

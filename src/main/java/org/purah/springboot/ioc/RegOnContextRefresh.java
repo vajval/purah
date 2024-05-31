@@ -1,15 +1,14 @@
 package org.purah.springboot.ioc;
 
 import org.purah.core.PurahContext;
-import org.purah.core.checker.method.PurahEnableMethod;
+import org.purah.core.checker.method.toChecker.PurahEnableMethod;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.CheckerManager;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.factory.CheckerFactory;
-import org.purah.core.checker.method.MethodToCheckerWithCache;
-import org.purah.core.checker.method.MethodToCheckerFactory;
-import org.purah.core.checker.method.MethodToCheckerFactoryByResult;
-import org.purah.core.checker.method.BaseLogicMethodToCheckerWithCache;
+import org.purah.core.checker.method.toCheckerFactory.MethodToCheckerFactory;
+import org.purah.core.checker.method.toCheckerFactory.LogicMethodToCheckerFactory;
+import org.purah.core.checker.method.toChecker.LogicMethodToChecker;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.factory.MatcherFactory;
 import org.purah.core.resolver.ArgResolver;
@@ -128,7 +127,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
             List<Method> methodList = Stream.of(clazz.getMethods()).filter(i -> i.getDeclaredAnnotation(ToChecker.class) != null).collect(Collectors.toList());
 
             for (Method method : methodList) {
-                MethodToCheckerWithCache methodToChecker = new BaseLogicMethodToCheckerWithCache(bean, method);
+                LogicMethodToChecker methodToChecker = new LogicMethodToChecker(bean, method);
                 checkerManager.reg(methodToChecker);
 
             }
@@ -180,7 +179,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
             }
 
 
-            return new MethodToCheckerFactoryByResult(bean, method, match);
+            return new LogicMethodToCheckerFactory(bean, method, match);
 
 
         } else if (length == 1) {

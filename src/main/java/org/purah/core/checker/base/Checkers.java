@@ -31,8 +31,8 @@ public class Checkers {
     }
 
 
-    public static <T> BaseCheckerWithCache<T, String> autoStringChecker(String name, Predicate<T> predicate, Class<T> clazz) {
-        return new BaseCheckerWithCache() {
+    public static <T> BaseSupportCacheChecker<T, String> autoStringChecker(String name, Predicate<T> predicate, Class<T> clazz) {
+        return new BaseSupportCacheChecker() {
 
             @Override
             public Class<?> inputCheckInstanceClass() {

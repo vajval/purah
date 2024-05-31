@@ -1,13 +1,13 @@
 package org.purah.core.checker.custom;
 
 
-import org.purah.core.checker.base.BaseCheckerWithCache;
+import org.purah.core.checker.base.BaseSupportCacheChecker;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.ExecChecker;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.base.MultiCheckerExecutor;
 import org.purah.core.checker.result.*;
-import org.purah.core.checker.method.AnnMethodToCheckerWithCache;
+import org.purah.core.checker.method.toChecker.AnnMethodToChecker;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AbstractCustomAnnCheckerWithCache extends BaseCheckerWithCache {
+public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
 
-    Map<Class<? extends Annotation>, ExecChecker<?,?>> map = new HashMap<>();
+    Map<Class<? extends Annotation>, ExecChecker<?, ?>> map = new HashMap<>();
 
 
     /**
@@ -58,7 +58,7 @@ public class AbstractCustomAnnCheckerWithCache extends BaseCheckerWithCache {
             }
 
             String name = this.name() + "[" + annClazz.getName() + "]";
-            AnnMethodToCheckerWithCache annMethodToChecker = new AnnMethodToCheckerWithCache(this, declaredMethod, name);
+            AnnMethodToChecker annMethodToChecker = new AnnMethodToChecker(this, declaredMethod, name);
 
             ExecChecker execChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> new ExecChecker(name, annMethodToChecker));
 
@@ -72,7 +72,7 @@ public class AbstractCustomAnnCheckerWithCache extends BaseCheckerWithCache {
 
     ResultLevel resultLevel;
 
-    public AbstractCustomAnnCheckerWithCache(ExecType.Main mainExecType, ResultLevel resultLevel) {
+    public AbstractCustomAnnChecker(ExecType.Main mainExecType, ResultLevel resultLevel) {
         this.mainExecType = mainExecType;
         this.resultLevel = resultLevel;
         initMethods();
@@ -93,12 +93,10 @@ public class AbstractCustomAnnCheckerWithCache extends BaseCheckerWithCache {
         String annListLogStr = enableAnnotations.stream().map(i -> i.annotationType().getSimpleName()).collect(Collectors.joining(",", "[", "]"));
 
 
-
-
         String log = checkInstance.fieldStr() + "  @Ann:" + annListLogStr + " : " + this.name();
 
 
-        return    multiCheckerExecutor.toMultiCheckResult(log);
+        return multiCheckerExecutor.toMultiCheckResult(log);
 
 
     }

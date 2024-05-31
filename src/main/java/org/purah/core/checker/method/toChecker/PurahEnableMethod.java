@@ -1,4 +1,4 @@
-package org.purah.core.checker.method;
+package org.purah.core.checker.method.toChecker;
 
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.result.CheckResult;
@@ -22,7 +22,7 @@ public class PurahEnableMethod {
     protected Class<?> needCheckArgClass;
 
     protected boolean argIsCheckInstanceClass = false;
-    protected boolean resultIsCheckResultClass = false;
+    protected boolean resultIsCheckResultClass;
 
 
     public PurahEnableMethod(Object bean, Method method) {

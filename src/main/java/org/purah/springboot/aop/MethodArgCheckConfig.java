@@ -12,51 +12,48 @@ public class MethodArgCheckConfig {
     /**
      * 注解内容
      */
-    CheckIt checkItAnn;
+    private CheckIt checkItAnn;
     /**
      * 校验用的规则
      */
 
-    List<String> checkerNameList;
+    private List<String> checkerNameList;
     /**
      * 入参类型
      */
-    Class<?> clazz;
+    private Class<?> clazz;
     /**
      * 入参的位置
      */
 
-    int index;
+    private int index;
 
-    public CheckIt getCheckItAnn() {
+
+    public MethodArgCheckConfig(CheckIt checkItAnn, List<String> checkerNameList, Class<?> clazz, int index) {
+        this.checkItAnn = checkItAnn;
+        this.checkerNameList = checkerNameList;
+        this.clazz = clazz;
+        this.index = index;
+    }
+
+    public CheckIt checkItAnn() {
         return checkItAnn;
     }
 
-    public void setCheckItAnn(CheckIt checkItAnn) {
-        this.checkItAnn = checkItAnn;
-    }
 
-    public List<String> getCheckerNameList() {
+    public List<String> checkerNameList() {
         return checkerNameList;
     }
 
-    public void setCheckerNameList(List<String> checkerNameList) {
-        this.checkerNameList = checkerNameList;
-    }
 
-    public Class<?> getClazz() {
+    public Class<?> argClazz() {
         return clazz;
     }
 
-    public void setClazz(Class<?> clazz) {
-        this.clazz = clazz;
-    }
 
-    public int getIndex() {
+    public int argIndexInMethod() {
         return index;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
+
 }

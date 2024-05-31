@@ -2,7 +2,7 @@ package org.purah.core.checker.factory;
 
 
 
-import org.purah.core.checker.base.BaseCheckerWithCache;
+import org.purah.core.checker.base.BaseSupportCacheChecker;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.result.CheckResult;
@@ -16,7 +16,7 @@ public interface EasyCheckFactory<T> extends CheckerFactory {
     @Override
     default Checker createChecker(String needMatchCheckerName) {
         Predicate<T> predicate = predicate(needMatchCheckerName);
-        return new BaseCheckerWithCache<T, Object>() {
+        return new BaseSupportCacheChecker<T, Object>() {
             @Override
             public CheckResult<Object> doCheck(CheckInstance<T> checkInstance) {
                 boolean test = predicate.test(checkInstance.instance());

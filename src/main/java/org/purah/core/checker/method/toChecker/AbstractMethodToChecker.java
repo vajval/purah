@@ -1,7 +1,7 @@
-package org.purah.core.checker.method;
+package org.purah.core.checker.method.toChecker;
 
 
-import org.purah.core.checker.base.BaseCheckerWithCache;
+import org.purah.core.checker.base.BaseSupportCacheChecker;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.result.CheckResult;
 
@@ -11,11 +11,10 @@ import java.lang.reflect.Method;
  * 直接将函数生成规则
  * 如果返回结果是
  */
-public abstract class MethodToCheckerWithCache extends BaseCheckerWithCache {
+public abstract class AbstractMethodToChecker extends BaseSupportCacheChecker {
 
 
     protected Method method;
-
     protected Object methodsToCheckersBean;
 
     protected String name;
@@ -27,7 +26,7 @@ public abstract class MethodToCheckerWithCache extends BaseCheckerWithCache {
     }
 
 
-    public MethodToCheckerWithCache(Object methodsToCheckersBean, Method method) {
+    public AbstractMethodToChecker(Object methodsToCheckersBean, Method method) {
         String errorMsg = errorMsgProtected(methodsToCheckersBean, method);
 
         if (errorMsg != null) {

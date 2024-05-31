@@ -6,7 +6,7 @@ import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
-import org.purah.core.checker.custom.AbstractCustomAnnCheckerWithCache;
+import org.purah.core.checker.custom.AbstractCustomAnnChecker;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmpty;
@@ -20,11 +20,11 @@ import org.springframework.util.StringUtils;
 @Name("自定义注解检测")
 @EnableOnPurahContext
 @Component
-public class CustomAnnCheckerWithCache extends AbstractCustomAnnCheckerWithCache {
+public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
     public static int cnPhoneNumCount = 0;
 
-    public CustomAnnCheckerWithCache() {
+    public CustomAnnChecker() {
         super(ExecType.Main.all_success, ResultLevel.failedAndIgnoreNotBaseLogic);
     }
 

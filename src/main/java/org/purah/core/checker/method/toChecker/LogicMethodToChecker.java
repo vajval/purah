@@ -1,4 +1,4 @@
-package org.purah.core.checker.method;
+package org.purah.core.checker.method.toChecker;
 
 import com.google.common.collect.Lists;
 import org.purah.core.base.Name;
@@ -8,13 +8,13 @@ import org.purah.core.checker.result.CheckResult;
 import java.lang.reflect.Method;
 
 
-public class BaseLogicMethodToCheckerWithCache extends MethodToCheckerWithCache {
+public class LogicMethodToChecker extends AbstractMethodToChecker {
 
     public static PurahEnableMethodValidator methodToCheckerValidator = new PurahEnableMethodValidator(Lists.newArrayList(Name.class),
             Lists.newArrayList(Object.class), Lists.newArrayList(boolean.class, CheckResult.class)
     );
 
-    public BaseLogicMethodToCheckerWithCache(Object methodsToCheckersBean, Method method) {
+    public LogicMethodToChecker(Object methodsToCheckersBean, Method method) {
         super(methodsToCheckersBean, method);
         this.name = method.getAnnotation(Name.class).value();
 

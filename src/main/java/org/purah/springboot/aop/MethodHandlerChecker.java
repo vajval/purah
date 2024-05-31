@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 
 import org.purah.core.PurahContext;
 import org.purah.core.base.Name;
-import org.purah.core.checker.base.BaseCheckerWithCache;
+import org.purah.core.checker.base.BaseSupportCacheChecker;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.ExecChecker;
@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MethodHandlerCheckerWithCache extends BaseCheckerWithCache {
+public class MethodHandlerChecker extends BaseSupportCacheChecker {
     protected String name;
 
     protected PurahContext purahContext;
@@ -39,7 +39,7 @@ public class MethodHandlerCheckerWithCache extends BaseCheckerWithCache {
     protected Type returnType;
     protected ExecType.Main methodExecType = ExecType.Main.all_success;
 
-    public MethodHandlerCheckerWithCache(Object methodsToCheckersBean, Method method, PurahContext purahContext) {
+    public MethodHandlerChecker(Object methodsToCheckersBean, Method method, PurahContext purahContext) {
         this.purahContext = purahContext;
         this.methodsToCheckersBean = methodsToCheckersBean;
         this.method = method;
@@ -49,7 +49,6 @@ public class MethodHandlerCheckerWithCache extends BaseCheckerWithCache {
     }
 
 
-    //    @Override
     protected void init() {
         ArrayList<Parameter> parameterArrayList = Lists.newArrayList(method.getParameters());
         methodArgCheckConfigList = new ArrayList<>();
@@ -79,12 +78,8 @@ public class MethodHandlerCheckerWithCache extends BaseCheckerWithCache {
             if (useCheckerNameList.size() == 0) continue;
 
 
-            MethodArgCheckConfig methodArgCheckConfig = new MethodArgCheckConfig();
+            MethodArgCheckConfig methodArgCheckConfig = new MethodArgCheckConfig(checkIt, useCheckerNameList, argClazz, index);
 
-            methodArgCheckConfig.setCheckItAnn(checkIt);
-            methodArgCheckConfig.setClazz(argClazz);
-            methodArgCheckConfig.setIndex(index);
-            methodArgCheckConfig.setCheckerNameList(useCheckerNameList);
 
             methodArgCheckConfigList.add(methodArgCheckConfig);
         }
@@ -106,9 +101,10 @@ public class MethodHandlerCheckerWithCache extends BaseCheckerWithCache {
 
     }
 
+
     @Override
-    public MethodCheckResult check(CheckInstance checkInstance) {
-        return (MethodCheckResult) super.check(checkInstance);
+    public boolean enableCache() {
+        return false;
     }
 
     @Override
@@ -118,10 +114,9 @@ public class MethodHandlerCheckerWithCache extends BaseCheckerWithCache {
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(
                 methodExecType,
                 ResultLevel.failedAndIgnoreNotBaseLogic);
-        List<Supplier<CheckResult<?>>> execList = new ArrayList<>();
 
         for (MethodArgCheckConfig methodArgCheckConfig : methodArgCheckConfigList) {
-            multiCheckerExecutor.add(() -> this.checkBaseLogicArgByConfig(methodArgCheckConfig, args[methodArgCheckConfig.index]));
+            multiCheckerExecutor.add(() -> this.checkBaseLogicArgByConfig(methodArgCheckConfig, args[methodArgCheckConfig.argIndexInMethod()]));
         }
 
         String log = methodsToCheckersBean.getClass() + "|method:" + method.getName();
@@ -136,32 +131,32 @@ public class MethodHandlerCheckerWithCache extends BaseCheckerWithCache {
 
     }
 
+    @Override
+    public MethodCheckResult check(CheckInstance checkInstance) {
+        return (MethodCheckResult) super.check(checkInstance);
+    }
 
     private ArgCheckResult checkBaseLogicArgByConfig(MethodArgCheckConfig methodArgCheckConfig, Object checkArg) {
 
-        CheckIt checkIt = methodArgCheckConfig.checkItAnn;
+        CheckIt checkIt = methodArgCheckConfig.checkItAnn();
 
 
         MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.execType(), checkIt.resultLevel());
 
 
-//        List<Supplier<CheckResult<?>>> execList = new ArrayList<>();
-
-        List<? extends ExecChecker<?, ?>> checkerList = methodArgCheckConfig.checkerNameList.stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
+        List<? extends ExecChecker<?, ?>> checkerList = methodArgCheckConfig.checkerNameList().stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
 
         for (Checker checker : checkerList) {
-            executor.add(CheckInstance.create(checkArg, methodArgCheckConfig.clazz), checker);
-//            execList.add(() -> checker.check(CheckInstance.create(checkArg, methodArgCheckConfig.clazz)));
+            executor.add(CheckInstance.create(checkArg, methodArgCheckConfig.argClazz()), checker);
         }
 
-        ;
-        String log = "method:" + method.getName() + "|arg" + methodArgCheckConfig.index;
+        String log = "method:" + method.getName() + "|arg" + methodArgCheckConfig.argIndexInMethod();
 
 
         MultiCheckResult<CheckResult<?>> multiCheckResult = executor.toMultiCheckResult(log);
 
 
-        return ArgCheckResult.create(multiCheckResult.mainCheckResult(), methodArgCheckConfig.checkerNameList,
+        return ArgCheckResult.create(multiCheckResult.mainCheckResult(), methodArgCheckConfig.checkerNameList(),
                 multiCheckResult.value(),
                 checkIt, checkArg, methodExecType);
 
@@ -249,14 +244,3 @@ public class MethodHandlerCheckerWithCache extends BaseCheckerWithCache {
 }
 
 
-//
-//    @Override
-//    public CheckResult check(CheckInstance checkInstance) {
-//        CheckResult check = super.check(checkInstance);
-//
-//        CombinatorialCheckResult result = new CombinatorialCheckResult();
-//        result.addResult(check);
-//        result.setLogicFromByChecker(check.logicFrom());
-//
-//        return result;
-//    }

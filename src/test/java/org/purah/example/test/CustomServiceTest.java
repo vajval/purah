@@ -16,7 +16,7 @@ import org.purah.example.customAnn.CustomService;
 import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmpty;
 import org.purah.example.customAnn.ann.NotNull;
-import org.purah.example.customAnn.checker.CustomAnnCheckerWithCache;
+import org.purah.example.customAnn.checker.CustomAnnChecker;
 import org.purah.example.customAnn.pojo.CustomUser;
 import org.purah.springboot.result.AutoFillCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -242,38 +242,38 @@ class CustomServiceTest {
     void booleanCheckByCustomSyntaxWithMultiLevel2() {
         int num = 100;
         test(num);
-        assertEquals(2 * num, CustomAnnCheckerWithCache.cnPhoneNumCount);
+        assertEquals(2 * num, CustomAnnChecker.cnPhoneNumCount);
 
         PurahCheckInstanceCacheContext.createEnableOnThread();
         test(num);
-        assertEquals(2, CustomAnnCheckerWithCache.cnPhoneNumCount);
+        assertEquals(2, CustomAnnChecker.cnPhoneNumCount);
         PurahCheckInstanceCacheContext.closeCache();
 
         test(num);
-        assertEquals(2 * num, CustomAnnCheckerWithCache.cnPhoneNumCount);
+        assertEquals(2 * num, CustomAnnChecker.cnPhoneNumCount);
 
 
         PurahCheckInstanceCacheContext.createEnableOnThread();
         PurahCheckInstanceCacheContext.createEnableOnThread();
 
         test(num);
-        assertEquals(2, CustomAnnCheckerWithCache.cnPhoneNumCount);
+        assertEquals(2, CustomAnnChecker.cnPhoneNumCount);
         PurahCheckInstanceCacheContext.closeCache();
 
         test(num);
-        assertEquals(2, CustomAnnCheckerWithCache.cnPhoneNumCount);
+        assertEquals(2, CustomAnnChecker.cnPhoneNumCount);
         PurahCheckInstanceCacheContext.closeCache();
 
 
 
 
         test(num);
-        assertEquals(2 * num, CustomAnnCheckerWithCache.cnPhoneNumCount);
+        assertEquals(2 * num, CustomAnnChecker.cnPhoneNumCount);
 
     }
 
     public void test(int num) {
-        CustomAnnCheckerWithCache.cnPhoneNumCount = 0;
+        CustomAnnChecker.cnPhoneNumCount = 0;
 
 
         goodCustomUser.setChildCustomUser(badCustomUser);

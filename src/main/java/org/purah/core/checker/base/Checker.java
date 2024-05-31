@@ -11,6 +11,8 @@ public interface Checker<CHECK_INSTANCE, RESULT> extends IName {
     String DEFAULT_FAILED_INFO = "FAILED";
     String DEFAULT_ERROR_INFO = "ERROR";
 
+//    boolean enableCache();
+
 
     /**
      * 校验 业务 在这里面
