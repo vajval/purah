@@ -8,11 +8,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-public class AnnMethodToChecker extends MethodToChecker {
+public class AnnMethodToCheckerWithCache extends MethodToCheckerWithCache {
 
     Class<?> annClazz;
 
-    public AnnMethodToChecker(Object methodsToCheckersBean, Method method, String name) {
+    public AnnMethodToCheckerWithCache(Object methodsToCheckersBean, Method method, String name) {
 
         super(methodsToCheckersBean, method);
         this.name = name;

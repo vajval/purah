@@ -13,7 +13,6 @@ import org.purah.core.exception.MethodArgCheckException;
 import org.purah.springboot.result.AutoFillCheckResult;
 import org.purah.springboot.result.MethodCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +27,7 @@ public class CheckItAspect {
 
     @Autowired
     PurahContext purahContext;
-    private final Map<Method, MethodHandlerChecker> methodCheckerMap = new ConcurrentHashMap<>();
+    private final Map<Method, MethodHandlerCheckerWithCache> methodCheckerMap = new ConcurrentHashMap<>();
 
 
     @Pointcut("execution(* *(.., @org.purah.springboot.ann.CheckIt (*), ..))")
@@ -43,13 +42,13 @@ public class CheckItAspect {
 
         boolean haveCacheOnThreadContextConfigInThisMethod = false;
         if (haveCacheOnThreadContextConfigInThisMethod) {
-            PurahCheckInstanceCacheContext.createEnableOnAop();
+            PurahCheckInstanceCacheContext.createEnableOnThread();
         }
         try {
             return pointcut(joinPoint);
         } finally {
             if (haveCacheOnThreadContextConfigInThisMethod) {
-                PurahCheckInstanceCacheContext.closeThisThreadContextLocalCacheIfNotNeedOnAop();
+                PurahCheckInstanceCacheContext.closeCache();
             }
         }
     }
@@ -63,7 +62,7 @@ public class CheckItAspect {
         /*
          * 找到对应函数使用的检查器材，然后检查
          */
-        MethodHandlerChecker methodHandlerChecker = this.checkerOf(joinPoint.getThis(), method);
+        MethodHandlerCheckerWithCache methodHandlerChecker = this.checkerOf(joinPoint.getThis(), method);
         CheckInstance<Object[]> checkInstance = CheckInstance.create(joinPoint.getArgs(), Object[].class);
 
         MethodCheckResult methodCheckResult = methodHandlerChecker.check(checkInstance);
@@ -95,9 +94,9 @@ public class CheckItAspect {
 
     }
 
-    public MethodHandlerChecker checkerOf(Object bean, Method method) {
+    public MethodHandlerCheckerWithCache checkerOf(Object bean, Method method) {
 
-        MethodHandlerChecker methodHandlerChecker = methodCheckerMap.computeIfAbsent(method, i -> new MethodHandlerChecker(bean, method, purahContext));
+        MethodHandlerCheckerWithCache methodHandlerChecker = methodCheckerMap.computeIfAbsent(method, i -> new MethodHandlerCheckerWithCache(bean, method, purahContext));
 
         purahContext.checkManager().reg(methodHandlerChecker);
 

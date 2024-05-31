@@ -2,7 +2,7 @@ package org.purah.example.test;
 
 
 import org.purah.core.base.Name;
-import org.purah.core.checker.base.BaseChecker;
+import org.purah.core.checker.base.BaseCheckerWithCache;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.result.CheckResult;
@@ -63,7 +63,7 @@ public class MethodsToCheckersTestBean {
     @ToCheckerFactory(match = "3取值必须在[*-*]之间判断FromTestBean")
     public Checker range3(String name) {
 
-        return new BaseChecker<Number, Object>() {
+        return new BaseCheckerWithCache<Number, Object>() {
             @Override
             public CheckResult doCheck(CheckInstance<Number> checkInstance) {
                 return range2(name, checkInstance.instance());

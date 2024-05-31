@@ -28,7 +28,7 @@ public class MultiCheckerExecutor {
 
     private final List<CheckResult> finalExecResult = new ArrayList<>();
 
-    private final Map<Supplier<CheckResult<?>>, InstanceCheckCacheKey> resultCacheMap = new ConcurrentHashMap<>();
+//    private final Map<Supplier<CheckResult<?>>, InstanceCheckCacheKey> resultCacheMap = new ConcurrentHashMap<>();
 
     private final List<Supplier<CheckResult<?>>> ruleResultSupplierList = new ArrayList<>();
 
@@ -56,16 +56,16 @@ public class MultiCheckerExecutor {
         }
         Supplier<CheckResult<?>> supplier = () -> checker.check(checkInstance);
 
-        if (PurahCheckInstanceCacheContext.isEnableOnThisContext()) {
-
-            CheckResult checkResult = PurahCheckInstanceCacheContext.get(checkInstance, checker.name());
-            if (checkResult != null) {
-                supplier = (() -> checkResult);
-            } else {
-                resultCacheMap.put(supplier, new InstanceCheckCacheKey(checkInstance, checker.name()));
-            }
-
-        }
+//        if (PurahCheckInstanceCacheContext.isEnableOnThisThreadContext()) {
+//
+//            CheckResult checkResult = PurahCheckInstanceCacheContext.get(checkInstance, checker.name());
+//            if (checkResult != null) {
+//                supplier = (() -> checkResult);
+//            } else {
+//                resultCacheMap.put(supplier, new InstanceCheckCacheKey(checkInstance, checker.name()));
+//            }
+//
+//        }
 
         this.add((supplier));
 
@@ -78,18 +78,18 @@ public class MultiCheckerExecutor {
         if (exec) return execInfo;
         exec = true;
         ExecInfo result = ExecInfo.success;
-        boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableOnThisContext();
+        boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableOnThisThreadContext();
 
 
         for (Supplier<? extends CheckResult<?>> supplier : ruleResultSupplierList) {
             CheckResult<?> checkResult = supplier.get();
-            if (enableOnThisContext) {
-                InstanceCheckCacheKey instanceCheckCacheKey = resultCacheMap.get(supplier);
-                if (instanceCheckCacheKey != null) {
-                    PurahCheckInstanceCacheContext.put(instanceCheckCacheKey, checkResult);
-
-                }
-            }
+//            if (enableOnThisContext) {
+//                InstanceCheckCacheKey instanceCheckCacheKey = resultCacheMap.get(supplier);
+//                if (instanceCheckCacheKey != null) {
+//                    PurahCheckInstanceCacheContext.put(instanceCheckCacheKey, checkResult);
+//
+//                }
+//            }
 
             if (resultLevel.needAddToFinalResult(checkResult)) {
                 this.finalExecResult.add(checkResult);

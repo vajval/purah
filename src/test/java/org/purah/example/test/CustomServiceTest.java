@@ -1,6 +1,5 @@
 package org.purah.example.test;
 
-import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,7 @@ import org.purah.example.customAnn.CustomService;
 import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmpty;
 import org.purah.example.customAnn.ann.NotNull;
+import org.purah.example.customAnn.checker.CustomAnnCheckerWithCache;
 import org.purah.example.customAnn.pojo.CustomUser;
 import org.purah.springboot.result.AutoFillCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -240,25 +240,54 @@ class CustomServiceTest {
 
     @Test
     void booleanCheckByCustomSyntaxWithMultiLevel2() {
-        PurahCheckInstanceCacheContext.createEnableOnAop();
+        int num = 100;
+        test(num);
+        assertEquals(2 * num, CustomAnnCheckerWithCache.cnPhoneNumCount);
+
+        PurahCheckInstanceCacheContext.createEnableOnThread();
+        test(num);
+        assertEquals(2, CustomAnnCheckerWithCache.cnPhoneNumCount);
+        PurahCheckInstanceCacheContext.closeCache();
+
+        test(num);
+        assertEquals(2 * num, CustomAnnCheckerWithCache.cnPhoneNumCount);
+
+
+        PurahCheckInstanceCacheContext.createEnableOnThread();
+        PurahCheckInstanceCacheContext.createEnableOnThread();
+
+        test(num);
+        assertEquals(2, CustomAnnCheckerWithCache.cnPhoneNumCount);
+        PurahCheckInstanceCacheContext.closeCache();
+
+        test(num);
+        assertEquals(2, CustomAnnCheckerWithCache.cnPhoneNumCount);
+        PurahCheckInstanceCacheContext.closeCache();
+
+
+
+
+        test(num);
+        assertEquals(2 * num, CustomAnnCheckerWithCache.cnPhoneNumCount);
+
+    }
+
+    public void test(int num) {
+        CustomAnnCheckerWithCache.cnPhoneNumCount = 0;
+
+
         goodCustomUser.setChildCustomUser(badCustomUser);
-        for (int i = 0; i < 1000000; i++) {
-
-
-            if (i % 10000 == 0) {
-                System.out.println(i);
-            }
+        for (int i = 0; i < num; i++) {
             AutoFillCheckResult autoFillCheckResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
             assertFalse(autoFillCheckResult.isSuccess());
 
 
-            String trim =  autoFillCheckResult.allBaseLogicCheckResult().stream().filter(w->w.isFailed()).map(w->w.log())
+            String trim = autoFillCheckResult.allBaseLogicCheckResult().stream().filter(w -> w.isFailed()).map(w -> w.log())
                     .reduce("", (a, b) -> a + b).trim();
 
             assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
             assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
             assertTrue(trim.contains("childCustomUser.phone:移不动也联不通"));
         }
-        PurahCheckInstanceCacheContext.closeThisThreadContextLocalCacheIfNotNeedOnAop();
     }
 }

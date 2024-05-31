@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 
 import org.purah.core.PurahContext;
 import org.purah.core.base.Name;
-import org.purah.core.checker.base.BaseChecker;
+import org.purah.core.checker.base.BaseCheckerWithCache;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.ExecChecker;
@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MethodHandlerChecker extends BaseChecker {
+public class MethodHandlerCheckerWithCache extends BaseCheckerWithCache {
     protected String name;
 
     protected PurahContext purahContext;
@@ -39,7 +39,7 @@ public class MethodHandlerChecker extends BaseChecker {
     protected Type returnType;
     protected ExecType.Main methodExecType = ExecType.Main.all_success;
 
-    public MethodHandlerChecker(Object methodsToCheckersBean, Method method, PurahContext purahContext) {
+    public MethodHandlerCheckerWithCache(Object methodsToCheckersBean, Method method, PurahContext purahContext) {
         this.purahContext = purahContext;
         this.methodsToCheckersBean = methodsToCheckersBean;
         this.method = method;

@@ -1,6 +1,9 @@
 package org.purah.core.checker.base;
 
 
+import jdk.jshell.spi.ExecutionControl;
+import org.purah.core.checker.cache.InstanceCheckCacheKey;
+import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 
@@ -8,21 +11,50 @@ import org.purah.core.checker.result.BaseLogicCheckResult;
  * @param <CHECK_INSTANCE>
  */
 
-public abstract class BaseChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTANCE, RESULT> {
+public abstract class BaseCheckerWithCache<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTANCE, RESULT> {
 
 
     @Override
     public CheckResult<RESULT> check(CheckInstance<CHECK_INSTANCE> checkInstance) {
-        CheckResult<RESULT> resultCheckResult;
+        CheckResult<RESULT> resultCheckResult = this.readCacheIfNeed(checkInstance);
+        if (resultCheckResult != null) {
+            return resultCheckResult;
+        }
+
         resultCheckResult = this.doCheck(checkInstance);
+
         if (resultCheckResult == null) {
             throw new RuntimeException("result cannot be Null " + this.logicFrom());
         }
 
+
         setLogicFrom(resultCheckResult);
+
+        putCacheIfNeed(checkInstance, resultCheckResult);
         return resultCheckResult;
     }
 
+    private void putCacheIfNeed(CheckInstance<CHECK_INSTANCE> checkInstance, CheckResult<RESULT> checkResult) {
+        boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableOnThisThreadContext();
+        if (!enableOnThisContext) {
+            return;
+        }
+        InstanceCheckCacheKey instanceCheckCacheKey = new InstanceCheckCacheKey(checkInstance, this.name());
+        PurahCheckInstanceCacheContext.put(instanceCheckCacheKey, checkResult);
+    }
+
+    private CheckResult<RESULT> readCacheIfNeed(CheckInstance<CHECK_INSTANCE> checkInstance) {
+        try {
+            boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableOnThisThreadContext();
+            if (enableOnThisContext) {
+                InstanceCheckCacheKey instanceCheckCacheKey = new InstanceCheckCacheKey(checkInstance, this.name());
+                return PurahCheckInstanceCacheContext.get(instanceCheckCacheKey);
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     public void setLogicFrom(CheckResult checkResult) {
 

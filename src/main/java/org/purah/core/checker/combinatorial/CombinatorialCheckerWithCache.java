@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * "[短文本]" : 敏感词检查
  * "[长文本]" : 敏感词检查
  */
-public class CombinatorialChecker extends BaseChecker<Object, Object> {
+public class CombinatorialCheckerWithCache extends BaseCheckerWithCache<Object, Object> {
 
     CombinatorialCheckerConfig config;
 
@@ -47,7 +47,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
     public List<FieldMatcherCheckerConfig> fieldMatcherCheckerConfigList = new ArrayList<>();
     private boolean init = false;
 
-    public CombinatorialChecker(CombinatorialCheckerConfig config) {
+    public CombinatorialCheckerWithCache(CombinatorialCheckerConfig config) {
         this.config = config;
     }
 
@@ -63,7 +63,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
         return config.name;
     }
 
-    public CombinatorialChecker init() {
+    public CombinatorialCheckerWithCache init() {
         if (this.init) return this;
         CheckerManager checkerManager = config.purahContext.checkManager();
         this.rootInstanceCheckers = this.config.extendCheckerNames.stream().map(checkerManager::get).collect(Collectors.toList());
@@ -152,7 +152,7 @@ public class CombinatorialChecker extends BaseChecker<Object, Object> {
             List<Supplier<CheckResult<?>>> supplierList = new ArrayList<>();
             ExecType.Matcher execType = fieldMatcherCheckerConfig.execType;
 
-            MultiCheckerExecutor multiCheckerExecutor = CombinatorialChecker.this.createMultiCheckerExecutor();
+            MultiCheckerExecutor multiCheckerExecutor = CombinatorialCheckerWithCache.this.createMultiCheckerExecutor();
 //            multiCheckerExecutor.exec(supplierList);
 
             // 对每个匹配到的字段

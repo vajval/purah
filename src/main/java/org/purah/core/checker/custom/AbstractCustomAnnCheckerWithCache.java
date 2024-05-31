@@ -1,13 +1,13 @@
 package org.purah.core.checker.custom;
 
 
-import org.purah.core.checker.base.BaseChecker;
+import org.purah.core.checker.base.BaseCheckerWithCache;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.ExecChecker;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.base.MultiCheckerExecutor;
 import org.purah.core.checker.result.*;
-import org.purah.core.checker.method.AnnMethodToChecker;
+import org.purah.core.checker.method.AnnMethodToCheckerWithCache;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AbstractCustomAnnChecker extends BaseChecker {
+public class AbstractCustomAnnCheckerWithCache extends BaseCheckerWithCache {
 
     Map<Class<? extends Annotation>, ExecChecker<?,?>> map = new HashMap<>();
 
@@ -58,7 +58,7 @@ public class AbstractCustomAnnChecker extends BaseChecker {
             }
 
             String name = this.name() + "[" + annClazz.getName() + "]";
-            AnnMethodToChecker annMethodToChecker = new AnnMethodToChecker(this, declaredMethod, name);
+            AnnMethodToCheckerWithCache annMethodToChecker = new AnnMethodToCheckerWithCache(this, declaredMethod, name);
 
             ExecChecker execChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> new ExecChecker(name, annMethodToChecker));
 
@@ -72,7 +72,7 @@ public class AbstractCustomAnnChecker extends BaseChecker {
 
     ResultLevel resultLevel;
 
-    public AbstractCustomAnnChecker(ExecType.Main mainExecType, ResultLevel resultLevel) {
+    public AbstractCustomAnnCheckerWithCache(ExecType.Main mainExecType, ResultLevel resultLevel) {
         this.mainExecType = mainExecType;
         this.resultLevel = resultLevel;
         initMethods();
@@ -81,8 +81,7 @@ public class AbstractCustomAnnChecker extends BaseChecker {
 
     @Override
     public CheckResult<?> doCheck(CheckInstance checkInstance) {
-//        System.out.println(checkInstance);
-//        System.out.println(456);
+
         List<Annotation> enableAnnotations = ((CheckInstance<?>) checkInstance).annListOnField().stream().filter(i -> map.containsKey(i.annotationType())).collect(Collectors.toList());
 
 

@@ -6,7 +6,7 @@ import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
-import org.purah.core.checker.custom.AbstractCustomAnnChecker;
+import org.purah.core.checker.custom.AbstractCustomAnnCheckerWithCache;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmpty;
@@ -20,8 +20,11 @@ import org.springframework.util.StringUtils;
 @Name("自定义注解检测")
 @EnableOnPurahContext
 @Component
-public class CustomAnnChecker extends AbstractCustomAnnChecker {
-    public CustomAnnChecker() {
+public class CustomAnnCheckerWithCache extends AbstractCustomAnnCheckerWithCache {
+
+    public static int cnPhoneNumCount = 0;
+
+    public CustomAnnCheckerWithCache() {
         super(ExecType.Main.all_success, ResultLevel.failedAndIgnoreNotBaseLogic);
     }
 
@@ -36,10 +39,11 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
     public CheckResult cnPhoneNum(CNPhoneNum cnPhoneNum, CheckInstance<String> str) {
         String strValue = str.instance();
+        cnPhoneNumCount++;
 
         //gpt小姐 说的
         if (strValue.matches("^1[3456789]\\d{9}$")) {
-            return success(str,"正确的");
+            return success(str, "正确的");
         }
         return BaseLogicCheckResult.failed(str.instance(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
 
@@ -49,7 +53,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
     public CheckResult notEmpty(NotEmpty notEmpty, CheckInstance<String> str) {
         String strValue = str.instance();
         if (StringUtils.hasText(strValue)) {
-            return success(str,"正确的");
+            return success(str, "正确的");
         }
         return BaseLogicCheckResult.failed(str.instance(), str.fieldStr() + ":" + notEmpty.errorMsg());
 
@@ -62,7 +66,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
         if (numValue.doubleValue() < range.min() || numValue.doubleValue() > range.max()) {
             return BaseLogicCheckResult.failed(num.instance(), (num.fieldStr() + ":" + range.errorMsg()));
         }
-        return success(num,"参数合规");
+        return success(num, "参数合规");
 
     }
 

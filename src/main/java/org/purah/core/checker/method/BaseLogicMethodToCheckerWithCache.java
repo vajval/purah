@@ -8,13 +8,13 @@ import org.purah.core.checker.result.CheckResult;
 import java.lang.reflect.Method;
 
 
-public class BaseLogicMethodToChecker extends MethodToChecker {
+public class BaseLogicMethodToCheckerWithCache extends MethodToCheckerWithCache {
 
     public static PurahEnableMethodValidator methodToCheckerValidator = new PurahEnableMethodValidator(Lists.newArrayList(Name.class),
             Lists.newArrayList(Object.class), Lists.newArrayList(boolean.class, CheckResult.class)
     );
 
-    public BaseLogicMethodToChecker(Object methodsToCheckersBean, Method method) {
+    public BaseLogicMethodToCheckerWithCache(Object methodsToCheckersBean, Method method) {
         super(methodsToCheckersBean, method);
         this.name = method.getAnnotation(Name.class).value();
 

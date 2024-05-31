@@ -1,7 +1,7 @@
 package org.purah.core.checker.method;
 
 
-import org.purah.core.checker.base.BaseChecker;
+import org.purah.core.checker.base.BaseCheckerWithCache;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.result.CheckResult;
@@ -34,7 +34,7 @@ public class MethodToCheckerFactoryByResult implements CheckerFactory {
     public Checker createChecker(String needMatchCheckerName) {
 
 
-        return new BaseChecker() {
+        return new BaseCheckerWithCache() {
             @Override
             public CheckResult doCheck(CheckInstance checkInstance) {
 

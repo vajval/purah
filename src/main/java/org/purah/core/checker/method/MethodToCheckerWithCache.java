@@ -1,8 +1,7 @@
 package org.purah.core.checker.method;
 
 
-
-import org.purah.core.checker.base.BaseChecker;
+import org.purah.core.checker.base.BaseCheckerWithCache;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.result.CheckResult;
 
@@ -12,7 +11,7 @@ import java.lang.reflect.Method;
  * 直接将函数生成规则
  * 如果返回结果是
  */
-public abstract class MethodToChecker extends BaseChecker {
+public abstract class MethodToCheckerWithCache extends BaseCheckerWithCache {
 
 
     protected Method method;
@@ -20,9 +19,7 @@ public abstract class MethodToChecker extends BaseChecker {
     protected Object methodsToCheckersBean;
 
     protected String name;
-    protected Class<?> resultClass = boolean.class;
-
-    protected boolean resultIsCheckResultClass = false;
+    protected PurahEnableMethod purahEnableMethod;
 
 
     protected String errorMsgProtected(Object methodsToCheckersBean, Method method) {
@@ -30,9 +27,7 @@ public abstract class MethodToChecker extends BaseChecker {
     }
 
 
-    PurahEnableMethod purahEnableMethod;
-
-    public MethodToChecker(Object methodsToCheckersBean, Method method) {
+    public MethodToCheckerWithCache(Object methodsToCheckersBean, Method method) {
         String errorMsg = errorMsgProtected(methodsToCheckersBean, method);
 
         if (errorMsg != null) {
@@ -49,7 +44,6 @@ public abstract class MethodToChecker extends BaseChecker {
     public abstract PurahEnableMethod purahEnableMethod(Object methodsToCheckersBean, Method method);
 
     protected void init() {
-
 
 
     }

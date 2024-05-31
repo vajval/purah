@@ -1,6 +1,6 @@
 package org.purah.example.checker;
 
-import org.purah.core.checker.base.BaseChecker;
+import org.purah.core.checker.base.BaseCheckerWithCache;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.result.CheckResult;
@@ -31,7 +31,7 @@ public class CityRateChecker implements CheckerFactory {
             max = 0.2;
         }
         double finalMax = max;
-        return new BaseChecker<Double, Object>() {
+        return new BaseCheckerWithCache<Double, Object>() {
             @Override
             public CheckResult doCheck(CheckInstance<Double> checkInstance) {
                 Double rate = checkInstance.instance();

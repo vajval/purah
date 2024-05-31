@@ -45,12 +45,12 @@ class MethodToCheckerTest {
 
         TestCheckers testCheckers = new TestCheckers();
         Method testMethod = TestCheckers.class.getMethod("checkById", Long.class);
-        MethodToChecker methodToChecker = new BaseLogicMethodToChecker(testCheckers, testMethod);
+        MethodToCheckerWithCache methodToChecker = new BaseLogicMethodToCheckerWithCache(testCheckers, testMethod);
         System.out.println(methodToChecker.check(CheckInstance.createObjectInstance(1L)));
         Assertions.assertTrue(methodToChecker.check(CheckInstance.createObjectInstance(1L)).isSuccess());
 
         testMethod = TestCheckers.class.getMethod("checkById", CheckInstance.class);
-        methodToChecker = new BaseLogicMethodToChecker(testCheckers, testMethod);
+        methodToChecker = new BaseLogicMethodToCheckerWithCache(testCheckers, testMethod);
         Assertions.assertTrue(methodToChecker.check(CheckInstance.createObjectInstance(1L)).isSuccess());
 
     }
@@ -65,12 +65,12 @@ class MethodToCheckerTest {
         CheckerManager checkerManager = new CheckerManager();
         TestCheckers testCheckers = new TestCheckers();
 
-        MethodToChecker methodToChecker = new BaseLogicMethodToChecker(testCheckers, TestCheckers.class.getMethod("checkById", Long.class));
+        MethodToCheckerWithCache methodToChecker = new BaseLogicMethodToCheckerWithCache(testCheckers, TestCheckers.class.getMethod("checkById", Long.class));
         checkerManager.reg(methodToChecker);
 
-        methodToChecker = new BaseLogicMethodToChecker(testCheckers, TestCheckers.class.getMethod("checkById", CheckInstance.class));
+        methodToChecker = new BaseLogicMethodToCheckerWithCache(testCheckers, TestCheckers.class.getMethod("checkById", CheckInstance.class));
         checkerManager.reg(methodToChecker);
-        methodToChecker = new BaseLogicMethodToChecker(testCheckers, TestCheckers.class.getMethod("checkByUser", Util.User.class));
+        methodToChecker = new BaseLogicMethodToCheckerWithCache(testCheckers, TestCheckers.class.getMethod("checkByUser", Util.User.class));
         checkerManager.reg(methodToChecker);
         ExecChecker execChecker = checkerManager.get("id为1");
         Assertions.assertTrue(execChecker.check(CheckInstance.createObjectInstance(Util.initiator)).isSuccess());

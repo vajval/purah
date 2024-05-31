@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.Util;
-import org.purah.core.checker.base.BaseChecker;
+import org.purah.core.checker.base.BaseCheckerWithCache;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.Checkers;
@@ -71,7 +71,7 @@ class CombinatorialCheckerTest {
         );
 
         purahContext.checkManager().reg(
-                new BaseChecker<String, String>() {
+                new BaseCheckerWithCache<String, String>() {
                     @Override
                     public CheckResult<String> doCheck(CheckInstance<String> checkInstance) {
                         if (checkInstance.instance().contains("sb")) {
