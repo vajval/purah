@@ -6,8 +6,11 @@ import org.purah.core.checker.result.CheckResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class PurahCheckInstanceCacheContext {
 
@@ -24,7 +27,37 @@ public class PurahCheckInstanceCacheContext {
     }
 
 
+    public static void execOnCacheContext(Runnable runnable) {
+        createEnableOnThread();
+        try {
+            runnable.run();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            closeCache();
+        }
+
+    }
+
+    public static <T> T execOnCacheContext(Supplier<? extends T> supplier) {
+
+        createEnableOnThread();
+        try {
+            return supplier.get();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            closeCache();
+        }
+
+    }
+
     public static PurahCheckInstanceCacheContext createEnableOnThread() {
+
         PurahCheckInstanceCacheContext thisThreadContextLocalCache = getCacheContextByThreadLocal();
         thisThreadContextLocalCache.cacheKeyListStack.add(new ArrayList<>());
         return thisThreadContextLocalCache;
@@ -32,6 +65,8 @@ public class PurahCheckInstanceCacheContext {
 
 
     public static void closeCache() {
+        System.out.println("closeCache");
+
         PurahCheckInstanceCacheContext thisThreadContextLocalCache = getCacheContextByThreadLocal();
         thisThreadContextLocalCache.pop();
     }
@@ -47,9 +82,9 @@ public class PurahCheckInstanceCacheContext {
             this.cacheMap.clear();
             return;
         }
-        for (InstanceCheckCacheKey instanceCheckCacheKey : needRemoveCacheKeyList) {
-            this.cacheMap.remove(instanceCheckCacheKey);
-        }
+//        for (InstanceCheckCacheKey instanceCheckCacheKey : needRemoveCacheKeyList) {
+//            this.cacheMap.remove(instanceCheckCacheKey);
+//        }
     }
 
 
@@ -85,6 +120,7 @@ public class PurahCheckInstanceCacheContext {
     }
 
     public static CheckResult get(CheckInstance checkInstance, String checkerName) {
+
         InstanceCheckCacheKey instanceCheckCacheKey = new InstanceCheckCacheKey(checkInstance, checkerName);
         return get(instanceCheckCacheKey);
 

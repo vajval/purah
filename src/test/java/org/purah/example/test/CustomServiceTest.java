@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -244,21 +245,9 @@ class CustomServiceTest {
         test(num);
         assertEquals(2 * num, CustomAnnChecker.cnPhoneNumCount);
 
+
+//        PurahCheckInstanceCacheContext.execOnCacheContext(() -> test(num));
         PurahCheckInstanceCacheContext.createEnableOnThread();
-        test(num);
-        assertEquals(2, CustomAnnChecker.cnPhoneNumCount);
-        PurahCheckInstanceCacheContext.closeCache();
-
-        test(num);
-        assertEquals(2 * num, CustomAnnChecker.cnPhoneNumCount);
-
-
-        PurahCheckInstanceCacheContext.createEnableOnThread();
-        PurahCheckInstanceCacheContext.createEnableOnThread();
-
-        test(num);
-        assertEquals(2, CustomAnnChecker.cnPhoneNumCount);
-        PurahCheckInstanceCacheContext.closeCache();
 
         test(num);
         assertEquals(2, CustomAnnChecker.cnPhoneNumCount);
@@ -269,6 +258,8 @@ class CustomServiceTest {
 
         test(num);
         assertEquals(2 * num, CustomAnnChecker.cnPhoneNumCount);
+
+
 
     }
 

@@ -40,25 +40,26 @@ public class CheckItAspect {
     @Around("pointcut()")
     public Object aroundAdvice(ProceedingJoinPoint joinPoint) {
 
-        boolean haveCacheOnThreadContextConfigInThisMethod = false;
-        if (haveCacheOnThreadContextConfigInThisMethod) {
-            PurahCheckInstanceCacheContext.createEnableOnThread();
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        boolean useCache = useCache(method);
+        if (useCache) {
+            return PurahCheckInstanceCacheContext.execOnCacheContext(() -> pointcut(joinPoint));
         }
-        try {
-            return pointcut(joinPoint);
-        } finally {
-            if (haveCacheOnThreadContextConfigInThisMethod) {
-                PurahCheckInstanceCacheContext.closeCache();
-            }
-        }
+        return pointcut(joinPoint);
+
+
     }
 
+
+    public boolean useCache(Method method) {
+        boolean cache = purahContext.config().isCache();
+        return cache;
+    }
 
     public Object pointcut(ProceedingJoinPoint joinPoint) {
 
 
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        Method method = methodSignature.getMethod();
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         /*
          * 找到对应函数使用的检查器材，然后检查
          */
