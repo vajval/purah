@@ -2,19 +2,50 @@ package org.purah.core.checker.combinatorial;
 
 import com.google.common.base.Splitter;
 import com.google.gson.Gson;
+import org.purah.core.PurahContext;
 import org.purah.core.checker.result.ResultLevel;
+import org.purah.core.matcher.MatcherManager;
+import org.purah.core.matcher.factory.MatcherFactory;
+import org.purah.core.matcher.intf.FieldMatcher;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class CombinatorialCheckerConfigProperties {
+public class CombinatorialCheckerConfigBuilder {
     private String checkerName;
-    private int resultLevel = ResultLevel.failedAndIgnoreNotBaseLogic.value();
+    private ResultLevel resultLevel = ResultLevel.failedAndIgnoreNotBaseLogic;
     private String logicFrom;
 
     private ExecType.Main mainExecType = ExecType.Main.all_success;
     private List<String> useCheckerNames = new ArrayList<>();
     private LinkedHashMap<String, Map<String, List<String>>> matcherFieldCheckerMapping = new LinkedHashMap<>();
+
+
+    public CombinatorialCheckerConfig build(PurahContext purahContext) {
+
+        CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(purahContext);
+
+        MatcherManager matcherManager = purahContext.matcherManager();
+
+
+        config.setMainExecType(this.getMainExecType());
+        config.setExtendCheckerNames(this.getUseCheckerNames());
+        config.setName(this.getCheckerName());
+        config.setResultLevel(this.getResultLevel());
+        config.setLogicFrom(this.getLogicFrom());
+
+        for (Map.Entry<String, Map<String, List<String>>> entry : this.getMatcherFieldCheckerMapping().entrySet()) {
+            String matcherFactoryName = entry.getKey();
+            MatcherFactory matcherFactory = matcherManager.factoryOf(matcherFactoryName);
+            for (Map.Entry<String, List<String>> matcherStrChecker : entry.getValue().entrySet()) {
+                String matcherStr = matcherStrChecker.getKey();
+                FieldMatcher fieldMatcher = matcherFactory.create(matcherStr);
+                List<String> checkerNameList = matcherStrChecker.getValue();
+                config.addMatcherCheckerName(fieldMatcher, checkerNameList);
+            }
+        }
+        return config;
+    }
 
 
     public String getLogicFrom() {
@@ -37,15 +68,15 @@ public class CombinatorialCheckerConfigProperties {
         this.logicFrom = logicFrom;
     }
 
-    public int getResultLevel() {
+    public ResultLevel getResultLevel() {
         return resultLevel;
     }
 
-    public void setResultLevel(int resultLevel) {
+    public void setResultLevel(ResultLevel resultLevel) {
         this.resultLevel = resultLevel;
     }
 
-    public CombinatorialCheckerConfigProperties(String checkerName) {
+    public CombinatorialCheckerConfigBuilder(String checkerName) {
         this.checkerName = checkerName;
     }
 
@@ -57,7 +88,7 @@ public class CombinatorialCheckerConfigProperties {
         this.useCheckerNames = useCheckerNames;
     }
 
-    public CombinatorialCheckerConfigProperties add(String matchFactoryType, LinkedHashMap<String, List<String>> fieldCheckerMapping) {
+    public CombinatorialCheckerConfigBuilder add(String matchFactoryType, LinkedHashMap<String, List<String>> fieldCheckerMapping) {
         LinkedHashMap<String, List<String>> valueMap = new LinkedHashMap<>();
 
         for (Map.Entry<String, List<String>> entry : fieldCheckerMapping.entrySet()) {
@@ -73,7 +104,7 @@ public class CombinatorialCheckerConfigProperties {
 
     }
 
-    public CombinatorialCheckerConfigProperties addByStrMap(String matchFactoryType, LinkedHashMap<String, String> fieldCheckerStrMapping) {
+    public CombinatorialCheckerConfigBuilder addByStrMap(String matchFactoryType, LinkedHashMap<String, String> fieldCheckerStrMapping) {
         LinkedHashMap<String, List<String>> valueMap = new LinkedHashMap<>();
 
         for (Map.Entry<String, String> entry : fieldCheckerStrMapping.entrySet()) {

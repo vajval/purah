@@ -1,7 +1,7 @@
 package org.purah.springboot.config;
 
 import com.google.common.base.Splitter;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.ResultLevel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -29,7 +29,7 @@ public class PurahConfigProperties {
         this.combinatorialCheckers = combinatorialCheckers;
     }
 
-    public List<CombinatorialCheckerConfigProperties> toCombinatorialCheckerConfigPropertiesList() {
+    public List<CombinatorialCheckerConfigBuilder> toCombinatorialCheckerConfigPropertiesList() {
 
         return combinatorialCheckers.stream().map(CombinatorialCheckerProperties::toCombinatorialCheckerConfigProperties).collect(Collectors.toList());
 
@@ -45,15 +45,18 @@ public class PurahConfigProperties {
     static class CombinatorialCheckerProperties {
 
         protected String name;
-        protected int resultLevel = ResultLevel.failedAndIgnoreNotBaseLogic.value();
-        protected String useCheckers = "";
+
+        protected int  resultLevel = ResultLevel.failedAndIgnoreNotBaseLogic.value();
+
         protected int execType = ExecType.Main.all_success.value();
+        protected String useCheckers = "";
+
 
         protected LinkedHashMap<String, LinkedHashMap<String, String>> mapping = new LinkedHashMap<>(0);
 
 
-        public CombinatorialCheckerConfigProperties toCombinatorialCheckerConfigProperties() {
-            CombinatorialCheckerConfigProperties result = new CombinatorialCheckerConfigProperties(name);
+        public CombinatorialCheckerConfigBuilder toCombinatorialCheckerConfigProperties() {
+            CombinatorialCheckerConfigBuilder result = new CombinatorialCheckerConfigBuilder(name);
             result.setLogicFrom("PurahConfigProperties.CombinatorialCheckerProperties{" + this + "}");
 
             result.setUseCheckerNames(split(useCheckers));
@@ -67,7 +70,7 @@ public class PurahConfigProperties {
 
                 result.add(entry.getKey(), valueMap);
             }
-            result.setResultLevel(resultLevel);
+            result.setResultLevel(ResultLevel.valueOf(resultLevel));
             result.setMainExecType(ExecType.Main.valueOf(execType));
             return result;
         }

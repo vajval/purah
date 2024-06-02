@@ -73,8 +73,6 @@ public abstract class BaseSupportCacheChecker<CHECK_INSTANCE, RESULT> implements
     }
 
     public void setLogicFrom(CheckResult checkResult) {
-
-
         checkResult.setCheckLogicFrom(logicFrom());
     }
 

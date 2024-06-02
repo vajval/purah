@@ -7,6 +7,7 @@ import org.springframework.core.ResolvableType;
 import java.util.function.Predicate;
 
 public class Checkers {
+
     public static Class<?> resultDataClass(Checker<?, ?> checker) {
         Class<?> result = generics(checker)[1].resolve();
         if (result == null) {

@@ -18,27 +18,27 @@ public class ArgResolverManager {
 
     boolean allEmpty = true;
     //反射解析器 当没有其他可用的的解析器时 使用这个
-    ArgResolver<?> defaultResolver = new DefaultArgResolver();
+    ArgResolver defaultResolver = new DefaultArgResolver();
 
     /**
      * 缓存map 有直接返回 ，注册解析器等操作会清空缓存
      */
-    Map<Class<?>, ArgResolver<?>> cacheMap = new ConcurrentHashMap<>();
+    Map<Class<?>, ArgResolver> cacheMap = new ConcurrentHashMap<>();
     /**
      * 强制指定map 有限度最高
      */
-    Map<Class<?>, ArgResolver<?>> assignMap = new ConcurrentHashMap<>();
+    Map<Class<?>, ArgResolver> assignMap = new ConcurrentHashMap<>();
     /**
      * 注册 argResolver 时 通过 supportTypes 确定的 使用方法 有冲突时会报错
      */
-    Map<Class<?>, ArgResolver<?>> regMap = new ConcurrentHashMap<>();
+    Map<Class<?>, ArgResolver> regMap = new ConcurrentHashMap<>();
     /**
      * 无从已经有的regMap中寻找时发现可以通过的 如     发现HashMap 可以用 ArgResolver<Map> 解析 那么 HashMap-ArgResolver<Map>就会放入 这个Map
      */
-    Map<Class<?>, ArgResolver<?>> exMap = new ConcurrentHashMap<>();
+    Map<Class<?>, ArgResolver> exMap = new ConcurrentHashMap<>();
 
 
-    public void assign(Class<?> clazz, ArgResolver<?> argResolver) {
+    public void assign(Class<?> clazz, ArgResolver argResolver) {
         assignMap.put(clazz, argResolver);
         cacheMap.put(clazz, argResolver);
     }
@@ -50,7 +50,7 @@ public class ArgResolverManager {
      *
      * @param argResolver 解析器
      */
-    public void reg(ArgResolver<?> argResolver) {
+    public void reg(ArgResolver argResolver) {
 
         resolverNullCheck(argResolver);
 
@@ -70,7 +70,7 @@ public class ArgResolverManager {
         updateAllEmpty();
     }
 
-    public ArgResolver<?> getArgResolver(Class<?> argClass) {
+    public ArgResolver getArgResolver(Class<?> argClass) {
 
         return cacheMap.computeIfAbsent(argClass, this::doGetArgResolver);
     }
@@ -84,13 +84,13 @@ public class ArgResolverManager {
      * @return
      */
 
-    public ArgResolver<?> doGetArgResolver(Class<?> argClass) {
+    public ArgResolver doGetArgResolver(Class<?> argClass) {
         if (allEmpty) return defaultResolver;
         clazzNullCheck(argClass);
 
 
         // 第一步 查找有没有强制指定的
-        ArgResolver<?> argResolver = assignMap.get(argClass);
+        ArgResolver argResolver = assignMap.get(argClass);
         if (argResolver != null) return argResolver;
         // 第二步 查找 ArgResolver 注册是 从supportTypes 直接确定的
         argResolver = regMap.get(argClass);
@@ -98,16 +98,16 @@ public class ArgResolverManager {
         // 第二步 查找 有没有间接找到的，比如 ArgResolver<Map> 支持 map ,当hashMap解析时  由于找不到 合适的，会挨个尝试，最后发现 ArgResolver<Map> 可以解析，便将其缓存
         argResolver = exMap.get(argClass);
         if (argResolver != null) return argResolver;
-        List<ArgResolver<?>> canUseArgResolverList = new ArrayList<>();
-        for (Map.Entry<Class<?>, ArgResolver<?>> entry : regMap.entrySet()) {
-            ArgResolver<?> resolver = entry.getValue();
+        List<ArgResolver> canUseArgResolverList = new ArrayList<>();
+        for (Map.Entry<Class<?>, ArgResolver> entry : regMap.entrySet()) {
+            ArgResolver resolver = entry.getValue();
             if (resolver.support(argClass)) {
                 canUseArgResolverList.add(resolver);
             }
         }
         if (canUseArgResolverList.size() > 1) {
             throw new RegException("ArgResolverManager::doGetArgResolver无法确定对于class " + argClass.getName() + "要使用那个解析器，可用的有"
-                    + canUseArgResolverList.stream().map(NameUtil::useName).collect(Collectors.toList())
+                    + canUseArgResolverList.stream().map(NameUtil::logClazzName).collect(Collectors.toList())
                     + "\n请使用assign强制指定 或检查呢:supportTypes方法是否冲突"
             );
         }
@@ -121,12 +121,12 @@ public class ArgResolverManager {
     }
 
 
-    public void setDefaultResolver(ArgResolver<?> defaultResolver) {
+    public void setDefaultResolver(ArgResolver defaultResolver) {
         this.defaultResolver = defaultResolver;
     }
 
 
-    public void regExArgResolverMapping(Class<?> clazz, ArgResolver<?> argResolver) {
+    public void regExArgResolverMapping(Class<?> clazz, ArgResolver argResolver) {
         clazzNullCheck(clazz);
         resolverNullCheck(argResolver);
         if (exMap.containsKey(clazz)) {
@@ -147,7 +147,7 @@ public class ArgResolverManager {
         }
     }
 
-    public static void resolverNullCheck(ArgResolver<?> argResolver) {
+    public static void resolverNullCheck(ArgResolver argResolver) {
         if (argResolver == null) {
             throw new RegException("ArgResolverManager 注册异常 argResolver 值不能为 null");
         }

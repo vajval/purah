@@ -61,8 +61,8 @@ public class CheckInstance<INSTANCE> {
         return new CheckInstance<>(instance, clazzInContext, fieldStr);
     }
 
-    public static <T> CheckInstance<T> createWithFieldConfig(T instance, String fieldStr, Field fieldInClass, List<Annotation> annotations) {
-        return new CheckInstance<>(instance, fieldStr, fieldInClass, annotations);
+    public static <T> CheckInstance<T> createWithFieldConfig(T instance, Field fieldInClass, List<Annotation> annotations) {
+        return new CheckInstance<>(instance, fieldInClass.getName(), fieldInClass, annotations);
     }
 
 
@@ -112,7 +112,6 @@ public class CheckInstance<INSTANCE> {
     }
 
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -125,7 +124,6 @@ public class CheckInstance<INSTANCE> {
     public int hashCode() {
         return Objects.hash(instance, fieldStr);
     }
-
 
 
 }

@@ -7,7 +7,7 @@ import org.purah.ExampleApplication;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.ExecChecker;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
@@ -31,7 +31,7 @@ class PurahEnableMethodsTest {
 
     @Test
     public void test() {
-        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("测试MethodsToCheckers注解");
+        CombinatorialCheckerConfigBuilder properties = new CombinatorialCheckerConfigBuilder("测试MethodsToCheckers注解");
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("name", "非空判断FromTestBean,有文本判断FromTestBean");
 

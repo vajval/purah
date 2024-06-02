@@ -5,8 +5,7 @@ import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.CheckerManager;
 import org.purah.core.checker.combinatorial.CombinatorialChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
-import org.purah.core.checker.result.ResultLevel;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.factory.MatcherFactory;
 import org.purah.core.matcher.intf.FieldMatcher;
@@ -58,37 +57,21 @@ public class PurahContext {
     public CombinatorialChecker combinatorialOf(String... checkerNames) {
         List<String> checkerNameList = Stream.of(checkerNames).collect(Collectors.toList());
 
-        CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties = new CombinatorialCheckerConfigProperties(UUID.randomUUID().toString());
-        combinatorialCheckerConfigProperties.setUseCheckerNames(checkerNameList);
-        combinatorialCheckerConfigProperties.setLogicFrom("PurahContext.combinatorialOf" + checkerNameList);
-        return createNewCombinatorialChecker(combinatorialCheckerConfigProperties);
+        CombinatorialCheckerConfigBuilder combinatorialCheckerConfigBuilder = new CombinatorialCheckerConfigBuilder(UUID.randomUUID().toString());
+        combinatorialCheckerConfigBuilder.setUseCheckerNames(checkerNameList);
+        combinatorialCheckerConfigBuilder.setLogicFrom("PurahContext.combinatorialOf" + checkerNameList);
+        return createNewCombinatorialChecker(combinatorialCheckerConfigBuilder);
 
     }
 
-    public CombinatorialChecker createNewCombinatorialChecker(CombinatorialCheckerConfigProperties properties) {
+    public CombinatorialChecker createNewCombinatorialChecker(CombinatorialCheckerConfigBuilder builder) {
+        CombinatorialCheckerConfig config = builder.build(this);
 
-
-        CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(this);
-        config.setMainExecType(properties.getMainExecType());
-        config.setExtendCheckerNames(properties.getUseCheckerNames());
-        config.setName(properties.getCheckerName());
-        config.setResultLevel(ResultLevel.valueOf(properties.getResultLevel()));
-        config.setLogicFrom(properties.getLogicFrom());
-
-        for (Map.Entry<String, Map<String, List<String>>> entry : properties.getMatcherFieldCheckerMapping().entrySet()) {
-            String matcherFactoryName = entry.getKey();
-            MatcherFactory matcherFactory = matcherManager.factoryOf(matcherFactoryName);
-            for (Map.Entry<String, List<String>> matcherStrChecker : entry.getValue().entrySet()) {
-                String matcherStr = matcherStrChecker.getKey();
-                FieldMatcher fieldMatcher = matcherFactory.create(matcherStr);
-                List<String> checkerNameList = matcherStrChecker.getValue();
-                config.addMatcherCheckerName(fieldMatcher, checkerNameList);
-            }
-        }
         return new CombinatorialChecker(config);
+
     }
 
-    public Checker regNewCombinatorialChecker(CombinatorialCheckerConfigProperties properties) {
+    public Checker regNewCombinatorialChecker(CombinatorialCheckerConfigBuilder properties) {
         Checker newCombinatorialChecker = createNewCombinatorialChecker(properties);
         return checkManager.reg(newCombinatorialChecker);
     }

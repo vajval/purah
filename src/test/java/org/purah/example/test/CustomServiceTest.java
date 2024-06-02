@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import org.purah.core.PurahContext;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.ResultLevel;
@@ -25,7 +25,6 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,7 +57,7 @@ class CustomServiceTest {
         goodCustomUser = new CustomUser(3L, "vajva", "15509931234", 15);
 
 
-        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("所有字段自定义注解检测");
+        CombinatorialCheckerConfigBuilder properties = new CombinatorialCheckerConfigBuilder("所有字段自定义注解检测");
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("*", "自定义注解检测");
         properties.addByStrMap("general", map);
@@ -246,12 +245,15 @@ class CustomServiceTest {
         assertEquals(2 * num, CustomAnnChecker.cnPhoneNumCount);
 
 
-//        PurahCheckInstanceCacheContext.execOnCacheContext(() -> test(num));
-        PurahCheckInstanceCacheContext.createEnableOnThread();
+        PurahCheckInstanceCacheContext.execOnCacheContext(() -> test(num));
 
-        test(num);
+
+
+//        PurahCheckInstanceCacheContext.createEnableOnThread();
+
+//        test(num);
         assertEquals(2, CustomAnnChecker.cnPhoneNumCount);
-        PurahCheckInstanceCacheContext.closeCache();
+//        PurahCheckInstanceCacheContext.closeCache();
 
 
 

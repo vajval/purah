@@ -1,28 +1,25 @@
 package org.purah.core.matcher;
 
-import org.purah.core.base.FieldGetMethodUtil;
-import org.purah.core.matcher.clazz.AbstractInstanceFieldMatcher;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.purah.core.matcher.clazz.AbstractClassCacheFieldMatcher;
 import org.purah.core.matcher.intf.FieldMatcher;
 import org.purah.core.matcher.multilevel.GeneralMultilevelFieldMatcher;
 import org.purah.core.matcher.multilevel.MultilevelFieldMatcher;
 
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractCustomAnnMatcher extends AbstractInstanceFieldMatcher implements MultilevelFieldMatcher {
+public abstract class AbstractCustomAnnMatcher extends AbstractClassCacheFieldMatcher implements MultilevelFieldMatcher {
 
     GeneralMultilevelFieldMatcher generalMultilevelFieldMatcher;
 
     public AbstractCustomAnnMatcher(String matchStr) {
-
         super(matchStr);
         generalMultilevelFieldMatcher = new GeneralMultilevelFieldMatcher(matchStr);
-
     }
 
     public abstract Set<Class<? extends Annotation>> customAnnList();
@@ -30,26 +27,32 @@ public abstract class AbstractCustomAnnMatcher extends AbstractInstanceFieldMatc
     @Override
     public List<String> getFieldsByClass(Class<?> clazz) {
 
-
-        fieldGetMethodUtil = new FieldGetMethodUtil();
-        List<String> result = new ArrayList<>();
-        Map<Field, Method> fieldMethodMap = fieldGetMethodUtil.fieldGetMethodMap(clazz);
-
+        PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(clazz);
         Set<Class<? extends Annotation>> customAnnList = customAnnList();
-        for (Map.Entry<Field, Method> entry : fieldMethodMap.entrySet()) {
-            Field field = entry.getKey();
-            if (!generalMultilevelFieldMatcher.match(field.getName())) {
+        List<String> result = new ArrayList<>();
+
+        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+
+            String fieldName = propertyDescriptor.getName();
+            if (!generalMultilevelFieldMatcher.match(fieldName)) {
                 continue;
             }
-            for (Annotation declaredAnnotation : field.getDeclaredAnnotations()) {
+            Field declaredField;
+            try {
+                declaredField = clazz.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                continue;
+            }
+            for (Annotation declaredAnnotation : declaredField.getDeclaredAnnotations()) {
 
                 if (customAnnList.contains(declaredAnnotation.annotationType())) {
-                    result.add(field.getName());
+                    result.add(fieldName);
                     break;
                 }
 
             }
         }
+
         return result;
     }
 

@@ -8,14 +8,13 @@ import org.purah.core.matcher.intf.FieldMatcher;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * 规则解析器会根据 <INSTANCE> 来为 对象挑选合适的解析器
- */
-public interface ArgResolver<INSTANCE> {
 
-    Map<String, CheckInstance> getMatchFieldObjectMap(INSTANCE instance, FieldMatcher fieldMatcher);
+public interface ArgResolver{
+
+    Map<String, CheckInstance<?>> getMatchFieldObjectMap(Object inputArg, FieldMatcher fieldMatcher);
 
     Set<Class<?>> supportTypes();
+
 
     default boolean support(Class<?> clazz) {
         if (supportTypes().contains(clazz)) {

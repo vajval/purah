@@ -15,7 +15,7 @@ class GeneralMultilevelFieldMatcherTest {
     void match() {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
         GeneralMultilevelFieldMatcher generalMultilevelFieldMatcher = new GeneralMultilevelFieldMatcher("*i*.i*");
-        Map<String, CheckInstance> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade, generalMultilevelFieldMatcher);
+        Map<String, CheckInstance<?>> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade, generalMultilevelFieldMatcher);
         Assertions.assertEquals(map.get("initiator.id").instance(), Util.trade.getInitiator().getId());
         Assertions.assertEquals(map.get("recipients.id").instance(), Util.trade.getRecipients().getId());
     }
@@ -24,7 +24,7 @@ class GeneralMultilevelFieldMatcherTest {
     void match2() {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
         GeneralMultilevelFieldMatcher generalMultilevelFieldMatcher = new GeneralMultilevelFieldMatcher("in*.nam?");
-        Map<String, CheckInstance> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade, generalMultilevelFieldMatcher);
+        Map<String, CheckInstance<?>> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade, generalMultilevelFieldMatcher);
         Assertions.assertEquals(map.get("initiator.name").instance(), Util.trade.getInitiator().getName());
     }
 

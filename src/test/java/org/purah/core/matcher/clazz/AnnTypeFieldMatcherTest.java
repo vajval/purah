@@ -29,7 +29,7 @@ public class AnnTypeFieldMatcherTest {
     @Test
     void resolver2() {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
-        Map<String, CheckInstance> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade,  new AnnTypeFieldMatcher("短文本"));
+        Map<String, CheckInstance<?>> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade,  new AnnTypeFieldMatcher("短文本"));
         Assertions.assertEquals(map.get("title").instance(), Util.trade.getTitle());
         Assertions.assertNull(map.get("recipients"));
     }
@@ -39,7 +39,7 @@ public class AnnTypeFieldMatcherTest {
     @Test
     void resolver() {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
-        Map<String, CheckInstance> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade, matcher);
+        Map<String, CheckInstance<?>> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade, matcher);
         Assertions.assertEquals(map.get("initiator").instance(), Util.initiator);
         Assertions.assertNull(map.get("recipients"));
     }

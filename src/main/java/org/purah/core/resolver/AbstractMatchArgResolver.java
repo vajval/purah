@@ -10,16 +10,12 @@ import org.purah.core.matcher.multilevel.MultilevelFieldMatcher;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 
-/**
- * 支持多级
- * @param <INSTANCE>
- */
-public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver<INSTANCE> {
+public abstract class AbstractMatchArgResolver implements ArgResolver {
 
 
     /**
@@ -27,31 +23,37 @@ public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver
      * 详情见单元测试
      */
     @Override
-    public Map<String, CheckInstance> getMatchFieldObjectMap(INSTANCE instance, FieldMatcher fieldMatcher) {
-        this.baseCheck(instance);
-        if (fieldMatcher instanceof MultilevelFieldMatcher ) {
-            MultilevelFieldMatcher multilevelFieldMatcher=( MultilevelFieldMatcher )fieldMatcher;
-            return this.getMultiLevelMap(instance, multilevelFieldMatcher);
+    public Map<String, CheckInstance<?>> getMatchFieldObjectMap(Object inputArg, FieldMatcher fieldMatcher) {
+        if(inputArg==null){
+            return Collections.emptyMap();
+        }
+        if (!support(inputArg.getClass())) {
+            throw new ArgResolverException("不支持的输入参数 argResolver:" + NameUtil.logClazzName(this) + "输入参数" + inputArg.getClass());
+        }
+
+        if (fieldMatcher instanceof MultilevelFieldMatcher) {
+            MultilevelFieldMatcher multilevelFieldMatcher = (MultilevelFieldMatcher) fieldMatcher;
+            return this.getMultiLevelMap(inputArg, multilevelFieldMatcher);
         } else {
-            return this.getBaseLogicLevelMap(instance, fieldMatcher);
+            return this.getThisLevelMatcherObjectMap(inputArg, fieldMatcher);
         }
     }
 
+    public abstract Map<String, CheckInstance<?>> getThisLevelMatcherObjectMap(Object inputArg, FieldMatcher fieldMatcher);
 
     /**
      * 获取多级 matcher  从 instance中获取多级对象，
      */
-    protected Map<String, CheckInstance> getMultiLevelMap(INSTANCE instance, MultilevelFieldMatcher multilevelFieldMatcher) {
+    protected Map<String, CheckInstance<?>> getMultiLevelMap(Object inputArg, MultilevelFieldMatcher multilevelFieldMatcher) {
 
-        Set<String> matchFieldList = this.matchFieldList(instance, multilevelFieldMatcher);
         String levelSplitStr = multilevelFieldMatcher.levelSplitStr();
-        Map<String, CheckInstance> result = new HashMap<>();
-        Map<String, CheckInstance> fieldsObjectMap = this.getFieldsObjectMap(instance, matchFieldList);
+        Map<String, CheckInstance<?>> result = new HashMap<>();
+        Map<String, CheckInstance<?>> fieldsObjectMap = this.getThisLevelMatcherObjectMap(inputArg, multilevelFieldMatcher);
 
 
-        for (Map.Entry<String, CheckInstance> entry : fieldsObjectMap.entrySet()) {
+        for (Map.Entry<String, CheckInstance<?>> entry : fieldsObjectMap.entrySet()) {
             String field = entry.getKey();
-            CheckInstance innCheckInstance = entry.getValue();
+            CheckInstance<?> innCheckInstance = entry.getValue();
 
             FieldMatcher childFieldMatcher = multilevelFieldMatcher.childFieldMatcher(field);
 
@@ -64,10 +66,10 @@ public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver
 
             //需要往底层看
             if (innCheckInstance.instance() != null && supportChildGet(innCheckInstance.instance().getClass())) {
-                Map<String, CheckInstance> childMap = this.getChildMap(innCheckInstance.instance(), childFieldMatcher);
-                for (Map.Entry<String, CheckInstance> childEntry : childMap.entrySet()) {
+                Map<String, CheckInstance<?>> childMap = this.getMatchFieldObjectMap(innCheckInstance.instance(), childFieldMatcher);
+                for (Map.Entry<String, CheckInstance<?>> childEntry : childMap.entrySet()) {
                     String childResultKey = childEntry.getKey();
-                    CheckInstance childResultValue = childEntry.getValue();
+                    CheckInstance<?> childResultValue = childEntry.getValue();
                     childResultValue.addFieldPreByParent(field + levelSplitStr);
                     result.put(field + levelSplitStr + childResultKey, childResultValue);
                 }
@@ -78,25 +80,6 @@ public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver
         return result;
     }
 
-    protected Map<String, CheckInstance> getChildMap(Object innObject, FieldMatcher childFieldMatcher) {
-        return this.getMatchFieldObjectMap((INSTANCE) innObject, childFieldMatcher);
-
-    }
-
-
-
-    protected Map<String, CheckInstance> getBaseLogicLevelMap(INSTANCE instance, FieldMatcher fieldMatcher) {
-        Set<String> matchFieldList = this.matchFieldList(instance, fieldMatcher);
-        return getFieldsObjectMap(instance, matchFieldList);
-    }
-
-    public abstract Map<String, CheckInstance> getFieldsObjectMap(INSTANCE instance, Set<String> matchFieldList);
-
-    protected Set<String> matchFieldList(INSTANCE instance, FieldMatcher fieldMatcher) {
-        return fieldMatcher.matchFields(fields(instance));
-    }
-
-    protected abstract Set<String> fields(INSTANCE instance);
 
     protected boolean supportChildGet(Class<?> clazz) {
         ArrayList<Class<?>> unSupportGet = Lists.newArrayList(String.class,
@@ -109,14 +92,7 @@ public abstract class AbstractMatchArgResolver<INSTANCE> extends BaseArgResolver
 
     }
 
-    protected void baseCheck(INSTANCE instance) {
-        if (instance == null) {
-            throw new ArgResolverException("不支持 解析null:" + NameUtil.useName(this));
-        }
-        if (!support(instance.getClass())) {
-            throw new ArgResolverException("不支持的输入参数 argResolver:" + NameUtil.useName(this) + "输入参数" + instance.getClass());
-        }
-    }
+
 }
 
 

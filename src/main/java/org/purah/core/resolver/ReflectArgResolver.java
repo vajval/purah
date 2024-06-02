@@ -1,20 +1,24 @@
 package org.purah.core.resolver;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.purah.core.base.FieldGetMethodUtil;
+import com.google.common.collect.Sets;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.purah.core.base.NameUtil;
 import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.exception.ArgResolverException;
 import org.purah.core.matcher.intf.FieldMatcher;
 import org.purah.core.matcher.intf.FieldMatcherWithInstance;
+import org.springframework.core.ResolvableType;
 
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 /**
@@ -23,88 +27,64 @@ import java.util.stream.Stream;
  * 会对字段配置进行
  */
 
-public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
+public class ReflectArgResolver extends AbstractMatchArgResolver {
 
     ConcurrentHashMap<Class<?>, ClassConfigCache> classClassConfigCacheMap = new ConcurrentHashMap<>();
-    FieldGetMethodUtil fieldGetMethodUtil;
-    private static final String defaultBooleanPre = "is";
-    private static final String defaultGetPre = "get";
-
-    public ReflectArgResolver() {
-        this(defaultGetPre, defaultBooleanPre);
-    }
-
-    public ReflectArgResolver(String getPre, String booleanPre) {
-        this.fieldGetMethodUtil = new FieldGetMethodUtil(getPre, booleanPre);
-    }
 
 
     @Override
-    public Map<String, CheckInstance> getFieldsObjectMap(Object instance, Set<String> matchFieldList) {
-        ClassConfigCache classConfigCache = initClassIfNecessary(instance.getClass());
-        Map<String, CheckInstance> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
-        for (String matchField : matchFieldList) {
-            CheckInstance objectCheckInstance = classConfigCache.invoke(instance, matchField);
-            result.put(matchField, objectCheckInstance);
-        }
-        return result;
+    public Set<Class<?>> supportTypes() {
+        return Sets.newHashSet(Object.class);
     }
 
-
-    @Override
     protected Set<String> fields(Object o) {
-        return initClassIfNecessary(o.getClass()).fieldSet;
-    }
-
-    @Override
-    protected Set<String> matchFieldList(Object instance, FieldMatcher fieldMatcher) {
-        Class<?> instanceClass = instance.getClass();
-        ClassConfigCache classConfigCache = initClassIfNecessary(instanceClass);
-        return classConfigCache.matchFieldList(instance, fieldMatcher);
-
+        return classConfigCacheOf(o.getClass()).fields();
     }
 
     @Override
     public boolean support(Class<?> clazz) {
-        if (Iterable.class.isAssignableFrom(clazz)) {
-            return false;
-        }
-        if (Iterator.class.isAssignableFrom(clazz)) {
-            return false;
-        }
-        return !(Map.class.isAssignableFrom(clazz));
+        return true;
     }
 
-    private ClassConfigCache initClassIfNecessary(Class<?> instanceClass) {
+    @Override
+    public Map<String, CheckInstance<?>> getThisLevelMatcherObjectMap(Object instance, FieldMatcher fieldMatcher) {
+        if (instance == null) {
+            throw new ArgResolverException("不支持 解析null:" + NameUtil.logClazzName(this));
+        }
+        Class<?> instanceClass = instance.getClass();
+
+
+        if (Map.class.isAssignableFrom(instanceClass)) {
+            Class<?> resolve = ResolvableType.forType(instanceClass).as(Map.class).getGenerics()[0].resolve();
+            if (!String.class.equals(resolve)) {
+                throw new RuntimeException("请自己实现一个支持 key非string类型map的解析器");
+            }
+            Map<String, Object> objectMap = (Map<String, Object>) instance;
+            Set<String> matchFieldList = fieldMatcher.matchFields(objectMap.keySet());
+            return matchFieldList.stream().collect(
+                    Collectors.toMap(matchField -> matchField,
+                            i -> CheckInstance.create(objectMap.get(i), Object.class, i)));
+        }
+        ClassConfigCache classConfigCache = classConfigCacheOf(instanceClass);
+        return classConfigCache.matchFieldValueMap(instance, fieldMatcher);
+    }
+
+
+    private ClassConfigCache classConfigCacheOf(Class<?> instanceClass) {
         return classClassConfigCacheMap.computeIfAbsent(instanceClass, i -> new ClassConfigCache(instanceClass));
     }
 
 
-    protected class ClassConfigCache {
+    protected static class ClassConfigCache {
         Class<?> instanceClass;
-        Set<String> fieldSet;
-        Map<String, List<Annotation>> fieldAnnMap;
-        Map<String, Field> fieldMap;
-        Map<String, Method> fieldGetMethodMap;
+
         Map<FieldMatcher, Set<String>> matchFieldCacheMap = new ConcurrentHashMap<>();
 
-
-        private CheckInstance invoke(Object instance, String fieldStr) {
-            try {
-                Method method = fieldGetMethodMap.get(fieldStr);
-                if (method == null) {
-                    throw new ArgResolverException("反射解析器" + this.getClass() + "找不到" + instance.getClass() + "字段" + fieldStr + "的get方法");
-                }
-                Field field = fieldMap.get(fieldStr);
-                List<Annotation> annotations = fieldAnnMap.get(fieldStr);
+        Map<String, Function<Object, CheckInstance<?>>> checkInstanceFactoryMap = new ConcurrentHashMap<>();
 
 
-                Object fieldObject = method.invoke(instance);
-                return CheckInstance.createWithFieldConfig(fieldObject, fieldStr, field, annotations);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-//                e.printStackTrace();
-                throw new ArgResolverException("反射解析器:" + this.getClass() + "在使用时出现异常 :" + instance.getClass() + "使用get方法出现异常" + e.getMessage());
-            }
+        private Set<String> fields() {
+            return checkInstanceFactoryMap.keySet();
         }
 
         private ClassConfigCache(Class<?> instanceClass) {
@@ -112,47 +92,81 @@ public class ReflectArgResolver extends AbstractMatchArgResolver<Object> {
             this.init(instanceClass);
         }
 
-        public void init(Class<?> instanceClass) {
-
-
-            fieldGetMethodMap = fieldGetMethodUtil.fieldNameGetMethodMap(instanceClass);
-            fieldSet = fieldGetMethodMap.keySet();
-            fieldMap = fieldGetMethodUtil.fieldNameFieldMap(instanceClass, fieldGetMethodMap.keySet());
-            fieldAnnMap = new ConcurrentHashMap<>();
-            for (Map.Entry<String, Field> entry : fieldMap.entrySet()) {
-                List<Annotation> annList = Stream.of(entry.getValue().getDeclaredAnnotations()).collect(Collectors.toList());
-                List<Annotation> cacheList = Collections.unmodifiableList(annList);
-                fieldAnnMap.put(entry.getKey(), cacheList);
+        protected Map<String, CheckInstance<?>> matchFieldValueMap(Object instance, FieldMatcher fieldMatcher) {
+            Set<String> matchFieldList = this.matchFieldList(instance, fieldMatcher);
+            Map<String, CheckInstance<?>> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
+            for (String matchFieldStr : matchFieldList) {
+                Function<Object, CheckInstance<?>> function = checkInstanceFactoryMap.get(matchFieldStr);
+                CheckInstance<?> objectCheckInstance = function.apply(instance);
+                result.put(matchFieldStr, objectCheckInstance);
             }
+            return result;
+        }
+
+
+        public void init(Class<?> instanceClass) {
+            PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(instanceClass);
+            for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+                String fieldName = propertyDescriptor.getName();
+                Field declaredField;
+                try {
+                    declaredField = instanceClass.getDeclaredField(fieldName);
+                } catch (NoSuchFieldException e) {
+                    throw new RuntimeException(e);
+                }
+
+                List<Annotation> annotations = Collections.unmodifiableList(Lists.newArrayList(declaredField.getDeclaredAnnotations()));
+                checkInstanceFactoryMap.put(fieldName, parentObject -> {
+                    Object fieldObject;
+                    try {
+                        fieldObject = PropertyUtils.getProperty(parentObject, fieldName);
+                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return CheckInstance.createWithFieldConfig(fieldObject, declaredField, annotations);
+                });
+
+            }
+
 
         }
 
-        protected Set<String> matchFieldList(Object instance, FieldMatcher fieldMatcher) {
 
+        protected Set<String> matchFieldList(Object instance, FieldMatcher fieldMatcher) {
             boolean supportedCache = fieldMatcher.supportCache();
             Set<String> result = null;
             if (supportedCache) {
                 result = matchFieldCacheMap.get(fieldMatcher);
             }
-
             if (result != null) {
                 return result;
             }
             if (fieldMatcher instanceof FieldMatcherWithInstance) {
                 FieldMatcherWithInstance fieldMatcherWithInstance = (FieldMatcherWithInstance) fieldMatcher;
-                result = fieldSet.stream().filter(field -> fieldMatcherWithInstance.match(field, instance)).collect(Collectors.toSet());
+                result = checkInstanceFactoryMap.keySet().stream().filter(field -> fieldMatcherWithInstance.match(field, instance)).collect(Collectors.toSet());
             } else {
-                result = fieldMatcher.matchFields(fieldSet);
+                result = fieldMatcher.matchFields(checkInstanceFactoryMap.keySet());
             }
             if (supportedCache) {
                 matchFieldCacheMap.put(fieldMatcher, result);
-
             }
             return result;
         }
 
 
     }
-
-
+//
+//          try {
+//        Method method = fieldGetMethodMap.get(fieldStr);
+//        if (method == null) {
+//            throw new ArgResolverException("反射解析器" + this.getClass() + "找不到" + instance.getClass() + "字段" + fieldStr + "的get方法");
+//        }
+//
+//
+//        Object fieldObject = method.invoke(instance);
+//        return
+//    } catch (IllegalAccessException | InvocationTargetException e) {
+////                e.printStackTrace();
+//        throw new ArgResolverException("反射解析器:" + this.getClass() + "在使用时出现异常 :" + instance.getClass() + "使用get方法出现异常" + e.getMessage());
+//    }
 }

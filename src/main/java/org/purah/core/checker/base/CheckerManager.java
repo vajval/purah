@@ -60,7 +60,6 @@ public class CheckerManager {
         if (result == null) {
             for (CheckerFactory checkerFactory : checkerFactoryList) {
                 if (checkerFactory.match(name)) {
-
                     CheckerProxy checkerByFactory = this.createCheckerByFactory(checkerFactory, name);
                     if (checkerFactory.cacheBeCreatedChecker()) {
                         return this.reg(checkerByFactory);

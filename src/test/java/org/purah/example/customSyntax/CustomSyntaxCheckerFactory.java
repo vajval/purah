@@ -3,7 +3,7 @@ package org.purah.example.customSyntax;
 import com.google.common.base.Splitter;
 
 import org.purah.core.PurahContext;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.checker.custom.AbstractCustomSyntaxCheckerFactory;
@@ -53,14 +53,14 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
      */
 
     @Override
-    public CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties(String needMatchCheckerName) {
+    public CombinatorialCheckerConfigBuilder combinatorialCheckerConfigProperties(String needMatchCheckerName) {
 
-        CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties = expToProperties(needMatchCheckerName);
-        combinatorialCheckerConfigProperties.setLogicFrom("[" + needMatchCheckerName + "]" + "[" + this.getClass().getName() + "]");
-        return combinatorialCheckerConfigProperties;
+        CombinatorialCheckerConfigBuilder combinatorialCheckerConfigBuilder = expToProperties(needMatchCheckerName);
+        combinatorialCheckerConfigBuilder.setLogicFrom("[" + needMatchCheckerName + "]" + "[" + this.getClass().getName() + "]");
+        return combinatorialCheckerConfigBuilder;
     }
 
-    public static CombinatorialCheckerConfigProperties expToProperties(String needMatchCheckerName) {
+    public static CombinatorialCheckerConfigBuilder expToProperties(String needMatchCheckerName) {
 
 
         // example: 0[x,y][a:b,c;e:d,e]
@@ -71,10 +71,10 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
         // 0[x,y][a:b,c;e:d,e]
 
 
-        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties(needMatchCheckerName);
+        CombinatorialCheckerConfigBuilder properties = new CombinatorialCheckerConfigBuilder(needMatchCheckerName);
 
         properties.setMainExecType(mainExecType);
-        properties.setResultLevel(ResultLevel.failedAndIgnoreNotBaseLogic.value());
+        properties.setResultLevel(ResultLevel.failedAndIgnoreNotBaseLogic);
         // x,y
         String useCheckersExp = checkerExp.substring(checkerExp.indexOf("[") + 1, checkerExp.indexOf("]"));
         if (StringUtils.hasText(useCheckersExp)) {

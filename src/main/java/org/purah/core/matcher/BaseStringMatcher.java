@@ -22,7 +22,7 @@ public abstract class BaseStringMatcher implements FieldMatcher {
 
     @Override
     public String toString() {
-        return  NameUtil.useName(this) + ":[" + matchStr + "]";
+        return  NameUtil.logClazzName(this) + ":[" + matchStr + "]";
     }
 
     @Override

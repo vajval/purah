@@ -19,6 +19,17 @@ public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
 
     Map<Class<? extends Annotation>, ExecChecker<?, ?>> map = new HashMap<>();
 
+    ExecType.Main mainExecType;
+
+    ResultLevel resultLevel;
+
+    public AbstractCustomAnnChecker(ExecType.Main mainExecType, ResultLevel resultLevel) {
+        this.mainExecType = mainExecType;
+        this.resultLevel = resultLevel;
+        initMethods();
+    }
+
+
 
     /**
      * 过滤出能用的函数
@@ -67,17 +78,6 @@ public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
     }
 
 
-    public abstract Checker methodToChecker(Object methodsToCheckersBean, Method method, String name);
-
-    ExecType.Main mainExecType;
-
-    ResultLevel resultLevel;
-
-    public AbstractCustomAnnChecker(ExecType.Main mainExecType, ResultLevel resultLevel) {
-        this.mainExecType = mainExecType;
-        this.resultLevel = resultLevel;
-        initMethods();
-    }
 
 
     @Override
@@ -102,5 +102,8 @@ public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
 
     }
 
+
+
+    public abstract Checker methodToChecker(Object methodsToCheckersBean, Method method, String name);
 
 }

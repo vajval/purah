@@ -29,7 +29,7 @@ public class ClassNameMatcherTest {
     @Test
     void resolver() {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
-        Map<String, CheckInstance> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade, matcher);
+        Map<String, CheckInstance<?>> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade, matcher);
         Assertions.assertEquals(map.get("initiator").instance(), Util.initiator);
         Assertions.assertEquals(map.get("recipients").instance(), Util.recipients);
         Assertions.assertNull(map.get("money"));

@@ -4,7 +4,7 @@ import org.purah.core.PurahContext;
 import org.purah.core.checker.method.PurahEnableMethod;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.CheckerManager;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.checker.method.toChecker.MethodToChecker;
 import org.purah.core.checker.method.toCheckerFactory.CheckerFactoryByMethod;
@@ -262,7 +262,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
     public void initPurahConfigProperties(PurahContext purahContext, ListableBeanFactory applicationContext) {
         PurahConfigProperties purahConfigProperties = applicationContext.getBean(PurahConfigProperties.class);
 
-        for (CombinatorialCheckerConfigProperties properties : purahConfigProperties.toCombinatorialCheckerConfigPropertiesList()) {
+        for (CombinatorialCheckerConfigBuilder properties : purahConfigProperties.toCombinatorialCheckerConfigPropertiesList()) {
             purahContext.regNewCombinatorialChecker(properties);
         }
 

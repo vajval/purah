@@ -1,7 +1,7 @@
 package org.purah.core.base;
 
 
-import static org.purah.core.base.NameUtil.nameByClassNameAnn;
+import static org.purah.core.base.NameUtil.nameByNameAnnOnClass;
 
 /**
  * 名字接口
@@ -12,7 +12,7 @@ public interface IName {
      * 也可以自己实现
      */
     default String name() {
-        return nameByClassNameAnn(this.getClass());
+        return nameByNameAnnOnClass(this.getClass());
     }
 
 }

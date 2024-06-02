@@ -1,14 +1,11 @@
 package org.purah.core.checker.base;
 
-import org.purah.core.checker.cache.InstanceCheckCacheKey;
-import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
+
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
@@ -28,7 +25,6 @@ public class MultiCheckerExecutor {
 
     private final List<CheckResult> finalExecResult = new ArrayList<>();
 
-//    private final Map<Supplier<CheckResult<?>>, InstanceCheckCacheKey> resultCacheMap = new ConcurrentHashMap<>();
 
     private final List<Supplier<CheckResult<?>>> ruleResultSupplierList = new ArrayList<>();
 
@@ -56,20 +52,7 @@ public class MultiCheckerExecutor {
         }
         Supplier<CheckResult<?>> supplier = () -> checker.check(checkInstance);
 
-//        if (PurahCheckInstanceCacheContext.isEnableOnThisThreadContext()) {
-//
-//            CheckResult checkResult = PurahCheckInstanceCacheContext.get(checkInstance, checker.name());
-//            if (checkResult != null) {
-//                supplier = (() -> checkResult);
-//            } else {
-//                resultCacheMap.put(supplier, new InstanceCheckCacheKey(checkInstance, checker.name()));
-//            }
-//
-//        }
-
         this.add((supplier));
-
-
         return this;
     }
 
@@ -78,18 +61,11 @@ public class MultiCheckerExecutor {
         if (exec) return execInfo;
         exec = true;
         ExecInfo result = ExecInfo.success;
-        boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableOnThisThreadContext();
 
 
         for (Supplier<? extends CheckResult<?>> supplier : ruleResultSupplierList) {
             CheckResult<?> checkResult = supplier.get();
-//            if (enableOnThisContext) {
-//                InstanceCheckCacheKey instanceCheckCacheKey = resultCacheMap.get(supplier);
-//                if (instanceCheckCacheKey != null) {
-//                    PurahCheckInstanceCacheContext.put(instanceCheckCacheKey, checkResult);
-//
-//                }
-//            }
+
 
             if (resultLevel.needAddToFinalResult(checkResult)) {
                 this.finalExecResult.add(checkResult);

@@ -10,7 +10,6 @@ public class CheckerProxy implements Checker {
 
     String logicFrom;
 
-
     public CheckerProxy(Checker checker, String name, String logicFrom) {
         this.checker = checker;
         this.name = name;
