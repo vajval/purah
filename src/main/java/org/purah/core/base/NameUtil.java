@@ -1,5 +1,9 @@
 package org.purah.core.base;
 
+
+import org.springframework.util.StringUtils;
+
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,9 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NameUtil {
 
     public static final String NULL_OBJECT_SHOW_NAME = "<null对象>";
-
     private static final Map<Class<?>, String> classAnnNameCacheMap = new ConcurrentHashMap<>();
-
+    private static final Map<Method, String> methodCacheMap = new ConcurrentHashMap<>();
 
     /**
      * 通常是打印日志时显示一个对象名字用的
@@ -26,27 +29,35 @@ public class NameUtil {
             IName i = (IName) object;
             return i.name();
         }
-        String  result = nameByNameAnnOnClass(object.getClass());
-        if (result != null) return result;
+        String result = nameByAnnOnClass(object.getClass());
+        if (StringUtils.hasText(result)) return result;
         return object.getClass().getSimpleName();
     }
 
 
-
-    public static String nameByNameAnnOnClass(Class<?> clazz) {
+    public static String nameByAnnOnClass(Class<?> clazz) {
         if (clazz == null) return null;
         String result = classAnnNameCacheMap.get(clazz);
-        if (result != null) return result;
+        if (StringUtils.hasText(result)) return result;
         Name name = clazz.getDeclaredAnnotation(Name.class);
-        if (name != null) {
+        if (name !=null) {
             classAnnNameCacheMap.put(clazz, name.value());
             return name.value();
         }
         return null;
     }
 
+    public static String nameByAnnOnMethod(Method method) {
 
-
+        String result = methodCacheMap.get(method);
+        if (StringUtils.hasText(result)) return result;
+        Name name = method.getDeclaredAnnotation(Name.class);
+        if (name != null) {
+            methodCacheMap.put(method, name.value());
+            return name.value();
+        }
+        return null;
+    }
 
 
 }

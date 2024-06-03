@@ -50,13 +50,10 @@ public class CheckerManager {
         this.checkerFactoryList.add(checkerFactory);
     }
 
-    /**
-     * @param name
-     * @return
-     */
+
 
     public ExecChecker<?, ?> get(String name) {
-        ExecChecker result = cacheMap.get(name);
+        ExecChecker<?, ?>  result = cacheMap.get(name);
         if (result == null) {
             for (CheckerFactory checkerFactory : checkerFactoryList) {
                 if (checkerFactory.match(name)) {

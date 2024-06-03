@@ -17,8 +17,9 @@ public abstract class AbstractMethodToChecker extends BaseSupportCacheChecker {
 
     protected PurahEnableMethod purahEnableMethod;
 
+    protected String name;
 
-    public AbstractMethodToChecker(Object methodsToCheckersBean, Method method) {
+    public AbstractMethodToChecker(Object methodsToCheckersBean, Method method, String name) {
         String errorMsg = validReturnErrorMsg(methodsToCheckersBean, method);
 
         if (errorMsg != null) {
@@ -26,6 +27,7 @@ public abstract class AbstractMethodToChecker extends BaseSupportCacheChecker {
         }
 
         purahEnableMethod = purahEnableMethod(methodsToCheckersBean, method);
+        this.name = name;
 
     }
 
@@ -39,8 +41,9 @@ public abstract class AbstractMethodToChecker extends BaseSupportCacheChecker {
     public abstract CheckResult doCheck(CheckInstance checkInstance);
 
     @Override
-    public abstract String name();
-
+    public String name() {
+        return name;
+    }
 
 
     @Override
@@ -58,8 +61,6 @@ public abstract class AbstractMethodToChecker extends BaseSupportCacheChecker {
     public String logicFrom() {
         return purahEnableMethod.wrapperMethod().toGenericString();
     }
-
-
 
 
 }

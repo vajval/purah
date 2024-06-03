@@ -10,10 +10,10 @@ import java.lang.reflect.Method;
 public class CheckerByAnnMethod extends AbstractMethodToChecker {
 
     Class<?> annClazz;
-    String name;
+
 
     public CheckerByAnnMethod(Object methodsToCheckersBean, Method method, String name) {
-        super(methodsToCheckersBean, method);
+        super(methodsToCheckersBean, method,name);
         this.name = name;
         annClazz = method.getParameters()[0].getType();
     }
@@ -25,7 +25,7 @@ public class CheckerByAnnMethod extends AbstractMethodToChecker {
 
     @Override
     public CheckResult doCheck(CheckInstance checkInstance) {
-        Annotation annotation = checkInstance.annOf(annClazz);
+        Annotation annotation = checkInstance.annOnField(annClazz);
         Object[] args = new Object[2];
         args[0] = annotation;
         args[1] = purahEnableMethod.checkInstanceToInputArg(checkInstance);

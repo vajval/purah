@@ -79,9 +79,6 @@ public class ArgResolverManager {
      * 首先查询强制指定的map 有的话就使用
      * 然后看 注册的有没有配置 有的话 就用该有的
      * 然后看扩展 配置
-     *
-     * @param argClass
-     * @return
      */
 
     public ArgResolver doGetArgResolver(Class<?> argClass) {

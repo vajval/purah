@@ -1,16 +1,14 @@
 package org.purah.springboot.ioc;
 
 import org.purah.core.PurahContext;
-import org.purah.core.checker.method.PurahEnableMethod;
+import org.purah.core.base.NameUtil;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.CheckerManager;
+import org.purah.core.checker.base.Checkers;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.checker.method.toChecker.MethodToChecker;
-import org.purah.core.checker.method.toCheckerFactory.CheckerFactoryByMethod;
-import org.purah.core.checker.method.toCheckerFactory.CheckerFactoryByLogicMethod;
-import org.purah.core.checker.method.toChecker.CheckerByLogicMethod;
-import org.purah.core.checker.method.toCheckerFactory.MethodToCheckerFactory;
+import org.purah.core.checker.factory.bymethod.MethodToCheckerFactory;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.factory.MatcherFactory;
 import org.purah.core.resolver.ArgResolver;
@@ -26,9 +24,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -68,7 +66,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    public void initMatcherManager(  PurahContext purahContext , ListableBeanFactory applicationContext) {
+    public void initMatcherManager(PurahContext purahContext, ListableBeanFactory applicationContext) {
         MatcherManager matcherManager = purahContext.matcherManager();
         Map<String, MatcherFactory> matcherFactoryMap = applicationContext.getBeansOfType(MatcherFactory.class);
 
@@ -81,7 +79,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    public void initArgResolverManager(   PurahContext purahContext, ListableBeanFactory applicationContext) {
+    public void initArgResolverManager(PurahContext purahContext, ListableBeanFactory applicationContext) {
 
         ArgResolverManager argResolverManager = purahContext.argResolverManager();
         Map<String, ArgResolver> argResolverMap = applicationContext.getBeansOfType(ArgResolver.class);
@@ -107,20 +105,32 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
      * @param purahContext
      */
 
-    public void initCheckerManager(   PurahContext purahContext, ListableBeanFactory applicationContext) {
+    public void initCheckerManager(PurahContext purahContext, ListableBeanFactory applicationContext) {
 //
 
+        Set<Object> purahEnableMethodsBeans = this.purahEnableMethodsBean(applicationContext);
+        regChecker(purahContext, applicationContext, purahEnableMethodsBeans);
+        regCheckerFactory(purahContext, applicationContext, purahEnableMethodsBeans);
 
+
+    }
+
+    public Set<Object> purahEnableMethodsBean(ListableBeanFactory applicationContext) {
         Collection<Object> values = applicationContext.getBeansWithAnnotation(PurahEnableMethods.class).values();
 
         Set<Object> purahEnableMethodsBean = filterByEnableAnn(values);
-
-        regChecker(purahContext, applicationContext, purahEnableMethodsBean);
-        regCheckerFactory(purahContext, applicationContext, purahEnableMethodsBean);
+        return purahEnableMethodsBean;
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public void regChecker(PurahContext purahContext, ListableBeanFactory applicationContext, Set<Object> purahEnableMethodsBean) {
+
+        this.regCheckerBean(purahContext, applicationContext);
+        this.regCheckerByBeanMethod(purahContext, applicationContext, purahEnableMethodsBean);
+
+    }
+
+    protected void regCheckerBean(PurahContext purahContext, ListableBeanFactory applicationContext) {
         Map<String, Checker> checkerMap = applicationContext.getBeansOfType(Checker.class);
         CheckerManager checkerManager = purahContext.checkManager();
 
@@ -128,25 +138,38 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
         for (Checker checker : checkers) {
             checkerManager.reg(checker);
         }
-        Class<? extends MethodToChecker> defaultMethodToCheckerClazz = purahContext.config().getDefaultMethodToCheckerClazz();
+    }
 
+    protected void regCheckerByBeanMethod(PurahContext purahContext, ListableBeanFactory applicationContext, Set<Object> purahEnableMethodsBean) {
 
-        Map<Class<? extends MethodToChecker>, MethodToChecker> classMethodToCheckerMap = classMethodToCheckerMap(purahEnableMethodsBean, applicationContext);
+        Map<Class<? extends MethodToChecker>, MethodToChecker> classMethodToCheckerMap = beanMethodToCheckerMap(purahEnableMethodsBean, applicationContext);
 
         for (Object bean : purahEnableMethodsBean) {
             Class<?> clazz = AopUtils.getTargetClass(bean);
             List<Method> methodList = Stream.of(clazz.getMethods()).filter(i -> i.getDeclaredAnnotation(ToChecker.class) != null).collect(Collectors.toList());
 
             for (Method method : methodList) {
-                MethodToChecker methodToChecker = classMethodToCheckerMap.get(method.getDeclaredAnnotation(ToChecker.class).value());
-                Checker checker = methodToChecker.toChecker(bean, method);
-                checkerManager.reg(checker);
+                ToChecker toCheckerAnn = method.getDeclaredAnnotation(ToChecker.class);
+                MethodToChecker methodToChecker = classMethodToCheckerMap.get(toCheckerAnn.value());
+                String name = toCheckerAnn.name();
+                System.out.println(1231);
+                System.out.println(method);
+                if (!StringUtils.hasText(name)) {
+
+                    name = NameUtil.nameByAnnOnMethod(method);
+                    System.out.println(name);
+
+                    if (!StringUtils.hasText(name)) name = method.getName();
+                    System.out.println(method);
+
+                }
+                Checker checker = methodToChecker.toChecker(bean, method, name);
+                purahContext.checkManager().reg(checker);
             }
         }
     }
 
-
-    public Map<Class<? extends MethodToChecker>, MethodToChecker> classMethodToCheckerMap(Set<Object> purahEnableMethodsBean, ListableBeanFactory applicationContext) {
+    public static Map<Class<? extends MethodToChecker>, MethodToChecker> beanMethodToCheckerMap(Set<Object> purahEnableMethodsBean, ListableBeanFactory applicationContext) {
         Set<Class<? extends MethodToChecker>> allMethodToCheckerSet = new HashSet<>();
         for (Object bean : purahEnableMethodsBean) {
             Class<?> clazz = AopUtils.getTargetClass(bean);
@@ -160,7 +183,8 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
             MethodToChecker bean = applicationContext.getBean(methodToCheckerClazz);
             classMethodToCheckerMap.put(methodToCheckerClazz, bean);
         }
-        classMethodToCheckerMap.put(MethodToChecker.class, CheckerByLogicMethod::new);
+        classMethodToCheckerMap.put(MethodToChecker.class, Checkers.defaultMethodToChecker);
+
         return classMethodToCheckerMap;
     }
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -173,8 +197,8 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
 
         for (CheckerFactory checkerFactory : checkerFactories) {
             checkerManager.addCheckerFactory(checkerFactory);
-        }
-        Map<Class<? extends MethodToCheckerFactory>, MethodToCheckerFactory> classMethodToCheckerFactoryMap = classMethodToCheckerFactoryMap(purahEnableMethodsBean, applicationContext);
+        }      
+        Map<Class<? extends MethodToCheckerFactory>, MethodToCheckerFactory> classMethodToCheckerFactoryMap = beanMethodToCheckerFactoryMap(purahEnableMethodsBean, applicationContext);
 
         for (Object bean : purahEnableMethodsBean) {
             Class<?> clazz = AopUtils.getTargetClass(bean);
@@ -192,65 +216,34 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
         }
     }
 
-    public Map<Class<? extends MethodToCheckerFactory>, MethodToCheckerFactory> classMethodToCheckerFactoryMap(Set<Object> purahEnableMethodsBean, ListableBeanFactory applicationContext) {
+
+    public Map<Class<? extends MethodToCheckerFactory>, MethodToCheckerFactory> beanMethodToCheckerFactoryMap(Set<Object> purahEnableMethodsBean, ListableBeanFactory applicationContext) {
         Set<Class<? extends MethodToCheckerFactory>> allMethodToCheckerSet = new HashSet<>();
         for (Object bean : purahEnableMethodsBean) {
+
             Class<?> clazz = AopUtils.getTargetClass(bean);
-            Stream.of(clazz.getMethods()).map(i -> i.getDeclaredAnnotation(ToCheckerFactory.class)).filter(Objects::nonNull).map(ToCheckerFactory::value
-            ).forEach(allMethodToCheckerSet::add);
+
+            for (Method method : clazz.getMethods()) {
+                ToCheckerFactory toCheckerFactoryAnn = method.getDeclaredAnnotation(ToCheckerFactory.class);
+                if (toCheckerFactoryAnn != null) {
+                    allMethodToCheckerSet.add(toCheckerFactoryAnn.value());
+                }
+            }
         }
-        allMethodToCheckerSet.remove(MethodToCheckerFactory.class);
+
         Map<Class<? extends MethodToCheckerFactory>, MethodToCheckerFactory> classMethodToCheckerMap = new HashMap<>();
+
+        allMethodToCheckerSet.remove(MethodToCheckerFactory.class);
 
         for (Class<? extends MethodToCheckerFactory> methodToCheckerClazz : allMethodToCheckerSet) {
             MethodToCheckerFactory bean = applicationContext.getBean(methodToCheckerClazz);
             classMethodToCheckerMap.put(methodToCheckerClazz, bean);
         }
-        classMethodToCheckerMap.put(MethodToCheckerFactory.class, defaultMethodToCheckerFactory);
+
+        classMethodToCheckerMap.put(MethodToCheckerFactory.class, Checkers.defaultMethodToCheckerFactory);
         return classMethodToCheckerMap;
     }
 
-
-    protected static final MethodToCheckerFactory defaultMethodToCheckerFactory = (bean, method) -> {
-        ToCheckerFactory toCheckerFactory = method.getDeclaredAnnotation(ToCheckerFactory.class);
-
-        String match = toCheckerFactory.match();
-        int length = method.getParameters().length;
-        Class<?> returnType = method.getReturnType();
-        Parameter[] parameters = method.getParameters();
-
-        if (length == 2) {
-            Parameter parameter1 = parameters[0];
-            if (!parameter1.getType().equals(String.class)) {
-                throw new RuntimeException("第一个入参必须是 string 类型，将被填充为checker名字");
-            }
-            boolean valid = PurahEnableMethod.validReturnType(returnType);
-            if (!valid) {
-                throw new RuntimeException("返回必须是 Boolean.class 或者 CheckResult.class");
-            }
-
-
-            return new CheckerFactoryByLogicMethod(bean, method, match);
-
-
-        } else if (length == 1) {
-            Parameter parameter = parameters[0];
-            if (!parameter.getType().equals(String.class)) {
-                throw new RuntimeException("唯一的入参必须是 string 类型，将被填充为checker名字");
-            }
-            if (!Checker.class.isAssignableFrom(returnType)) {
-                throw new RuntimeException("返回值必须时checker");
-
-            }
-
-            return new CheckerFactoryByMethod(bean, method, match);
-
-        } else {
-            throw new RuntimeException();
-        }
-
-
-    };
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

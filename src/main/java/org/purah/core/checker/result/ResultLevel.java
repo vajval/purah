@@ -8,7 +8,7 @@ public enum ResultLevel {
 
 //    errorIgnoreMatch(4);
 
-    int value;
+    final int value;
 
     ResultLevel(int value) {
         this.value = value;

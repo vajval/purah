@@ -34,7 +34,7 @@ public enum ExecInfo {
     failed("FAILED"),
     error("ERROR");
 
-    String value;
+    final String value;
 
     ExecInfo(String value) {
         this.value = value;

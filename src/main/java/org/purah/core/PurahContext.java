@@ -22,11 +22,11 @@ public class PurahContext {
     public PurahContextConfig config;
 
 
-    private CheckerManager checkManager = new CheckerManager();
+    private final CheckerManager checkManager = new CheckerManager();
 
-    private ArgResolverManager argResolverManager = new ArgResolverManager();
+    private final ArgResolverManager argResolverManager = new ArgResolverManager();
 
-    private MatcherManager matcherManager = new MatcherManager();
+    private final MatcherManager matcherManager = new MatcherManager();
 
     public PurahContext(PurahContextConfig config) {
         this.config = config;
@@ -71,7 +71,7 @@ public class PurahContext {
 
     }
 
-    public Checker regNewCombinatorialChecker(CombinatorialCheckerConfigBuilder properties) {
+    public Checker<?,?> regNewCombinatorialChecker(CombinatorialCheckerConfigBuilder properties) {
         Checker newCombinatorialChecker = createNewCombinatorialChecker(properties);
         return checkManager.reg(newCombinatorialChecker);
     }

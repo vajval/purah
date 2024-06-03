@@ -52,8 +52,7 @@ public class CheckItAspect {
 
 
     public boolean useCache(Method method) {
-        boolean cache = purahContext.config().isCache();
-        return cache;
+        return purahContext.config().isCache();
     }
 
     public Object pointcut(ProceedingJoinPoint joinPoint) {

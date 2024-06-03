@@ -1,4 +1,4 @@
-package org.purah.core.checker.method.toCheckerFactory;
+package org.purah.core.checker.factory.bymethod;
 
 
 import org.purah.core.checker.base.BaseSupportCacheChecker;

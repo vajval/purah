@@ -13,7 +13,6 @@ public interface FieldMatcher {
 
     /**
      * 支持的话一定要重写 equal
-     * @return
      */
     default boolean supportCache() {
         return false;

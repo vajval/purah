@@ -1,7 +1,6 @@
 package org.purah.springboot.ann;
 
-import org.purah.core.checker.method.toChecker.MethodToChecker;
-import org.purah.core.checker.method.toCheckerFactory.MethodToCheckerFactory;
+import org.purah.core.checker.factory.bymethod.MethodToCheckerFactory;
 
 import java.lang.annotation.*;
 

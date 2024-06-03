@@ -40,7 +40,7 @@ public class BaseMatcherFactory implements MatcherFactory {
         } catch (NoSuchMethodException e) {
             throw new FieldMatcherException(fieldMatcherClazz.getName() + "没有可用的构造器,本方法只支持只有一个String入参的构造方法");
         }
-        name = NameUtil.nameByNameAnnOnClass(fieldMatcherClazz);
+        name = NameUtil.nameByAnnOnClass(fieldMatcherClazz);
         this.fieldMatcherClazz = fieldMatcherClazz;
     }
 

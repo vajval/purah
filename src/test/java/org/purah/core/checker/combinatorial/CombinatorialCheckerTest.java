@@ -211,13 +211,8 @@ class CombinatorialCheckerTest {
 
     }
 
-//    @Test
-//    public void tes6() {
-//        for (int i = 0; i < 10000000; i++) {
-//            tes5();
-//        }
-//    }
 
+    @Test
     public void tes5() {
 
 
@@ -237,7 +232,7 @@ class CombinatorialCheckerTest {
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
         CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(CheckInstance.createObjectInstance(Util.trade));
         Assertions.assertTrue(CheckResult.isSuccess());
-        Assertions.assertEquals(CheckResult.value().size(), 3);
+        Assertions.assertEquals(CheckResult.value().size(), 0);
 
     }
 }

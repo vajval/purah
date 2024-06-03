@@ -67,9 +67,9 @@ public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
             }
 
             String name = this.name() + "[" + annClazz.getName() + "]";
-            Checker checkerByAnnMethod = methodToChecker(this, declaredMethod, name);
+            Checker<?,?> checkerByAnnMethod = methodToChecker(this, declaredMethod, name);
 
-            ExecChecker execChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> new ExecChecker(name, checkerByAnnMethod));
+            ExecChecker<?,?> execChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> new ExecChecker<>(name, checkerByAnnMethod));
 
             execChecker.addNewChecker(checkerByAnnMethod);
 

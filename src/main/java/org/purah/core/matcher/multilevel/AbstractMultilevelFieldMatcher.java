@@ -24,13 +24,6 @@ public abstract class AbstractMultilevelFieldMatcher extends BaseStringMatcher i
     public abstract FieldMatcher childFieldMatcherByChildStr(String childMatchStr);
 
 
-    /**
-     *
-     * @param matchedField
-     * @return
-     */
-
-
 
     @Override
     public FieldMatcher childFieldMatcher(String matchedField) {

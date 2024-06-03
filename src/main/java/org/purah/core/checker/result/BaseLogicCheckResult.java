@@ -62,16 +62,16 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
 
     }
 
-    public static <T> BaseLogicCheckResult<T> success() {
-        return new BaseLogicCheckResult<T>(ExecInfo.success, null, null);
+    public static <T> BaseLogicCheckResult<T > success() {
+        return new BaseLogicCheckResult<>(ExecInfo.success, null, null);
     }
 
     public static <T> BaseLogicCheckResult<T> success(T data, String log) {
-        return new BaseLogicCheckResult<T>(ExecInfo.success, data, log);
+        return new BaseLogicCheckResult<>(ExecInfo.success, data, log);
     }
 
     public static <T> BaseLogicCheckResult<T> failed(T data, String log) {
-        return new BaseLogicCheckResult<T>(ExecInfo.failed, data, log);
+        return new BaseLogicCheckResult<>(ExecInfo.failed, data, log);
 
     }
 

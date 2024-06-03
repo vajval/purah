@@ -12,24 +12,19 @@ public class MainOfMultiCheckResult<T>  extends BaseLogicCheckResult<T>{
     }
 
     public static <T> MainOfMultiCheckResult<T> success() {
-        return new MainOfMultiCheckResult<T>(ExecInfo.success, null, null);
+        return new MainOfMultiCheckResult<>(ExecInfo.success, null, null);
     }
 
     public static <T> MainOfMultiCheckResult<T> success(T data, String log) {
-        return new MainOfMultiCheckResult<T>(ExecInfo.success, data, log);
+        return new MainOfMultiCheckResult<>(ExecInfo.success, data, log);
     }
 
     public static <T> MainOfMultiCheckResult<T> failed(T data, String log) {
-        return new MainOfMultiCheckResult<T>(ExecInfo.failed, data, log);
+        return new MainOfMultiCheckResult<>(ExecInfo.failed, data, log);
 
     }
 
-    public static <T> MainOfMultiCheckResult<T> ignore(String log) {
-        MainOfMultiCheckResult<T> result = new MainOfMultiCheckResult<>(ExecInfo.ignore, null, log);
-        result.log = log;
-        return result;
 
-    }
 
     public static <T> MainOfMultiCheckResult<T> error(Exception e, String log) {
         MainOfMultiCheckResult<T> result = new MainOfMultiCheckResult<>(ExecInfo.error, e);

@@ -6,6 +6,6 @@ import java.lang.reflect.Method;
 
 public interface MethodToChecker {
 
-    Checker toChecker(Object methodsToCheckersBean, Method method);
+    Checker toChecker(Object methodsToCheckersBean, Method method ,String name);
 
 }

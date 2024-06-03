@@ -1,9 +1,10 @@
-package org.purah.core.checker.method.toCheckerFactory;
+package org.purah.core.checker.factory.bymethod;
 
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.CheckerProxy;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,7 +37,7 @@ public class CheckerFactoryByMethod implements CheckerFactory {
         try {
             Checker result = (Checker) method.invoke(bean, needMatchCheckerName);
             String name = needMatchCheckerName;
-            if (result.name() != null) {
+            if (StringUtils.hasText(result.name())) {
                 name = result.name();
             }
             return new CheckerProxy(result, name, method.toGenericString());

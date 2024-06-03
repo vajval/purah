@@ -1,7 +1,7 @@
 package org.purah.core;
 
 import org.purah.core.checker.method.toChecker.MethodToChecker;
-import org.purah.core.checker.method.toCheckerFactory.MethodToCheckerFactory;
+import org.purah.core.checker.factory.bymethod.MethodToCheckerFactory;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.springboot.ann.EnablePurah;
 

@@ -151,17 +151,17 @@ class CustomServiceTest {
 
     @Test
     void booleanCheckByCustomSyntaxWithMultiLevel() {
-//        CheckResult CheckResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
+        CheckResult CheckResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
 
-//        assertTrue(CheckResult.isSuccess());
+        assertTrue(CheckResult.isSuccess());
         goodCustomUser.setChildCustomUser(badCustomUser);
         System.out.println("------------------------------------");
         AutoFillCheckResult checkResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
         assertFalse(checkResult.isSuccess());
         List<BaseLogicCheckResult> resultList = checkResult.allBaseLogicCheckResult(ResultLevel.failedAndIgnoreNotBaseLogic);
 //        value.stream().
-        String trim = resultList.stream().map(CheckResult::log)
-                .reduce("", (a, b) -> a + b).trim();
+//        String trim = resultList.stream().map(CheckResult::log)
+//                .reduce("", (a, b) -> a + b).trim();
         /*
          * 检测
          * id

@@ -19,8 +19,7 @@ import org.springframework.util.StringUtils;
 @EnableOnPurahContext//使之生效
 public class MethodsToCheckersTestBean {
 
-    @Name("非空判断FromTestBean")
-    @ToChecker
+    @ToChecker(name = "非空判断FromTestBean")
     public boolean notEmpty(Object o) {
         return o != null;
     }
@@ -34,8 +33,7 @@ public class MethodsToCheckersTestBean {
     }
 
 
-    @Name("有文本判断FromTestBean")
-    @ToChecker
+    @ToChecker(name = "有文本判断FromTestBean")
     public CheckResult hasTest(String text) {
         if (StringUtils.hasText(text)) {
             return BaseLogicCheckResult.success(null, "有文本");

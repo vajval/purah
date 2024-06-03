@@ -76,7 +76,7 @@ public class CheckInstance<INSTANCE> {
     }
 
 
-    public <E extends Annotation> E annOf(Class<E> clazz) {
+    public <E extends Annotation> E annOnField(Class<E> clazz) {
         Optional<Annotation> first = annotations.stream().filter(i -> i.annotationType().equals(clazz)).findFirst();
         return (E) (first.orElse(null));
     }
