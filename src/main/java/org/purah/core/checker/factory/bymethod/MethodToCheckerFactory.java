@@ -7,5 +7,5 @@ import java.lang.reflect.Method;
 
 public interface MethodToCheckerFactory {
 
-    CheckerFactory toCheckerFactory(Object bean, Method method);
+    CheckerFactory toCheckerFactory(Object bean, Method method, boolean cacheBeCreatedChecker);
 }

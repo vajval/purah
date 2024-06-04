@@ -13,7 +13,7 @@ import java.lang.reflect.Parameter;
 
 public class DefaultMethodToCheckerFactory implements MethodToCheckerFactory {
     @Override
-    public CheckerFactory toCheckerFactory(Object bean, Method method) {
+    public CheckerFactory toCheckerFactory(Object bean, Method method, boolean cacheBeCreatedChecker) {
 
         ToCheckerFactory toCheckerFactory = method.getDeclaredAnnotation(ToCheckerFactory.class);
 
@@ -33,7 +33,7 @@ public class DefaultMethodToCheckerFactory implements MethodToCheckerFactory {
             }
 
 
-            return new CheckerFactoryByLogicMethod(bean, method, match);
+            return new CheckerFactoryByLogicMethod(bean, method, match, toCheckerFactory.cacheBeCreatedChecker());
 
 
         } else if (length == 1) {
@@ -46,7 +46,7 @@ public class DefaultMethodToCheckerFactory implements MethodToCheckerFactory {
 
             }
 
-            return new CheckerFactoryByMethod(bean, method, match);
+            return new CheckerFactoryByMethod(bean, method, match, toCheckerFactory.cacheBeCreatedChecker());
 
         } else {
             throw new RuntimeException();
@@ -54,7 +54,6 @@ public class DefaultMethodToCheckerFactory implements MethodToCheckerFactory {
 
 
     }
-
 
 
 }

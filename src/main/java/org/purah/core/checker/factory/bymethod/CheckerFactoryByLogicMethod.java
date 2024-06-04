@@ -17,12 +17,20 @@ public class CheckerFactoryByLogicMethod implements CheckerFactory {
     WildCardMatcher wildCardMatcher;
 
     PurahEnableMethod purahEnableMethod;
+    boolean cacheBeCreatedChecker;
 
-    public CheckerFactoryByLogicMethod(Object bean, Method method, String matchStr) {
+    public CheckerFactoryByLogicMethod(Object bean, Method method, String matchStr, boolean cacheBeCreatedChecker) {
         this.wildCardMatcher = new WildCardMatcher(matchStr);
         purahEnableMethod = new PurahEnableMethod(bean, method, 1);
+        this.cacheBeCreatedChecker = cacheBeCreatedChecker;
+
     }
 
+
+    @Override
+    public boolean cacheBeCreatedChecker() {
+        return this.cacheBeCreatedChecker;
+    }
 
     @Override
     public boolean match(String needMatchCheckerName) {

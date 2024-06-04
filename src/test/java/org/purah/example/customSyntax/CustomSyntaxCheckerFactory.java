@@ -7,7 +7,7 @@ import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.checker.custom.AbstractCustomSyntaxCheckerFactory;
-import org.purah.springboot.ann.EnableOnPurahContext;
+import org.purah.springboot.ann.EnableBeanOnPurahContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -16,7 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@EnableOnPurahContext
+@EnableBeanOnPurahContext
 @Component
 public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFactory {
 

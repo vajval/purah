@@ -3,7 +3,7 @@ package org.purah.springboot.ioc;
 
 import org.purah.core.PurahContext;
 import org.purah.core.matcher.BaseStringMatcher;
-import org.purah.springboot.ann.EnableOnPurahContext;
+import org.purah.springboot.ann.EnableBeanOnPurahContext;
 import org.purah.springboot.ann.EnablePurah;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -88,7 +88,7 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     private LinkedHashSet<BeanDefinition> enableOnPurahContextCandidateComponent(AnnotationMetadata metadata) {
         ClassPathScanningCandidateComponentProvider scanner = this.getScanner();
         scanner.setResourceLoader(resourceLoader);
-        scanner.addIncludeFilter(new AnnotationTypeFilter(EnableOnPurahContext.class));
+        scanner.addIncludeFilter(new AnnotationTypeFilter(EnableBeanOnPurahContext.class));
 
         String packageName = ClassUtils.getPackageName(metadata.getClassName());
         return new LinkedHashSet<>(scanner.findCandidateComponents(packageName));

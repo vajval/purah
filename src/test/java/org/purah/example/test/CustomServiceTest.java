@@ -14,7 +14,7 @@ import org.purah.core.exception.MethodArgCheckException;
 import org.purah.ExampleApplication;
 import org.purah.example.customAnn.CustomService;
 import org.purah.example.customAnn.ann.CNPhoneNum;
-import org.purah.example.customAnn.ann.NotEmpty;
+import org.purah.example.customAnn.ann.NotEmptyTest;
 import org.purah.example.customAnn.ann.NotNull;
 import org.purah.example.customAnn.checker.CustomAnnChecker;
 import org.purah.example.customAnn.pojo.CustomUser;
@@ -138,7 +138,7 @@ class CustomServiceTest {
 
 
     public Long id;
-    @NotEmpty(errorMsg = "这个字段不能为空")
+    @NotEmptyTest(errorMsg = "这个字段不能为空")
     public String name;
     @CNPhoneNum(errorMsg = "移不动也联不通")
     public String phone;

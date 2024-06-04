@@ -17,6 +17,8 @@ public class Checkers {
     public static final MethodToChecker defaultMethodToChecker = new DefaultMethodToChecker();
     public static final MethodToCheckerFactory defaultMethodToCheckerFactory = new DefaultMethodToCheckerFactory();
 
+
+
     public abstract class CheckerFunction implements Checker {
 
         String name;

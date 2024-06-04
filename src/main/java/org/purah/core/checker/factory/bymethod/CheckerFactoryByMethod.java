@@ -17,12 +17,18 @@ public class CheckerFactoryByMethod implements CheckerFactory {
 
     Method method;
     Object bean;
+    boolean cacheBeCreatedChecker;
 
-
-    public CheckerFactoryByMethod(Object bean, Method method, String matchStr) {
+    public CheckerFactoryByMethod(Object bean, Method method, String matchStr, boolean cacheBeCreatedChecker) {
         this.wildCardMatcher = new WildCardMatcher(matchStr);
         this.method = method;
         this.bean = bean;
+        this.cacheBeCreatedChecker = cacheBeCreatedChecker;
+    }
+
+    @Override
+    public boolean cacheBeCreatedChecker() {
+        return this.cacheBeCreatedChecker;
     }
 
     @Override

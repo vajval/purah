@@ -5,11 +5,9 @@ import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
-import org.purah.springboot.ann.EnableOnPurahContext;
-import org.springframework.stereotype.Component;
+import org.purah.springboot.ann.EnableBeanOnPurahContext;
 
-@EnableOnPurahContext
-@Component
+@EnableBeanOnPurahContext
 public class CityRateChecker implements CheckerFactory {
 
     @Override

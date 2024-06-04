@@ -10,5 +10,7 @@ import java.lang.annotation.*;
 public @interface ToCheckerFactory {
     String match();
 
+    boolean cacheBeCreatedChecker() default true;
+
     Class<? extends MethodToCheckerFactory> value() default MethodToCheckerFactory.class;
 }

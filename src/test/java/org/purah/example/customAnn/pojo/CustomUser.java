@@ -2,7 +2,7 @@ package org.purah.example.customAnn.pojo;
 
 
 import org.purah.example.customAnn.ann.CNPhoneNum;
-import org.purah.example.customAnn.ann.NotEmpty;
+import org.purah.example.customAnn.ann.NotEmptyTest;
 import org.purah.example.customAnn.ann.NotNull;
 import org.purah.example.customAnn.ann.Range;
 import org.purah.springboot.ann.CheckIt;
@@ -11,7 +11,7 @@ import org.purah.springboot.ann.CheckIt;
 public class CustomUser {
     @Range(min = 1, max = 10, errorMsg = "取值范围错误")
     public Long id;
-    @NotEmpty(errorMsg = "这个字段不能为空")
+    @NotEmptyTest(errorMsg = "这个字段不能为空")
     public String name;
     @CNPhoneNum(errorMsg = "移不动也联不通")
     public String phone;

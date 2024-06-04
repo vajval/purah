@@ -11,10 +11,10 @@ import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.custom.AbstractCustomAnnChecker;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.example.customAnn.ann.CNPhoneNum;
-import org.purah.example.customAnn.ann.NotEmpty;
+import org.purah.example.customAnn.ann.NotEmptyTest;
 import org.purah.example.customAnn.ann.NotNull;
 import org.purah.example.customAnn.ann.Range;
-import org.purah.springboot.ann.EnableOnPurahContext;
+import org.purah.springboot.ann.EnableBeanOnPurahContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 
 
 @Name("自定义注解检测")
-@EnableOnPurahContext
+@EnableBeanOnPurahContext
 @Component
 public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
@@ -59,12 +59,12 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
     }
 
-    public CheckResult notEmpty(NotEmpty notEmpty, CheckInstance<String> str) {
+    public CheckResult notEmpty(NotEmptyTest notEmptyTest, CheckInstance<String> str) {
         String strValue = str.instance();
         if (StringUtils.hasText(strValue)) {
             return success(str, "正确的");
         }
-        return BaseLogicCheckResult.failed(str.instance(), str.fieldStr() + ":" + notEmpty.errorMsg());
+        return BaseLogicCheckResult.failed(str.instance(), str.fieldStr() + ":" + notEmptyTest.errorMsg());
 
 
     }

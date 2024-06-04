@@ -27,7 +27,7 @@ public class MethodsToCheckersTestBean {
     //生成固定逻辑的 检查器
     @Name("非空判断FromTestBean")
     @ToChecker
-    public boolean notEmpty(Object o) {
+    public boolean notEmptyTest(Object o) {
         return o != null;
     }
     //根据不同的需求形成不同的检查器
@@ -210,12 +210,12 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
     }
 
-    public CheckResult notEmpty(NotEmpty notEmpty, CheckInstance<String> str) {
+    public CheckResult notEmptyTest(NotEmpty notEmptyTest, CheckInstance<String> str) {
         String strValue = str.instance();
         if (StringUtils.hasText(strValue)) {
             return success("正确的");
         }
-        return BaseLogicCheckResult.failed(str.instance(), str.fieldStr() + ":" + notEmpty.errorMsg());
+        return BaseLogicCheckResult.failed(str.instance(), str.fieldStr() + ":" + notEmptyTest.errorMsg());
 
 
     }

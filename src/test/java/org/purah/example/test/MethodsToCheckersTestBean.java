@@ -7,7 +7,7 @@ import org.purah.core.checker.base.CheckInstance;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
-import org.purah.springboot.ann.EnableOnPurahContext;
+import org.purah.springboot.ann.EnableBeanOnPurahContext;
 import org.purah.springboot.ann.PurahEnableMethods;
 import org.purah.springboot.ann.ToChecker;
 import org.purah.springboot.ann.ToCheckerFactory;
@@ -16,7 +16,7 @@ import org.springframework.util.StringUtils;
 
 
 @PurahEnableMethods//将这个对象的函数转化为核对器
-@EnableOnPurahContext//使之生效
+@EnableBeanOnPurahContext//使之生效
 public class MethodsToCheckersTestBean {
 
     @ToChecker(name = "非空判断FromTestBean")
