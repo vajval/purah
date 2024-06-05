@@ -2,7 +2,7 @@ package org.purah.springboot.ioc;
 
 import com.google.common.collect.Lists;
 import org.purah.core.base.Name;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.example.customAnn.ann.NotEmptyTest;
@@ -29,13 +29,13 @@ public class IocTest {
 
     @ToChecker
     @Name("notEmptyStringIocTest")
-    public boolean IocTestNotNull(CheckInstance<String> o) {
+    public boolean IocTestNotNull(InputCheckArg<String> o) {
         return o != null;
     }
 
     @ToChecker(name = "hasTestIocTest")
-    public CheckResult hasTest(CheckInstance<String> checkInstance) {
-        if (StringUtils.hasText(checkInstance.instance())) {
+    public CheckResult hasTest(InputCheckArg<String> inputCheckArg) {
+        if (StringUtils.hasText(inputCheckArg.inputArg())) {
             return BaseLogicCheckResult.success(null, "有文本");
         } else {
             return BaseLogicCheckResult.failed(null, "无文本");
@@ -43,8 +43,8 @@ public class IocTest {
     }
 
     @ToChecker(name = "notEmptyAnnIocTest")
-    public CheckResult hasTest(NotEmptyTest notEmptyTest, CheckInstance<String> checkInstance) {
-        if (StringUtils.hasText(checkInstance.instance())) {
+    public CheckResult hasTest(NotEmptyTest notEmptyTest, InputCheckArg<String> inputCheckArg) {
+        if (StringUtils.hasText(inputCheckArg.inputArg())) {
             return BaseLogicCheckResult.success(null, "not empty");
         } else {
             return BaseLogicCheckResult.failed(null, "empty");

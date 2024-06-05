@@ -1,7 +1,7 @@
 package org.purah.core.checker.method.toChecker;
 
 import org.purah.core.base.NameUtil;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.method.PurahEnableMethod;
 import org.purah.core.checker.result.CheckResult;
 
@@ -38,9 +38,9 @@ public class CheckerByLogicMethod extends AbstractMethodToChecker {
     }
 
     @Override
-    public CheckResult doCheck(CheckInstance checkInstance) {
+    public CheckResult doCheck(InputCheckArg inputCheckArg) {
         Object[] args = new Object[1];
-        args[0] = purahEnableMethod.checkInstanceToInputArg(checkInstance);
+        args[0] = purahEnableMethod.checkInstanceToInputArg(inputCheckArg);
 
 
         return purahEnableMethod.invoke(args);

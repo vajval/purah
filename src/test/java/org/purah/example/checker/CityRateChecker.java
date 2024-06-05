@@ -1,7 +1,7 @@
 package org.purah.example.checker;
 
 import org.purah.core.checker.base.BaseSupportCacheChecker;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
@@ -31,15 +31,15 @@ public class CityRateChecker implements CheckerFactory {
         double finalMax = max;
         return new BaseSupportCacheChecker<Double, Object>() {
             @Override
-            public CheckResult doCheck(CheckInstance<Double> checkInstance) {
-                Double rate = checkInstance.instance();
+            public CheckResult doCheck(InputCheckArg<Double> inputCheckArg) {
+                Double rate = inputCheckArg.inputArg();
                 if (rate < min) {
-                    return failed(checkInstance,"利率值过小为 " + rate);
+                    return failed(inputCheckArg,"利率值过小为 " + rate);
                 }
                 if (rate > finalMax) {
-                    return failed(checkInstance,"利率值过大为 " + rate);
+                    return failed(inputCheckArg,"利率值过大为 " + rate);
                 }
-                return success(checkInstance,"利率值正合适");
+                return success(inputCheckArg,"利率值正合适");
             }
         };
 

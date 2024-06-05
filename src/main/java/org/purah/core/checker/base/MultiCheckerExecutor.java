@@ -46,11 +46,11 @@ public class MultiCheckerExecutor {
     }
 
 
-    public MultiCheckerExecutor add(CheckInstance checkInstance, Checker checker) {
+    public MultiCheckerExecutor add(InputCheckArg inputCheckArg, Checker checker) {
         if (exec) {
             throw new RuntimeException("已经执行玩了，不能在添加了");
         }
-        Supplier<CheckResult<?>> supplier = () -> checker.check(checkInstance);
+        Supplier<CheckResult<?>> supplier = () -> checker.check(inputCheckArg);
 
         this.add((supplier));
         return this;

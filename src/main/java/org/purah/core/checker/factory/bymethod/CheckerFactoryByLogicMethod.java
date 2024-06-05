@@ -2,7 +2,7 @@ package org.purah.core.checker.factory.bymethod;
 
 
 import org.purah.core.checker.base.BaseSupportCacheChecker;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.method.PurahEnableMethod;
 import org.purah.core.checker.result.CheckResult;
@@ -43,11 +43,11 @@ public class CheckerFactoryByLogicMethod implements CheckerFactory {
 
         return new BaseSupportCacheChecker() {
             @Override
-            public CheckResult doCheck(CheckInstance checkInstance) {
+            public CheckResult doCheck(InputCheckArg inputCheckArg) {
 
                 Object[] args = new Object[2];
                 args[0] = needMatchCheckerName;
-                args[1] = purahEnableMethod.checkInstanceToInputArg(checkInstance);
+                args[1] = purahEnableMethod.checkInstanceToInputArg(inputCheckArg);
 
 
                 return purahEnableMethod.invoke(args);

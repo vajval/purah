@@ -3,9 +3,7 @@ package org.purah.core.checker.custom;
 
 import org.purah.core.checker.base.*;
 import org.purah.core.checker.combinatorial.ExecType;
-import org.purah.core.checker.method.toChecker.MethodToChecker;
 import org.purah.core.checker.result.*;
-import org.purah.core.checker.method.toChecker.CheckerByAnnMethod;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -17,7 +15,7 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
 
-    Map<Class<? extends Annotation>, ExecChecker<?, ?>> map = new HashMap<>();
+    Map<Class<? extends Annotation>, GenericsProxyChecker<?, ?>> map = new HashMap<>();
 
     ExecType.Main mainExecType;
 
@@ -69,9 +67,9 @@ public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
             String name = this.name() + "[" + annClazz.getName() + "]";
             Checker<?,?> checkerByAnnMethod = methodToChecker(this, declaredMethod, name);
 
-            ExecChecker<?,?> execChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> new ExecChecker<>(name, checkerByAnnMethod));
+            GenericsProxyChecker<?,?> genericsProxyChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> new GenericsProxyChecker<>(name, checkerByAnnMethod));
 
-            execChecker.addNewChecker(checkerByAnnMethod);
+            genericsProxyChecker.addNewChecker(checkerByAnnMethod);
 
         }
 
@@ -81,20 +79,20 @@ public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
 
 
     @Override
-    public CheckResult<?> doCheck(CheckInstance checkInstance) {
+    public CheckResult<?> doCheck(InputCheckArg inputCheckArg) {
 
-        List<Annotation> enableAnnotations = ((CheckInstance<?>) checkInstance).annListOnField().stream().filter(i -> map.containsKey(i.annotationType())).collect(Collectors.toList());
+        List<Annotation> enableAnnotations = ((InputCheckArg<?>) inputCheckArg).annListOnField().stream().filter(i -> map.containsKey(i.annotationType())).collect(Collectors.toList());
 
 
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel);
 
         for (Annotation enableAnnotation : enableAnnotations) {
-            multiCheckerExecutor.add(() -> map.get(enableAnnotation.annotationType()).check(checkInstance));
+            multiCheckerExecutor.add(() -> map.get(enableAnnotation.annotationType()).check(inputCheckArg));
         }
         String annListLogStr = enableAnnotations.stream().map(i -> i.annotationType().getSimpleName()).collect(Collectors.joining(",", "[", "]"));
 
 
-        String log = checkInstance.fieldStr() + "  @Ann:" + annListLogStr + " : " + this.name();
+        String log = inputCheckArg.fieldStr() + "  @Ann:" + annListLogStr + " : " + this.name();
 
 
         return multiCheckerExecutor.toMultiCheckResult(log);

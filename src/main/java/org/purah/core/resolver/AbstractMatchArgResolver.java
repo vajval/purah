@@ -3,7 +3,7 @@ package org.purah.core.resolver;
 
 import com.google.common.collect.Lists;
 import org.purah.core.base.NameUtil;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.exception.ArgResolverException;
 import org.purah.core.matcher.intf.FieldMatcher;
 import org.purah.core.matcher.multilevel.MultilevelFieldMatcher;
@@ -23,8 +23,8 @@ public abstract class AbstractMatchArgResolver implements ArgResolver {
      * 详情见单元测试
      */
     @Override
-    public Map<String, CheckInstance<?>> getMatchFieldObjectMap(Object inputArg, FieldMatcher fieldMatcher) {
-        if(inputArg==null){
+    public Map<String, InputCheckArg<?>> getMatchFieldObjectMap(Object inputArg, FieldMatcher fieldMatcher) {
+        if (inputArg == null) {
             return Collections.emptyMap();
         }
         if (!support(inputArg.getClass())) {
@@ -39,44 +39,47 @@ public abstract class AbstractMatchArgResolver implements ArgResolver {
         }
     }
 
-    public abstract Map<String, CheckInstance<?>> getThisLevelMatcherObjectMap(Object inputArg, FieldMatcher fieldMatcher);
+    public abstract Map<String, InputCheckArg<?>> getThisLevelMatcherObjectMap(Object inputArg, FieldMatcher fieldMatcher);
 
     /**
      * 获取多级 matcher  从 instance中获取多级对象，
      */
-    protected Map<String, CheckInstance<?>> getMultiLevelMap(Object inputArg, MultilevelFieldMatcher multilevelFieldMatcher) {
+    protected Map<String, InputCheckArg<?>> getMultiLevelMap(Object inputArg, MultilevelFieldMatcher multilevelFieldMatcher) {
 
         String levelSplitStr = multilevelFieldMatcher.levelSplitStr();
-        Map<String, CheckInstance<?>> result = new HashMap<>();
-        Map<String, CheckInstance<?>> fieldsObjectMap = this.getThisLevelMatcherObjectMap(inputArg, multilevelFieldMatcher);
+        Map<String, InputCheckArg<?>> result = new HashMap<>();
+        Map<String, InputCheckArg<?>> fieldsObjectMap = this.getThisLevelMatcherObjectMap(inputArg, multilevelFieldMatcher);
+        System.out.println(fieldsObjectMap);
 
-
-        for (Map.Entry<String, CheckInstance<?>> entry : fieldsObjectMap.entrySet()) {
+        for (Map.Entry<String, InputCheckArg<?>> entry : fieldsObjectMap.entrySet()) {
             String field = entry.getKey();
-            CheckInstance<?> innCheckInstance = entry.getValue();
+            InputCheckArg<?> innInputCheckArg = entry.getValue();
 
             FieldMatcher childFieldMatcher = multilevelFieldMatcher.childFieldMatcher(field);
-
+            System.out.println(childFieldMatcher);
             //不需要往底层看
             if (childFieldMatcher == null) {
-                result.put(field, innCheckInstance);
+                result.put(field, innInputCheckArg);
                 continue;
             }
 
-
             //需要往底层看
-            if (innCheckInstance.instance() != null && supportChildGet(innCheckInstance.instance().getClass())) {
-                Map<String, CheckInstance<?>> childMap = this.getMatchFieldObjectMap(innCheckInstance.instance(), childFieldMatcher);
-                for (Map.Entry<String, CheckInstance<?>> childEntry : childMap.entrySet()) {
+            if (innInputCheckArg.inputArg() != null && supportChildGet(innInputCheckArg.inputArg().getClass())) {
+
+                Map<String, InputCheckArg<?>> childMap = this.getMatchFieldObjectMap(innInputCheckArg.inputArg(), childFieldMatcher);
+
+
+                for (Map.Entry<String, InputCheckArg<?>> childEntry : childMap.entrySet()) {
                     String childResultKey = childEntry.getKey();
-                    CheckInstance<?> childResultValue = childEntry.getValue();
+                    InputCheckArg<?> childResultValue = childEntry.getValue();
                     childResultValue.addFieldPreByParent(field + levelSplitStr);
+
                     result.put(field + levelSplitStr + childResultKey, childResultValue);
+
                 }
             }
 
         }
-
         return result;
     }
 

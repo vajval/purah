@@ -2,7 +2,7 @@ package org.purah.core.checker.method.toChecker;
 
 
 import org.purah.core.checker.base.BaseSupportCacheChecker;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.method.PurahEnableMethod;
 import org.purah.core.checker.result.CheckResult;
 
@@ -38,7 +38,7 @@ public abstract class AbstractMethodToChecker extends BaseSupportCacheChecker {
 
 
     @Override
-    public abstract CheckResult doCheck(CheckInstance checkInstance);
+    public abstract CheckResult doCheck(InputCheckArg inputCheckArg);
 
     @Override
     public String name() {

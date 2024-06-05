@@ -2,7 +2,7 @@ package org.purah.example.customAnn.checker;
 
 
 import org.purah.core.base.Name;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.method.toChecker.CheckerByAnnMethod;
@@ -46,34 +46,34 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
     }
 
-    public CheckResult cnPhoneNum(CNPhoneNum cnPhoneNum, CheckInstance<String> str) {
-        String strValue = str.instance();
+    public CheckResult cnPhoneNum(CNPhoneNum cnPhoneNum, InputCheckArg<String> str) {
+        String strValue = str.inputArg();
         cnPhoneNumCount++;
 
         //gpt小姐 说的
         if (strValue.matches("^1[3456789]\\d{9}$")) {
             return success(str, "正确的");
         }
-        return BaseLogicCheckResult.failed(str.instance(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
+        return BaseLogicCheckResult.failed(str.inputArg(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
 
 
     }
 
-    public CheckResult notEmpty(NotEmptyTest notEmptyTest, CheckInstance<String> str) {
-        String strValue = str.instance();
+    public CheckResult notEmpty(NotEmptyTest notEmptyTest, InputCheckArg<String> str) {
+        String strValue = str.inputArg();
         if (StringUtils.hasText(strValue)) {
             return success(str, "正确的");
         }
-        return BaseLogicCheckResult.failed(str.instance(), str.fieldStr() + ":" + notEmptyTest.errorMsg());
+        return BaseLogicCheckResult.failed(str.inputArg(), str.fieldStr() + ":" + notEmptyTest.errorMsg());
 
 
     }
 
 
-    public CheckResult range(Range range, CheckInstance<Number> num) {
-        Number numValue = num.instance();
+    public CheckResult range(Range range, InputCheckArg<Number> num) {
+        Number numValue = num.inputArg();
         if (numValue.doubleValue() < range.min() || numValue.doubleValue() > range.max()) {
-            return BaseLogicCheckResult.failed(num.instance(), (num.fieldStr() + ":" + range.errorMsg()));
+            return BaseLogicCheckResult.failed(num.inputArg(), (num.fieldStr() + ":" + range.errorMsg()));
         }
         return success(num, "参数合规");
 

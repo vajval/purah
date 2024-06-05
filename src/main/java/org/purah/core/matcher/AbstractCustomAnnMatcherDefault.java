@@ -3,7 +3,7 @@ package org.purah.core.matcher;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.matcher.clazz.AbstractClassCacheFieldMatcher;
 import org.purah.core.matcher.intf.FieldMatcher;
-import org.purah.core.matcher.multilevel.GeneralMultilevelFieldMatcher;
+import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.multilevel.MultilevelFieldMatcher;
 
 import java.beans.PropertyDescriptor;
@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractCustomAnnMatcher extends AbstractClassCacheFieldMatcher implements MultilevelFieldMatcher {
+public abstract class AbstractCustomAnnMatcherDefault extends AbstractClassCacheFieldMatcher implements MultilevelFieldMatcher {
 
-    GeneralMultilevelFieldMatcher generalMultilevelFieldMatcher;
+    GeneralFieldMatcher generalFieldMatcher;
 
-    public AbstractCustomAnnMatcher(String matchStr) {
+    public AbstractCustomAnnMatcherDefault(String matchStr) {
         super(matchStr);
-        generalMultilevelFieldMatcher = new GeneralMultilevelFieldMatcher(matchStr);
+        generalFieldMatcher = new GeneralFieldMatcher(matchStr);
     }
 
     public abstract Set<Class<? extends Annotation>> customAnnList();
@@ -34,7 +34,7 @@ public abstract class AbstractCustomAnnMatcher extends AbstractClassCacheFieldMa
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
 
             String fieldName = propertyDescriptor.getName();
-            if (!generalMultilevelFieldMatcher.match(fieldName)) {
+            if (!generalFieldMatcher.match(fieldName)) {
                 continue;
             }
             Field declaredField;
@@ -58,6 +58,6 @@ public abstract class AbstractCustomAnnMatcher extends AbstractClassCacheFieldMa
 
     @Override
     public FieldMatcher childFieldMatcher(String matchedField) {
-        return generalMultilevelFieldMatcher.childFieldMatcher(matchedField);
+        return generalFieldMatcher.childFieldMatcher(matchedField);
     }
 }

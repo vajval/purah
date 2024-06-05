@@ -1,7 +1,7 @@
 package org.purah.core.resolver;
 
 import com.google.common.collect.Sets;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.matcher.intf.FieldMatcher;
 
 
@@ -22,7 +22,7 @@ public class DefaultArgResolver implements ArgResolver{
     }
 
     @Override
-    public Map<String, CheckInstance<?>> getMatchFieldObjectMap(Object o, FieldMatcher fieldMatcher) {
+    public Map<String, InputCheckArg<?>> getMatchFieldObjectMap(Object o, FieldMatcher fieldMatcher) {
         return mainArgResolver.getMatchFieldObjectMap(o, fieldMatcher);
     }
 

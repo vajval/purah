@@ -6,11 +6,11 @@ import org.purah.core.matcher.intf.FieldMatcher;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;
 
 @Name("general")
-public class GeneralMultilevelFieldMatcher extends AbstractMultilevelFieldMatcher {
+public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher {
 
     FieldMatcher firstLevelFieldMatcher;
 
-    public GeneralMultilevelFieldMatcher(String matchStr) {
+    public GeneralFieldMatcher(String matchStr) {
         super(matchStr);
         firstLevelFieldMatcher = new WildCardMatcher(firstLevelStr);
     }
@@ -23,7 +23,7 @@ public class GeneralMultilevelFieldMatcher extends AbstractMultilevelFieldMatche
     @Override
     public FieldMatcher childFieldMatcherByChildStr(String childMatchStr) {
         if (childMatchStr.contains(this.levelSplitStr())) {
-            return new GeneralMultilevelFieldMatcher(childMatchStr);
+            return new GeneralFieldMatcher(childMatchStr);
         }
         return new WildCardMatcher(childMatchStr);
 

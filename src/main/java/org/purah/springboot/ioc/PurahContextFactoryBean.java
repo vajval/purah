@@ -4,10 +4,11 @@ package org.purah.springboot.ioc;
 import org.purah.core.PurahContext;
 import org.purah.core.PurahContextConfig;
 import org.purah.core.matcher.MatcherManager;
+
 import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
 import org.purah.core.matcher.clazz.ClassNameMatcher;
 import org.purah.core.matcher.intf.FieldMatcher;
-import org.purah.core.matcher.multilevel.GeneralMultilevelFieldMatcher;
+import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 
 import org.purah.core.matcher.singleLevel.ReMatcher;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;
@@ -43,7 +44,7 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
         matcherManager.regBaseStrMatcher(ClassNameMatcher.class);
         matcherManager.regBaseStrMatcher(ReMatcher.class);
         matcherManager.regBaseStrMatcher(WildCardMatcher.class);
-        matcherManager.regBaseStrMatcher(GeneralMultilevelFieldMatcher.class);
+        matcherManager.regBaseStrMatcher(GeneralFieldMatcher.class);
         baseStringMatcherClass.forEach(matcherManager::regBaseStrMatcher);
 
         return purahContext;

@@ -7,14 +7,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.Util;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.Checkers;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
+
 import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
 import org.purah.core.matcher.clazz.ClassNameMatcher;
-import org.purah.core.matcher.multilevel.GeneralMultilevelFieldMatcher;
+import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;
 
 
@@ -28,7 +29,7 @@ class CombinatorialCheckerConfigTest {
         purahContext.matcherManager().regBaseStrMatcher(AnnTypeFieldMatcher.class);
         purahContext.matcherManager().regBaseStrMatcher(ClassNameMatcher.class);
         purahContext.matcherManager().regBaseStrMatcher(WildCardMatcher.class);
-        purahContext.matcherManager().regBaseStrMatcher(GeneralMultilevelFieldMatcher.class);
+        purahContext.matcherManager().regBaseStrMatcher(GeneralFieldMatcher.class);
 
         purahContext.checkManager().addCheckerFactory(
                 new CheckerFactory() {
@@ -71,10 +72,10 @@ class CombinatorialCheckerConfigTest {
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
 
 
-        CheckResult result = checker.check(CheckInstance.createObjectInstance(Util.initiator));
+        CheckResult result = checker.check(InputCheckArg.createObjectInstance(Util.initiator));
         Assertions.assertTrue(result.isSuccess());
 
-        result = checker.check(CheckInstance.createObjectInstance(Util.recipients));
+        result = checker.check(InputCheckArg.createObjectInstance(Util.recipients));
         Assertions.assertFalse(result.isSuccess());
     }
 
@@ -98,7 +99,7 @@ class CombinatorialCheckerConfigTest {
         Checker multiLevelchecker = purahContext.regNewCombinatorialChecker(properties);
 
 
-        CheckResult result = multiLevelchecker.check(CheckInstance.createObjectInstance(Util.trade));
+        CheckResult result = multiLevelchecker.check(InputCheckArg.createObjectInstance(Util.trade));
         Assertions.assertTrue(result.isSuccess());
     }
 

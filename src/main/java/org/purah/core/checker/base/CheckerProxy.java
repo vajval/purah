@@ -22,8 +22,8 @@ public class CheckerProxy implements Checker {
     }
 
     @Override
-    public CheckResult check(CheckInstance checkInstance) {
-        CheckResult result = checker.check(checkInstance);
+    public CheckResult check(InputCheckArg inputCheckArg) {
+        CheckResult result = checker.check(inputCheckArg);
         result.setCheckLogicFrom(this.logicFrom());
         return result;
     }

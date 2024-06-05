@@ -5,9 +5,9 @@ import com.google.common.collect.Lists;
 import org.purah.core.PurahContext;
 import org.purah.core.base.Name;
 import org.purah.core.checker.base.BaseSupportCacheChecker;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.base.Checker;
-import org.purah.core.checker.base.ExecChecker;
+import org.purah.core.checker.base.GenericsProxyChecker;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.base.MultiCheckerExecutor;
 import org.purah.core.checker.result.*;
@@ -23,7 +23,6 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -108,8 +107,8 @@ public class MethodHandlerChecker extends BaseSupportCacheChecker {
     }
 
     @Override
-    public MethodCheckResult doCheck(CheckInstance checkInstance) {
-        Object[] args = (Object[]) checkInstance.instance();
+    public MethodCheckResult doCheck(InputCheckArg inputCheckArg) {
+        Object[] args = (Object[]) inputCheckArg.inputArg();
 
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(
                 methodExecType,
@@ -132,8 +131,8 @@ public class MethodHandlerChecker extends BaseSupportCacheChecker {
     }
 
     @Override
-    public MethodCheckResult check(CheckInstance checkInstance) {
-        return (MethodCheckResult) super.check(checkInstance);
+    public MethodCheckResult check(InputCheckArg inputCheckArg) {
+        return (MethodCheckResult) super.check(inputCheckArg);
     }
 
     private ArgCheckResult checkBaseLogicArgByConfig(MethodArgCheckConfig methodArgCheckConfig, Object checkArg) {
@@ -144,10 +143,10 @@ public class MethodHandlerChecker extends BaseSupportCacheChecker {
         MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.execType(), checkIt.resultLevel());
 
 
-        List<? extends ExecChecker<?, ?>> checkerList = methodArgCheckConfig.checkerNameList().stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
+        List<? extends GenericsProxyChecker<?, ?>> checkerList = methodArgCheckConfig.checkerNameList().stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
 
         for (Checker checker : checkerList) {
-            executor.add(CheckInstance.create(checkArg, methodArgCheckConfig.argClazz()), checker);
+            executor.add(InputCheckArg.create(checkArg, methodArgCheckConfig.argClazz()), checker);
         }
 
         String log = "method:" + method.getName() + "|arg" + methodArgCheckConfig.argIndexInMethod();

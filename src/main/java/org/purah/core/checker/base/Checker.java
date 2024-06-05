@@ -18,10 +18,10 @@ public interface Checker<CHECK_INSTANCE, RESULT> extends IName {
      * 校验 业务 在这里面
      */
 
-    CheckResult<RESULT> check(CheckInstance<CHECK_INSTANCE> checkInstance);
+    CheckResult<RESULT> check(InputCheckArg<CHECK_INSTANCE> inputCheckArg);
 
     default CheckResult<RESULT> check(CHECK_INSTANCE checkInstance) {
-        return check(CheckInstance.create(checkInstance, inputCheckInstanceClass()));
+        return check(InputCheckArg.create(checkInstance, inputCheckInstanceClass()));
     }
 
     default Class<?> inputCheckInstanceClass() {

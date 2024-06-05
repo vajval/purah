@@ -3,7 +3,7 @@ package org.purah.core.matcher.clazz;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.Util;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.matcher.intf.FieldMatcherWithInstance;
 import org.purah.core.resolver.DefaultArgResolver;
 
@@ -29,9 +29,9 @@ public class ClassNameMatcherTest {
     @Test
     void resolver() {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
-        Map<String, CheckInstance<?>> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade, matcher);
-        Assertions.assertEquals(map.get("initiator").instance(), Util.initiator);
-        Assertions.assertEquals(map.get("recipients").instance(), Util.recipients);
+        Map<String, InputCheckArg<?>> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade, matcher);
+        Assertions.assertEquals(map.get("initiator").inputArg(), Util.initiator);
+        Assertions.assertEquals(map.get("recipients").inputArg(), Util.recipients);
         Assertions.assertNull(map.get("money"));
     }
 }

@@ -44,11 +44,7 @@ public class PurahIocS {
     public List<Checker> checkersByBeanMethod() {
         Set<Class<? extends MethodToChecker>> allMethodToCheckerSet = clazzConfigsOnMethodAnn(toCheckerMethodMap, m -> m.getDeclaredAnnotation(ToChecker.class).value());
         Map<Class<? extends MethodToChecker>, MethodToChecker> classMethodToCheckerMap = classBeanMap(allMethodToCheckerSet, MethodToChecker.class, Checkers.defaultMethodToChecker);
-        System.out.println(toCheckerMethodMap);
-        for (Map.Entry<Object, List<Method>> entry : toCheckerMethodMap.entrySet()) {
-            System.out.println(entry.getKey());
-            System.out.println(entry.getValue());
-        }
+
 
         return checkersByBeanMethod(classMethodToCheckerMap);
 
@@ -81,8 +77,7 @@ public class PurahIocS {
             Object bean = entry.getKey();
             List<Method> methodList = entry.getValue();
             for (Method method : methodList) {
-                System.out.println("---------------------");
-                System.out.println(method);
+
 
                 ToChecker toCheckerAnn = method.getDeclaredAnnotation(ToChecker.class);
                 MethodToChecker methodToChecker = classMethodToCheckerMap.get(toCheckerAnn.value());

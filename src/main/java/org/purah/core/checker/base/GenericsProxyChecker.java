@@ -19,32 +19,36 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <CHECK_INSTANCE>
  * @param <RESULT>
  */
-public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTANCE, RESULT> {
+public class GenericsProxyChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTANCE, RESULT> {
 
 
     String name;
     InputArgClass defaultInputArgClass;
     Checker<?, ?> defaultChecker;
-    Map<InputArgClass, Checker<?, ?>> typeEnableCheckerCacheMap = new ConcurrentHashMap<>();
+    Map<InputArgClass, Checker<?, ?>> cacheGenericsCheckerMapping = new ConcurrentHashMap<>();
 
 
-    public ExecChecker(String name, Checker<?, ?> checker) {
+    public GenericsProxyChecker(String name, Checker<?, ?> checker) {
         this.name = name;
         this.addNewChecker(checker);
     }
+
+    /**
+     * 添加新的
+     */
 
     public void addNewChecker(Checker<?, ?> checker) {
         InputArgClass checkerSupportInputArgClass = InputArgClass.byChecker(checker);
         if (defaultChecker == null) {
             this.defaultChecker = checker;
             this.defaultInputArgClass = checkerSupportInputArgClass;
-        }else{
+        } else {
             if (checkerSupportInputArgClass.equals(defaultInputArgClass)) {
                 defaultChecker = checker;
             }
         }
 
-        this.typeEnableCheckerCacheMap.put(checkerSupportInputArgClass, checker);
+        this.cacheGenericsCheckerMapping.put(checkerSupportInputArgClass, checker);
 
 
     }
@@ -55,40 +59,39 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
     }
 
     @Override
-    public CheckResult check(CheckInstance<CHECK_INSTANCE> checkInstance) {
+    public CheckResult check(InputCheckArg<CHECK_INSTANCE> inputCheckArg) {
 
 
-        Checker<?, ?> checker = getChecker(checkInstance);
+        Checker<?, ?> checker = getChecker(inputCheckArg);
         try {
-            return ((Checker) checker).check(checkInstance);
+            return ((Checker) checker).check(inputCheckArg);
         } catch (PurahException exception) {
-//            System.out.println(123);
             throw exception;
         }
     }
 
-    protected Checker<?, ?> getChecker(CheckInstance<CHECK_INSTANCE> checkInstance) {
-        InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(checkInstance);
-
+    protected Checker<?, ?> getChecker(InputCheckArg<CHECK_INSTANCE> inputCheckArg) {
+        InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputCheckArg);
 
         if (defaultInputArgClass.support(inputCheckInstanceArgClass)) {
             return defaultChecker;
         }
 
-        Checker<?, ?> result = typeEnableCheckerCacheMap.get(inputCheckInstanceArgClass);
+        Checker<?, ?> result = cacheGenericsCheckerMapping.get(inputCheckInstanceArgClass);
         if (result != null) {
             return result;
         }
-        for (Map.Entry<InputArgClass, Checker<?, ?>> entry : typeEnableCheckerCacheMap.entrySet()) {
+        for (Map.Entry<InputArgClass, Checker<?, ?>> entry : cacheGenericsCheckerMapping.entrySet()) {
             InputArgClass cacheInputArgClass = entry.getKey();
 
             if (cacheInputArgClass.support(inputCheckInstanceArgClass)) {
                 result = entry.getValue();
-                typeEnableCheckerCacheMap.put(inputCheckInstanceArgClass, result);
+                cacheGenericsCheckerMapping.put(inputCheckInstanceArgClass, result);
                 return result;
             }
         }
         throw new CheckerException(this, "checker " + this.name + "没有对该类的解析方法" + inputCheckInstanceArgClass.clazz);
+
 
     }
 
@@ -112,8 +115,8 @@ public class ExecChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTAN
             return new InputArgClass(clazz);
         }
 
-        public static InputArgClass byInstance(CheckInstance<?> checkInstance) {
-            return new InputArgClass(checkInstance.instanceClass());
+        public static InputArgClass byInstance(InputCheckArg<?> inputCheckArg) {
+            return new InputArgClass(inputCheckArg.inputArgClass());
         }
 
 

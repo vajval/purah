@@ -58,9 +58,10 @@ class PurahIocSTest {
         Set<Object> purahEnableMethodsBeans = purahIocS.purahEnableMethodsBean();
 
         List<Checker> checkers = purahIocS.checkersByBeanMethod();
+        Set<String> collect = checkers.stream().map(i -> i.name()).collect(Collectors.toSet());
 
-        for (Checker checker : checkers) {
-            Assertions.assertTrue(IocTest.checkerMethodNameList.contains(checker.name()));
+        for (String s : IocTest.checkerMethodNameList) {
+            Assertions.assertTrue(collect.contains(s));
         }
 
 

@@ -12,6 +12,8 @@ import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.exception.MethodArgCheckException;
 import org.purah.ExampleApplication;
+import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
+import org.purah.core.resolver.ReflectArgResolver;
 import org.purah.example.customAnn.CustomService;
 import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmptyTest;
@@ -248,7 +250,6 @@ class CustomServiceTest {
         PurahCheckInstanceCacheContext.execOnCacheContext(() -> test(num));
 
 
-
 //        PurahCheckInstanceCacheContext.createEnableOnThread();
 
 //        test(num);
@@ -256,11 +257,18 @@ class CustomServiceTest {
 //        PurahCheckInstanceCacheContext.closeCache();
 
 
-
-
         test(num);
         assertEquals(2 * num, CustomAnnChecker.cnPhoneNumCount);
 
+
+    }
+
+    @Test
+    public void tesasdt() {
+        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
+        GeneralFieldMatcher r = new GeneralFieldMatcher("*.*");
+        goodCustomUser.setChildCustomUser(badCustomUser);
+        System.out.println(reflectArgResolver.getMatchFieldObjectMap(goodCustomUser, r));
 
 
     }
@@ -278,6 +286,7 @@ class CustomServiceTest {
             String trim = autoFillCheckResult.allBaseLogicCheckResult().stream().filter(w -> w.isFailed()).map(w -> w.log())
                     .reduce("", (a, b) -> a + b).trim();
 
+            System.out.println(trim);
             assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
             assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));
             assertTrue(trim.contains("childCustomUser.phone:移不动也联不通"));

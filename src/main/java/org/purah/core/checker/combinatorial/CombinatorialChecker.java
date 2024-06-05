@@ -76,7 +76,7 @@ public class CombinatorialChecker extends BaseSupportCacheChecker<Object, Object
     }
 
     @Override
-    public CheckResult doCheck(CheckInstance<Object> checkInstance) {
+    public CheckResult doCheck(InputCheckArg<Object> inputCheckArg) {
         if (!init) {
             init();
         }
@@ -91,7 +91,7 @@ public class CombinatorialChecker extends BaseSupportCacheChecker<Object, Object
          */
         for (Checker checker : rootInstanceCheckers) {
 //            Supplier<CheckResult<?>> BaseLogicCheckResultSupplier = () -> checker.check(checkInstance);
-            executor.add(checkInstance, checker);
+            executor.add(inputCheckArg, checker);
 //            supplierList.add(BaseLogicCheckResultSupplier);
         }
         /*
@@ -100,11 +100,11 @@ public class CombinatorialChecker extends BaseSupportCacheChecker<Object, Object
 
         for (FieldMatcherCheckerConfig fieldMatcherCheckerConfig : fieldMatcherCheckerConfigList) {
             FieldMatcherCheckerConfigExecutor fieldMatcherCheckerConfigExecutor = new FieldMatcherCheckerConfigExecutor(fieldMatcherCheckerConfig);
-            executor.add(() -> fieldMatcherCheckerConfigExecutor.check(checkInstance));
+            executor.add(() -> fieldMatcherCheckerConfigExecutor.check(inputCheckArg));
         }
 
 
-        String log = "[" + checkInstance.fieldStr() + "]: " + this.name();
+        String log = "[" + inputCheckArg.fieldStr() + "]: " + this.name();
         CombinatorialCheckResult result = executor.toCombinatorialCheckResult(log);
         result.setCheckLogicFrom(this.logicFrom());
         return result;
@@ -139,15 +139,15 @@ public class CombinatorialChecker extends BaseSupportCacheChecker<Object, Object
         }
 
 
-        public CheckResult check(CheckInstance<Object> checkInstance) {
+        public CheckResult check(InputCheckArg<Object> inputCheckArg) {
 
-            ArgResolver argResolver = getArgResolverManager().getArgResolver(checkInstance.instanceClass());
-
-
-            Object instance = checkInstance.instance();
+            ArgResolver argResolver = getArgResolverManager().getArgResolver(inputCheckArg.inputArgClass());
 
 
-            Map<String, CheckInstance<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(instance, fieldMatcherCheckerConfig.fieldMatcher);
+            Object instance = inputCheckArg.inputArg();
+
+
+            Map<String, InputCheckArg<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(instance, fieldMatcherCheckerConfig.fieldMatcher);
 
             List<Supplier<CheckResult<?>>> supplierList = new ArrayList<>();
             ExecType.Matcher execType = fieldMatcherCheckerConfig.execType;
@@ -159,13 +159,13 @@ public class CombinatorialChecker extends BaseSupportCacheChecker<Object, Object
 
             if (execType == ExecType.Matcher.checker_instance) {
                 for (Checker checker : checkerList) {
-                    for (Map.Entry<String, CheckInstance<?>> entry : matchFieldObjectMap.entrySet()) {
+                    for (Map.Entry<String, InputCheckArg<?>> entry : matchFieldObjectMap.entrySet()) {
                         multiCheckerExecutor.add(entry.getValue(), checker);
 //                        supplierList.add(() -> checker.check(entry.getValue()));
                     }
                 }
             } else if (execType == ExecType.Matcher.instance_checker) {
-                for (Map.Entry<String, CheckInstance<?>> entry : matchFieldObjectMap.entrySet()) {
+                for (Map.Entry<String, InputCheckArg<?>> entry : matchFieldObjectMap.entrySet()) {
                     for (Checker checker : checkerList) {
                         multiCheckerExecutor.add(entry.getValue(), checker);
 //                        supplierList.add(() -> checker.check(entry.getValue()));
@@ -179,7 +179,7 @@ public class CombinatorialChecker extends BaseSupportCacheChecker<Object, Object
             String checkerNamesStr = fieldMatcherCheckerConfig.getCheckers().stream().map(IName::name).collect(Collectors.joining(","));
             FieldMatcher fieldMatcher = fieldMatcherCheckerConfig.fieldMatcher;
 
-            String log = checkInstance.fieldStr() + " match:(" + fieldMatcher + ") checkers: " + checkerNamesStr;
+            String log = inputCheckArg.fieldStr() + " match:(" + fieldMatcher + ") checkers: " + checkerNamesStr;
             CombinatorialCheckResult result = multiCheckerExecutor.toCombinatorialCheckResult(log);
 
             result.setCheckLogicFrom("combinatorial by config,see log");

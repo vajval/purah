@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CheckInstance<INSTANCE> {
+public class InputCheckArg<INSTANCE> {
     //需要检查的对象
-    INSTANCE instance;
+    INSTANCE inputArg;
     //相对于根节点的字段
     //例如 title  user.id   user.childUser.id  等
     String fieldStr;
@@ -23,9 +23,9 @@ public class CheckInstance<INSTANCE> {
     // 如果这个对象是父对象class的一个field ，此处保存field中的注解
     List<Annotation> annotations;
 
-    private CheckInstance(INSTANCE instance, Class<?> clazzInContext, String fieldStr) {
-        this(instance, fieldStr, null, Collections.emptyList());
-        this.instance = instance;
+    private InputCheckArg(INSTANCE inputArg, Class<?> clazzInContext, String fieldStr) {
+        this(inputArg, fieldStr, null, Collections.emptyList());
+        this.inputArg = inputArg;
         if (clazzInContext == null) {
             throw new RuntimeException("不要将class设置为null,实在不行就Object.class");
         }
@@ -33,8 +33,8 @@ public class CheckInstance<INSTANCE> {
 
     }
 
-    private CheckInstance(INSTANCE instance, String fieldStr, Field fieldInClass, List<Annotation> annotations) {
-        this.instance = instance;
+    private InputCheckArg(INSTANCE inputArg, String fieldStr, Field fieldInClass, List<Annotation> annotations) {
+        this.inputArg = inputArg;
         this.fieldInClass = fieldInClass;
         if (this.fieldInClass != null) {
             this.clazzInContext = this.fieldInClass.getType();
@@ -49,20 +49,20 @@ public class CheckInstance<INSTANCE> {
     }
 
 
-    public static <T> CheckInstance<T> createObjectInstance(T instance) {
+    public static <T> InputCheckArg<T> createObjectInstance(T instance) {
         return create(instance, Object.class);
     }
 
-    public static <T> CheckInstance<T> create(T instance, Class<?> clazzInContext) {
+    public static <T> InputCheckArg<T> create(T instance, Class<?> clazzInContext) {
         return create(instance, clazzInContext, "root");
     }
 
-    public static <T> CheckInstance<T> create(T instance, Class<?> clazzInContext, String fieldStr) {
-        return new CheckInstance<>(instance, clazzInContext, fieldStr);
+    public static <T> InputCheckArg<T> create(T instance, Class<?> clazzInContext, String fieldStr) {
+        return new InputCheckArg<>(instance, clazzInContext, fieldStr);
     }
 
-    public static <T> CheckInstance<T> createWithFieldConfig(T instance, Field fieldInClass, List<Annotation> annotations) {
-        return new CheckInstance<>(instance, fieldInClass.getName(), fieldInClass, annotations);
+    public static <T> InputCheckArg<T> createWithFieldConfig(T instance, Field fieldInClass, List<Annotation> annotations) {
+        return new InputCheckArg<>(instance, fieldInClass.getName(), fieldInClass, annotations);
     }
 
 
@@ -86,24 +86,23 @@ public class CheckInstance<INSTANCE> {
     }
 
 
-    public INSTANCE instance() {
-        return instance;
+    public INSTANCE inputArg() {
+        return inputArg;
     }
 
 
-    public Class<?> instanceClass() {
-        if (instance != null) {
-            return instance.getClass();
+    public Class<?> inputArgClass() {
+        if (inputArg != null) {
+            return inputArg.getClass();
         }
         return clazzInContext;
 
     }
 
-
     @Override
     public String toString() {
-        return "CheckInstance{" +
-                "instance=" + instance +
+        return "CheckInputArg{" +
+                "inputArg=" + inputArg +
                 ", fieldStr='" + fieldStr + '\'' +
                 ", clazzInContext=" + clazzInContext +
                 ", fieldInClass=" + fieldInClass +
@@ -111,18 +110,17 @@ public class CheckInstance<INSTANCE> {
                 '}';
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CheckInstance<?> that = (CheckInstance<?>) o;
-        return Objects.equals(instance, that.instance) && Objects.equals(fieldStr, that.fieldStr);
+        InputCheckArg<?> that = (InputCheckArg<?>) o;
+        return Objects.equals(inputArg, that.inputArg) && Objects.equals(fieldStr, that.fieldStr);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(instance, fieldStr);
+        return Objects.hash(inputArg, fieldStr);
     }
 
 

@@ -1,15 +1,10 @@
 package org.purah.core.checker.cache;
 
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.result.CheckResult;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class PurahCheckInstanceCacheContext {
@@ -100,9 +95,9 @@ public class PurahCheckInstanceCacheContext {
 
     }
 
-    public static CheckResult get(CheckInstance checkInstance, String checkerName) {
+    public static CheckResult get(InputCheckArg inputCheckArg, String checkerName) {
 
-        InstanceCheckCacheKey instanceCheckCacheKey = new InstanceCheckCacheKey(checkInstance, checkerName);
+        InstanceCheckCacheKey instanceCheckCacheKey = new InstanceCheckCacheKey(inputCheckArg, checkerName);
         return get(instanceCheckCacheKey);
 
     }

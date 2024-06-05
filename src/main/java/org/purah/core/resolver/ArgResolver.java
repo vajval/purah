@@ -2,7 +2,7 @@ package org.purah.core.resolver;
 
 
 
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.matcher.intf.FieldMatcher;
 
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Set;
 
 public interface ArgResolver{
 
-    Map<String, CheckInstance<?>> getMatchFieldObjectMap(Object inputArg, FieldMatcher fieldMatcher);
+    Map<String, InputCheckArg<?>> getMatchFieldObjectMap(Object inputArg, FieldMatcher fieldMatcher);
 
     Set<Class<?>> supportTypes();
 

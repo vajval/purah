@@ -1,7 +1,7 @@
 package org.purah.core.checker.method;
 
 import org.purah.core.base.Name;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.springframework.core.ResolvableType;
@@ -58,7 +58,7 @@ public class PurahEnableMethod {
 
 
         this.needCheckArgClass = method.getParameterTypes()[needCheckArgIndex];
-        if (this.needCheckArgClass.equals(CheckInstance.class)) {
+        if (this.needCheckArgClass.equals(InputCheckArg.class)) {
             ParameterizedType genericReturnType = (ParameterizedType) method.getGenericParameterTypes()[needCheckArgIndex];
             this.needCheckArgClass = (Class) genericReturnType.getActualTypeArguments()[0];
             argIsCheckInstanceClass = true;
@@ -68,11 +68,11 @@ public class PurahEnableMethod {
     }
 
 
-    public Object checkInstanceToInputArg(CheckInstance checkInstance) {
+    public Object checkInstanceToInputArg(InputCheckArg inputCheckArg) {
         if (argIsCheckInstanceClass) {
-            return checkInstance;
+            return inputCheckArg;
         }
-        return checkInstance.instance();
+        return inputCheckArg.inputArg();
     }
 
     public CheckResult invoke(Object[] args) {

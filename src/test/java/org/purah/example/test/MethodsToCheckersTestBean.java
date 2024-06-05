@@ -3,7 +3,7 @@ package org.purah.example.test;
 
 import org.purah.core.base.Name;
 import org.purah.core.checker.base.BaseSupportCacheChecker;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
@@ -63,20 +63,20 @@ public class MethodsToCheckersTestBean {
 
         return new BaseSupportCacheChecker<Number, Object>() {
             @Override
-            public CheckResult doCheck(CheckInstance<Number> checkInstance) {
-                return range2(name, checkInstance.instance());
+            public CheckResult doCheck(InputCheckArg<Number> inputCheckArg) {
+                return range2(name, inputCheckArg.inputArg());
             }
         };
     }
 
     @Name("数值判断FromTestBean")
     @ToChecker
-    public CheckResult range(CheckInstance<Number> checkInstance) {
-        Integer value = checkInstance.instance().intValue();
+    public CheckResult range(InputCheckArg<Number> inputCheckArg) {
+        Integer value = inputCheckArg.inputArg().intValue();
         if (value < 0) {
-            return BaseLogicCheckResult.failed(null, checkInstance.fieldStr() + ":取值错误:" + value);
+            return BaseLogicCheckResult.failed(null, inputCheckArg.fieldStr() + ":取值错误:" + value);
         } else {
-            return BaseLogicCheckResult.success(null, checkInstance.fieldStr() + ":取值正确:" + value);
+            return BaseLogicCheckResult.success(null, inputCheckArg.fieldStr() + ":取值正确:" + value);
         }
     }
 }

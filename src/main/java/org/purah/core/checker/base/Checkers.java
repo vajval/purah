@@ -27,7 +27,7 @@ public class Checkers {
             this.name = name;
         }
 
-        public abstract CheckResult check(CheckInstance checkInstance);
+        public abstract CheckResult check(InputCheckArg inputCheckArg);
     }
 
 
@@ -114,17 +114,17 @@ public class Checkers {
             }
 
             @Override
-            public CheckResult<String> doCheck(CheckInstance checkInstance) {
+            public CheckResult<String> doCheck(InputCheckArg inputCheckArg) {
                 boolean test;
                 try {
-                    test = predicate.test((T) checkInstance.instance());
+                    test = predicate.test((T) inputCheckArg.inputArg());
                 } catch (Exception e) {
-                    return error(checkInstance, e);
+                    return error(inputCheckArg, e);
                 }
                 if (test) {
-                    return success(checkInstance, "success");
+                    return success(inputCheckArg, "success");
                 }
-                return failed(checkInstance, "failed");
+                return failed(inputCheckArg, "failed");
             }
         };
     }

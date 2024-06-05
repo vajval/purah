@@ -1,10 +1,14 @@
 package org.purah.core.matcher;
 
 
+import com.google.common.collect.Sets;
 import org.purah.core.base.NameUtil;
 import org.purah.core.matcher.intf.FieldMatcher;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 基础的匹配器，内置一个简单的字符串创建
@@ -14,15 +18,20 @@ import java.util.Objects;
 public abstract class BaseStringMatcher implements FieldMatcher {
     protected String matchStr;
 
-    public BaseStringMatcher(String matchStr) {
-        this.matchStr = matchStr;
-    }
+//    protected String wrapper = null;
 
+    public BaseStringMatcher(String matchStr) {
+
+        this.matchStr = matchStr;
+//        if (wrapper != null) {
+
+
+    }
 
 
     @Override
     public String toString() {
-        return  NameUtil.logClazzName(this) + ":[" + matchStr + "]";
+        return NameUtil.logClazzName(this) + ":[" + matchStr + "]";
     }
 
     @Override
@@ -43,4 +52,6 @@ public abstract class BaseStringMatcher implements FieldMatcher {
     public int hashCode() {
         return Objects.hash(matchStr);
     }
+
+
 }

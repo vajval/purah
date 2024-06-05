@@ -1,6 +1,6 @@
 package org.purah.core.checker.method.toChecker;
 
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.method.PurahEnableMethod;
 import org.purah.core.checker.result.CheckResult;
 
@@ -24,11 +24,11 @@ public class CheckerByAnnMethod extends AbstractMethodToChecker {
     }
 
     @Override
-    public CheckResult doCheck(CheckInstance checkInstance) {
-        Annotation annotation = checkInstance.annOnField(annClazz);
+    public CheckResult doCheck(InputCheckArg inputCheckArg) {
+        Annotation annotation = inputCheckArg.annOnField(annClazz);
         Object[] args = new Object[2];
         args[0] = annotation;
-        args[1] = purahEnableMethod.checkInstanceToInputArg(checkInstance);
+        args[1] = purahEnableMethod.checkInstanceToInputArg(inputCheckArg);
         return purahEnableMethod.invoke(args);
 
 

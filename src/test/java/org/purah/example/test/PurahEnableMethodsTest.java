@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import org.purah.ExampleApplication;
 import org.purah.core.PurahContext;
-import org.purah.core.checker.base.CheckInstance;
-import org.purah.core.checker.base.ExecChecker;
+import org.purah.core.checker.base.InputCheckArg;
+import org.purah.core.checker.base.GenericsProxyChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.CheckResult;
@@ -45,14 +45,14 @@ class PurahEnableMethodsTest {
 
         CustomUser badCustomUser = new CustomUser(-1L, null, null, 35);
 
-        ExecChecker execChecker = purahContext.checkManager().get("测试MethodsToCheckers注解");
-        CheckResult check = execChecker.check(CheckInstance.createObjectInstance(badCustomUser));
+        GenericsProxyChecker genericsProxyChecker = purahContext.checkManager().get("测试MethodsToCheckers注解");
+        CheckResult check = genericsProxyChecker.check(InputCheckArg.createObjectInstance(badCustomUser));
         System.out.println(check);
 
 
 
 
-        CheckResult checkResult = execChecker.check(CheckInstance.createObjectInstance(badCustomUser));
+        CheckResult checkResult = genericsProxyChecker.check(InputCheckArg.createObjectInstance(badCustomUser));
         Assertions.assertFalse(checkResult.isError());
 
 

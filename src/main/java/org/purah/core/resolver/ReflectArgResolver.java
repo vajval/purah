@@ -5,11 +5,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.base.NameUtil;
-import org.purah.core.checker.base.CheckInstance;
+import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.exception.ArgResolverException;
 import org.purah.core.matcher.intf.FieldMatcher;
 import org.purah.core.matcher.intf.FieldMatcherWithInstance;
-import org.springframework.core.ResolvableType;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class ReflectArgResolver extends AbstractMatchArgResolver {
 
-    ConcurrentHashMap<Class<?>, ClassConfigCache> classClassConfigCacheMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Class<?>, ClassConfigCache> classClassConfigCacheMap = new ConcurrentHashMap<>();
 
 
     @Override
@@ -47,23 +46,26 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
     }
 
     @Override
-    public Map<String, CheckInstance<?>> getThisLevelMatcherObjectMap(Object instance, FieldMatcher fieldMatcher) {
+    public Map<String, InputCheckArg<?>> getThisLevelMatcherObjectMap(Object instance, FieldMatcher fieldMatcher) {
         if (instance == null) {
             throw new ArgResolverException("不支持 解析null:" + NameUtil.logClazzName(this));
         }
         Class<?> instanceClass = instance.getClass();
 
-
         if (Map.class.isAssignableFrom(instanceClass)) {
-            Class<?> resolve = ResolvableType.forType(instanceClass).as(Map.class).getGenerics()[0].resolve();
-            if (!String.class.equals(resolve)) {
-                throw new RuntimeException("请自己实现一个支持 key非string类型map的解析器");
-            }
+
             Map<String, Object> objectMap = (Map<String, Object>) instance;
             Set<String> matchFieldList = fieldMatcher.matchFields(objectMap.keySet());
+//                    Sets.newHashSetWithExpectedSize(objectMap.keySet().size());
+//            for (String field : matchFieldList) {
+//                if (fieldMatcher.match(field)) {
+//                    matchFieldList.add(field);
+//                }
+//            }
+
             return matchFieldList.stream().collect(
                     Collectors.toMap(matchField -> matchField,
-                            i -> CheckInstance.create(objectMap.get(i), Object.class, i)));
+                            i -> InputCheckArg.create(objectMap.get(i), Object.class, i)));
         }
         ClassConfigCache classConfigCache = classConfigCacheOf(instanceClass);
         return classConfigCache.matchFieldValueMap(instance, fieldMatcher);
@@ -80,11 +82,11 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
 
         Map<FieldMatcher, Set<String>> matchFieldCacheMap = new ConcurrentHashMap<>();
 
-        Map<String, Function<Object, CheckInstance<?>>> checkInstanceFactoryMap = new ConcurrentHashMap<>();
+        Map<String, Function<Object, InputCheckArg<?>>> factoryCacheByClassField = new ConcurrentHashMap<>();
 
 
         private Set<String> fields() {
-            return checkInstanceFactoryMap.keySet();
+            return factoryCacheByClassField.keySet();
         }
 
         private ClassConfigCache(Class<?> instanceClass) {
@@ -92,14 +94,27 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
             this.init(instanceClass);
         }
 
-        protected Map<String, CheckInstance<?>> matchFieldValueMap(Object instance, FieldMatcher fieldMatcher) {
-            Set<String> matchFieldList = this.matchFieldList(instance, fieldMatcher);
-            Map<String, CheckInstance<?>> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
-            for (String matchFieldStr : matchFieldList) {
-                Function<Object, CheckInstance<?>> function = checkInstanceFactoryMap.get(matchFieldStr);
-                CheckInstance<?> objectCheckInstance = function.apply(instance);
-                result.put(matchFieldStr, objectCheckInstance);
+        protected Object get(Object inputArg, String field) {
+            try {
+                return PropertyUtils.getProperty(inputArg, field);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new RuntimeException(e);
             }
+        }
+
+        protected Map<String, InputCheckArg<?>> matchFieldValueMap(Object instance, FieldMatcher fieldMatcher) {
+            Set<String> matchFieldList = this.matchFieldList(instance, fieldMatcher);
+            Map<String, InputCheckArg<?>> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
+
+
+            for (String matchFieldStr : matchFieldList) {
+                Function<Object, InputCheckArg<?>> function = factoryCacheByClassField.get(matchFieldStr);
+                InputCheckArg<?> objectInputCheckArg = function.apply(instance);
+                result.put(matchFieldStr, objectInputCheckArg);
+
+            }
+
+
             return result;
         }
 
@@ -114,21 +129,9 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
                 } catch (NoSuchFieldException e) {
                     throw new RuntimeException(e);
                 }
-
                 List<Annotation> annotations = Collections.unmodifiableList(Lists.newArrayList(declaredField.getDeclaredAnnotations()));
-                checkInstanceFactoryMap.put(fieldName, parentObject -> {
-                    Object fieldObject;
-                    try {
-                        fieldObject = PropertyUtils.getProperty(parentObject, fieldName);
-                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                        throw new RuntimeException(e);
-                    }
-                    return CheckInstance.createWithFieldConfig(fieldObject, declaredField, annotations);
-                });
-
+                factoryCacheByClassField.put(fieldName, parentObject -> InputCheckArg.createWithFieldConfig(get(parentObject, fieldName), declaredField, annotations));
             }
-
-
         }
 
 
@@ -141,12 +144,23 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
             if (result != null) {
                 return result;
             }
+
             if (fieldMatcher instanceof FieldMatcherWithInstance) {
                 FieldMatcherWithInstance fieldMatcherWithInstance = (FieldMatcherWithInstance) fieldMatcher;
-                result = checkInstanceFactoryMap.keySet().stream().filter(field -> fieldMatcherWithInstance.match(field, instance)).collect(Collectors.toSet());
+                result = factoryCacheByClassField.keySet().stream().filter(field -> fieldMatcherWithInstance.match(field, instance)).collect(Collectors.toSet());
             } else {
-                result = fieldMatcher.matchFields(checkInstanceFactoryMap.keySet());
+                result = fieldMatcher.matchFields(factoryCacheByClassField.keySet());
             }
+//                    = Sets.newHashSetWithExpectedSize(factoryCacheByClassField.keySet().size());
+//
+//
+//            for (String field : factoryCacheByClassField.keySet()) {
+//                if (fieldMatcher.match(field)) {
+//                    result.add(field);
+//                }
+//            }
+
+
             if (supportedCache) {
                 matchFieldCacheMap.put(fieldMatcher, result);
             }
