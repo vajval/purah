@@ -6,6 +6,7 @@ import org.purah.core.checker.result.CheckResult;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 public class CheckerByAnnMethod extends AbstractMethodToChecker {
 
@@ -13,7 +14,7 @@ public class CheckerByAnnMethod extends AbstractMethodToChecker {
 
 
     public CheckerByAnnMethod(Object methodsToCheckersBean, Method method, String name) {
-        super(methodsToCheckersBean, method,name);
+        super(methodsToCheckersBean, method, name);
         this.name = name;
         annClazz = method.getParameters()[0].getType();
     }
@@ -29,7 +30,15 @@ public class CheckerByAnnMethod extends AbstractMethodToChecker {
         Object[] args = new Object[2];
         args[0] = annotation;
         args[1] = purahEnableMethod.checkInstanceToInputArg(inputCheckArg);
-        return purahEnableMethod.invoke(args);
+        Object result = purahEnableMethod.invoke(args);
+        if (purahEnableMethod.resultIsCheckResultClass()) {
+            return (CheckResult) result;
+        } else if (Objects.equals(result, true)) {
+            return success(inputCheckArg, true);
+        } else if (Objects.equals(result, false)) {
+            return failed(inputCheckArg, false);
+        }
+        throw new RuntimeException("不阿盖出错");
 
 
     }
@@ -48,8 +57,7 @@ public class CheckerByAnnMethod extends AbstractMethodToChecker {
         }
 
         Class<?> returnType = method.getReturnType();
-        if (!(CheckResult.class.isAssignableFrom(returnType)) &&
-                !(boolean.class.isAssignableFrom(returnType))) {
+        if (!(CheckResult.class.isAssignableFrom(returnType)) && !(boolean.class.isAssignableFrom(returnType))) {
             return "返回值必须是 CheckResult  或者 boolean " + method;
 
         }

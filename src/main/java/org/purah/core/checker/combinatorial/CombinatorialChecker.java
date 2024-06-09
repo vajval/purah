@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * wild_card:
  * "[num_*]" : 取值范围检测
  * type_by_ann:
- * "[短文本]" : 敏感词检查
+ * "[短文本]" : 敏感词检查                          
  * "[长文本]" : 敏感词检查
  */
 public class CombinatorialChecker extends BaseSupportCacheChecker<Object, Object> {

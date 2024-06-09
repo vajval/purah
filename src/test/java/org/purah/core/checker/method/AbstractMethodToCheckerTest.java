@@ -34,7 +34,7 @@ class AbstractMethodToCheckerTest {
 
         @Name("id为1")
         public BaseLogicCheckResult checkByUser(Util.User user) {
-            return checkById(InputCheckArg.createObjectInstance(user.getId()));
+            return checkById(InputCheckArg.create(user.getId()));
 
         }
 
@@ -48,12 +48,12 @@ class AbstractMethodToCheckerTest {
         TestCheckers testCheckers = new TestCheckers();
         Method testMethod = TestCheckers.class.getMethod("checkById", Long.class);
         AbstractMethodToChecker abstractMethodToChecker = new CheckerByLogicMethod(testCheckers, testMethod);
-        System.out.println(abstractMethodToChecker.check(InputCheckArg.createObjectInstance(1L)));
-        Assertions.assertTrue(abstractMethodToChecker.check(InputCheckArg.createObjectInstance(1L)).isSuccess());
+        System.out.println(abstractMethodToChecker.check(InputCheckArg.create(1L)));
+        Assertions.assertTrue(abstractMethodToChecker.check(InputCheckArg.create(1L)).isSuccess());
 
         testMethod = TestCheckers.class.getMethod("checkById", InputCheckArg.class);
         abstractMethodToChecker = new CheckerByLogicMethod(testCheckers, testMethod);
-        Assertions.assertTrue(abstractMethodToChecker.check(InputCheckArg.createObjectInstance(1L)).isSuccess());
+        Assertions.assertTrue(abstractMethodToChecker.check(InputCheckArg.create(1L)).isSuccess());
 
     }
 
@@ -75,12 +75,12 @@ class AbstractMethodToCheckerTest {
         abstractMethodToChecker = new CheckerByLogicMethod(testCheckers, TestCheckers.class.getMethod("checkByUser", Util.User.class));
         checkerManager.reg(abstractMethodToChecker);
         GenericsProxyChecker genericsProxyChecker = checkerManager.get("id为1");
-        Assertions.assertTrue(genericsProxyChecker.check(InputCheckArg.createObjectInstance(Util.initiator)).isSuccess());
-        Assertions.assertFalse(genericsProxyChecker.check(InputCheckArg.createObjectInstance(Util.recipients)).isSuccess());
+        Assertions.assertTrue(genericsProxyChecker.check(InputCheckArg.create(Util.initiator)).isSuccess());
+        Assertions.assertFalse(genericsProxyChecker.check(InputCheckArg.create(Util.recipients)).isSuccess());
 
 
-        Assertions.assertTrue(genericsProxyChecker.check(InputCheckArg.createObjectInstance(1L)).isSuccess());
-        Assertions.assertFalse(genericsProxyChecker.check(InputCheckArg.createObjectInstance(2L)).isSuccess());
+        Assertions.assertTrue(genericsProxyChecker.check(InputCheckArg.create(1L)).isSuccess());
+        Assertions.assertFalse(genericsProxyChecker.check(InputCheckArg.create(2L)).isSuccess());
     }
 
     @Test

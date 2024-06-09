@@ -46,13 +46,13 @@ class PurahEnableMethodsTest {
         CustomUser badCustomUser = new CustomUser(-1L, null, null, 35);
 
         GenericsProxyChecker genericsProxyChecker = purahContext.checkManager().get("测试MethodsToCheckers注解");
-        CheckResult check = genericsProxyChecker.check(InputCheckArg.createObjectInstance(badCustomUser));
+        CheckResult check = genericsProxyChecker.check(InputCheckArg.create(badCustomUser));
         System.out.println(check);
 
 
 
 
-        CheckResult checkResult = genericsProxyChecker.check(InputCheckArg.createObjectInstance(badCustomUser));
+        CheckResult checkResult = genericsProxyChecker.check(InputCheckArg.create(badCustomUser));
         Assertions.assertFalse(checkResult.isError());
 
 

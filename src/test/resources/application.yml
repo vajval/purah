@@ -1,0 +1,9 @@
+logging:
+  level:
+    root: info
+#log4j:
+#  logger: ERROR
+#    org:
+#      apache:
+#        commons:
+#          beanutils: ERROR

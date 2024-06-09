@@ -10,6 +10,7 @@ import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 public class CheckerFactoryByLogicMethod implements CheckerFactory {
 
@@ -48,14 +49,20 @@ public class CheckerFactoryByLogicMethod implements CheckerFactory {
                 Object[] args = new Object[2];
                 args[0] = needMatchCheckerName;
                 args[1] = purahEnableMethod.checkInstanceToInputArg(inputCheckArg);
+                Object result = purahEnableMethod.invoke(args);
 
-
-                return purahEnableMethod.invoke(args);
+                if (purahEnableMethod.resultIsCheckResultClass()) {
+                    return (CheckResult) result;
+                } else if (Objects.equals(result, true)) {
+                    return success(inputCheckArg, true);
+                } else if (Objects.equals(result, false)) {
+                    return failed(inputCheckArg, false);
+                }
+                throw new RuntimeException("不阿盖出错");
             }
 
             @Override
             public String logicFrom() {
-
                 return purahEnableMethod.wrapperMethod().toGenericString();
             }
 

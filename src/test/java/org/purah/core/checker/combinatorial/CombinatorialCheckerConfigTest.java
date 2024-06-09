@@ -72,10 +72,10 @@ class CombinatorialCheckerConfigTest {
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
 
 
-        CheckResult result = checker.check(InputCheckArg.createObjectInstance(Util.initiator));
+        CheckResult result = checker.check(InputCheckArg.create(Util.initiator));
         Assertions.assertTrue(result.isSuccess());
 
-        result = checker.check(InputCheckArg.createObjectInstance(Util.recipients));
+        result = checker.check(InputCheckArg.create(Util.recipients));
         Assertions.assertFalse(result.isSuccess());
     }
 
@@ -99,7 +99,7 @@ class CombinatorialCheckerConfigTest {
         Checker multiLevelchecker = purahContext.regNewCombinatorialChecker(properties);
 
 
-        CheckResult result = multiLevelchecker.check(InputCheckArg.createObjectInstance(Util.trade));
+        CheckResult result = multiLevelchecker.check(InputCheckArg.create(Util.trade));
         Assertions.assertTrue(result.isSuccess());
     }
 

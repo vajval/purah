@@ -1,6 +1,7 @@
 package org.purah.springboot.ioc;
 
 import com.google.common.collect.Sets;
+import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,7 @@ class PurahIocSTest {
 
     @Test
     void enableCheckers() {
+
         Set<Checker> checkers = purahIocS.enableBeanSetByClass(Checker.class);
         Optional<Checker> iocTestCheckerOptional = checkers.stream().filter(i -> i.name().equals("IocTestChecker")).findFirst();
         Assertions.assertTrue(iocTestCheckerOptional.isPresent());

@@ -1,6 +1,8 @@
 package org.purah.core.checker.base;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.purah.core.checker.cache.InstanceCheckCacheKey;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.checker.result.CheckResult;
@@ -11,10 +13,13 @@ import org.purah.core.checker.result.BaseLogicCheckResult;
  */
 
 public abstract class BaseSupportCacheChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTANCE, RESULT> {
-
+    private static final Logger logger = LogManager.getLogger(BaseSupportCacheChecker.class);
 
     @Override
     public CheckResult<RESULT> check(InputCheckArg<CHECK_INSTANCE> inputCheckArg) {
+        if (inputCheckArg == null) {
+            inputCheckArg = InputCheckArg.create(null, inputCheckInstanceClass());
+        }
         CheckResult<RESULT> resultCheckResult = this.readCacheIfNeed(inputCheckArg);
         if (resultCheckResult != null) {
             return resultCheckResult;
@@ -23,6 +28,8 @@ public abstract class BaseSupportCacheChecker<CHECK_INSTANCE, RESULT> implements
         resultCheckResult = this.doCheck(inputCheckArg);
 
         if (resultCheckResult == null) {
+
+            logger.error("checker  result is NUll logicForm " + this.logicFrom());
             throw new RuntimeException("result cannot be Null " + this.logicFrom());
         }
 
@@ -51,7 +58,7 @@ public abstract class BaseSupportCacheChecker<CHECK_INSTANCE, RESULT> implements
             InstanceCheckCacheKey instanceCheckCacheKey = new InstanceCheckCacheKey(inputCheckArg, this.name());
             PurahCheckInstanceCacheContext.put(instanceCheckCacheKey, checkResult);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
@@ -67,7 +74,7 @@ public abstract class BaseSupportCacheChecker<CHECK_INSTANCE, RESULT> implements
             }
             return null;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
             return null;
         }
     }

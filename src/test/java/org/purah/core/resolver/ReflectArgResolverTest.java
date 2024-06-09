@@ -2,6 +2,8 @@ package org.purah.core.resolver;
 
 import com.google.common.collect.Sets;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.TestObject;
@@ -19,6 +21,7 @@ class ReflectArgResolverTest {
 
     @Test
     void getMatchFieldObjectMap() {
+//        org.apache.commons.beanutils.converters.BooleanConverter
         WildCardMatcher wildCardMatcher = new WildCardMatcher("?b");
 
         Map<String, InputCheckArg<?>> matchFieldObjectMap = reflectArgResolver.getMatchFieldObjectMap(testObject, wildCardMatcher);
@@ -60,7 +63,11 @@ class ReflectArgResolverTest {
     @Test
     void matchst() {
 
+        System.setProperty("org.apache.commons.logging.Log",
+                "org.apache.commons.logging.impl.NoOpLog");
+        Log log = LogFactory.getLog(ReflectArgResolverTest.class);
 
+        log.info("You do not want to see me");
         TestObject object = TestObject.create();
 
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher(

@@ -14,6 +14,7 @@ public class WildCardMatcherTest {
 
     static Set<String> testFields = Sets.newHashSet("a", "ab", "abc", "abcd", "ba");
 
+
     public static void assertMatch_X(FieldMatcher fieldMatcher) {
 
         Set<String> matchFields = fieldMatcher.matchFields(testFields);
@@ -26,20 +27,27 @@ public class WildCardMatcherTest {
         Assertions.assertEquals(matchFields, Sets.newHashSet("ab"));
     }
 
+    @Test
+    public void matc() {
+        FieldMatcher fieldMatcher = new WildCardMatcher("[a?,abc?]");
+        Set<String> matchFields = fieldMatcher.matchFields(testFields);
+        Assertions.assertEquals(matchFields, Sets.newHashSet("ab", "abcd"));
+    }
 
     @Test
     public void match_x() {
         FieldMatcher fieldMatcher = new WildCardMatcher("a*");
-        assertMatch_X(fieldMatcher);
+        Set<String> matchFields = fieldMatcher.matchFields(testFields);
+        Assertions.assertEquals(matchFields, Sets.newHashSet("a", "ab", "abc", "abcd"));
 
     }
 
     @Test
     public void match_w() {
         WildCardMatcher wildCardMatcher = new WildCardMatcher("a?");
-        assertMatch_W(wildCardMatcher);
+        Set<String> matchFields = wildCardMatcher.matchFields(testFields);
+        Assertions.assertEquals(matchFields, Sets.newHashSet("ab"));
     }
-
 
 
 }

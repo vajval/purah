@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractCustomAnnMatcherDefault extends AbstractClassCacheFieldMatcher implements MultilevelFieldMatcher {
+public abstract class AbstractCustomAnnMatcher extends AbstractClassCacheFieldMatcher implements MultilevelFieldMatcher {
 
     GeneralFieldMatcher generalFieldMatcher;
 
-    public AbstractCustomAnnMatcherDefault(String matchStr) {
+    public AbstractCustomAnnMatcher(String matchStr) {
         super(matchStr);
         generalFieldMatcher = new GeneralFieldMatcher(matchStr);
     }

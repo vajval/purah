@@ -29,13 +29,13 @@ class CheckerManagerTest {
 
         Checker checker = checkerManager.get("发起者张三检测");
 
-        Assertions.assertTrue(checker.check(InputCheckArg.createObjectInstance(trade)).isSuccess());
-        Assertions.assertTrue(checker.check(InputCheckArg.createObjectInstance(initiator)).isSuccess());
+        Assertions.assertTrue(checker.check(InputCheckArg.create(trade)).isSuccess());
+        Assertions.assertTrue(checker.check(InputCheckArg.create(initiator)).isSuccess());
 
-        Assertions.assertFalse(checker.check(InputCheckArg.createObjectInstance(recipients)).isSuccess());
-        Assertions.assertTrue(checker.check(InputCheckArg.createObjectInstance(recipients)).isFailed());
+        Assertions.assertFalse(checker.check(InputCheckArg.create(recipients)).isSuccess());
+        Assertions.assertTrue(checker.check(InputCheckArg.create(recipients)).isFailed());
 
-        Assertions.assertThrows(RuntimeException.class, () -> checker.check(InputCheckArg.createObjectInstance(money)).isSuccess());
+        Assertions.assertThrows(RuntimeException.class, () -> checker.check(InputCheckArg.create(money)).isSuccess());
 
 
     }

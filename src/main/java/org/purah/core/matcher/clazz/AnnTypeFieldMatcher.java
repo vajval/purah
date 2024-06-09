@@ -4,7 +4,6 @@ package org.purah.core.matcher.clazz;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.base.Name;
 import org.purah.core.matcher.ann.FieldType;
-import org.purah.core.matcher.intf.FieldMatcherWithInstance;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Name("type_by_ann")
-public class AnnTypeFieldMatcher extends AbstractClassCacheFieldMatcher implements FieldMatcherWithInstance {
+public class AnnTypeFieldMatcher extends AbstractClassCacheFieldMatcher   {
 
 
     public AnnTypeFieldMatcher(String matchStr) {

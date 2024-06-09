@@ -18,20 +18,15 @@ import java.util.stream.Collectors;
 public abstract class BaseStringMatcher implements FieldMatcher {
     protected String matchStr;
 
-//    protected String wrapper = null;
 
     public BaseStringMatcher(String matchStr) {
-
         this.matchStr = matchStr;
-//        if (wrapper != null) {
-
-
     }
 
 
     @Override
     public String toString() {
-        return NameUtil.logClazzName(this) + ":[" + matchStr + "]";
+        return NameUtil.logClazzName(this) + ":(  " + matchStr + "  )";
     }
 
     @Override

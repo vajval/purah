@@ -10,11 +10,9 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
     protected ExecInfo execInfo;
 
     protected Exception e;
-
     protected T data;
 
     protected String log;
-
     protected String info;
 
     protected BaseLogicCheckResult(ExecInfo execInfo, T data, String log) {

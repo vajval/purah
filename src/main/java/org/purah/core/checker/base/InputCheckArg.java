@@ -15,25 +15,27 @@ public class InputCheckArg<INSTANCE> {
     //例如 title  user.id   user.childUser.id  等
     String fieldStr;
 
-    // instance的class
+    // 参数在代码中明确使用的的class，inputArg为null时，inputArgClass()返回此class
     Class<?> clazzInContext;
     // 如果这个对象是父对象class的一个field ，此处保存field信息
 
     Field fieldInClass;
     // 如果这个对象是父对象class的一个field ，此处保存field中的注解
     List<Annotation> annotations;
+    Object parent;
 
-    private InputCheckArg(INSTANCE inputArg, Class<?> clazzInContext, String fieldStr) {
-        this(inputArg, fieldStr, null, Collections.emptyList());
+    private InputCheckArg(INSTANCE inputArg, Class<?> clazzInContext, String fieldStr, Object parent) {
+        this(inputArg, fieldStr, null, Collections.emptyList(), null);
         this.inputArg = inputArg;
         if (clazzInContext == null) {
             throw new RuntimeException("不要将class设置为null,实在不行就Object.class");
         }
         this.clazzInContext = clazzInContext;
+        this.parent = parent;
 
     }
 
-    private InputCheckArg(INSTANCE inputArg, String fieldStr, Field fieldInClass, List<Annotation> annotations) {
+    private InputCheckArg(INSTANCE inputArg, String fieldStr, Field fieldInClass, List<Annotation> annotations, Object parent) {
         this.inputArg = inputArg;
         this.fieldInClass = fieldInClass;
         if (this.fieldInClass != null) {
@@ -44,27 +46,35 @@ public class InputCheckArg<INSTANCE> {
             this.fieldStr = "";
         }
         this.annotations = annotations;
+        this.parent = parent;
 
 
     }
 
 
-    public static <T> InputCheckArg<T> createObjectInstance(T instance) {
+    public static <T> InputCheckArg<T> create(T instance) {
         return create(instance, Object.class);
     }
 
     public static <T> InputCheckArg<T> create(T instance, Class<?> clazzInContext) {
-        return create(instance, clazzInContext, "root");
+        return create(instance, clazzInContext, "root", null);
     }
 
-    public static <T> InputCheckArg<T> create(T instance, Class<?> clazzInContext, String fieldStr) {
-        return new InputCheckArg<>(instance, clazzInContext, fieldStr);
+    public static <T> InputCheckArg<T> create(T instance, Class<?> clazzInContext, String fieldStr, Object parent) {
+        return new InputCheckArg<>(instance, clazzInContext, fieldStr, parent);
     }
 
-    public static <T> InputCheckArg<T> createWithFieldConfig(T instance, Field fieldInClass, List<Annotation> annotations) {
-        return new InputCheckArg<>(instance, fieldInClass.getName(), fieldInClass, annotations);
+    public static <T> InputCheckArg<T> createChildWithFieldConfig(T instance, Field fieldInClass, List<Annotation> annotations, Object parent) {
+        return new InputCheckArg<>(instance, fieldInClass.getName(), fieldInClass, annotations, parent);
     }
 
+    public Object parent() {
+        return parent;
+    }
+
+    public <E> Object parent(Class<E> clazz) {
+        return clazz.cast(parent);
+    }
 
     public String fieldStr() {
         if (fieldStr == null) return "";

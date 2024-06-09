@@ -75,28 +75,19 @@ public class PurahEnableMethod {
         return inputCheckArg.inputArg();
     }
 
-    public CheckResult invoke(Object[] args) {
+    public Object invoke(Object[] args) {
         try {
 
-            Object result = method.invoke(bean, args);
-            if (resultIsCheckResultClass) {
-                return (CheckResult) result;
-            } else {
-                Boolean resultValue = (Boolean) result;
-                BaseLogicCheckResult baseLogicCheckResult;
-                if (resultValue) {
-                    baseLogicCheckResult = BaseLogicCheckResult.success(true, "success");
-                } else {
-                    baseLogicCheckResult = BaseLogicCheckResult.failed(false, "failed");
-
-                }
-                return baseLogicCheckResult;
-            }
+            return method.invoke(bean, args);
 
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean resultIsCheckResultClass() {
+        return resultIsCheckResultClass;
     }
 
     public Method wrapperMethod() {

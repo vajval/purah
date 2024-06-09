@@ -11,10 +11,11 @@ import java.lang.reflect.Parameter;
 
 public class DefaultMethodToChecker implements MethodToChecker {
     @Override
-    public Checker toChecker(Object methodsToCheckersBean, Method method, String name) {
+    public Checker toChecker(Object methodsToCheckersBean, Method method) {
 
 
         Parameter[] parameters = method.getParameters();
+        String name = nameFromMethod(method);
         if (parameters.length == 1) {
             return new CheckerByLogicMethod(methodsToCheckersBean, method, name);
         }

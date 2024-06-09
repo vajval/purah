@@ -8,7 +8,6 @@ import org.purah.core.matcher.clazz.ClassNameMatcher;
 import org.purah.core.matcher.clazz.ClassNameMatcherTest;
 import org.purah.core.matcher.factory.MatcherFactory;
 import org.purah.core.matcher.intf.FieldMatcher;
-import org.purah.core.matcher.intf.FieldMatcherWithInstance;
 import org.purah.core.matcher.singleLevel.WildCardMatcher;
 import org.purah.core.matcher.singleLevel.WildCardMatcherTest;
 
@@ -29,11 +28,11 @@ public class MatcherManagerTest {
         MatcherManager matcherManager = defaultMatcherManager;
 
         FieldMatcher fieldMatcher = matcherManager.factoryOf("type_by_ann").create("需要检测");
-        AnnTypeFieldMatcherTest.assertMatch((FieldMatcherWithInstance) fieldMatcher);
+        AnnTypeFieldMatcherTest.assertMatch(fieldMatcher);
 
 
         fieldMatcher = matcherManager.factoryOf("class_name").create(Util.User.class.getName());
-        ClassNameMatcherTest.assertMatch((FieldMatcherWithInstance) fieldMatcher);
+        ClassNameMatcherTest.assertMatch( fieldMatcher);
 
         MatcherFactory matcherFactory = matcherManager.factoryOf("wild_card");
         WildCardMatcherTest.assertMatch_X(matcherFactory.create("a*"));

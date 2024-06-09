@@ -1,8 +1,11 @@
 package org.purah.core.checker.base;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.exception.RuleRegException;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CheckerManager {
 
+    private static final Logger logger = LogManager.getLogger(CheckerManager.class);
 
     /**
      * 根据名字匹配规则
-     * 根据入参class选择使用的checker 在ExecChecker内部实现
+     * 根据入参class选择使用的checker 在GenericsProxyChecker内部实现
      */
 
     private final Map<String, GenericsProxyChecker> cacheMap = new ConcurrentHashMap<>();
@@ -32,8 +36,8 @@ public class CheckerManager {
             throw new RuleRegException("注册规则不能为空");
         }
         String name = checker.name();
-        if (name == null) {
-            throw new RuntimeException();
+        if (!StringUtils.hasText(name)) {
+            throw new RuleRegException(name.getClass() + "no name");
         }
         GenericsProxyChecker<?, ?> genericsProxyChecker = cacheMap.get(name);
         if (genericsProxyChecker == null) {
@@ -51,13 +55,14 @@ public class CheckerManager {
     }
 
 
-
     public GenericsProxyChecker<?, ?> get(String name) {
         GenericsProxyChecker<?, ?> result = cacheMap.get(name);
         if (result == null) {
             for (CheckerFactory checkerFactory : checkerFactoryList) {
                 if (checkerFactory.match(name)) {
                     CheckerProxy checkerByFactory = this.createCheckerByFactory(checkerFactory, name);
+
+                    logger.info("create checker:{}  by factory:{} logicFrom :{} ", name, checkerFactory.getClass(), checkerByFactory.logicFrom());
                     if (checkerFactory.cacheBeCreatedChecker()) {
                         return this.reg(checkerByFactory);
                     }

@@ -3,7 +3,6 @@ package org.purah.core.matcher.clazz;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.base.Name;
-import org.purah.core.matcher.intf.FieldMatcherWithInstance;
 
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.List;
  * 匹配指定 类名的字段
  */
 @Name("class_name")
-public class ClassNameMatcher extends AbstractClassCacheFieldMatcher implements FieldMatcherWithInstance {
+public class ClassNameMatcher extends AbstractClassCacheFieldMatcher   {
 
 
     Class<?> clazz;

@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class NameUtil {
 
-    public static final String NULL_OBJECT_SHOW_NAME = "<null对象>";
+    public static final String NULL_OBJECT_SHOW_NAME = "<null_object>";
     private static final Map<Class<?>, String> classAnnNameCacheMap = new ConcurrentHashMap<>();
     private static final Map<Method, String> methodCacheMap = new ConcurrentHashMap<>();
 

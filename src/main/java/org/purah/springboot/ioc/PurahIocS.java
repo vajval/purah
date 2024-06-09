@@ -1,6 +1,8 @@
 package org.purah.springboot.ioc;
 
 import com.google.common.collect.Maps;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.purah.core.base.NameUtil;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.Checkers;
@@ -26,8 +28,17 @@ public class PurahIocS {
     private final ListableBeanFactory applicationContext;
     private final Map<Object, List<Method>> toCheckerMethodMap;
     private final Map<Object, List<Method>> toCheckeFactroyMethodMap;
-
     private final Set<Object> purahEnableMethodsBean;
+    Log log = LogFactory.getLog(this.getClass());
+
+    Log log() {
+        if (this.log == null) {
+
+            this.log = LogFactory.getLog(this.getClass());
+        }
+        return log;
+    }
+
 
     protected PurahIocS(ListableBeanFactory applicationContext) {
         this.applicationContext = applicationContext;
@@ -49,6 +60,7 @@ public class PurahIocS {
         return checkersByBeanMethod(classMethodToCheckerMap);
 
     }
+
     public List<CheckerFactory> checkerFactoriesByBeanMethod() {
         Set<Class<? extends MethodToCheckerFactory>> allMethodToCheckerSet =
                 clazzConfigsOnMethodAnn(toCheckeFactroyMethodMap, m -> m.getDeclaredAnnotation(ToCheckerFactory.class).value());
@@ -56,7 +68,6 @@ public class PurahIocS {
                 classBeanMap(allMethodToCheckerSet, MethodToCheckerFactory.class, Checkers.defaultMethodToCheckerFactory);
         return checkerFactoryListByMethod(classMethodToCheckerFactoryMap);
     }
-
 
 
     protected Map<Object, List<Method>> beanEnableMethodMap(Class<? extends Annotation> annType) {
@@ -70,7 +81,8 @@ public class PurahIocS {
 
     }
 
-    protected List<Checker> checkersByBeanMethod(Map<Class<? extends MethodToChecker>, MethodToChecker> classMethodToCheckerMap) {
+    protected List<Checker> checkersByBeanMethod(Map<Class<? extends
+            MethodToChecker>, MethodToChecker> classMethodToCheckerMap) {
 
         List<Checker> result = new ArrayList<>();
         for (Map.Entry<Object, List<Method>> entry : toCheckerMethodMap.entrySet()) {
@@ -81,12 +93,14 @@ public class PurahIocS {
 
                 ToChecker toCheckerAnn = method.getDeclaredAnnotation(ToChecker.class);
                 MethodToChecker methodToChecker = classMethodToCheckerMap.get(toCheckerAnn.value());
-                String name = toCheckerAnn.name();
-                if (!StringUtils.hasText(name)) {
-                    name = NameUtil.nameByAnnOnMethod(method);
-                    if (!StringUtils.hasText(name)) name = method.getName();
+                String errorMsg = methodToChecker.errorMsg(method);
+                if (errorMsg != null) {
+                    if (this.log().isWarnEnabled()) {
+                        this.log().warn(errorMsg);
+                    }
+                    continue;
                 }
-                Checker checker = methodToChecker.toChecker(bean, method, name);
+                Checker checker = methodToChecker.toChecker(bean, method);
                 result.add(checker);
 
 
@@ -96,7 +110,8 @@ public class PurahIocS {
     }
 
 
-    public List<CheckerFactory> checkerFactoryListByMethod(Map<Class<? extends MethodToCheckerFactory>, MethodToCheckerFactory> classMethodToCheckerFactoryMap
+    public List<CheckerFactory> checkerFactoryListByMethod(Map<Class<? extends
+            MethodToCheckerFactory>, MethodToCheckerFactory> classMethodToCheckerFactoryMap
     ) {
 
         List<CheckerFactory> checkerFactoryList = new ArrayList<>();
@@ -109,6 +124,8 @@ public class PurahIocS {
 
                 ToCheckerFactory toCheckerFactory = method.getDeclaredAnnotation(ToCheckerFactory.class);
                 MethodToCheckerFactory methodToCheckerFactory = classMethodToCheckerFactoryMap.get(toCheckerFactory.value());
+
+
                 CheckerFactory checkerFactory = methodToCheckerFactory.toCheckerFactory(bean, method, toCheckerFactory.cacheBeCreatedChecker());
                 checkerFactoryList.add(checkerFactory);
 
@@ -120,7 +137,9 @@ public class PurahIocS {
     }
 
 
-    private <T> Set<Class<? extends T>> clazzConfigsOnMethodAnn(Map<Object, List<Method>> beanMethodMap, Function<Method, Class<? extends T>> function) {
+    private <T> Set<Class<? extends
+            T>> clazzConfigsOnMethodAnn(Map<Object, List<Method>> beanMethodMap, Function<Method, Class<? extends
+            T>> function) {
 
         Set<Class<? extends T>> allTClassSet = new HashSet<>();
         for (Map.Entry<Object, List<Method>> entry : beanMethodMap.entrySet()) {

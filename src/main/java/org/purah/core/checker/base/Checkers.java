@@ -34,10 +34,6 @@ public class Checkers {
 
 
 
-//    public static Checker checkerByStaticMethod(CheckerFunction checkerFunction) {
-//
-//        return checkerByStaticMethod(checkerFunction, defaultMethodToChecker);
-//    }
 
     public static Checker checkerByStaticMethod(Method method) {
         return checkerByStaticMethod(method, defaultMethodToChecker);
@@ -66,7 +62,7 @@ public class Checkers {
     }
 
     public static Checker checkerByMethod(Object methodsToCheckersBean, Method method, String name, MethodToChecker methodToChecker) {
-        return methodToChecker.toChecker(methodsToCheckersBean, method, name);
+        return methodToChecker.toChecker(methodsToCheckersBean, method);
     }
 
 

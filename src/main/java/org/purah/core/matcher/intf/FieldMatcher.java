@@ -30,7 +30,24 @@ public interface FieldMatcher {
 
     }
 
-    boolean match(String field);
+    default boolean match(String field) {
+        return match(field, null);
+    }
+    default boolean match(String field, Object belongInstance) {
+        return match(field);
+    }
+
+    default Set<String> matchFields(Set<String> fields, Object belongInstance) {
+        HashSet<String> result = Sets.newHashSetWithExpectedSize(fields.size());
+        for (String field : fields) {
+            if (this.match(field, belongInstance)) {
+                result.add(field);
+            }
+        }
+        return result;
+
+    }
+
 
 
 }

@@ -45,8 +45,6 @@
     </licenses>
 
 
-
-
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
@@ -59,7 +57,11 @@
 
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
 
 
         <dependency>
@@ -94,6 +96,12 @@
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>1.9.4</version> <!-- 请确保使用你需要的版本号 -->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>commons-logging</groupId>-->
+<!--                    <artifactId>commons-logging</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -137,7 +145,6 @@
         <url>https://github.com/vajval/purah.git</url>
         <tag>HEAD</tag>
     </scm>
-
 
 
     <build>
@@ -221,7 +228,6 @@
             </build>
         </profile>
     </profiles>
-
 
 
 </project>

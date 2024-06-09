@@ -1,5 +1,7 @@
 package org.purah.springboot.ioc;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.CheckerManager;
@@ -27,6 +29,8 @@ import java.util.Set;
 @Configuration
 public class RegOnContextRefresh implements ApplicationListener<ContextRefreshedEvent> {
 
+
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         ApplicationContext applicationContext = event.getApplicationContext();
@@ -47,7 +51,6 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
     public void initMatcherManager(PurahContext purahContext, PurahIocS purahIocS) {
         MatcherManager matcherManager = purahContext.matcherManager();
         Set<MatcherFactory> enableMatcherFactories = purahIocS.enableBeanSetByClass(MatcherFactory.class);
-
         for (MatcherFactory matcherFactory : enableMatcherFactories) {
             matcherManager.reg(matcherFactory);
         }
@@ -85,7 +88,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
 
 
         regChecker(purahContext, purahIocS);
-        regCheckerFactory(purahContext,  purahIocS);
+        regCheckerFactory(purahContext, purahIocS);
 
 
     }
@@ -114,7 +117,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public void regCheckerFactory(PurahContext purahContext, PurahIocS purahIocS) {
 
-        Set<CheckerFactory> checkerFactories = purahIocS.enableBeanSetByClass( CheckerFactory.class);
+        Set<CheckerFactory> checkerFactories = purahIocS.enableBeanSetByClass(CheckerFactory.class);
 
         List<CheckerFactory> checkerFactoriesByBeanMethod = purahIocS.checkerFactoriesByBeanMethod();
 

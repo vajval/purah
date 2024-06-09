@@ -49,14 +49,12 @@ public abstract class AbstractMatchArgResolver implements ArgResolver {
         String levelSplitStr = multilevelFieldMatcher.levelSplitStr();
         Map<String, InputCheckArg<?>> result = new HashMap<>();
         Map<String, InputCheckArg<?>> fieldsObjectMap = this.getThisLevelMatcherObjectMap(inputArg, multilevelFieldMatcher);
-        System.out.println(fieldsObjectMap);
 
         for (Map.Entry<String, InputCheckArg<?>> entry : fieldsObjectMap.entrySet()) {
             String field = entry.getKey();
             InputCheckArg<?> innInputCheckArg = entry.getValue();
 
             FieldMatcher childFieldMatcher = multilevelFieldMatcher.childFieldMatcher(field);
-            System.out.println(childFieldMatcher);
             //不需要往底层看
             if (childFieldMatcher == null) {
                 result.put(field, innInputCheckArg);

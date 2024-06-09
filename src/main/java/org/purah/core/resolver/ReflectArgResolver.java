@@ -8,7 +8,6 @@ import org.purah.core.base.NameUtil;
 import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.exception.ArgResolverException;
 import org.purah.core.matcher.intf.FieldMatcher;
-import org.purah.core.matcher.intf.FieldMatcherWithInstance;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -56,16 +55,9 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
 
             Map<String, Object> objectMap = (Map<String, Object>) instance;
             Set<String> matchFieldList = fieldMatcher.matchFields(objectMap.keySet());
-//                    Sets.newHashSetWithExpectedSize(objectMap.keySet().size());
-//            for (String field : matchFieldList) {
-//                if (fieldMatcher.match(field)) {
-//                    matchFieldList.add(field);
-//                }
-//            }
-
             return matchFieldList.stream().collect(
                     Collectors.toMap(matchField -> matchField,
-                            i -> InputCheckArg.create(objectMap.get(i), Object.class, i)));
+                            i -> InputCheckArg.create(objectMap.get(i), Object.class, i, instance)));
         }
         ClassConfigCache classConfigCache = classConfigCacheOf(instanceClass);
         return classConfigCache.matchFieldValueMap(instance, fieldMatcher);
@@ -130,7 +122,7 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
                     throw new RuntimeException(e);
                 }
                 List<Annotation> annotations = Collections.unmodifiableList(Lists.newArrayList(declaredField.getDeclaredAnnotations()));
-                factoryCacheByClassField.put(fieldName, parentObject -> InputCheckArg.createWithFieldConfig(get(parentObject, fieldName), declaredField, annotations));
+                factoryCacheByClassField.put(fieldName, parentObject -> InputCheckArg.createChildWithFieldConfig(get(parentObject, fieldName), declaredField, annotations, parentObject));
             }
         }
 
@@ -144,21 +136,7 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
             if (result != null) {
                 return result;
             }
-
-            if (fieldMatcher instanceof FieldMatcherWithInstance) {
-                FieldMatcherWithInstance fieldMatcherWithInstance = (FieldMatcherWithInstance) fieldMatcher;
-                result = factoryCacheByClassField.keySet().stream().filter(field -> fieldMatcherWithInstance.match(field, instance)).collect(Collectors.toSet());
-            } else {
-                result = fieldMatcher.matchFields(factoryCacheByClassField.keySet());
-            }
-//                    = Sets.newHashSetWithExpectedSize(factoryCacheByClassField.keySet().size());
-//
-//
-//            for (String field : factoryCacheByClassField.keySet()) {
-//                if (fieldMatcher.match(field)) {
-//                    result.add(field);
-//                }
-//            }
+            result = fieldMatcher.matchFields(factoryCacheByClassField.keySet(), instance);
 
 
             if (supportedCache) {
@@ -169,18 +147,9 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
 
 
     }
-//
-//          try {
-//        Method method = fieldGetMethodMap.get(fieldStr);
-//        if (method == null) {
+
 //            throw new ArgResolverException("反射解析器" + this.getClass() + "找不到" + instance.getClass() + "字段" + fieldStr + "的get方法");
-//        }
-//
-//
-//        Object fieldObject = method.invoke(instance);
-//        return
-//    } catch (IllegalAccessException | InvocationTargetException e) {
-////                e.printStackTrace();
+
 //        throw new ArgResolverException("反射解析器:" + this.getClass() + "在使用时出现异常 :" + instance.getClass() + "使用get方法出现异常" + e.getMessage());
-//    }
+
 }

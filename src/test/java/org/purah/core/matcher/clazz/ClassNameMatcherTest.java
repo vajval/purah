@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.Util;
 import org.purah.core.checker.base.InputCheckArg;
-import org.purah.core.matcher.intf.FieldMatcherWithInstance;
+import org.purah.core.matcher.intf.FieldMatcher;
 import org.purah.core.resolver.DefaultArgResolver;
 
 import java.util.Map;
@@ -20,7 +20,7 @@ public class ClassNameMatcherTest {
     }
 
 
-    public static void assertMatch(FieldMatcherWithInstance fieldMatcher) {
+    public static void assertMatch(FieldMatcher fieldMatcher) {
         Assertions.assertTrue(fieldMatcher.match("initiator", Util.trade));
         Assertions.assertTrue(fieldMatcher.match("recipients", Util.trade));
         Assertions.assertFalse(fieldMatcher.match("money", Util.trade));

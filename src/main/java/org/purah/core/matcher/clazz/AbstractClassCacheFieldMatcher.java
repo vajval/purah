@@ -4,13 +4,13 @@ package org.purah.core.matcher.clazz;
 
 
 import org.purah.core.matcher.BaseStringMatcher;
-import org.purah.core.matcher.intf.FieldMatcherWithInstance;
+import org.purah.core.matcher.intf.FieldMatcher;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AbstractClassCacheFieldMatcher extends BaseStringMatcher implements FieldMatcherWithInstance {
+public abstract class AbstractClassCacheFieldMatcher extends BaseStringMatcher implements FieldMatcher {
 
     protected ClassFieldsCaches classFieldsCaches;
 

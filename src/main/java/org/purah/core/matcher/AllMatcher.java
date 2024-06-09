@@ -9,7 +9,6 @@ public class AllMatcher extends BaseStringMatcher implements FieldMatcher {
 
 
     public AllMatcher(String matchStr) {
-
         super(matchStr);
     }
 
