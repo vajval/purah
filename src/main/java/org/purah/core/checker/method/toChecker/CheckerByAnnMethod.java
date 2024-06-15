@@ -1,11 +1,16 @@
 package org.purah.core.checker.method.toChecker;
 
+import org.purah.core.base.NameUtil;
 import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.method.PurahEnableMethod;
 import org.purah.core.checker.result.CheckResult;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Objects;
 
 public class CheckerByAnnMethod extends AbstractMethodToChecker {
@@ -17,6 +22,12 @@ public class CheckerByAnnMethod extends AbstractMethodToChecker {
         super(methodsToCheckersBean, method, name);
         this.name = name;
         annClazz = method.getParameters()[0].getType();
+        String errorMsg = errorMsgCheckerByAnnMethod(methodsToCheckersBean, method);
+
+        if (errorMsg != null) {
+            throw new RuntimeException(errorMsg);
+        }
+
     }
 
     @Override
@@ -29,7 +40,7 @@ public class CheckerByAnnMethod extends AbstractMethodToChecker {
         Annotation annotation = inputCheckArg.annOnField(annClazz);
         Object[] args = new Object[2];
         args[0] = annotation;
-        args[1] = purahEnableMethod.checkInstanceToInputArg(inputCheckArg);
+        args[1] = purahEnableMethod.inputArgValue(inputCheckArg);
         Object result = purahEnableMethod.invoke(args);
         if (purahEnableMethod.resultIsCheckResultClass()) {
             return (CheckResult) result;
@@ -48,20 +59,17 @@ public class CheckerByAnnMethod extends AbstractMethodToChecker {
         return new PurahEnableMethod(methodsToCheckersBean, method, 1);
     }
 
-
-    @Override
-    protected String validReturnErrorMsg(Object methodsToCheckersBean, Method method) {
-//todo 第一个入参为注解
+    public static String errorMsgCheckerByAnnMethod(Object methodsToCheckersBean, Method method) {
         if (method.getParameters().length != 2) {
-            return "入参只能有一个参数" + method;
+            return "入参必須有兩個参数" + method;
         }
+        Class<?> parameterizedType = method.getParameters()[0].getType();
 
-        Class<?> returnType = method.getReturnType();
-        if (!(CheckResult.class.isAssignableFrom(returnType)) && !(boolean.class.isAssignableFrom(returnType))) {
-            return "返回值必须是 CheckResult  或者 boolean " + method;
-
+        if (!(parameterizedType.isAnnotation())) {
+            return "第一個參數必須為注解，將被填充為字段上的注解值";
         }
         return null;
+
 
     }
 

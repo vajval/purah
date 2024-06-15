@@ -7,15 +7,14 @@ import org.purah.core.base.NameUtil;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.Checkers;
 import org.purah.core.checker.factory.CheckerFactory;
-import org.purah.core.checker.factory.bymethod.MethodToCheckerFactory;
+import org.purah.core.checker.factory.MethodToCheckerFactory;
 import org.purah.core.checker.method.toChecker.MethodToChecker;
 import org.purah.springboot.ann.EnableBeanOnPurahContext;
-import org.purah.springboot.ann.PurahEnableMethods;
-import org.purah.springboot.ann.ToChecker;
-import org.purah.springboot.ann.ToCheckerFactory;
+import org.purah.springboot.ann.PurahMethodsRegBean;
+import org.purah.springboot.ann.convert.ToChecker;
+import org.purah.springboot.ann.convert.ToCheckerFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
-import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -42,7 +41,7 @@ public class PurahIocS {
 
     protected PurahIocS(ListableBeanFactory applicationContext) {
         this.applicationContext = applicationContext;
-        this.purahEnableMethodsBean = enableBeanSetByAnn(PurahEnableMethods.class);
+        this.purahEnableMethodsBean = enableBeanSetByAnn(PurahMethodsRegBean.class);
         this.toCheckerMethodMap = beanEnableMethodMap(ToChecker.class);
         this.toCheckeFactroyMethodMap = beanEnableMethodMap(ToCheckerFactory.class);
     }
@@ -93,15 +92,13 @@ public class PurahIocS {
 
                 ToChecker toCheckerAnn = method.getDeclaredAnnotation(ToChecker.class);
                 MethodToChecker methodToChecker = classMethodToCheckerMap.get(toCheckerAnn.value());
-                String errorMsg = methodToChecker.errorMsg(method);
-                if (errorMsg != null) {
-                    if (this.log().isWarnEnabled()) {
-                        this.log().warn(errorMsg);
-                    }
-                    continue;
+
+                String name = NameUtil.nameByAnnOnMethod(method);
+                Checker checker = methodToChecker.toChecker(bean, method, name);
+                if(checker!=null){
+                    result.add(checker);
+
                 }
-                Checker checker = methodToChecker.toChecker(bean, method);
-                result.add(checker);
 
 
             }
@@ -111,8 +108,7 @@ public class PurahIocS {
 
 
     public List<CheckerFactory> checkerFactoryListByMethod(Map<Class<? extends
-            MethodToCheckerFactory>, MethodToCheckerFactory> classMethodToCheckerFactoryMap
-    ) {
+            MethodToCheckerFactory>, MethodToCheckerFactory> classMethodToCheckerFactoryMap) {
 
         List<CheckerFactory> checkerFactoryList = new ArrayList<>();
 
@@ -126,8 +122,11 @@ public class PurahIocS {
                 MethodToCheckerFactory methodToCheckerFactory = classMethodToCheckerFactoryMap.get(toCheckerFactory.value());
 
 
-                CheckerFactory checkerFactory = methodToCheckerFactory.toCheckerFactory(bean, method, toCheckerFactory.cacheBeCreatedChecker());
-                checkerFactoryList.add(checkerFactory);
+                CheckerFactory checkerFactory = methodToCheckerFactory.toCheckerFactory(bean, method, toCheckerFactory.match(), toCheckerFactory.cacheBeCreatedChecker());
+                if (checkerFactory != null) {
+                    checkerFactoryList.add(checkerFactory);
+
+                }
 
 
             }

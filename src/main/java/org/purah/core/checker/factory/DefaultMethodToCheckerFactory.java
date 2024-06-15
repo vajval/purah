@@ -1,59 +1,53 @@
 package org.purah.core.checker.factory;
 
-import org.purah.core.checker.base.Checker;
-import org.purah.core.checker.factory.CheckerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.purah.core.checker.factory.bymethod.BaseCheckerFactoryByMethod;
 import org.purah.core.checker.factory.bymethod.CheckerFactoryByLogicMethod;
-import org.purah.core.checker.factory.bymethod.CheckerFactoryByMethod;
-import org.purah.core.checker.factory.bymethod.MethodToCheckerFactory;
-import org.purah.core.checker.method.PurahEnableMethod;
-import org.purah.springboot.ann.ToCheckerFactory;
+import org.purah.core.checker.factory.bymethod.CheckerFactoryByCheckerMethod;
+import org.purah.core.checker.factory.bymethod.CheckerFactoryByPropertiesMethod;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 
 public class DefaultMethodToCheckerFactory implements MethodToCheckerFactory {
+    private static final Logger logger = LogManager.getLogger(DefaultMethodToCheckerFactory.class);
+
     @Override
-    public CheckerFactory toCheckerFactory(Object bean, Method method, boolean cacheBeCreatedChecker) {
-
-        ToCheckerFactory toCheckerFactory = method.getDeclaredAnnotation(ToCheckerFactory.class);
-
-        String match = toCheckerFactory.match();
-        int length = method.getParameters().length;
-        Class<?> returnType = method.getReturnType();
-        Parameter[] parameters = method.getParameters();
-
-        if (length == 2) {
-            Parameter parameter1 = parameters[0];
-            if (!parameter1.getType().equals(String.class)) {
-                throw new RuntimeException("第一个入参必须是 string 类型，将被填充为checker名字");
-            }
-            boolean valid = PurahEnableMethod.validReturnType(returnType);
-            if (!valid) {
-                throw new RuntimeException("返回必须是 Boolean.class 或者 CheckResult.class");
-            }
+    public CheckerFactory toCheckerFactory(Object bean, Method method, String match, boolean cacheBeCreatedChecker) {
 
 
-            return new CheckerFactoryByLogicMethod(bean, method, match, toCheckerFactory.cacheBeCreatedChecker());
+        String errorMsg = BaseCheckerFactoryByMethod.errorMsgBaseCheckerFactoryByMethod(bean, method);
 
+        if (errorMsg != null) {
+            logger.warn("{},errorMsg", method.toGenericString());
+            return null;
+//            throw new RuntimeException(errorMsg);
+        }
 
-        } else if (length == 1) {
-            Parameter parameter = parameters[0];
-            if (!parameter.getType().equals(String.class)) {
-                throw new RuntimeException("唯一的入参必须是 string 类型，将被填充为checker名字");
-            }
-            if (!Checker.class.isAssignableFrom(returnType)) {
-                throw new RuntimeException("返回值必须时checker");
-
-            }
-
-            return new CheckerFactoryByMethod(bean, method, match, toCheckerFactory.cacheBeCreatedChecker());
-
-        } else {
-            throw new RuntimeException();
+        errorMsg = CheckerFactoryByCheckerMethod.errorMsgCheckerFactoryByCheckerMethod(bean, method);
+        if (errorMsg == null) {
+            logger.info("{}  {}", method, CheckerFactoryByCheckerMethod.class);
+            return new CheckerFactoryByCheckerMethod(bean, method, match, cacheBeCreatedChecker);
         }
 
 
+        errorMsg = CheckerFactoryByLogicMethod.errorMsgCheckerFactoryByLogicMethod(bean, method);
+        if (errorMsg == null) {
+            logger.info("{}  {}", method, CheckerFactoryByLogicMethod.class);
+            return new CheckerFactoryByLogicMethod(bean, method, match, cacheBeCreatedChecker);
+        }
+
+
+        errorMsg = CheckerFactoryByPropertiesMethod.errorMsgCheckerFactoryByPropertiesMethod(bean, method);
+        if (errorMsg == null) {
+            logger.info("{}  {}", method, CheckerFactoryByPropertiesMethod.class);
+            return new CheckerFactoryByPropertiesMethod(bean, method, match, cacheBeCreatedChecker);
+        }
+
+        logger.warn("{},没有适配的转换器", method.toGenericString());
+
+        return null;
+
+
     }
-
-
 }

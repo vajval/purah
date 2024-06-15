@@ -17,7 +17,6 @@ public class MultiCheckerExecutor {
 
     private final ExecType.Main mainExecType;
     private ExecInfo execInfo = ExecInfo.success;
-
     private final ResultLevel resultLevel;
     private Exception e;
 
@@ -38,7 +37,7 @@ public class MultiCheckerExecutor {
 
     public MultiCheckerExecutor add(Supplier<CheckResult<?>> supplier) {
         if (exec) {
-            throw new RuntimeException("已经执行玩了，不能在添加了");
+            throw new RuntimeException("已经执行完了，不能在添加了");
         }
         ruleResultSupplierList.add(supplier);
 
@@ -48,7 +47,7 @@ public class MultiCheckerExecutor {
 
     public MultiCheckerExecutor add(InputCheckArg inputCheckArg, Checker checker) {
         if (exec) {
-            throw new RuntimeException("已经执行玩了，不能在添加了");
+            throw new RuntimeException("已经执行完了，不能在添加了");
         }
         Supplier<CheckResult<?>> supplier = () -> checker.check(inputCheckArg);
 
@@ -107,18 +106,28 @@ public class MultiCheckerExecutor {
 
 
     }
+    /**
+     *
 
+     */
 
     public MultiCheckResult<CheckResult<?>> toMultiCheckResult(String log) {
         execIfNotExec(ruleResultSupplierList);
         return multiCheckResult(log);
     }
 
+    /**
+     *
+     * @param log
+     * @return
+     */
+
     public CombinatorialCheckResult toCombinatorialCheckResult(String log) {
         execIfNotExec(ruleResultSupplierList);
         MultiCheckResult<CheckResult<?>> multiCheckResult = multiCheckResult(log);
         return CombinatorialCheckResult.create(multiCheckResult, resultLevel);
     }
+
 
 
     private MultiCheckResult<CheckResult<?>> multiCheckResult(String log) {
@@ -129,7 +138,6 @@ public class MultiCheckerExecutor {
             mainResult = MainOfMultiCheckResult.success(null, execInfo.value() + " (" + log + ")");
         } else if (execInfo.equals(ExecInfo.failed)) {
             mainResult = MainOfMultiCheckResult.failed(null, execInfo.value() + " (" + log + ")");
-
         } else if (execInfo.equals(ExecInfo.error)) {
             mainResult = MainOfMultiCheckResult.error(e, execInfo.value() + " (" + log + ")");
 

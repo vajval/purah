@@ -11,6 +11,9 @@ public class CheckerProxy implements Checker {
     String logicFrom;
 
     public CheckerProxy(Checker checker, String name, String logicFrom) {
+        if(checker==null){
+            throw new RuntimeException("代理checker不能为null");
+        }
         this.checker = checker;
         this.name = name;
         this.logicFrom = logicFrom;

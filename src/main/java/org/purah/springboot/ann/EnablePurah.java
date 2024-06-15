@@ -2,7 +2,7 @@ package org.purah.springboot.ann;
 
 
 import org.purah.core.checker.method.toChecker.MethodToChecker;
-import org.purah.core.checker.factory.bymethod.MethodToCheckerFactory;
+import org.purah.core.checker.factory.MethodToCheckerFactory;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.springboot.ioc.ImportPurahRegistrar;
 import org.springframework.context.annotation.Import;
@@ -20,7 +20,6 @@ public @interface EnablePurah {
     Class<? extends MethodToChecker> defaultMethodToCheckerClazz() default MethodToChecker.class;
 
     Class<? extends MethodToCheckerFactory> defaultMethodToCheckerFactoryClazz() default MethodToCheckerFactory.class;
-
 
     ResultLevel defaultResultLevel() default ResultLevel.failedAndIgnoreNotBaseLogic;
 

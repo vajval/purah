@@ -1,4 +1,4 @@
-package org.purah.springboot.ann;
+package org.purah.springboot.ann.method;
 
 
 import java.lang.annotation.*;

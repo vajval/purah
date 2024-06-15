@@ -1,6 +1,9 @@
 package org.purah.core.checker.base;
 
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckerException;
 import org.purah.core.exception.PurahException;
@@ -8,6 +11,7 @@ import org.purah.core.exception.PurahException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 
 /**
  * 对 同名  但是对支持的入参对象class不同的多个 checker封装
@@ -15,11 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 但是一个支持的入参为String 另一个为Long
  * 这两个 会被封装到 typeEnableCheckerCacheMap中
  * 根据需要检查对象的
- *
- * @param <CHECK_INSTANCE>
- * @param <RESULT>
  */
-public class GenericsProxyChecker<CHECK_INSTANCE, RESULT> implements Checker<CHECK_INSTANCE, RESULT> {
+public class GenericsProxyChecker implements Checker<Object, Object> {
 
 
     String name;
@@ -27,17 +28,43 @@ public class GenericsProxyChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
     Checker<?, ?> defaultChecker;
     Map<InputArgClass, Checker<?, ?>> cacheGenericsCheckerMapping = new ConcurrentHashMap<>();
 
+    BiFunction<GenericsProxyChecker, Integer, Integer> tryUpdateContext;
+    int checkerFactoryCount;
 
-    public GenericsProxyChecker(String name, Checker<?, ?> checker) {
+    private GenericsProxyChecker(String name) {
         this.name = name;
-        this.addNewChecker(checker);
+    }
+
+    private GenericsProxyChecker(String name, int checkerFactoryCount, BiFunction<GenericsProxyChecker, Integer, Integer> tryUpdateContext) {
+        this.name = name;
+        this.checkerFactoryCount = checkerFactoryCount;
+        this.tryUpdateContext = tryUpdateContext;
+
+    }
+
+    public static GenericsProxyChecker create(String name) {
+        return new GenericsProxyChecker(name);
+
+    }
+
+    public static GenericsProxyChecker createByChecker(Checker<?, ?> checker) {
+        return create(checker.name()).addNewChecker(checker);
+
+    }
+
+    public static GenericsProxyChecker createAndSupportUpdateByCheckerFactory(String name, int checkerFactoryCount, BiFunction<GenericsProxyChecker, Integer, Integer> tryUpdateContext) {
+        return new GenericsProxyChecker(name, checkerFactoryCount, tryUpdateContext);
+
     }
 
     /**
      * 添加新的
      */
 
-    public void addNewChecker(Checker<?, ?> checker) {
+    public GenericsProxyChecker addNewChecker(Checker<?, ?> checker) {
+        if (checker instanceof GenericsProxyChecker) {
+            throw new RuntimeException("不支持嵌套");
+        }
         InputArgClass checkerSupportInputArgClass = InputArgClass.byChecker(checker);
         if (defaultChecker == null) {
             this.defaultChecker = checker;
@@ -50,7 +77,7 @@ public class GenericsProxyChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
 
         this.cacheGenericsCheckerMapping.put(checkerSupportInputArgClass, checker);
 
-
+        return this;
     }
 
     @Override
@@ -59,10 +86,15 @@ public class GenericsProxyChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
     }
 
     @Override
-    public CheckResult check(InputCheckArg<CHECK_INSTANCE> inputCheckArg) {
+    public CheckResult check(InputCheckArg<Object> inputCheckArg) {
 
-
+        InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputCheckArg);
+        System.out.println(cacheGenericsCheckerMapping.keySet());
         Checker<?, ?> checker = getChecker(inputCheckArg);
+
+        if (checker == null) {
+            throw new CheckerException(this, "checker " + this.name + "没有对该类的解析方法" + inputCheckInstanceArgClass.clazz);
+        }
         try {
             return ((Checker) checker).check(inputCheckArg);
         } catch (PurahException exception) {
@@ -70,8 +102,80 @@ public class GenericsProxyChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
         }
     }
 
-    protected Checker<?, ?> getChecker(InputCheckArg<CHECK_INSTANCE> inputCheckArg) {
+
+    protected Checker<?, ?> getChecker(InputCheckArg<Object> inputCheckArg) {
+
         InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputCheckArg);
+
+        int oldCount = this.checkerFactoryCount;
+        Checker<?, ?> result = getCheckerBySupportClass(inputCheckInstanceArgClass);
+        if (result != null) {
+            return result;
+        }
+        tryUpdateContext();
+        if (oldCount != this.checkerFactoryCount) {
+            result = getCheckerBySupportClass(inputCheckInstanceArgClass);
+        }
+
+
+        if (result != null) {
+            return result;
+        }
+
+
+        InputArgClass convertClass = convert(inputCheckArg);
+        if (convertClass == null) {
+            return null;
+        }
+        Checker<?, ?> checkerByConvertWrapperClass = getCheckerBySupportClass(convertClass);
+        if (checkerByConvertWrapperClass == null) {
+            return null;
+        }
+        cacheGenericsCheckerMapping.put(inputCheckInstanceArgClass, checkerByConvertWrapperClass);
+        return checkerByConvertWrapperClass;
+
+
+    }
+
+    private static BiMap<Class<?>, Class<?>> wrapperClassMap = buildWrapperClassMap();
+
+    private static BiMap<Class<?>, Class<?>> buildWrapperClassMap() {
+
+        BiMap<Class<?>, Class<?>> wrapperClassMap = HashBiMap.create();
+
+        wrapperClassMap.put(byte.class, Byte.class);
+        wrapperClassMap.put(short.class, Short.class);
+        wrapperClassMap.put(int.class, Integer.class);
+        wrapperClassMap.put(long.class, Long.class);
+        wrapperClassMap.put(char.class, Character.class);
+        wrapperClassMap.put(boolean.class, Boolean.class);
+        wrapperClassMap.put(double.class, Double.class);
+        wrapperClassMap.put(float.class, Float.class);
+        return wrapperClassMap;
+    }
+
+    private static InputArgClass convert(InputCheckArg<Object> inputCheckArg) {
+        Class<?> clazz = inputCheckArg.inputArgClass();
+
+        if (inputCheckArg.inputArg() == null) {
+            if (wrapperClassMap.containsValue(clazz)) {
+                return null;
+            }
+        }
+        Class<?> resultClass = wrapperClassMap.get(clazz);
+        if (resultClass == null) {
+            resultClass = wrapperClassMap.inverse().get(clazz);
+        }
+        if (resultClass == null) {
+            return null;
+        }
+        return new InputArgClass(resultClass);
+
+
+    }
+
+
+    protected Checker<?, ?> getCheckerBySupportClass(InputArgClass inputCheckInstanceArgClass) {
 
         if (defaultInputArgClass.support(inputCheckInstanceArgClass)) {
             return defaultChecker;
@@ -83,16 +187,23 @@ public class GenericsProxyChecker<CHECK_INSTANCE, RESULT> implements Checker<CHE
         }
         for (Map.Entry<InputArgClass, Checker<?, ?>> entry : cacheGenericsCheckerMapping.entrySet()) {
             InputArgClass cacheInputArgClass = entry.getKey();
-
             if (cacheInputArgClass.support(inputCheckInstanceArgClass)) {
                 result = entry.getValue();
                 cacheGenericsCheckerMapping.put(inputCheckInstanceArgClass, result);
                 return result;
             }
         }
-        throw new CheckerException(this, "checker " + this.name + "没有对该类的解析方法" + inputCheckInstanceArgClass.clazz);
 
 
+        return null;
+
+    }
+
+    private void tryUpdateContext() {
+        if (tryUpdateContext == null) return;
+        synchronized (this) {
+            this.checkerFactoryCount = tryUpdateContext.apply(this, this.checkerFactoryCount);
+        }
     }
 
 

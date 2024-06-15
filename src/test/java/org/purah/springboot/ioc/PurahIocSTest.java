@@ -1,22 +1,16 @@
 package org.purah.springboot.ioc;
 
-import com.google.common.collect.Sets;
-import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.ExampleApplication;
 import org.purah.core.checker.base.Checker;
-import org.purah.core.checker.base.Checkers;
 import org.purah.core.checker.factory.CheckerFactory;
-import org.purah.core.checker.factory.bymethod.MethodToCheckerFactory;
-import org.purah.core.checker.method.toChecker.MethodToChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;

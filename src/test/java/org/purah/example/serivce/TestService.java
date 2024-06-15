@@ -4,7 +4,7 @@ package org.purah.example.serivce;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.example.customAnn.pojo.CustomUser;
 import org.purah.springboot.ann.CheckIt;
-import org.purah.springboot.ann.FillToMethodResult;
+import org.purah.springboot.ann.method.FillToMethodResult;
 import org.springframework.stereotype.Service;
 
 @Service

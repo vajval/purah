@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
 
-    Map<Class<? extends Annotation>, GenericsProxyChecker<?, ?>> map = new HashMap<>();
+    Map<Class<? extends Annotation>, GenericsProxyChecker> map = new HashMap<>();
 
     ExecType.Main mainExecType;
 
@@ -26,7 +26,6 @@ public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
         this.resultLevel = resultLevel;
         initMethods();
     }
-
 
 
     /**
@@ -65,17 +64,15 @@ public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
             }
 
             String name = this.name() + "[" + annClazz.getName() + "]";
-            Checker<?,?> checkerByAnnMethod = methodToChecker(this, declaredMethod, name);
+            Checker<?, ?> checkerByAnnMethod = methodToChecker(this, declaredMethod, name);
 
-            GenericsProxyChecker<?,?> genericsProxyChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> new GenericsProxyChecker<>(name, checkerByAnnMethod));
+            GenericsProxyChecker genericsProxyChecker = map.computeIfAbsent((Class<? extends Annotation>) annClazz, i -> GenericsProxyChecker.create(name).addNewChecker(checkerByAnnMethod));
 
             genericsProxyChecker.addNewChecker(checkerByAnnMethod);
 
         }
 
     }
-
-
 
 
     @Override
@@ -99,7 +96,6 @@ public abstract class AbstractCustomAnnChecker extends BaseSupportCacheChecker {
 
 
     }
-
 
 
     public abstract Checker methodToChecker(Object methodsToCheckersBean, Method method, String name);

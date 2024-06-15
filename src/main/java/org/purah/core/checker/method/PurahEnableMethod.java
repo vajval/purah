@@ -3,7 +3,6 @@ package org.purah.core.checker.method;
 import org.purah.core.base.Name;
 import org.purah.core.checker.base.InputCheckArg;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.InvocationTargetException;
@@ -68,7 +67,7 @@ public class PurahEnableMethod {
     }
 
 
-    public Object checkInstanceToInputArg(InputCheckArg inputCheckArg) {
+    public Object inputArgValue(InputCheckArg inputCheckArg) {
         if (argIsCheckInstanceClass) {
             return inputCheckArg;
         }

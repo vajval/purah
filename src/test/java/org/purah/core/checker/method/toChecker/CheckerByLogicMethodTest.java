@@ -38,8 +38,6 @@ public class CheckerByLogicMethodTest {
     @Test
     public void publicTest() throws NoSuchMethodException {
         Method test = CheckerByLogicMethodTest.class.getDeclaredMethod("haveTest", InputCheckArg.class);
-
-
         CheckerByLogicMethod checker = new CheckerByLogicMethod(null, test);
         Assertions.assertEquals("haveTest", checker.name());
         CheckResult result = checker.check(null);

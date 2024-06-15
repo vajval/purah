@@ -35,14 +35,15 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
     }
 
 
-
+    @Override
+    public String name() {
+        return "example";
+    }
 
     @Override
     public boolean match(String needMatchCheckerName) {
         return needMatchCheckerName.startsWith("example:");
     }
-
-
 
 
     /**

@@ -1,19 +1,14 @@
 package org.purah.springboot.ioc;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.base.CheckerManager;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.checker.factory.CheckerFactory;
-import org.purah.core.checker.factory.bymethod.MethodToCheckerFactory;
-import org.purah.core.checker.method.toChecker.MethodToChecker;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.factory.MatcherFactory;
 import org.purah.core.resolver.ArgResolver;
 import org.purah.core.resolver.ArgResolverManager;
-import org.purah.springboot.ann.ToChecker;
 import org.purah.springboot.config.PurahConfigProperties;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -21,9 +16,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 
-import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Configuration

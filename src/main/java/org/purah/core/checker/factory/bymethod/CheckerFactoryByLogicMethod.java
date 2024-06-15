@@ -7,36 +7,46 @@ import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.method.PurahEnableMethod;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
-import org.purah.core.matcher.singleLevel.WildCardMatcher;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.Objects;
 
-public class CheckerFactoryByLogicMethod implements CheckerFactory {
+public class CheckerFactoryByLogicMethod extends BaseCheckerFactoryByMethod implements CheckerFactory {
 
-
-    WildCardMatcher wildCardMatcher;
 
     PurahEnableMethod purahEnableMethod;
-    boolean cacheBeCreatedChecker;
+
 
     public CheckerFactoryByLogicMethod(Object bean, Method method, String matchStr, boolean cacheBeCreatedChecker) {
-        this.wildCardMatcher = new WildCardMatcher(matchStr);
+        super(bean, method, matchStr, cacheBeCreatedChecker);
+        String errorMsg = errorMsgCheckerFactoryByLogicMethod(bean, method);
+        if (errorMsg != null) {
+            throw new RuntimeException(errorMsg);
+        }
         purahEnableMethod = new PurahEnableMethod(bean, method, 1);
-        this.cacheBeCreatedChecker = cacheBeCreatedChecker;
 
     }
 
+    public static String errorMsgCheckerFactoryByLogicMethod(Object bean, Method method) {
+        Class<?> returnType = method.getReturnType();
+        Parameter[] parameters = method.getParameters();
+        if (parameters.length != 2) {
+            return "只支持两个入参，第一个为参数名字第二个为 需要检查的参数";
+        }
 
-    @Override
-    public boolean cacheBeCreatedChecker() {
-        return this.cacheBeCreatedChecker;
+        if(!parameters[0].getParameterizedType().equals(String.class)){
+            return "第一个入参必须是 string 类型，将被填充为checker名字";
+        }
+        if (CheckResult.class.isAssignableFrom(returnType)) {
+            return null;
+        }
+        if (boolean.class.isAssignableFrom(returnType)) {
+            return null;
+        }
+        return "返回值只能为 boolean或者CheckResult";
     }
 
-    @Override
-    public boolean match(String needMatchCheckerName) {
-        return wildCardMatcher.match(needMatchCheckerName);
-    }
 
     @Override
     public Checker createChecker(String needMatchCheckerName) {
@@ -48,7 +58,7 @@ public class CheckerFactoryByLogicMethod implements CheckerFactory {
 
                 Object[] args = new Object[2];
                 args[0] = needMatchCheckerName;
-                args[1] = purahEnableMethod.checkInstanceToInputArg(inputCheckArg);
+                args[1] = purahEnableMethod.inputArgValue(inputCheckArg);
                 Object result = purahEnableMethod.invoke(args);
 
                 if (purahEnableMethod.resultIsCheckResultClass()) {

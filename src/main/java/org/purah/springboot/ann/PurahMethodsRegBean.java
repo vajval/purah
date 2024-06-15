@@ -8,5 +8,5 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Documented
 @Component
-public @interface PurahEnableMethods {
+public @interface PurahMethodsRegBean {
 }

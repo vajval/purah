@@ -8,18 +8,19 @@ import org.purah.core.checker.base.Checker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.springboot.ann.EnableBeanOnPurahContext;
-import org.purah.springboot.ann.PurahEnableMethods;
-import org.purah.springboot.ann.ToChecker;
-import org.purah.springboot.ann.ToCheckerFactory;
+import org.purah.springboot.ann.PurahMethodsRegBean;
+import org.purah.springboot.ann.convert.ToChecker;
+import org.purah.springboot.ann.convert.ToCheckerFactory;
 import org.springframework.util.StringUtils;
 
 
 
-@PurahEnableMethods//将这个对象的函数转化为核对器
+@PurahMethodsRegBean//将这个对象的函数转化为核对器
 @EnableBeanOnPurahContext//使之生效
 public class MethodsToCheckersTestBean {
 
-    @ToChecker(name = "非空判断FromTestBean")
+    @ToChecker
+    @Name( "非空判断FromTestBean")
     public boolean notEmpty(Object o) {
         return o != null;
     }
@@ -33,7 +34,8 @@ public class MethodsToCheckersTestBean {
     }
 
 
-    @ToChecker(name = "有文本判断FromTestBean")
+    @ToChecker
+    @Name("有文本判断FromTestBean")
     public CheckResult hasTest(String text) {
         if (StringUtils.hasText(text)) {
             return BaseLogicCheckResult.success(null, "有文本");

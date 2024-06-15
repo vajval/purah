@@ -7,14 +7,14 @@ import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.example.customAnn.ann.NotEmptyTest;
 import org.purah.springboot.ann.EnableBeanOnPurahContext;
-import org.purah.springboot.ann.PurahEnableMethods;
-import org.purah.springboot.ann.ToChecker;
-import org.purah.springboot.ann.ToCheckerFactory;
+import org.purah.springboot.ann.PurahMethodsRegBean;
+import org.purah.springboot.ann.convert.ToChecker;
+import org.purah.springboot.ann.convert.ToCheckerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 
-@PurahEnableMethods//将这个对象的函数转化为核对器
+@PurahMethodsRegBean//将这个对象的函数转化为核对器
 @EnableBeanOnPurahContext//使之生效
 public class IocTest {
 
@@ -22,7 +22,8 @@ public class IocTest {
     public static List<String> checkerMethodNameList = Lists.newArrayList(
             "notEmptyIntegerIocTest", "notEmptyStringIocTest", "hasTestIocTest","notEmptyAnnIocTest");
 
-    @ToChecker(name = "notEmptyIntegerIocTest")
+    @ToChecker
+    @Name("notEmptyIntegerIocTest")
     public boolean IocTestNotNull(Integer o) {
         return o != null;
     }
@@ -33,7 +34,8 @@ public class IocTest {
         return o != null;
     }
 
-    @ToChecker(name = "hasTestIocTest")
+    @ToChecker
+    @Name("hasTestIocTest")
     public CheckResult hasTest(InputCheckArg<String> inputCheckArg) {
         if (StringUtils.hasText(inputCheckArg.inputArg())) {
             return BaseLogicCheckResult.success(null, "有文本");
@@ -42,7 +44,8 @@ public class IocTest {
         }
     }
 
-    @ToChecker(name = "notEmptyAnnIocTest")
+    @ToChecker
+    @Name("notEmptyAnnIocTest")
     public CheckResult hasTest(NotEmptyTest notEmptyTest, InputCheckArg<String> inputCheckArg) {
         if (StringUtils.hasText(inputCheckArg.inputArg())) {
             return BaseLogicCheckResult.success(null, "not empty");

@@ -9,19 +9,15 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 
-public class  CheckerByLogicMethod extends AbstractMethodToChecker {
+public class CheckerByLogicMethod extends AbstractMethodToChecker {
 
 
     public CheckerByLogicMethod(Object methodsToCheckersBean, Method method, String name) {
         super(methodsToCheckersBean, method, name);
-        if (name == null) {
-            throw new RuntimeException("必须要给规则一个名字 请在对应method上增加 @Name注解" + method);
-        }
-        Class<?> returnType = method.getReturnType();
-        if (!(CheckResult.class.isAssignableFrom(returnType)) &&
-                !(boolean.class.isAssignableFrom(returnType))) {
-            throw new RuntimeException("返回值必须是 CheckResult  或者 boolean " + method);
+        String errorMsg = errorMsgCheckerByLogicMethod(methodsToCheckersBean, method);
 
+        if (errorMsg != null) {
+            throw new RuntimeException(errorMsg);
         }
 
     }
@@ -40,7 +36,7 @@ public class  CheckerByLogicMethod extends AbstractMethodToChecker {
     @Override
     public CheckResult doCheck(InputCheckArg inputCheckArg) {
         Object[] args = new Object[1];
-        args[0] = purahEnableMethod.checkInstanceToInputArg(inputCheckArg);
+        args[0] = purahEnableMethod.inputArgValue(inputCheckArg);
         Object result = purahEnableMethod.invoke(args);
 
         if (purahEnableMethod.resultIsCheckResultClass()) {
@@ -53,16 +49,13 @@ public class  CheckerByLogicMethod extends AbstractMethodToChecker {
         throw new RuntimeException("不阿盖出错");
     }
 
-    @Override
-    protected String validReturnErrorMsg(Object methodsToCheckersBean, Method method) {
 
-
+    public static String errorMsgCheckerByLogicMethod(Object methodsToCheckersBean, Method method) {
         if (method.getParameters().length != 1) {
-            return "入参只能有一个参数" + method;
+            return "入参只能有一個將被填充為需要檢查的對象";
         }
-
-
         return null;
+
 
     }
 
