@@ -1,6 +1,6 @@
 package org.purah.core.checker.cache;
 
-import org.purah.core.checker.base.InputCheckArg;
+import org.purah.core.checker.base.InputToCheckerArg;
 import org.purah.core.checker.result.CheckResult;
 
 import java.util.Map;
@@ -11,7 +11,7 @@ public class PurahCheckInstanceCacheContext {
 
     private static final ThreadLocal<PurahCheckInstanceCacheContext> threadLocal = new ThreadLocal<>();
 
-    private Map<InstanceCheckCacheKey, CheckResult> cacheMap = new ConcurrentHashMap<>();
+    private Map<InputToCheckerArgCacheKey, CheckResult> cacheMap = new ConcurrentHashMap<>();
 
     private int stackNum = 0;
 
@@ -88,22 +88,22 @@ public class PurahCheckInstanceCacheContext {
     }
 
 
-    public static void put(InstanceCheckCacheKey instanceCheckCacheKey, CheckResult checkResult) {
+    public static void put(InputToCheckerArgCacheKey inputToCheckerArgCacheKey, CheckResult checkResult) {
         PurahCheckInstanceCacheContext thisThreadContextLocalCache = getCacheContextByThreadLocal();
-        thisThreadContextLocalCache.cacheMap.put(instanceCheckCacheKey, checkResult);
+        thisThreadContextLocalCache.cacheMap.put(inputToCheckerArgCacheKey, checkResult);
 
 
     }
 
-    public static CheckResult get(InputCheckArg inputCheckArg, String checkerName) {
+    public static CheckResult get(InputToCheckerArg inputToCheckerArg, String checkerName) {
 
-        InstanceCheckCacheKey instanceCheckCacheKey = new InstanceCheckCacheKey(inputCheckArg, checkerName);
-        return get(instanceCheckCacheKey);
+        InputToCheckerArgCacheKey inputToCheckerArgCacheKey = new InputToCheckerArgCacheKey(inputToCheckerArg, checkerName);
+        return get(inputToCheckerArgCacheKey);
 
     }
 
-    public static CheckResult get(InstanceCheckCacheKey instanceCheckCacheKey) {
-        return getCacheContextByThreadLocal().cacheMap.get(instanceCheckCacheKey);
+    public static CheckResult get(InputToCheckerArgCacheKey inputToCheckerArgCacheKey) {
+        return getCacheContextByThreadLocal().cacheMap.get(inputToCheckerArgCacheKey);
 
     }
 

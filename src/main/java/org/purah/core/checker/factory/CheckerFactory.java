@@ -2,7 +2,7 @@ package org.purah.core.checker.factory;
 
 
 import org.purah.core.base.IName;
-import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.Checker;
 
 public interface CheckerFactory extends IName {
 

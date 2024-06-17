@@ -2,9 +2,9 @@ package org.purah.core.checker.combinatorial;
 
 
 
-import org.purah.core.checker.base.Checker;
-import org.purah.core.checker.base.CheckerManager;
-import org.purah.core.matcher.intf.FieldMatcher;
+import org.purah.core.checker.Checker;
+import org.purah.core.checker.CheckerManager;
+import org.purah.core.matcher.FieldMatcher;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 public class FieldMatcherCheckerConfig {
     ExecType.Matcher execType=ExecType.Matcher.instance_checker;
     FieldMatcher fieldMatcher;
-
     List<String> checkerNames;
 
 

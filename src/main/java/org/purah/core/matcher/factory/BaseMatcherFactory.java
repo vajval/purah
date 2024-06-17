@@ -1,10 +1,10 @@
 package org.purah.core.matcher.factory;
 
 
-
 import org.purah.core.base.NameUtil;
 import org.purah.core.exception.FieldMatcherException;
-import org.purah.core.matcher.intf.FieldMatcher;
+import org.purah.core.matcher.BaseStringMatcher;
+import org.purah.core.matcher.FieldMatcher;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -35,13 +35,30 @@ public class BaseMatcherFactory implements MatcherFactory {
      */
 
     public void initVerify(Class<? extends FieldMatcher> fieldMatcherClazz) {
-        try {
-            constructor = fieldMatcherClazz.getConstructor(String.class);
-        } catch (NoSuchMethodException e) {
+        constructor = singleStringConstructor(fieldMatcherClazz);
+        if (constructor == null) {
             throw new FieldMatcherException(fieldMatcherClazz.getName() + "没有可用的构造器,本方法只支持只有一个String入参的构造方法");
+
         }
         name = NameUtil.nameByAnnOnClass(fieldMatcherClazz);
         this.fieldMatcherClazz = fieldMatcherClazz;
+    }
+
+    public static Constructor<? extends FieldMatcher> singleStringConstructor(Class<? extends FieldMatcher> fieldMatcherClazz) {
+        try {
+            return fieldMatcherClazz.getConstructor(String.class);
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
+
+    public static boolean clazzVerify(Class<? > clazz) {
+        if (BaseStringMatcher.class.isAssignableFrom(clazz)) {
+            Constructor<? extends FieldMatcher> constructor = singleStringConstructor((Class)clazz);
+            return constructor != null;
+        }
+        return false;
+
     }
 
     @Override

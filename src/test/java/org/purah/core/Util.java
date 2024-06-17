@@ -1,10 +1,10 @@
 package org.purah.core;
 
 
-import org.purah.core.matcher.ann.FieldType;
+import org.purah.core.matcher.clazz.ann.FieldType;
 import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
 import org.purah.core.matcher.clazz.ClassNameMatcher;
-import org.purah.core.matcher.singleLevel.WildCardMatcher;
+import org.purah.core.matcher.WildCardMatcher;
 
 public class Util {
 

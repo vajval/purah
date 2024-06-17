@@ -3,7 +3,7 @@
 //import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.Test;
 //import org.purah.core.checker.base.CheckInstance;
-//import org.purah.core.matcher.singleLevel.WildCardMatcher;
+//import org.purah.core.matcher.WildCardMatcher;
 //
 //import java.util.Map;
 //
@@ -26,9 +26,7 @@
 //        Map<String, CheckInstance<?>> getFromObject = defaultArgResolver.getMatchFieldObjectMap(testObject, wildCardMatcher);
 //
 //
-//        System.out.println(getFromMap);
-//        System.out.println(getFromObject);
-//
+
 //        Assertions.assertEquals(getFromMap, getFromObject);
 //
 //        Assertions.assertEquals(getFromMap.size(), 1);

@@ -1,6 +1,6 @@
 package org.purah.springboot.ann.convert;
 
-import org.purah.core.checker.factory.MethodToCheckerFactory;
+import org.purah.core.checker.factory.method.converter.MethodToCheckerFactoryConverter;
 
 import java.lang.annotation.*;
 
@@ -13,5 +13,5 @@ public @interface ToCheckerFactory {
 
     boolean cacheBeCreatedChecker() default true;
 
-    Class<? extends MethodToCheckerFactory> value() default MethodToCheckerFactory.class;
+    Class<? extends MethodToCheckerFactoryConverter> value() default MethodToCheckerFactoryConverter.class;
 }

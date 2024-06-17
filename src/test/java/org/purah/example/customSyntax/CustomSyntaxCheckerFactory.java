@@ -6,7 +6,7 @@ import org.purah.core.PurahContext;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.ResultLevel;
-import org.purah.core.checker.custom.AbstractCustomSyntaxCheckerFactory;
+import org.purah.core.checker.factory.AbstractCustomSyntaxCheckerFactory;
 import org.purah.springboot.ann.EnableBeanOnPurahContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,8 +1,8 @@
 package org.purah.springboot.ann;
 
 
-import org.purah.core.checker.method.toChecker.MethodToChecker;
-import org.purah.core.checker.factory.MethodToCheckerFactory;
+import org.purah.core.checker.method.converter.MethodToCheckerConverter;
+import org.purah.core.checker.factory.method.converter.MethodToCheckerFactoryConverter;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.springboot.ioc.ImportPurahRegistrar;
 import org.springframework.context.annotation.Import;
@@ -17,9 +17,9 @@ public @interface EnablePurah {
 
     boolean enableCache() default true;
 
-    Class<? extends MethodToChecker> defaultMethodToCheckerClazz() default MethodToChecker.class;
+    Class<? extends MethodToCheckerConverter> defaultMethodToCheckerClazz() default MethodToCheckerConverter.class;
 
-    Class<? extends MethodToCheckerFactory> defaultMethodToCheckerFactoryClazz() default MethodToCheckerFactory.class;
+    Class<? extends MethodToCheckerFactoryConverter> defaultMethodToCheckerFactoryClazz() default MethodToCheckerFactoryConverter.class;
 
     ResultLevel defaultResultLevel() default ResultLevel.failedAndIgnoreNotBaseLogic;
 

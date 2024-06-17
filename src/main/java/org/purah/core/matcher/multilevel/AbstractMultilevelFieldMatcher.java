@@ -2,7 +2,7 @@ package org.purah.core.matcher.multilevel;
 
 
 import org.purah.core.matcher.BaseStringMatcher;
-import org.purah.core.matcher.intf.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 
 public abstract class AbstractMultilevelFieldMatcher extends BaseStringMatcher implements MultilevelFieldMatcher {
 

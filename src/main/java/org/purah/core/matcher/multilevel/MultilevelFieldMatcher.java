@@ -1,7 +1,7 @@
 package org.purah.core.matcher.multilevel;
 
 
-import org.purah.core.matcher.intf.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 
 public interface MultilevelFieldMatcher extends FieldMatcher {
 

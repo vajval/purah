@@ -3,8 +3,8 @@ package org.purah.core.matcher.clazz;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.Util;
-import org.purah.core.checker.base.InputCheckArg;
-import org.purah.core.matcher.intf.FieldMatcher;
+import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.resolver.DefaultArgResolver;
 
 import java.util.Map;
@@ -32,14 +32,13 @@ public class AnnTypeFieldMatcherTest {
 
 
 
-        Map<String, InputCheckArg<?>> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade,  new AnnTypeFieldMatcher("短文本"));
+        Map<String, InputToCheckerArg<?>> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade,  new AnnTypeFieldMatcher("短文本"));
 
         AnnTypeFieldMatcher 短文本 = new AnnTypeFieldMatcher("短文本");
 
 
-        System.out.println(map);
 
-        Assertions.assertEquals(map.get("title").inputArg(), Util.trade.getTitle());
+        Assertions.assertEquals(map.get("title").argValue(), Util.trade.getTitle());
         Assertions.assertNull(map.get("recipients"));
     }
 
@@ -48,8 +47,8 @@ public class AnnTypeFieldMatcherTest {
     @Test
     void resolver() {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
-        Map<String, InputCheckArg<?>> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade, matcher);
-        Assertions.assertEquals(map.get("initiator").inputArg(), Util.initiator);
+        Map<String, InputToCheckerArg<?>> map = defaultArgResolver.getMatchFieldObjectMap(Util.trade, matcher);
+        Assertions.assertEquals(map.get("initiator").argValue(), Util.initiator);
         Assertions.assertNull(map.get("recipients"));
     }
 

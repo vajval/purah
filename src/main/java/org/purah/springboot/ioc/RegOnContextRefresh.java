@@ -1,36 +1,46 @@
 package org.purah.springboot.ioc;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.purah.core.PurahContext;
-import org.purah.core.checker.base.Checker;
-import org.purah.core.checker.base.CheckerManager;
+import org.purah.core.checker.Checker;
+import org.purah.core.checker.CheckerManager;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.checker.factory.CheckerFactory;
+import org.purah.core.checker.factory.method.converter.DefaultMethodToCheckerFactoryConverter;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.factory.MatcherFactory;
 import org.purah.core.resolver.ArgResolver;
 import org.purah.core.resolver.ArgResolverManager;
 import org.purah.springboot.config.PurahConfigProperties;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Configuration
 public class RegOnContextRefresh implements ApplicationListener<ContextRefreshedEvent> {
 
+    private static final Logger logger = LogManager.getLogger(RegOnContextRefresh.class);
 
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         ApplicationContext applicationContext = event.getApplicationContext();
+
         PurahContext purahContext = applicationContext.getBean(PurahContext.class);
+
 
         PurahIocS purahIocS = new PurahIocS(applicationContext);
 
+        this.initPurahContext(purahContext, applicationContext);
         this.initMatcherManager(purahContext, purahIocS);
         this.initArgResolverManager(purahContext, purahIocS);
         this.initCheckerManager(purahContext, purahIocS);
@@ -39,6 +49,30 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
         this.initPurahConfigProperties(purahContext, applicationContext);
     }
 
+
+    public void initPurahContext(PurahContext purahContext, ApplicationContext applicationContext) {
+        try {
+            CheckerManager checkerManager = applicationContext.getBean(CheckerManager.class);
+            purahContext.overrideCheckerManager(checkerManager);
+            logger.info("使用默认CheckerManager");
+        } catch (NoSuchBeanDefinitionException ignored) {
+            logger.info("使用默认CheckerManager");
+        }
+        try {
+            MatcherManager matcherManager = applicationContext.getBean(MatcherManager.class);
+            purahContext.overrideMatcherManager(matcherManager);
+        } catch (NoSuchBeanDefinitionException ignored) {
+            logger.info("使用默认CheckerManager");
+        }
+        try {
+            ArgResolverManager argResolverManager = applicationContext.getBean(ArgResolverManager.class);
+            purahContext.overrideArgResolverManager(argResolverManager);
+        } catch (NoSuchBeanDefinitionException ignored) {
+            logger.info("使用默认CheckerManager");
+        }
+
+
+    }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public void initMatcherManager(PurahContext purahContext, PurahIocS purahIocS) {

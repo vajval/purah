@@ -3,8 +3,10 @@ package org.purah.springboot.ioc;
 
 import org.purah.core.PurahContext;
 import org.purah.core.matcher.BaseStringMatcher;
+import org.purah.core.matcher.factory.BaseMatcherFactory;
 import org.purah.springboot.ann.EnableBeanOnPurahContext;
 import org.purah.springboot.ann.EnablePurah;
+import org.purah.springboot.ann.PurahInterface;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -14,6 +16,7 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
@@ -43,30 +46,23 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry, BeanNameGenerator importBeanNameGenerator) {
 
-
-
-
-//
         LinkedHashSet<BeanDefinition> beanDefinitions = enableOnPurahContextCandidateComponent(metadata);
 
 
-        AbstractBeanDefinition purahContextBeanDefinition = purahContextBeanDefinition( metadata,beanDefinitions);
-        BeanDefinitionHolder holder = new BeanDefinitionHolder(purahContextBeanDefinition, PurahContext.class.getName());
-        BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
+        AbstractBeanDefinition purahContextBeanDefinition = purahContextBeanDefinition(metadata, beanDefinitions);
 
-
+        registry.registerBeanDefinition(PurahContext.class.getName(), purahContextBeanDefinition);
 
 
     }
 
 
-    public AbstractBeanDefinition purahContextBeanDefinition(AnnotationMetadata metadata,LinkedHashSet<BeanDefinition> beanDefinitions) {
+    public AbstractBeanDefinition purahContextBeanDefinition(AnnotationMetadata metadata, LinkedHashSet<BeanDefinition> beanDefinitions) {
 
 
         BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(PurahContextFactoryBean.class);
 
         EnablePurah enablePurah = ((StandardAnnotationMetadata) metadata).getIntrospectedClass().getDeclaredAnnotation(EnablePurah.class);
-
 
 
         List<Class<BaseStringMatcher>> classes = scanStringMatcherClass(beanDefinitions, BaseStringMatcher.class);
@@ -89,42 +85,31 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
         ClassPathScanningCandidateComponentProvider scanner = this.getScanner();
         scanner.setResourceLoader(resourceLoader);
         scanner.addIncludeFilter(new AnnotationTypeFilter(EnableBeanOnPurahContext.class));
-
         String packageName = ClassUtils.getPackageName(metadata.getClassName());
         return new LinkedHashSet<>(scanner.findCandidateComponents(packageName));
     }
 
-    private <T> List<Class<T>> intClazz(LinkedHashSet<BeanDefinition> candidateComponents) {
-        List<Class<T>> result = new ArrayList<>();
-        for (BeanDefinition beanDefinition : candidateComponents) {
-            try {
-                Class<?> clazz = Class.forName(beanDefinition.getBeanClassName());
-
-                if (clazz.isInterface()) {
-                    result.add((Class) clazz);
-                }
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return result;
-    }
-
-
 
     private <T> List<Class<T>> scanStringMatcherClass(LinkedHashSet<BeanDefinition> candidateComponents, Class<T> matchClazz) {
-
-
         List<Class<T>> result = new ArrayList<>();
         for (BeanDefinition beanDefinition : candidateComponents) {
+
+            Class<?> clazz;
+
             try {
-                Class<?> clazz = Class.forName(beanDefinition.getBeanClassName());
-                if ((matchClazz.isAssignableFrom(clazz))) {
-                    result.add((Class) clazz);
-                }
+                clazz = Class.forName(beanDefinition.getBeanClassName());
             } catch (ClassNotFoundException e) {
+                e.printStackTrace();
                 throw new RuntimeException(e);
+
             }
+
+            boolean verify = BaseMatcherFactory.clazzVerify(clazz);
+            if (verify) {
+                result.add((Class) clazz);
+            }
+
+
         }
         return result;
     }
@@ -168,5 +153,43 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
         this.resourceLoader = resourceLoader;
     }
 
+//  ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+//        TypeFilter typeFilter = new AssignableTypeFilter(MyService.class);
+//        scanner.addIncludeFilter(typeFilter);
+//
+//        String basePackage = "com.example.services"; // 指定要扫描的包路径
+//        Set<BeanDefinition> candidateComponents = scanner.findCandidateComponents(basePackage);
+//
+//        for (BeanDefinition bd : candidateComponents) {
+//            try {
+//                Class<?> clazz = Class.forName(bd.getBeanClassName());
+//                Object target = clazz.getDeclaredConstructor().newInstance();
+//                MyServiceCglibProxy cglibProxy = new MyServiceCglibProxy(target);
+//                Object proxyBean = cglibProxy.getProxy();
+//
+//                BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(clazz);
+//                builder.setFactoryMethodOnBean("getProxy", "myServiceProxy");
+//
+//                registry.registerBeanDefinition("myServiceProxy", builder.getBeanDefinition());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
+//        List<Class<Object>> classes1 = scanPurahInterfaceClass(beanDefinitions);
+//
+//
+//        GenericBeanDefinition genericBeanDefinition = new GenericBeanDefinition();
+//        genericBeanDefinition.setBeanClass(TestIntf.class);
+//
+//        genericBeanDefinition.setSource(new TestIntf() {
+//
+//        });
+//        registry.registerBeanDefinition(TestIntf.class.getName(), genericBeanDefinition);
+//        BeanDefinitionHolder holder2 = new BeanDefinitionHolder(genericBeanDefinition, TestIntf.class.getName());
+//如果我想扫描指定目录下的接口，然后手动将其cglib增强注册到applicationContext中怎么办
+//        BeanDefinitionReaderUtils.registerBeanDefinition(holder2, registry);
+
+//        registry.registerBeanDefinition();
 }

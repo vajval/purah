@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.ExampleApplication;
-import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.Checker;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,9 +22,15 @@ class PurahIocSTest {
     ApplicationContext applicationContext;
 
     PurahIocS purahIocS;
+
     @BeforeEach
-    public void  beanMethodToCheckerMap(){
-        purahIocS=new PurahIocS(applicationContext);
+    public void beanMethodToCheckerMap() {
+        purahIocS = new PurahIocS(applicationContext);
+    }
+
+    @Test
+    void inf() {
+//        applicationContext.getBean(TestIntf.class);
     }
 
     @Test
@@ -67,7 +73,6 @@ class PurahIocSTest {
     @Test
     void beanMethodToCheckerFactoryMap() {
         List<CheckerFactory> checkerFactoryList = purahIocS.checkerFactoriesByBeanMethod();
-
 
 
     }

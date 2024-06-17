@@ -1,17 +1,20 @@
 package org.purah.core.resolver;
 
 
-
-import org.purah.core.checker.base.InputCheckArg;
-import org.purah.core.matcher.intf.FieldMatcher;
+import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.matcher.FieldMatcher;
 
 import java.util.Map;
 import java.util.Set;
 
 
-public interface ArgResolver{
+public interface ArgResolver {
 
-    Map<String, InputCheckArg<?>> getMatchFieldObjectMap(Object inputArg, FieldMatcher fieldMatcher);
+    Map<String, InputToCheckerArg<?>> getMatchFieldObjectMap(InputToCheckerArg<?> inputArg, FieldMatcher fieldMatcher);
+
+    default Map<String, InputToCheckerArg<?>> getMatchFieldObjectMap(Object inputArg, FieldMatcher fieldMatcher) {
+        return getMatchFieldObjectMap(InputToCheckerArg.create(inputArg), fieldMatcher);
+    }
 
     Set<Class<?>> supportTypes();
 

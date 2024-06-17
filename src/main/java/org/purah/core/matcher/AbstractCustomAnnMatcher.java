@@ -2,7 +2,6 @@ package org.purah.core.matcher;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.matcher.clazz.AbstractClassCacheFieldMatcher;
-import org.purah.core.matcher.intf.FieldMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.multilevel.MultilevelFieldMatcher;
 

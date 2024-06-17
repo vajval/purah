@@ -4,10 +4,10 @@ import com.google.common.collect.Lists;
 
 import org.purah.core.PurahContext;
 import org.purah.core.base.Name;
-import org.purah.core.checker.base.BaseSupportCacheChecker;
-import org.purah.core.checker.base.InputCheckArg;
-import org.purah.core.checker.base.Checker;
-import org.purah.core.checker.base.GenericsProxyChecker;
+import org.purah.core.checker.AbstractBaseSupportCacheChecker;
+import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.Checker;
+import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.base.MultiCheckerExecutor;
 import org.purah.core.checker.result.*;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MethodHandlerChecker extends BaseSupportCacheChecker {
+public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker {
     protected String name;
 
     protected PurahContext purahContext;
@@ -107,8 +107,8 @@ public class MethodHandlerChecker extends BaseSupportCacheChecker {
     }
 
     @Override
-    public MethodCheckResult doCheck(InputCheckArg inputCheckArg) {
-        Object[] args = (Object[]) inputCheckArg.inputArg();
+    public MethodCheckResult doCheck(InputToCheckerArg inputToCheckerArg) {
+        Object[] args = (Object[]) inputToCheckerArg.argValue();
 
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(
                 methodExecType,
@@ -131,8 +131,8 @@ public class MethodHandlerChecker extends BaseSupportCacheChecker {
     }
 
     @Override
-    public MethodCheckResult check(InputCheckArg inputCheckArg) {
-        return (MethodCheckResult) super.check(inputCheckArg);
+    public MethodCheckResult check(InputToCheckerArg inputToCheckerArg) {
+        return (MethodCheckResult) super.check(inputToCheckerArg);
     }
 
     private ArgCheckResult checkBaseLogicArgByConfig(MethodArgCheckConfig methodArgCheckConfig, Object checkArg) {
@@ -146,7 +146,7 @@ public class MethodHandlerChecker extends BaseSupportCacheChecker {
         List<? extends GenericsProxyChecker> checkerList = methodArgCheckConfig.checkerNameList().stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
 
         for (Checker checker : checkerList) {
-            executor.add(InputCheckArg.create(checkArg, methodArgCheckConfig.argClazz()), checker);
+            executor.add(InputToCheckerArg.create(checkArg, methodArgCheckConfig.argClazz()), checker);
         }
 
         String log = "method:" + method.getName() + "|arg" + methodArgCheckConfig.argIndexInMethod();
@@ -195,17 +195,17 @@ public class MethodHandlerChecker extends BaseSupportCacheChecker {
     }
 
     @Override
-    public Class<?> inputCheckInstanceClass() {
+    public Class<?> inputArgClass() {
         return Object[].class;
     }
 
     @Override
-    public Class<?> resultClass() {
+    public Class<?> resultDataClass() {
         if (this.returnType instanceof Class) {
             return (Class<?>) this.returnType;
 
         }
-        return super.resultClass();
+        return super.resultDataClass();
     }
 
     private boolean isArgCheckResultType() {

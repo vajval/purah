@@ -14,31 +14,34 @@ public class MultiCheckResult<T extends CheckResult> implements CheckResult<List
     }
 
 
-    public List<BaseLogicCheckResult> allBaseLogicCheckResult(ResultLevel resultLevel) {
+    public List<BaseLogicCheckResult> resultChildList(ResultLevel resultLevel) {
         List<BaseLogicCheckResult> resultList = new ArrayList<>();
         List<MainOfMultiCheckResult> multiCheckResultList = new ArrayList<>();
+
         allBaseLogicCheckResultByRecursion(this, resultLevel, resultList, multiCheckResultList);
         return resultList;
     }
 
     protected static void allBaseLogicCheckResultByRecursion(MultiCheckResult multiCheckResult, ResultLevel resultLevel, List<BaseLogicCheckResult> baseLogicCheckResultList, List<MainOfMultiCheckResult> multiCheckResultList) {
 
+        if (resultLevel.allowAddToFinalResult(multiCheckResult)) {
+            if (resultLevel == ResultLevel.all) {
+                multiCheckResultList.add(multiCheckResult.mainCheckResult);
+            }
+            if (resultLevel == ResultLevel.failedNotBaseLogic) {
+                multiCheckResultList.add(multiCheckResult.mainCheckResult);
+            }
+        }
+        if (multiCheckResult.valueList == null) return;
+
         for (Object o : multiCheckResult.valueList) {
             if (o instanceof MultiCheckResult) {
                 MultiCheckResult childResult = (MultiCheckResult) o;
-
-                if (resultLevel.needAddToFinalResult(childResult)) {
-                    if (resultLevel == ResultLevel.failedAndIgnoreNotBaseLogic) {
-                        multiCheckResultList.add(childResult.mainCheckResult);
-                    }
-                }
                 allBaseLogicCheckResultByRecursion(childResult, resultLevel, baseLogicCheckResultList, multiCheckResultList);
-
-
             } else if (o instanceof BaseLogicCheckResult) {
                 BaseLogicCheckResult baseLogicCheckResult = (BaseLogicCheckResult) o;
-                boolean needAdd = resultLevel.needAddToFinalResult(baseLogicCheckResult);
-                if (needAdd) {
+                boolean allowAdd = resultLevel.allowAddToFinalResult(baseLogicCheckResult);
+                if (allowAdd) {
                     baseLogicCheckResultList.add(baseLogicCheckResult);
                 }
             }

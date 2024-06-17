@@ -5,12 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import org.purah.ExampleApplication;
 import org.purah.core.PurahContext;
-import org.purah.core.checker.base.InputCheckArg;
-import org.purah.core.checker.base.GenericsProxyChecker;
+import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.example.customAnn.pojo.CustomUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,21 +44,14 @@ class PurahEnableMethodsTest {
         CustomUser badCustomUser = new CustomUser(-1L, null, null, 35);
 
         GenericsProxyChecker genericsProxyChecker = purahContext.checkManager().get("测试MethodsToCheckers注解");
-        CheckResult check = genericsProxyChecker.check(InputCheckArg.create(badCustomUser));
-        System.out.println(check);
+        CheckResult check = genericsProxyChecker.check(badCustomUser);
 
 
 
 
-        CheckResult checkResult = genericsProxyChecker.check(InputCheckArg.create(badCustomUser));
+        CheckResult checkResult = genericsProxyChecker.check(badCustomUser);
         Assertions.assertFalse(checkResult.isError());
 
-
-        System.out.println(checkResult.checkLogicFrom());
-        for (CheckResult result :( (CombinatorialCheckResult) checkResult).value()) {
-            System.out.println(result);
-            System.out.println(result.checkLogicFrom());
-        }
 
     }
 

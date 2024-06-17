@@ -2,8 +2,8 @@ package org.purah.core.matcher.multilevel;
 
 
 import org.purah.core.base.Name;
-import org.purah.core.matcher.intf.FieldMatcher;
-import org.purah.core.matcher.singleLevel.WildCardMatcher;
+import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.matcher.WildCardMatcher;
 
 @Name("general")
 public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher {
@@ -33,7 +33,6 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher {
         } else {
             firstLevelStr = matchStr;
         }
-        System.out.println(firstLevelStr);
         if (this.matchStr.equals(firstLevelStr)) {
             childStr = null;
         } else {

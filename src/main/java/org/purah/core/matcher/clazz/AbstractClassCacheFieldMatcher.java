@@ -4,7 +4,7 @@ package org.purah.core.matcher.clazz;
 
 
 import org.purah.core.matcher.BaseStringMatcher;
-import org.purah.core.matcher.intf.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 
 import java.util.List;
 import java.util.Set;
@@ -30,7 +30,6 @@ public abstract class AbstractClassCacheFieldMatcher extends BaseStringMatcher i
         if (field == null || belongInstance == null) {
             return false;
         }
-        System.out.println( classFieldsCaches.getByInstanceClass(belongInstance.getClass()));
         return classFieldsCaches.getByInstanceClass(belongInstance.getClass()).contains(field);
 
     }

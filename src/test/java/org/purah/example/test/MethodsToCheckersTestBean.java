@@ -2,9 +2,9 @@ package org.purah.example.test;
 
 
 import org.purah.core.base.Name;
-import org.purah.core.checker.base.BaseSupportCacheChecker;
-import org.purah.core.checker.base.InputCheckArg;
-import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.AbstractBaseSupportCacheChecker;
+import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.Checker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.springboot.ann.EnableBeanOnPurahContext;
@@ -63,22 +63,22 @@ public class MethodsToCheckersTestBean {
     @ToCheckerFactory(match = "3取值必须在[*-*]之间判断FromTestBean")
     public Checker range3(String name) {
 
-        return new BaseSupportCacheChecker<Number, Object>() {
+        return new AbstractBaseSupportCacheChecker<Number, Object>() {
             @Override
-            public CheckResult doCheck(InputCheckArg<Number> inputCheckArg) {
-                return range2(name, inputCheckArg.inputArg());
+            public CheckResult doCheck(InputToCheckerArg<Number> inputToCheckerArg) {
+                return range2(name, inputToCheckerArg.argValue());
             }
         };
     }
 
     @Name("数值判断FromTestBean")
     @ToChecker
-    public CheckResult range(InputCheckArg<Number> inputCheckArg) {
-        Integer value = inputCheckArg.inputArg().intValue();
+    public CheckResult range(InputToCheckerArg<Number> inputToCheckerArg) {
+        Integer value = inputToCheckerArg.argValue().intValue();
         if (value < 0) {
-            return BaseLogicCheckResult.failed(null, inputCheckArg.fieldStr() + ":取值错误:" + value);
+            return BaseLogicCheckResult.failed(null, inputToCheckerArg.fieldStr() + ":取值错误:" + value);
         } else {
-            return BaseLogicCheckResult.success(null, inputCheckArg.fieldStr() + ":取值正确:" + value);
+            return BaseLogicCheckResult.success(null, inputToCheckerArg.fieldStr() + ":取值正确:" + value);
         }
     }
 }

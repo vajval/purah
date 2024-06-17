@@ -1,10 +1,11 @@
 package org.purah.core.checker.result;
 
 public enum ResultLevel {
-    all(0),
-    failed(1),
-    failedAndIgnoreNotBaseLogic(2),
-    error(3);
+    all(1),
+    failed(2),
+    failedAndIgnoreNotBaseLogic(3),
+    failedNotBaseLogic(4),
+    error(0);
 
 //    errorIgnoreMatch(4);
 
@@ -36,7 +37,7 @@ public enum ResultLevel {
     }
 
 
-    public boolean needAddToFinalResult(CheckResult checkResult) {
+    public boolean allowAddToFinalResult(CheckResult checkResult) {
         if (this == ResultLevel.all) {
             return true;
         } else if (this == ResultLevel.failed) {
@@ -51,6 +52,10 @@ public enum ResultLevel {
 
         } else if (this == ResultLevel.error) {
             if (checkResult.isError()) {
+                return true;
+            }
+        } else if (this == ResultLevel.failedNotBaseLogic) {
+            if (!checkResult.isSuccess()) {
                 return true;
             }
         }

@@ -1,6 +1,7 @@
 package org.purah.core.checker.base;
 
 
+import org.purah.core.checker.Checker;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.*;
 
@@ -45,11 +46,11 @@ public class MultiCheckerExecutor {
     }
 
 
-    public MultiCheckerExecutor add(InputCheckArg inputCheckArg, Checker checker) {
+    public MultiCheckerExecutor add(InputToCheckerArg inputToCheckerArg, Checker checker) {
         if (exec) {
             throw new RuntimeException("已经执行完了，不能在添加了");
         }
-        Supplier<CheckResult<?>> supplier = () -> checker.check(inputCheckArg);
+        Supplier<CheckResult<?>> supplier = () -> checker.check(inputToCheckerArg);
 
         this.add((supplier));
         return this;
@@ -66,7 +67,7 @@ public class MultiCheckerExecutor {
             CheckResult<?> checkResult = supplier.get();
 
 
-            if (resultLevel.needAddToFinalResult(checkResult)) {
+            if (resultLevel.allowAddToFinalResult(checkResult)) {
                 this.finalExecResult.add(checkResult);
             }
             if (checkResult.isIgnore()) {

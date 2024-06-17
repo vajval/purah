@@ -3,10 +3,9 @@ package org.purah.core.matcher.singleLevel;
 import com.google.common.collect.Sets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.purah.core.TestObject;
-import org.purah.core.matcher.intf.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.matcher.WildCardMatcher;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class WildCardMatcherTest {

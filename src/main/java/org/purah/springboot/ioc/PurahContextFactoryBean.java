@@ -3,15 +3,9 @@ package org.purah.springboot.ioc;
 
 import org.purah.core.PurahContext;
 import org.purah.core.PurahContextConfig;
-import org.purah.core.matcher.MatcherManager;
 
-import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
-import org.purah.core.matcher.clazz.ClassNameMatcher;
-import org.purah.core.matcher.intf.FieldMatcher;
-import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 
-import org.purah.core.matcher.singleLevel.ReMatcher;
-import org.purah.core.matcher.singleLevel.WildCardMatcher;
 import org.purah.springboot.ann.EnablePurah;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -36,18 +30,10 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
     @Override
     public Object getObject() {
         PurahContextConfig purahContextConfig = new PurahContextConfig(enablePurah);
+        purahContextConfig.setBaseStringMatcherClass(baseStringMatcherClass);
 
-        PurahContext purahContext = new PurahContext(purahContextConfig);
 
-        MatcherManager matcherManager = purahContext.matcherManager();
-        matcherManager.regBaseStrMatcher(AnnTypeFieldMatcher.class);
-        matcherManager.regBaseStrMatcher(ClassNameMatcher.class);
-        matcherManager.regBaseStrMatcher(ReMatcher.class);
-        matcherManager.regBaseStrMatcher(WildCardMatcher.class);
-        matcherManager.regBaseStrMatcher(GeneralFieldMatcher.class);
-        baseStringMatcherClass.forEach(matcherManager::regBaseStrMatcher);
-
-        return purahContext;
+        return new PurahContext(purahContextConfig);
 
     }
 

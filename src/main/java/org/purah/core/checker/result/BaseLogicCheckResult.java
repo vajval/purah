@@ -1,9 +1,12 @@
 package org.purah.core.checker.result;
 
 import com.google.gson.Gson;
+import org.purah.core.checker.base.InputToCheckerArg;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.purah.core.checker.Checker.*;
 
 public class BaseLogicCheckResult<T> implements CheckResult<T> {
 
@@ -87,6 +90,31 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
 
     }
 
+
+    protected static <A> String logStr(InputToCheckerArg<A> inputToCheckerArg, String pre) {
+
+        String clazzStr = inputToCheckerArg.argClass().getName();
+
+        return pre + " (field [" + inputToCheckerArg.fieldStr() + "] type [" + clazzStr + "]" + ")";
+    }
+
+
+    public static <A, R> BaseLogicCheckResult<R> successBuildLog(InputToCheckerArg<A> inputToCheckerArg, R result) {
+        String log = logStr(inputToCheckerArg, DEFAULT_SUCCESS_INFO);
+        return BaseLogicCheckResult.success(result, log);
+    }
+
+    public static <A, R> BaseLogicCheckResult<R> failedBuildLog(InputToCheckerArg<A> inputToCheckerArg, R result) {
+        String log = logStr(inputToCheckerArg, DEFAULT_FAILED_INFO);
+
+        return BaseLogicCheckResult.failed(result, log);
+    }
+
+    public static <A, R> BaseLogicCheckResult<R> errorBuildLog(InputToCheckerArg<A> inputToCheckerArg, Exception e) {
+        String log = logStr(inputToCheckerArg, DEFAULT_ERROR_INFO);
+        return BaseLogicCheckResult.error(e, log);
+
+    }
     @Override
     public T value() {
         return data;

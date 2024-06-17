@@ -5,9 +5,9 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.base.NameUtil;
-import org.purah.core.checker.base.InputCheckArg;
+import org.purah.core.checker.base.InputToCheckerArg;
 import org.purah.core.exception.ArgResolverException;
-import org.purah.core.matcher.intf.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -45,45 +45,46 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
     }
 
     @Override
-    public Map<String, InputCheckArg<?>> getThisLevelMatcherObjectMap(Object instance, FieldMatcher fieldMatcher) {
-        if (instance == null) {
+    public Map<String, InputToCheckerArg<?>> getThisLevelMatcherObjectMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
+        Object inputArg = inputToCheckerArg.argValue();
+        if (inputArg == null) {
             throw new ArgResolverException("不支持 解析null:" + NameUtil.logClazzName(this));
         }
-        Class<?> instanceClass = instance.getClass();
+        Class<?> inputArgClass = inputArg.getClass();
 
-        if (Map.class.isAssignableFrom(instanceClass)) {
+        if (Map.class.isAssignableFrom(inputArgClass)) {
 
-            Map<String, Object> objectMap = (Map<String, Object>) instance;
+            Map<String, Object> objectMap = (Map<String, Object>) inputArg;
             Set<String> matchFieldList = fieldMatcher.matchFields(objectMap.keySet());
             return matchFieldList.stream().collect(
                     Collectors.toMap(matchField -> matchField,
-                            i -> InputCheckArg.create(objectMap.get(i), Object.class, i, instance)));
+                            i -> InputToCheckerArg.create(objectMap.get(i), Object.class, i, inputArg)));
         }
-        ClassConfigCache classConfigCache = classConfigCacheOf(instanceClass);
-        return classConfigCache.matchFieldValueMap(instance, fieldMatcher);
+        ClassConfigCache classConfigCache = classConfigCacheOf(inputArgClass);
+        return classConfigCache.matchFieldValueMap(inputArg, fieldMatcher);
     }
 
 
-    private ClassConfigCache classConfigCacheOf(Class<?> instanceClass) {
-        return classClassConfigCacheMap.computeIfAbsent(instanceClass, i -> new ClassConfigCache(instanceClass));
+    private ClassConfigCache classConfigCacheOf(Class<?> inputArgClass) {
+        return classClassConfigCacheMap.computeIfAbsent(inputArgClass, i -> new ClassConfigCache(inputArgClass));
     }
 
 
     protected static class ClassConfigCache {
-        Class<?> instanceClass;
+        Class<?> inputArgClass;
 
         Map<FieldMatcher, Set<String>> matchFieldCacheMap = new ConcurrentHashMap<>();
 
-        Map<String, Function<Object, InputCheckArg<?>>> factoryCacheByClassField = new ConcurrentHashMap<>();
+        Map<String, Function<Object, InputToCheckerArg<?>>> factoryCacheByClassField = new ConcurrentHashMap<>();
 
 
         private Set<String> fields() {
             return factoryCacheByClassField.keySet();
         }
 
-        private ClassConfigCache(Class<?> instanceClass) {
-            this.instanceClass = instanceClass;
-            this.init(instanceClass);
+        private ClassConfigCache(Class<?> inputArgClass) {
+            this.inputArgClass = inputArgClass;
+            this.init(inputArgClass);
         }
 
         protected Object get(Object inputArg, String field) {
@@ -94,15 +95,15 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
             }
         }
 
-        protected Map<String, InputCheckArg<?>> matchFieldValueMap(Object instance, FieldMatcher fieldMatcher) {
-            Set<String> matchFieldList = this.matchFieldList(instance, fieldMatcher);
-            Map<String, InputCheckArg<?>> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
+        protected Map<String, InputToCheckerArg<?>> matchFieldValueMap(Object inputArgValue, FieldMatcher fieldMatcher) {
+            Set<String> matchFieldList = this.matchFieldList(inputArgValue, fieldMatcher);
+            Map<String, InputToCheckerArg<?>> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
 
 
             for (String matchFieldStr : matchFieldList) {
-                Function<Object, InputCheckArg<?>> function = factoryCacheByClassField.get(matchFieldStr);
-                InputCheckArg<?> objectInputCheckArg = function.apply(instance);
-                result.put(matchFieldStr, objectInputCheckArg);
+                Function<Object, InputToCheckerArg<?>> function = factoryCacheByClassField.get(matchFieldStr);
+                InputToCheckerArg<?> objectInputToCheckerArg = function.apply(inputArgValue);
+                result.put(matchFieldStr, objectInputToCheckerArg);
 
             }
 
@@ -111,18 +112,18 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
         }
 
 
-        public void init(Class<?> instanceClass) {
-            PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(instanceClass);
+        public void init(Class<?> inputArgClass) {
+            PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(inputArgClass);
             for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
                 String fieldName = propertyDescriptor.getName();
                 Field declaredField;
                 try {
-                    declaredField = instanceClass.getDeclaredField(fieldName);
+                    declaredField = inputArgClass.getDeclaredField(fieldName);
                 } catch (NoSuchFieldException e) {
                     throw new RuntimeException(e);
                 }
                 List<Annotation> annotations = Collections.unmodifiableList(Lists.newArrayList(declaredField.getDeclaredAnnotations()));
-                factoryCacheByClassField.put(fieldName, parentObject -> InputCheckArg.createChildWithFieldConfig(get(parentObject, fieldName), declaredField, annotations, parentObject));
+                factoryCacheByClassField.put(fieldName, parentObject -> InputToCheckerArg.createChildWithFieldConfig(get(parentObject, fieldName), declaredField, annotations, parentObject));
             }
         }
 

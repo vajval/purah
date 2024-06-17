@@ -1,14 +1,9 @@
 package org.purah.core.matcher;
 
 
-import com.google.common.collect.Sets;
 import org.purah.core.base.NameUtil;
-import org.purah.core.matcher.intf.FieldMatcher;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 基础的匹配器，内置一个简单的字符串创建

@@ -1,19 +1,26 @@
 package org.purah.core;
 
-import org.purah.core.checker.method.toChecker.MethodToChecker;
-import org.purah.core.checker.factory.MethodToCheckerFactory;
+import org.purah.core.checker.method.converter.MethodToCheckerConverter;
+import org.purah.core.checker.factory.method.converter.MethodToCheckerFactoryConverter;
 import org.purah.core.checker.result.ResultLevel;
+import org.purah.core.matcher.FieldMatcher;
 import org.purah.springboot.ann.EnablePurah;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PurahContextConfig {
 
     boolean cache;
 
-    Class<? extends MethodToChecker> defaultMethodToCheckerClazz = MethodToChecker.class;
+    Class<? extends MethodToCheckerConverter> defaultMethodToCheckerClazz = MethodToCheckerConverter.class;
 
-    Class<? extends MethodToCheckerFactory> defaultMethodToCheckerFactoryClazz = MethodToCheckerFactory.class;
+    Class<? extends MethodToCheckerFactoryConverter> defaultMethodToCheckerFactoryClazz = MethodToCheckerFactoryConverter.class;
 
     ResultLevel defaultResultLevel = ResultLevel.failedAndIgnoreNotBaseLogic;
+
+
+    List<Class<? extends FieldMatcher>> baseStringMatcherClass=new ArrayList<>();
 
     public PurahContextConfig() {
     }
@@ -25,15 +32,23 @@ public class PurahContextConfig {
         this.defaultResultLevel = enablePurah.defaultResultLevel();
     }
 
+    public List<Class<? extends FieldMatcher>> getBaseStringMatcherClass() {
+        return baseStringMatcherClass;
+    }
+
+    public void setBaseStringMatcherClass(List<Class<? extends FieldMatcher>> baseStringMatcherClass) {
+        this.baseStringMatcherClass = baseStringMatcherClass;
+    }
+
     public boolean isCache() {
         return cache;
     }
 
-    public Class<? extends MethodToChecker> getDefaultMethodToCheckerClazz() {
+    public Class<? extends MethodToCheckerConverter> getDefaultMethodToCheckerClazz() {
         return defaultMethodToCheckerClazz;
     }
 
-    public Class<? extends MethodToCheckerFactory> getDefaultMethodToCheckerFactoryClazz() {
+    public Class<? extends MethodToCheckerFactoryConverter> getDefaultMethodToCheckerFactoryClazz() {
         return defaultMethodToCheckerFactoryClazz;
     }
 

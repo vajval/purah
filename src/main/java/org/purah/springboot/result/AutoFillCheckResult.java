@@ -17,14 +17,14 @@ public class AutoFillCheckResult implements CheckResult<MethodCheckResult> {
         return methodCheckResult.mainCheckResult();
     }
 
-    public List<BaseLogicCheckResult> allBaseLogicCheckResult(ResultLevel resultLevel) {
+    public List<BaseLogicCheckResult> childList(ResultLevel resultLevel) {
 
-        return methodCheckResult.allBaseLogicCheckResult(resultLevel);
+        return methodCheckResult.resultChildList(resultLevel);
     }
 
-    public List<BaseLogicCheckResult> allBaseLogicCheckResult() {
+    public List<BaseLogicCheckResult> childList() {
 
-        return allBaseLogicCheckResult(ResultLevel.failedAndIgnoreNotBaseLogic);
+        return childList(ResultLevel.failedAndIgnoreNotBaseLogic);
     }
 
 

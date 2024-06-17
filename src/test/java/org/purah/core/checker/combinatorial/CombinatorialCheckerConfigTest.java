@@ -7,8 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.Util;
-import org.purah.core.checker.base.InputCheckArg;
-import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.Checker;
 import org.purah.core.checker.base.Checkers;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
@@ -16,7 +15,7 @@ import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
 import org.purah.core.matcher.clazz.ClassNameMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
-import org.purah.core.matcher.singleLevel.WildCardMatcher;
+import org.purah.core.matcher.WildCardMatcher;
 
 
 import java.util.LinkedHashMap;
@@ -72,10 +71,10 @@ class CombinatorialCheckerConfigTest {
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
 
 
-        CheckResult result = checker.check(InputCheckArg.create(Util.initiator));
+        CheckResult result = checker.check(Util.initiator);
         Assertions.assertTrue(result.isSuccess());
 
-        result = checker.check(InputCheckArg.create(Util.recipients));
+        result = checker.check(Util.recipients);
         Assertions.assertFalse(result.isSuccess());
     }
 
@@ -99,7 +98,7 @@ class CombinatorialCheckerConfigTest {
         Checker multiLevelchecker = purahContext.regNewCombinatorialChecker(properties);
 
 
-        CheckResult result = multiLevelchecker.check(InputCheckArg.create(Util.trade));
+        CheckResult result = multiLevelchecker.check(Util.trade);
         Assertions.assertTrue(result.isSuccess());
     }
 

@@ -1,58 +1,32 @@
 package org.purah.core.checker.base;
 
 
-import org.purah.core.base.NameUtil;
-import org.purah.core.checker.method.DefaultMethodToChecker;
-import org.purah.core.checker.method.toChecker.MethodToChecker;
-import org.purah.core.checker.factory.DefaultMethodToCheckerFactory;
-import org.purah.core.checker.factory.MethodToCheckerFactory;
+import org.purah.core.checker.AbstractBaseSupportCacheChecker;
+import org.purah.core.checker.Checker;
+import org.purah.core.checker.method.converter.DefaultMethodToCheckerConverter;
+import org.purah.core.checker.method.converter.MethodToCheckerConverter;
+import org.purah.core.checker.factory.method.converter.DefaultMethodToCheckerFactoryConverter;
+import org.purah.core.checker.factory.method.converter.MethodToCheckerFactoryConverter;
 import org.purah.core.checker.result.CheckResult;
 import org.springframework.core.ResolvableType;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class Checkers {
-    public static final MethodToChecker defaultMethodToChecker = new DefaultMethodToChecker();
-    public static final MethodToCheckerFactory defaultMethodToCheckerFactory = new DefaultMethodToCheckerFactory();
 
 
-    public static Class<?> resultDataClass(Checker<?, ?> checker) {
-        Class<?> result = generics(checker)[1].resolve();
-        if (result == null) {
-            return Object.class;
-        }
-        return result;
-    }
-
-    public static Class<?> supportInputCheckInstanceClass(Checker<?, ?> checker) {
-        Class<?> result = generics(checker)[0].resolve();
-        if (result == null) {
-            return Object.class;
-        }
-        return result;
-    }
-
-    public static ResolvableType[] generics(Checker<?, ?> checker) {
-        return ResolvableType
-                .forClass(checker.getClass())
-                .as(Checker.class)
-                .getGenerics();
-    }
-
-
-    public static <T> BaseSupportCacheChecker<T, Object> autoStringChecker(String name, Predicate<T> predicate, Class<T> clazz) {
-        return new BaseSupportCacheChecker() {
+    public static <T> AbstractBaseSupportCacheChecker<T, Object> autoStringChecker(String name, Predicate<T> predicate, Class<T> clazz) {
+        return new AbstractBaseSupportCacheChecker() {
 
 
             @Override
-            public Class<?> inputCheckInstanceClass() {
+            public Class<?> inputArgClass() {
                 return clazz;
             }
 
             @Override
-            public Class<?> resultClass() {
+            public Class<?> resultDataClass() {
                 return String.class;
             }
 
@@ -62,17 +36,17 @@ public class Checkers {
             }
 
             @Override
-            public CheckResult<String> doCheck(InputCheckArg inputCheckArg) {
+            public CheckResult<String> doCheck(InputToCheckerArg inputToCheckerArg) {
                 boolean test;
                 try {
-                    test = predicate.test((T) inputCheckArg.inputArg());
+                    test = predicate.test((T) inputToCheckerArg.argValue());
                 } catch (Exception e) {
-                    return error(inputCheckArg, e);
+                    return error(inputToCheckerArg, e);
                 }
                 if (test) {
-                    return success(inputCheckArg, inputCheckArg.inputArg());
+                    return success(inputToCheckerArg, inputToCheckerArg.argValue());
                 }
-                return failed(inputCheckArg, inputCheckArg.inputArg());
+                return failed(inputToCheckerArg, inputToCheckerArg.argValue());
             }
         };
     }

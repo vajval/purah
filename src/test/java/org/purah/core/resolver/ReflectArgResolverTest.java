@@ -1,17 +1,15 @@
 package org.purah.core.resolver;
 
 import com.google.common.collect.Sets;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.TestObject;
-import org.purah.core.checker.base.InputCheckArg;
+import org.purah.core.checker.base.InputToCheckerArg;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
-import org.purah.core.matcher.singleLevel.WildCardMatcher;
+import org.purah.core.matcher.WildCardMatcher;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 class ReflectArgResolverTest {
@@ -24,9 +22,9 @@ class ReflectArgResolverTest {
 //        org.apache.commons.beanutils.converters.BooleanConverter
         WildCardMatcher wildCardMatcher = new WildCardMatcher("?b");
 
-        Map<String, InputCheckArg<?>> matchFieldObjectMap = reflectArgResolver.getMatchFieldObjectMap(testObject, wildCardMatcher);
+        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = reflectArgResolver.getMatchFieldObjectMap(testObject, wildCardMatcher);
         Assertions.assertEquals(matchFieldObjectMap.size(), 1);
-        Assertions.assertEquals(matchFieldObjectMap.get("ab").inputArg(), testObject.ab);
+        Assertions.assertEquals(matchFieldObjectMap.get("ab").argValue(), testObject.ab);
     }
 
 
@@ -73,8 +71,7 @@ class ReflectArgResolverTest {
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher(
                 "ma*.mapKe*.key"
         );
-        Map<String, InputCheckArg<?>> thisLevelMatcherObjectMap = reflectArgResolver.getMultiLevelMap(object, generalFieldMatcher);
-        System.out.println(thisLevelMatcherObjectMap);
+        Map<String, InputToCheckerArg<?>> thisLevelMatcherObjectMap = reflectArgResolver.getMultiLevelMap(object, generalFieldMatcher);
     }
 
     @Test

@@ -3,7 +3,7 @@ package org.purah.core.matcher.clazz;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.base.Name;
-import org.purah.core.matcher.ann.FieldType;
+import org.purah.core.matcher.clazz.ann.FieldType;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;

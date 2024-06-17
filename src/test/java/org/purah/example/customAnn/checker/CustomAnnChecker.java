@@ -2,13 +2,13 @@ package org.purah.example.customAnn.checker;
 
 
 import org.purah.core.base.Name;
-import org.purah.core.checker.base.InputCheckArg;
-import org.purah.core.checker.base.Checker;
+import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.Checker;
 import org.purah.core.checker.combinatorial.ExecType;
-import org.purah.core.checker.method.toChecker.CheckerByAnnMethod;
+import org.purah.core.checker.method.ByAnnMethodChecker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
-import org.purah.core.checker.custom.AbstractCustomAnnChecker;
+import org.purah.core.checker.AbstractCustomAnnChecker;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmptyTest;
@@ -34,7 +34,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
     @Override
     public Checker methodToChecker(Object methodsToCheckersBean, Method method, String name) {
-        return new CheckerByAnnMethod(methodsToCheckersBean, method, name);
+        return new ByAnnMethodChecker(methodsToCheckersBean, method, name);
     }
 
     public boolean notNull(NotNull notNull, Integer age) {
@@ -46,34 +46,34 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
     }
 
-    public CheckResult cnPhoneNum(CNPhoneNum cnPhoneNum, InputCheckArg<String> str) {
-        String strValue = str.inputArg();
+    public CheckResult cnPhoneNum(CNPhoneNum cnPhoneNum, InputToCheckerArg<String> str) {
+        String strValue = str.argValue();
         cnPhoneNumCount++;
 
         //gpt小姐 说的
         if (strValue.matches("^1[3456789]\\d{9}$")) {
             return success(str, "正确的");
         }
-        return BaseLogicCheckResult.failed(str.inputArg(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
+        return BaseLogicCheckResult.failed(str.argValue(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
 
 
     }
 
-    public CheckResult notEmpty(NotEmptyTest notEmptyTest, InputCheckArg<String> str) {
-        String strValue = str.inputArg();
+    public CheckResult notEmpty(NotEmptyTest notEmptyTest, InputToCheckerArg<String> str) {
+        String strValue = str.argValue();
         if (StringUtils.hasText(strValue)) {
             return success(str, "正确的");
         }
-        return BaseLogicCheckResult.failed(str.inputArg(), str.fieldStr() + ":" + notEmptyTest.errorMsg());
+        return BaseLogicCheckResult.failed(str.argValue(), str.fieldStr() + ":" + notEmptyTest.errorMsg());
 
 
     }
 
 
-    public CheckResult range(Range range, InputCheckArg<Number> num) {
-        Number numValue = num.inputArg();
+    public CheckResult range(Range range, InputToCheckerArg<Number> num) {
+        Number numValue = num.argValue();
         if (numValue.doubleValue() < range.min() || numValue.doubleValue() > range.max()) {
-            return BaseLogicCheckResult.failed(num.inputArg(), (num.fieldStr() + ":" + range.errorMsg()));
+            return BaseLogicCheckResult.failed(num.argValue(), (num.fieldStr() + ":" + range.errorMsg()));
         }
         return success(num, "参数合规");
 

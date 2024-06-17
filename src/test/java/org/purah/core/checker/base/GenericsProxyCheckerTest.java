@@ -3,14 +3,15 @@ package org.purah.core.checker.base;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.Util;
+import org.purah.core.checker.Checker;
+import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckerException;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.purah.core.Util.*;
 
 public class GenericsProxyCheckerTest {
-    public static Checker<Util.Trade, Object> tradeChecker =
+    public static Checker<Trade, Object> tradeChecker =
             Checkers.autoStringChecker("id1", i -> i.getInitiator().getId().equals(1L), Util.Trade.class);
 
     public static Checker<Util.User, Object> userChecker =

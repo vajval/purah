@@ -5,7 +5,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.purah.core.matcher.factory.BaseMatcherFactory;
 import org.purah.core.matcher.factory.MatcherFactory;
-import org.purah.core.matcher.intf.FieldMatcher;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

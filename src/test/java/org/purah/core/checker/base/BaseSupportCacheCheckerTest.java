@@ -3,10 +3,10 @@ package org.purah.core.checker.base;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.purah.core.checker.AbstractBaseSupportCacheChecker;
+import org.purah.core.checker.Checker;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.checker.result.CheckResult;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class BaseSupportCacheCheckerTest {
     static int count = 0;
@@ -18,11 +18,11 @@ class BaseSupportCacheCheckerTest {
 
     }
 
-    Checker<Object, Object> checker = new BaseSupportCacheChecker<Object, Object>() {
+    Checker<Object, Object> checker = new AbstractBaseSupportCacheChecker<Object, Object>() {
         @Override
-        public CheckResult<Object> doCheck(InputCheckArg<Object> inputCheckArg) {
+        public CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
             count++;
-            return success(inputCheckArg, null);
+            return success(inputToCheckerArg, null);
         }
     };
 

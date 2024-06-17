@@ -7,8 +7,6 @@ import org.purah.core.matcher.clazz.AnnTypeFieldMatcherTest;
 import org.purah.core.matcher.clazz.ClassNameMatcher;
 import org.purah.core.matcher.clazz.ClassNameMatcherTest;
 import org.purah.core.matcher.factory.MatcherFactory;
-import org.purah.core.matcher.intf.FieldMatcher;
-import org.purah.core.matcher.singleLevel.WildCardMatcher;
 import org.purah.core.matcher.singleLevel.WildCardMatcherTest;
 
 public class MatcherManagerTest {

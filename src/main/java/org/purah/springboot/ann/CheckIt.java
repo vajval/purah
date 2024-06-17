@@ -50,6 +50,7 @@ public @interface CheckIt {
 
     ExecType.Main execType() default ExecType.Main.all_success;
 
+    //todo
     ResultLevel resultLevel() default ResultLevel.failedAndIgnoreNotBaseLogic;
 
 
