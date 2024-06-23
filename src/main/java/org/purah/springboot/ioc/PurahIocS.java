@@ -3,7 +3,6 @@ package org.purah.springboot.ioc;
 import com.google.common.collect.Maps;
 import org.purah.core.base.NameUtil;
 import org.purah.core.checker.Checker;
-import org.purah.core.checker.base.Checkers;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.checker.factory.method.converter.MethodToCheckerFactoryConverter;
 import org.purah.core.checker.method.converter.MethodToCheckerConverter;

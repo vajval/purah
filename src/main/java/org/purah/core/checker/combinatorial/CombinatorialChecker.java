@@ -2,10 +2,7 @@ package org.purah.core.checker.combinatorial;
 
 
 import org.purah.core.base.IName;
-import org.purah.core.checker.AbstractBaseSupportCacheChecker;
-import org.purah.core.checker.Checker;
-import org.purah.core.checker.CheckerManager;
-import org.purah.core.checker.base.*;
+import org.purah.core.checker.*;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.matcher.FieldMatcher;
@@ -32,7 +29,7 @@ import java.util.stream.Collectors;
  * wild_card:
  * "[num_*]" : 取值范围检测
  * type_by_ann:
- * "[短文本]" : 敏感词检查                          
+ * "[短文本]" : 敏感词检查
  * "[长文本]" : 敏感词检查
  */
 public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object, Object> {
@@ -100,10 +97,12 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
 
         for (FieldMatcherCheckerConfig fieldMatcherCheckerConfig : fieldMatcherCheckerConfigList) {
             FieldMatcherCheckerConfigExecutor fieldMatcherCheckerConfigExecutor = new FieldMatcherCheckerConfigExecutor(fieldMatcherCheckerConfig);
-            executor.add(() -> fieldMatcherCheckerConfigExecutor.check(inputToCheckerArg));
+//            executor.add(() -> fieldMatcherCheckerConfigExecutor.check(inputToCheckerArg));
+            fieldMatcherCheckerConfigExecutor.addToMultiCheckerExecutor(executor, inputToCheckerArg);
+
+
+
         }
-
-
         String log = "[" + inputToCheckerArg.fieldStr() + "]: " + this.name();
         CombinatorialCheckResult result = executor.toCombinatorialCheckResult(log);
         result.setCheckLogicFrom(this.logicFrom());
@@ -117,7 +116,7 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
     }
 
     private MultiCheckerExecutor createMultiCheckerExecutor() {
-        return new MultiCheckerExecutor( this.config.mainExecType, this.config.resultLevel);
+        return new MultiCheckerExecutor(this.config.mainExecType, this.config.resultLevel);
     }
 
 
@@ -138,38 +137,40 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
             this.fieldMatcherCheckerConfig = fieldMatcherCheckerConfig;
         }
 
-
-        public CheckResult check(InputToCheckerArg<Object> inputToCheckerArg) {
-
+        protected List<Supplier<CheckResult<?>>> checkResultSupplierList(InputToCheckerArg<Object> inputToCheckerArg) {
             ArgResolver argResolver = getArgResolverManager().getArgResolver(inputToCheckerArg.argClass());
-
-
-
-
             Map<String, InputToCheckerArg<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(inputToCheckerArg, fieldMatcherCheckerConfig.fieldMatcher);
-
             ExecType.Matcher execType = fieldMatcherCheckerConfig.execType;
-
-            MultiCheckerExecutor multiCheckerExecutor = CombinatorialChecker.this.createMultiCheckerExecutor();
-
-            // 对每个匹配到的字段
-
+            List<Supplier<CheckResult<?>>> result = new ArrayList<>(checkerList.size() * matchFieldObjectMap.size());
             if (execType == ExecType.Matcher.checker_instance) {
                 for (Checker checker : checkerList) {
                     for (Map.Entry<String, InputToCheckerArg<?>> entry : matchFieldObjectMap.entrySet()) {
-                        multiCheckerExecutor.add(entry.getValue(), checker);
+                        result.add(() -> checker.check(entry.getValue()));
                     }
                 }
             } else if (execType == ExecType.Matcher.instance_checker) {
                 for (Map.Entry<String, InputToCheckerArg<?>> entry : matchFieldObjectMap.entrySet()) {
                     for (Checker checker : checkerList) {
-                        multiCheckerExecutor.add(entry.getValue(), checker);
+                        result.add(() -> checker.check(entry.getValue()));
                     }
                 }
             } else {
                 throw new RuntimeException();
             }
 
+            return result;
+        }
+
+        public void addToMultiCheckerExecutor(MultiCheckerExecutor executor, InputToCheckerArg<Object> inputToCheckerArg) {
+            List<Supplier<CheckResult<?>>> suppliers = checkResultSupplierList(inputToCheckerArg);
+            for (Supplier<CheckResult<?>> supplier : suppliers) {
+                executor.add(supplier);
+            }
+        }
+
+        public CheckResult check(InputToCheckerArg<Object> inputToCheckerArg) {
+            MultiCheckerExecutor multiCheckerExecutor = CombinatorialChecker.this.createMultiCheckerExecutor();
+            addToMultiCheckerExecutor(multiCheckerExecutor,inputToCheckerArg);
 
             String checkerNamesStr = fieldMatcherCheckerConfig.getCheckers().stream().map(IName::name).collect(Collectors.joining(","));
             FieldMatcher fieldMatcher = fieldMatcherCheckerConfig.fieldMatcher;

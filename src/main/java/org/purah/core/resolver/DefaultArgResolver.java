@@ -1,7 +1,7 @@
 package org.purah.core.resolver;
 
 import com.google.common.collect.Sets;
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.FieldMatcher;
 
 

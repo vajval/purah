@@ -2,7 +2,7 @@ package org.purah.core.checker.method;
 
 import org.purah.core.base.NameUtil;
 import org.purah.core.checker.PurahMethod;
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.result.CheckResult;
 
 import java.lang.reflect.Method;
@@ -36,7 +36,6 @@ public class ByLogicMethodChecker extends AbstractMethodToChecker {
     public CheckResult doCheck(InputToCheckerArg inputToCheckerArg) {
         Object[] args = new Object[1];
         args[0] = inputToCheckerArg;
-//                purahEnableMethod.inputArgValue(inputToCheckerArg);
         return purahEnableMethod.invokeResult(args);
     }
 

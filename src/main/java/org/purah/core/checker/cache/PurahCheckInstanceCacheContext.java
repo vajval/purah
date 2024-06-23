@@ -1,6 +1,6 @@
 package org.purah.core.checker.cache;
 
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.result.CheckResult;
 
 import java.util.Map;
@@ -44,12 +44,12 @@ public class PurahCheckInstanceCacheContext {
             e.printStackTrace();
             throw e;
         } finally {
-            closeCache();
+            popCache();
         }
 
     }
 
-    private static PurahCheckInstanceCacheContext createEnableOnThread() {
+    public synchronized static PurahCheckInstanceCacheContext createEnableOnThread() {
 
         PurahCheckInstanceCacheContext thisThreadContextLocalCache = getCacheContextByThreadLocal();
         thisThreadContextLocalCache.stackNum++;
@@ -57,9 +57,15 @@ public class PurahCheckInstanceCacheContext {
     }
 
 
-    private static void closeCache() {
+    public synchronized static void popCache() {
         PurahCheckInstanceCacheContext thisThreadContextLocalCache = getCacheContextByThreadLocal();
         thisThreadContextLocalCache.pop();
+    }
+
+    public synchronized static void closeCache() {
+        PurahCheckInstanceCacheContext thisThreadContextLocalCache = getCacheContextByThreadLocal();
+        thisThreadContextLocalCache.stackNum = 0;
+        thisThreadContextLocalCache.cacheMap.clear();
     }
 
     private static PurahCheckInstanceCacheContext notEnabledContext() {

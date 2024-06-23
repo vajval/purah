@@ -1,7 +1,6 @@
 package org.purah.core.checker;
 
 
-import org.purah.core.checker.base.InputToCheckerArg;
 import org.purah.core.checker.result.CheckResult;
 
 public class ProxyChecker implements Checker {

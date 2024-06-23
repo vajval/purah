@@ -3,7 +3,7 @@ package org.purah.example.test;
 
 import org.purah.core.base.Name;
 import org.purah.core.checker.AbstractBaseSupportCacheChecker;
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;

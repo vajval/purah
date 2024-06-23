@@ -33,9 +33,8 @@ public interface FieldMatcher {
     default boolean match(String field) {
         return match(field, null);
     }
-    default boolean match(String field, Object belongInstance) {
-        return match(field);
-    }
+
+    boolean match(String field, Object belongInstance);
 
     default Set<String> matchFields(Set<String> fields, Object belongInstance) {
         HashSet<String> result = Sets.newHashSetWithExpectedSize(fields.size());
@@ -47,7 +46,6 @@ public interface FieldMatcher {
         return result;
 
     }
-
 
 
 }

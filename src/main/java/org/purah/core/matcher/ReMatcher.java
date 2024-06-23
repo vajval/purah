@@ -18,9 +18,10 @@ public class ReMatcher extends BaseStringMatcher implements FieldMatcher {
     }
 
     @Override
-    public boolean match(String field) {
+    public boolean match(String field, Object belongInstance) {
         if (field == null) field = "";
         return field.matches(this.matchStr);
-
     }
+
+
 }

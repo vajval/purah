@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.Util;
 import org.purah.core.base.Name;
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.CheckerManager;
 import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.result.BaseLogicCheckResult;
@@ -32,7 +32,7 @@ class AbstractMethodToCheckerTest {
 
         @Name("id为1")
         public BaseLogicCheckResult checkByUser(Util.User user) {
-            return checkById(InputToCheckerArg.create(user.getId()));
+            return checkById(InputToCheckerArg.of(user.getId()));
 
         }
 

@@ -1,6 +1,5 @@
 package org.purah.core.checker;
 
-import org.purah.core.checker.base.InputToCheckerArg;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.CheckResult;
 import org.springframework.core.ResolvableType;

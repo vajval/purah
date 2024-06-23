@@ -1,1 +1,22 @@
-{}
+{
+  child.child=CheckInputArg{
+  inputArg=[
+  People
+  {
+    id=
+    '60c5fb8c-acfc-4a47-87e3-2a5947ff360c',
+    name=
+    '外孙子',
+    child=null
+  },
+  People
+  {
+    id=
+    '97b25e3c-439e-49f0-b8db-4d41732cb0ab',
+    name=
+    '外孙女',
+    child=null
+  }
+], fieldStr='child.child', clazzInContext=interface java.util.List, fieldInClass=java.util.List org.purah.core.matcher.multilevel.GeneralMultilevelFieldMatcherTest$People.child, annotations=[]}, child.id=CheckInputArg{inputArg=abc621b7-e6cc-41ae-ba61-e0bd4a216210, fieldStr='child.id', clazzInContext=class java.lang.String, fieldInClass=java.lang.String org.purah.core.matcher.multilevel.GeneralMultilevelFieldMatcherTest$People.id, annotations=[]}, child.name=CheckInputArg{inputArg=女儿, fieldStr='child.name', clazzInContext=class java.lang.String, fieldInClass=java.lang.String org.purah.core.matcher.multilevel.GeneralMultilevelFieldMatcherTest$People.name, annotations=[]
+}
+}

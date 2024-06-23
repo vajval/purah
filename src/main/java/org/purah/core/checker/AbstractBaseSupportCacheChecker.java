@@ -3,7 +3,6 @@ package org.purah.core.checker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.purah.core.checker.base.InputToCheckerArg;
 import org.purah.core.checker.cache.InputToCheckerArgCacheKey;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.checker.result.CheckResult;
@@ -19,7 +18,7 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
     @Override
     public CheckResult<RESULT> check(InputToCheckerArg<INPUT_ARG> inputToCheckerArg) {
         if (inputToCheckerArg == null) {
-            inputToCheckerArg = InputToCheckerArg.create(null, inputArgClass());
+            inputToCheckerArg = InputToCheckerArg.of(null, inputArgClass());
         }
         CheckResult<RESULT> resultCheckResult = this.readCacheIfNeed(inputToCheckerArg);
         if (resultCheckResult != null) {

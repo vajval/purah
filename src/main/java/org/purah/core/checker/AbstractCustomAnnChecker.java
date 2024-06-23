@@ -1,14 +1,12 @@
 package org.purah.core.checker;
 
 
-import org.purah.core.checker.base.*;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

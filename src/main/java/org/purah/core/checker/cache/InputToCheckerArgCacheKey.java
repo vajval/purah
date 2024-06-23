@@ -1,6 +1,6 @@
 package org.purah.core.checker.cache;
 
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 
 import java.util.Objects;
 

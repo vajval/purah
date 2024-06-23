@@ -4,6 +4,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.matcher.clazz.AbstractClassCacheFieldMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.multilevel.MultilevelFieldMatcher;
+import org.purah.core.matcher.multilevel.MultilevelMatchInfo;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -56,7 +57,7 @@ public abstract class AbstractCustomAnnMatcher extends AbstractClassCacheFieldMa
     }
 
     @Override
-    public FieldMatcher childFieldMatcher(String matchedField) {
-        return generalFieldMatcher.childFieldMatcher(matchedField);
+    public MultilevelMatchInfo childFieldMatcher(Object instance, String matchedField, Object matchedObject) {
+        return generalFieldMatcher.childFieldMatcher(instance,matchedField, matchedObject);
     }
 }

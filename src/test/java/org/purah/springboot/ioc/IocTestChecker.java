@@ -2,7 +2,7 @@ package org.purah.springboot.ioc;
 
 import org.purah.core.base.Name;
 import org.purah.core.checker.AbstractBaseSupportCacheChecker;
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.springboot.ann.EnableBeanOnPurahContext;

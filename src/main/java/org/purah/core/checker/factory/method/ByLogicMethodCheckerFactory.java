@@ -2,7 +2,7 @@ package org.purah.core.checker.factory.method;
 
 
 import org.purah.core.checker.AbstractBaseSupportCacheChecker;
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.PurahMethod;
 import org.purah.core.checker.factory.CheckerFactory;

@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.purah.core.PurahContext;
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.exception.MethodArgCheckException;
 import org.purah.springboot.result.AutoFillCheckResult;
@@ -63,7 +63,7 @@ public class CheckItAspect {
          * 找到对应函数使用的检查器材，然后检查
          */
         MethodHandlerChecker methodHandlerChecker = this.checkerOf(joinPoint.getThis(), method);
-        InputToCheckerArg<Object[]> inputToCheckerArg = InputToCheckerArg.create(joinPoint.getArgs(), Object[].class);
+        InputToCheckerArg<Object[]> inputToCheckerArg = InputToCheckerArg.of(joinPoint.getArgs(), Object[].class);
 
         MethodCheckResult methodCheckResult = methodHandlerChecker.check(inputToCheckerArg);
 

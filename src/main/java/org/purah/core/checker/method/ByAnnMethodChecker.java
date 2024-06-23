@@ -1,7 +1,7 @@
 package org.purah.core.checker.method;
 
 import org.purah.core.checker.PurahMethod;
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.result.CheckResult;
 
 import java.lang.annotation.Annotation;
@@ -32,10 +32,7 @@ public class ByAnnMethodChecker extends AbstractMethodToChecker {
     @Override
     public CheckResult doCheck(InputToCheckerArg inputToCheckerArg) {
         Annotation annotation = inputToCheckerArg.annOnField(annClazz);
-        Object[] args = new Object[2];
-        args[0] = annotation;
-        args[1] = inputToCheckerArg;
-//                purahEnableMethod.inputArgValue(inputToCheckerArg);
+        Object[] args = new Object[]{annotation,inputToCheckerArg};
         return purahEnableMethod.invokeResult(args);
 
 

@@ -2,7 +2,6 @@ package org.purah.core.checker;
 
 
 import org.purah.core.base.IName;
-import org.purah.core.checker.base.InputToCheckerArg;
 import org.purah.core.checker.result.CheckResult;
 import org.springframework.core.ResolvableType;
 
@@ -20,7 +19,7 @@ public interface Checker<INPUT_ARG, RESULT> extends IName {
     CheckResult<RESULT> check(InputToCheckerArg<INPUT_ARG> inputToCheckerArg);
 
     default CheckResult<RESULT> check(INPUT_ARG inputArg) {
-        return check(InputToCheckerArg.create(inputArg, inputArgClass()));
+        return check(InputToCheckerArg.of(inputArg, inputArgClass()));
     }
 
     default Class<?> inputArgClass() {

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.Util;
 import org.purah.core.checker.Checker;
-import org.purah.core.checker.base.Checkers;
+import org.purah.core.checker.LambdaChecker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
 
@@ -40,7 +40,8 @@ class CombinatorialCheckerConfigTest {
                     @Override
                     public Checker createChecker(String needMatchCheckerName) {
                         Long id = Long.parseLong(needMatchCheckerName.replace("id为", ""));
-                        return Checkers.autoStringChecker(needMatchCheckerName, i -> i.equals(id), Number.class);
+                        return LambdaChecker.of(Number.class).build(needMatchCheckerName, i -> i.equals(id));
+
                     }
 
 

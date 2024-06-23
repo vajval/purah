@@ -2,12 +2,11 @@ package org.purah.core.matcher.multilevel;
 
 
 import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.matcher.FieldMatcherWithInstance;
 
-public interface MultilevelFieldMatcher extends FieldMatcher {
+public interface MultilevelFieldMatcher extends FieldMatcherWithInstance {
 
-    FieldMatcher childFieldMatcher(String matchedField);
+    MultilevelMatchInfo childFieldMatcher(Object instance, String matchedField, Object matchedObject);
 
-    default String levelSplitStr() {
-        return ".";
-    }
+
 }

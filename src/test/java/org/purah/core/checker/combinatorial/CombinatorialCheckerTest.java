@@ -5,10 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.Util;
-import org.purah.core.checker.AbstractBaseSupportCacheChecker;
-import org.purah.core.checker.base.InputToCheckerArg;
-import org.purah.core.checker.Checker;
-import org.purah.core.checker.base.Checkers;
+import org.purah.core.checker.*;
+import org.purah.core.checker.factory.LambdaCheckerFactory;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
@@ -34,62 +32,28 @@ class CombinatorialCheckerTest {
         purahContext.matcherManager().regBaseStrMatcher(ClassNameMatcher.class);
         purahContext.matcherManager().regBaseStrMatcher(WildCardMatcher.class);
         purahContext.matcherManager().regBaseStrMatcher(GeneralFieldMatcher.class);
-
         purahContext.checkManager().addCheckerFactory(
-                new CheckerFactory() {
-                    @Override
-                    public boolean match(String needMatchCheckerName) {
-                        return needMatchCheckerName.startsWith("id为");
-                    }
+                LambdaCheckerFactory.of(Number.class).build(i -> i.startsWith("id为"),
+                        (name, inputArg) -> {
+                            Long id = Long.parseLong(name.replace("id为", ""));
+                            return inputArg.equals(id);
+                        })
+        );
+        purahContext.checkManager().addCheckerFactory(
+                LambdaCheckerFactory.of(String.class).build(i -> i.startsWith("必须姓"),
+                        (name, inputArg) -> {
+                            String namePre = name.replace("必须姓", "");
+                            return inputArg.startsWith(namePre);
+                        })
 
-                    @Override
-                    public Checker createChecker(String needMatchCheckerName) {
-                        Long id = Long.parseLong(needMatchCheckerName.replace("id为", ""));
-                        return Checkers.autoStringChecker(needMatchCheckerName, i -> i.equals(id), Number.class);
-                    }
-
-
-                }
         );
 
 
-        purahContext.checkManager().addCheckerFactory(
-                new CheckerFactory() {
-                    @Override
-                    public boolean match(String needMatchCheckerName) {
-                        return needMatchCheckerName.startsWith("必须姓");
-                    }
-
-                    @Override
-                    public Checker createChecker(String needMatchCheckerName) {
-                        String namePre = needMatchCheckerName.replace("必须姓", "");
-                        return Checkers.autoStringChecker(needMatchCheckerName, str
-                                -> str.startsWith(namePre), String.class);
-                    }
-
-
-                }
-        );
 
         purahContext.checkManager().reg(
-                new AbstractBaseSupportCacheChecker<String, String>() {
-                    @Override
-                    public CheckResult<String> doCheck(InputToCheckerArg<String> inputToCheckerArg) {
-                        if (inputToCheckerArg.argValue().contains("sb")) {
-                            return failed(inputToCheckerArg, "有敏感词");
-                        } else {
-                            return success(inputToCheckerArg, "没有敏感词");
-                        }
-                    }
-
-                    @Override
-                    public String name() {
-                        return "敏感词检测";
-                    }
-
-
-                }
+                LambdaChecker.of(String.class).build("敏感词检测", i -> !i.contains("sb"))
         );
+
     }
 
 
@@ -148,6 +112,7 @@ class CombinatorialCheckerTest {
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
         CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(Util.trade);
         Assertions.assertFalse(CheckResult.isSuccess());
+        System.out.println(CheckResult.value());
 
         Assertions.assertEquals(CheckResult.value().size(), 2);
     }
@@ -196,10 +161,11 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(Util.trade);
-        Assertions.assertTrue(CheckResult.isSuccess());
+        CombinatorialCheckResult checkResult = (CombinatorialCheckResult) checker.check(Util.trade);
+        Assertions.assertTrue(checkResult.isSuccess());
+        System.out.println(checkResult.value());
 
-        Assertions.assertEquals(0, CheckResult.value().size());
+        Assertions.assertEquals(2, checkResult.value().size());
 
     }
 
@@ -222,9 +188,10 @@ class CombinatorialCheckerTest {
 
 
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
-        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(Util.trade);
-        Assertions.assertTrue(CheckResult.isSuccess());
-        Assertions.assertEquals(CheckResult.value().size(), 0);
+        CombinatorialCheckResult checkResult = (CombinatorialCheckResult) checker.check(Util.trade);
+
+        Assertions.assertTrue(checkResult.isSuccess());
+        Assertions.assertEquals(checkResult.value().size(), 2);
 
     }
 }

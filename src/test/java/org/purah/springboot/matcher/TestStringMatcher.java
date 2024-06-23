@@ -13,7 +13,7 @@ public class TestStringMatcher  extends BaseStringMatcher {
     }
 
     @Override
-    public boolean match(String field) {
+    public boolean match(String field, Object belongInstance) {
         return false;
     }
 }

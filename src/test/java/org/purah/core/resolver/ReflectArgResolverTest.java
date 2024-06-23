@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.TestObject;
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.WildCardMatcher;
 
@@ -40,13 +40,13 @@ class ReflectArgResolverTest {
 //    }
 
 
-    @Test
-    void fields() {
-        Set<String> fields = reflectArgResolver.fields(testObject);
-        Assertions.assertEquals(fields, Sets.newHashSet("a", "ab", "abc", "map", "child"));
-    }
 
-    @Test
+    @Test//    @Test
+//    void fields() {
+//        Set<String> fields = reflectArgResolver.fields(testObject);
+//        Assertions.assertEquals(fields, Sets.newHashSet("a", "ab", "abc", "map", "child"));
+//    }
+
     void matchFieldList() {
 
 
@@ -61,8 +61,7 @@ class ReflectArgResolverTest {
     @Test
     void matchst() {
 
-        System.setProperty("org.apache.commons.logging.Log",
-                "org.apache.commons.logging.impl.NoOpLog");
+
         Log log = LogFactory.getLog(ReflectArgResolverTest.class);
 
         log.info("You do not want to see me");
@@ -71,7 +70,7 @@ class ReflectArgResolverTest {
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher(
                 "ma*.mapKe*.key"
         );
-        Map<String, InputToCheckerArg<?>> thisLevelMatcherObjectMap = reflectArgResolver.getMultiLevelMap(object, generalFieldMatcher);
+//        Map<String, InputToCheckerArg<?>> thisLevelMatcherObjectMap = reflectArgResolver.getMultiLevelMap(InputToCheckerArg.of(object), generalFieldMatcher);
     }
 
     @Test

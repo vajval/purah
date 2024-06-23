@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.checker.AbstractBaseSupportCacheChecker;
 import org.purah.core.checker.Checker;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.checker.result.CheckResult;
 

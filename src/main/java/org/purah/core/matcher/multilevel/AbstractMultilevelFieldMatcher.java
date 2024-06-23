@@ -2,10 +2,8 @@ package org.purah.core.matcher.multilevel;
 
 
 import org.purah.core.matcher.BaseStringMatcher;
-import org.purah.core.matcher.FieldMatcher;
 
 public abstract class AbstractMultilevelFieldMatcher extends BaseStringMatcher implements MultilevelFieldMatcher {
-
 
 
     public AbstractMultilevelFieldMatcher(String matchStr) {
@@ -15,11 +13,7 @@ public abstract class AbstractMultilevelFieldMatcher extends BaseStringMatcher i
     }
 
 
-    @Override
-    public abstract boolean match(String field);
-
-
 
     @Override
-    public abstract FieldMatcher childFieldMatcher(String matchedField);
+    public abstract MultilevelMatchInfo childFieldMatcher(Object instance, String matchedField, Object matchedObject);
 }

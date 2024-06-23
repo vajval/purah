@@ -23,7 +23,7 @@ public class WildCardMatcher extends BaseStringMatcher {
 
     public WildCardMatcher(String matchStr) {
         super(matchStr);
-        if (this.matchStr.startsWith("[")) {
+        if (this.matchStr.startsWith("{")) {
             this.wildCardList = Splitter.on(",").splitToList(this.matchStr.substring(1, this.matchStr.length() - 1));
         } else {
             this.wildCardList = Collections.singletonList(this.matchStr);
@@ -33,7 +33,7 @@ public class WildCardMatcher extends BaseStringMatcher {
     }
 
     public WildCardMatcher(List<String> wildCardList) {
-        super(wildCardList.stream().collect(Collectors.joining(",", "[", "]")));
+        super(wildCardList.stream().collect(Collectors.joining(",", "{", "}")));
         this.wildCardList = wildCardList;
 
 
@@ -44,9 +44,8 @@ public class WildCardMatcher extends BaseStringMatcher {
         return super.supportCache();
     }
 
-
     @Override
-    public boolean match(String field) {
+    public boolean match(String field, Object belongInstance) {
         for (String wildCard : this.wildCardList) {
             if (FilenameUtils.wildcardMatch(field, wildCard)) {
                 return true;
@@ -54,6 +53,8 @@ public class WildCardMatcher extends BaseStringMatcher {
         }
         return false;
     }
+
+
 
 
 }

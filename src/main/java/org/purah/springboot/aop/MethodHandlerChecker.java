@@ -5,11 +5,11 @@ import com.google.common.collect.Lists;
 import org.purah.core.PurahContext;
 import org.purah.core.base.Name;
 import org.purah.core.checker.AbstractBaseSupportCacheChecker;
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.combinatorial.ExecType;
-import org.purah.core.checker.base.MultiCheckerExecutor;
+import org.purah.core.checker.MultiCheckerExecutor;
 import org.purah.core.checker.result.*;
 import org.purah.springboot.ann.CheckIt;
 import org.purah.springboot.ann.method.FillToMethodResult;
@@ -146,7 +146,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker {
         List<? extends GenericsProxyChecker> checkerList = methodArgCheckConfig.checkerNameList().stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
 
         for (Checker checker : checkerList) {
-            executor.add(InputToCheckerArg.create(checkArg, methodArgCheckConfig.argClazz()), checker);
+            executor.add(InputToCheckerArg.of(checkArg, methodArgCheckConfig.argClazz()), checker);
         }
 
         String log = "method:" + method.getName() + "|arg" + methodArgCheckConfig.argIndexInMethod();

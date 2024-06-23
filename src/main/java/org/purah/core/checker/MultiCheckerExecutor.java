@@ -1,7 +1,6 @@
-package org.purah.core.checker.base;
+package org.purah.core.checker;
 
 
-import org.purah.core.checker.Checker;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.*;
 

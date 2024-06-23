@@ -12,7 +12,7 @@ public class AllMatcher extends BaseStringMatcher implements FieldMatcher {
     }
 
     @Override
-    public boolean match(String field) {
+    public boolean match(String field, Object belongInstance) {
         return true;
     }
 }

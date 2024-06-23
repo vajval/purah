@@ -11,8 +11,7 @@ import org.springframework.boot.test.context.SpringBootTestContextBootstrapper;
 public class ExampleApplication {
 
     public static void main(String[] args) {
-        System.setProperty("org.apache.commons.logging.Log",
-                "org.apache.commons.logging.impl.NoOpLog");
+
         SpringApplication.run(ExampleApplication.class, args);
     }
 }

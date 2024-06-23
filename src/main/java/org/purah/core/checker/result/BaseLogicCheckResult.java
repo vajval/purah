@@ -1,7 +1,7 @@
 package org.purah.core.checker.result;
 
 import com.google.gson.Gson;
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -3,7 +3,7 @@ package org.purah.core.matcher.clazz;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.Util;
-import org.purah.core.checker.base.InputToCheckerArg;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.resolver.DefaultArgResolver;
 

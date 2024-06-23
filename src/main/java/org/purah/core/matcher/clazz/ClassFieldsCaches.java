@@ -1,5 +1,7 @@
 package org.purah.core.matcher.clazz;
 
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,4 +20,6 @@ public class ClassFieldsCaches {
     public List<String> getByInstanceClass(Class<?> clazz) {
         return clazzFieldMap.computeIfAbsent(clazz, c -> this.getFieldsFun.apply(c));
     }
+
+
 }

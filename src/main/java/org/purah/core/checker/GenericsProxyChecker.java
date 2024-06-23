@@ -3,7 +3,6 @@ package org.purah.core.checker;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import org.purah.core.checker.base.InputToCheckerArg;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckerException;
 import org.purah.core.exception.PurahException;
@@ -136,7 +135,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
     }
 
-    private static BiMap<Class<?>, Class<?>> wrapperClassMap = buildWrapperClassMap();
+    private static final BiMap<Class<?>, Class<?>> wrapperClassMap = buildWrapperClassMap();
 
     private static BiMap<Class<?>, Class<?>> buildWrapperClassMap() {
 
