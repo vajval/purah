@@ -18,6 +18,8 @@ public class ByLogicMethodChecker extends AbstractMethodToChecker {
         if (errorMsg != null) {
             throw new RuntimeException(errorMsg);
         }
+        purahEnableMethod = new PurahMethod(methodsToCheckersBean, method);
+
 
     }
 
@@ -27,16 +29,12 @@ public class ByLogicMethodChecker extends AbstractMethodToChecker {
 
     }
 
-    @Override
-    public PurahMethod purahEnableMethod(Object methodsToCheckersBean, Method method) {
-        return new PurahMethod(methodsToCheckersBean, method);
-    }
 
     @Override
     public CheckResult doCheck(InputToCheckerArg inputToCheckerArg) {
         Object[] args = new Object[1];
         args[0] = inputToCheckerArg;
-        return purahEnableMethod.invokeResult(args);
+        return purahEnableMethod.invokeResult(inputToCheckerArg, args);
     }
 
 

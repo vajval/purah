@@ -7,10 +7,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.base.NameUtil;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.exception.ArgResolverException;
-import org.purah.core.matcher.BaseStringMatcher;
 import org.purah.core.matcher.FieldMatcher;
-import org.purah.core.matcher.FieldMatcherWithInstance;
-import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.springframework.util.StringUtils;
 
 import java.beans.PropertyDescriptor;
@@ -19,9 +16,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 /**
@@ -35,16 +30,6 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
 
     private final ConcurrentHashMap<Class<?>, ClassConfigCache> classClassConfigCacheMap = new ConcurrentHashMap<>();
 
-
-    @Override
-    public Set<Class<?>> supportTypes() {
-        return Sets.newHashSet(Object.class);
-    }
-
-    @Override
-    public boolean support(Class<?> clazz) {
-        return true;
-    }
 
     protected static String childStr(String parentFieldStr, String thisFieldStr, String levelSplitStr) {
         if (!StringUtils.hasText(parentFieldStr)) {

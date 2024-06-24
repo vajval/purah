@@ -8,8 +8,6 @@ public abstract class AbstractMultilevelFieldMatcher extends BaseStringMatcher i
 
     public AbstractMultilevelFieldMatcher(String matchStr) {
         super(matchStr);
-
-
     }
 
 

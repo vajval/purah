@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 /**
  * 通配符 匹配器
  */
+@ListableFieldMatcher
 @Name("wild_card")
 public class WildCardMatcher extends BaseStringMatcher {
 
@@ -24,6 +25,9 @@ public class WildCardMatcher extends BaseStringMatcher {
     public WildCardMatcher(String matchStr) {
         super(matchStr);
         if (this.matchStr.startsWith("{")) {
+            if(!this.matchStr.endsWith("}")){
+                throw new RuntimeException("括号要有始有终");
+            }
             this.wildCardList = Splitter.on(",").splitToList(this.matchStr.substring(1, this.matchStr.length() - 1));
         } else {
             this.wildCardList = Collections.singletonList(this.matchStr);
@@ -53,8 +57,6 @@ public class WildCardMatcher extends BaseStringMatcher {
         }
         return false;
     }
-
-
 
 
 }

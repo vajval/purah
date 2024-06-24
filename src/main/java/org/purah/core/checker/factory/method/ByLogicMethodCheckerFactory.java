@@ -51,7 +51,6 @@ public class ByLogicMethodCheckerFactory extends AbstractByMethodCheckerFactory 
     public Checker createChecker(String needMatchCheckerName) {
 
 
-
         return new AbstractBaseSupportCacheChecker() {
             @Override
             public CheckResult doCheck(InputToCheckerArg inputToCheckerArg) {
@@ -60,7 +59,7 @@ public class ByLogicMethodCheckerFactory extends AbstractByMethodCheckerFactory 
                 args[0] = needMatchCheckerName;
                 args[1] = inputToCheckerArg;
 
-                return purahEnableMethod.invokeResult(args);
+                return purahEnableMethod.invokeResult(inputToCheckerArg, args);
 
             }
 

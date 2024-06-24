@@ -21,6 +21,7 @@ public class ByAnnMethodChecker extends AbstractMethodToChecker {
         if (errorMsg != null) {
             throw new RuntimeException(errorMsg);
         }
+        purahEnableMethod =new PurahMethod(methodsToCheckersBean, method, 1);
 
     }
 
@@ -33,15 +34,11 @@ public class ByAnnMethodChecker extends AbstractMethodToChecker {
     public CheckResult doCheck(InputToCheckerArg inputToCheckerArg) {
         Annotation annotation = inputToCheckerArg.annOnField(annClazz);
         Object[] args = new Object[]{annotation,inputToCheckerArg};
-        return purahEnableMethod.invokeResult(args);
+        return purahEnableMethod.invokeResult(inputToCheckerArg,args);
 
 
     }
 
-    @Override
-    public PurahMethod purahEnableMethod(Object methodsToCheckersBean, Method method) {
-        return new PurahMethod(methodsToCheckersBean, method, 1);
-    }
 
     public static String errorMsgCheckerByAnnMethod(Object methodsToCheckersBean, Method method) {
         if (method.getParameters().length != 2) {

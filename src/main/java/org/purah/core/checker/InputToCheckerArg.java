@@ -28,7 +28,7 @@ public class InputToCheckerArg<INPUT_ARG> {
     InputToCheckerArg<?> parent;
 
 
-    public BiFunction<String, String, String> buildChildFieldStr = (levelSplitStr, childStr) -> {
+    private BiFunction<String, String, String> buildChildFieldStr = (levelSplitStr, childStr) -> {
         String finalFieldStr = fieldStr;
         if (StringUtils.hasText(finalFieldStr)) {
             finalFieldStr = finalFieldStr + levelSplitStr + childStr;
@@ -75,9 +75,6 @@ public class InputToCheckerArg<INPUT_ARG> {
         return new InputToCheckerArg<>(INPUT_ARG, clazzInContext, "", null);
     }
 
-    public <T> InputToCheckerArg<T> createChild(T INPUT_ARG, String fieldStr, String levelSplitStr) {
-        return createChild(INPUT_ARG, buildChildFieldStr.apply(levelSplitStr, fieldStr));
-    }
 
     public <T> InputToCheckerArg<T> createChild(T INPUT_ARG, String childFieldStr) {
         return new InputToCheckerArg<>(INPUT_ARG, Object.class, childFieldStr, this);
@@ -86,10 +83,6 @@ public class InputToCheckerArg<INPUT_ARG> {
     public <T> InputToCheckerArg<T> createChildWithFieldConfig(T INPUT_ARG, String childFieldStr, Field fieldInClass, List<Annotation> annotations) {
         return new InputToCheckerArg<>(INPUT_ARG, childFieldStr, fieldInClass, annotations, this);
     }
-
-//    public <T> InputToCheckerArg<T> createChildWithFieldConfig(T INPUT_ARG, Field fieldInClass, List<Annotation> annotations, String levelSplitStr) {
-//        return createChildWithFieldConfig(INPUT_ARG, buildChildFieldStr.apply(levelSplitStr, fieldInClass.getName()), fieldInClass, annotations);
-//    }
 
 
     public InputToCheckerArg<?> parent() {
@@ -132,7 +125,10 @@ public class InputToCheckerArg<INPUT_ARG> {
             return arg.getClass();
         }
         return clazzInContext;
+    }
 
+    public boolean isNull() {
+        return arg == null;
     }
 
     @Override

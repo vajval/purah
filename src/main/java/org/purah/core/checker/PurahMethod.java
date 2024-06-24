@@ -17,7 +17,7 @@ public class PurahMethod {
 
 
     protected boolean methodParamBeWrapped;
-    protected Class<?> inputArgValueClazz;
+    protected Class<?> inputArgValueClazz = Object.class;
     protected int needCheckArgIndex;
 
 
@@ -35,12 +35,12 @@ public class PurahMethod {
 
         this.methodParamBeWrapped = false;
         this.needCheckArgIndex = needCheckArgIndex;
-
-
-        this.inputArgValueClazz = method.getParameterTypes()[needCheckArgIndex];
-        if (this.inputArgValueClazz.equals(InputToCheckerArg.class)) {
-            this.inputArgValueClazz = inputArgWrapperValueClazz(method, needCheckArgIndex);
-            this.methodParamBeWrapped = true;
+        if (needCheckArgIndex != -1) {
+            this.inputArgValueClazz = method.getParameterTypes()[needCheckArgIndex];
+            if (this.inputArgValueClazz.equals(InputToCheckerArg.class)) {
+                this.inputArgValueClazz = inputArgWrapperValueClazz(method, needCheckArgIndex);
+                this.methodParamBeWrapped = true;
+            }
         }
 
 
@@ -76,21 +76,14 @@ public class PurahMethod {
         return (Class) genericReturnType.getActualTypeArguments()[0];
     }
 
-    public Object inputToMethodArgValue(InputToCheckerArg inputToCheckerArg) {
-        if (methodParamBeWrapped) {
-            return inputToCheckerArg;
+
+    public CheckResult invokeResult(InputToCheckerArg inputToCheckerArg, Object[] invokeArgs) {
+        Object result;
+        if (this.needCheckArgIndex != -1 && !methodParamBeWrapped) {
+            invokeArgs[this.needCheckArgIndex] = ((InputToCheckerArg) invokeArgs[this.needCheckArgIndex]).argValue();
+
         }
-        return inputToCheckerArg.argValue();
-    }
-
-    public CheckResult invokeResult(Object[] args) {
-
-        Object[] inputMethodArgs = Arrays.copyOf(args, args.length);
-        InputToCheckerArg inputToCheckerArg = (InputToCheckerArg) args[this.needCheckArgIndex];
-
-        inputMethodArgs[this.needCheckArgIndex] = inputToMethodArgValue(inputToCheckerArg);
-
-        Object result = invoke(inputMethodArgs);
+        result = invoke(invokeArgs);
 
 
         if (methodResultBeWrapped) {

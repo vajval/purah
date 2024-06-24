@@ -23,6 +23,13 @@ public abstract class AbstractMatchArgResolver implements ArgResolver {
      */
     @Override
     public Map<String, InputToCheckerArg<?>> getMatchFieldObjectMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
+        if (fieldMatcher == null) {
+            throw new RuntimeException("不要传空的fieldMatcher");
+        }
+        if (inputToCheckerArg.isNull()) {
+
+            return new HashMap<>();
+        }
         Map<String, InputToCheckerArg<?>> result = new HashMap<>();
         putMatchFieldObjectMapToResult(inputToCheckerArg, fieldMatcher, result);
         return result;
@@ -35,9 +42,7 @@ public abstract class AbstractMatchArgResolver implements ArgResolver {
         if (inputArg == null) {
             return;
         }
-        if (!support(inputArg.getClass())) {
-            throw new ArgResolverException("不支持的输入参数 argResolver:" + NameUtil.logClazzName(this) + "输入参数" + inputArg.getClass());
-        }
+
         if (fieldMatcher instanceof MultilevelFieldMatcher) {
             MultilevelFieldMatcher multilevelFieldMatcher = (MultilevelFieldMatcher) fieldMatcher;
             this.putMultiLevelMapToResult(inputToCheckerArg, multilevelFieldMatcher, result);

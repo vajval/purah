@@ -25,13 +25,10 @@ public abstract class AbstractMethodToChecker extends AbstractBaseSupportCacheCh
         if (errorMsg != null) {
             throw new RuntimeException(errorMsg);
         }
-
-        purahEnableMethod = purahEnableMethod(methodsToCheckersBean, method);
         this.name = name;
         this.method = method;
     }
 
-    protected abstract PurahMethod purahEnableMethod(Object methodsToCheckersBean, Method method);
 
 
     public static String errorMsgAbstractMethodToChecker(Object methodsToCheckersBean, Method method) {

@@ -16,21 +16,4 @@ public interface ArgResolver {
         return getMatchFieldObjectMap(InputToCheckerArg.of(inputArg), fieldMatcher);
     }
 
-    Set<Class<?>> supportTypes();
-
-
-    default boolean support(Class<?> clazz) {
-        if (supportTypes().contains(clazz)) {
-            return true;
-        }
-        for (Class<?> supportType : supportTypes()) {
-            //  Map                        HashMap
-            if (supportType.isAssignableFrom(clazz)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
 }

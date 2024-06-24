@@ -3,6 +3,7 @@ package org.purah.core.checker.method.converter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.purah.core.checker.Checker;
+import org.purah.core.checker.method.AutoMethodCheckerByDefaultReflectArgResolver;
 import org.purah.core.checker.method.ByAnnMethodChecker;
 import org.purah.core.checker.method.ByLogicMethodChecker;
 import org.purah.core.checker.method.AbstractMethodToChecker;
@@ -34,6 +35,13 @@ public class DefaultMethodToCheckerConverter implements MethodToCheckerConverter
         if (errorMsg == null) {
             logger.info("{}  {}", method, ByAnnMethodChecker.class);
             return new ByAnnMethodChecker(methodsToCheckersBean, method, name);
+        }
+        errorMsg = AutoMethodCheckerByDefaultReflectArgResolver.errorMsgAutoMethodCheckerByDefaultReflectArgResolver
+                (methodsToCheckersBean, method);
+        if (errorMsg == null) {
+            logger.info("{}  {}", method, AutoMethodCheckerByDefaultReflectArgResolver.class);
+            return new AutoMethodCheckerByDefaultReflectArgResolver(methodsToCheckersBean, method, name);
+
         }
         logger.warn("{},没有适配的转换器", method.toGenericString());
 

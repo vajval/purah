@@ -17,10 +17,6 @@ public class DefaultArgResolver implements ArgResolver {
         return mainArgResolver.getMatchFieldObjectMap(inputArg, fieldMatcher);
     }
 
-    @Override
-    public boolean support(Class<?> clazz) {
-        return mainArgResolver.support(clazz);
-    }
 
     @Override
     public Map<String, InputToCheckerArg<?>> getMatchFieldObjectMap(Object o, FieldMatcher fieldMatcher) {
@@ -28,8 +24,4 @@ public class DefaultArgResolver implements ArgResolver {
     }
 
 
-    @Override
-    public Set<Class<?>> supportTypes() {
-        return Sets.newHashSet(Object.class);
-    }
 }
