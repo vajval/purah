@@ -3,7 +3,7 @@ package org.purah.core.checker.result;
 public interface CheckResult<T> {
 
 
-    T value();
+    T data();
 
     default boolean isSuccess() {
         return execInfo() == ExecInfo.success;

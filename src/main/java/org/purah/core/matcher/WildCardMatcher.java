@@ -24,11 +24,9 @@ public class WildCardMatcher extends BaseStringMatcher {
 
     public WildCardMatcher(String matchStr) {
         super(matchStr);
-        if (this.matchStr.startsWith("{")) {
-            if(!this.matchStr.endsWith("}")){
-                throw new RuntimeException("括号要有始有终");
-            }
-            this.wildCardList = Splitter.on(",").splitToList(this.matchStr.substring(1, this.matchStr.length() - 1));
+        if (this.matchStr.contains("|")) {
+
+            this.wildCardList = Splitter.on("|").splitToList(this.matchStr);
         } else {
             this.wildCardList = Collections.singletonList(this.matchStr);
         }

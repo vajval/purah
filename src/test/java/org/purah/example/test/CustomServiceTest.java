@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import org.purah.core.PurahContext;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.ResultLevel;
@@ -61,7 +61,7 @@ class CustomServiceTest {
         goodCustomUser = new CustomUser(3L, "vajva", "15509931234", 15);
 
 
-        CombinatorialCheckerConfigBuilder properties = new CombinatorialCheckerConfigBuilder("所有字段自定义注解检测");
+        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("所有字段自定义注解检测");
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("*", "自定义注解检测");
         properties.addByStrMap("general", map);
@@ -93,7 +93,7 @@ class CustomServiceTest {
 
         assertTrue(badCheckResult.isFailed());
 
-        assertEquals(1, ((List) badCheckResult.value()).size());
+        assertEquals(1, ((List) badCheckResult.data()).size());
 
 
     }

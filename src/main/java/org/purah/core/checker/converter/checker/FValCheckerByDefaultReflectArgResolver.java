@@ -1,7 +1,7 @@
-package org.purah.core.checker.method;
+package org.purah.core.checker.converter.checker;
 
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.checker.PurahMethod;
+import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.resolver.ArgResolver;
@@ -9,12 +9,14 @@ import org.purah.core.resolver.ReflectArgResolver;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class AutoMethodCheckerByDefaultReflectArgResolver extends AbstractMethodToChecker {
+public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodToChecker {
     Map<Integer, FieldParameter> fieldParameterMap = new ConcurrentHashMap<>();
 
     public static final ArgResolver resolver = new ReflectArgResolver();
@@ -35,7 +37,7 @@ public class AutoMethodCheckerByDefaultReflectArgResolver extends AbstractMethod
 
     protected String matchStr;
 
-    public AutoMethodCheckerByDefaultReflectArgResolver(Object methodsToCheckersBean, Method method, String name) {
+    public FValCheckerByDefaultReflectArgResolver(Object methodsToCheckersBean, Method method, String name) {
         super(methodsToCheckersBean, method, name);
         String errorMsg = errorMsgAutoMethodCheckerByDefaultReflectArgResolver(methodsToCheckersBean, method);
 
@@ -44,19 +46,24 @@ public class AutoMethodCheckerByDefaultReflectArgResolver extends AbstractMethod
         }
 
         int rootIndex = -1;
+        Set<String> matchStirs = new HashSet<>();
         Parameter[] parameters = method.getParameters();
         for (int index = 0; index < parameters.length; index++) {
             Parameter parameter = parameters[index];
-            FVal FVal = parameter.getDeclaredAnnotation(FVal.class);
-            if (FVal != null) {
-                if (FVal.value().toLowerCase(Locale.ROOT).equals(FVal.root)) {
+            FVal fVal = parameter.getDeclaredAnnotation(FVal.class);
+            if (fVal != null) {
+                if (fVal.value().toLowerCase(Locale.ROOT).equals(FVal.root)) {
                     rootIndex = index;
+                } else {
+                    matchStirs.add(fVal.value());
                 }
-                fieldParameterMap.put(index, new FieldParameter(index, FVal, parameter.getType()));
+
+                fieldParameterMap.put(index, new FieldParameter(index, fVal, parameter.getType()));
             }
         }
-        matchStr = fieldParameterMap.values().stream().map(i -> i.FVal.value()).collect(Collectors.joining(",", "{", "}"));
-        purahEnableMethod = new PurahMethod(methodsToCheckersBean, method, rootIndex);
+        matchStr = matchStirs.stream().collect(Collectors.joining("|"));
+
+        purahEnableMethod = new PurahWrapMethod(methodsToCheckersBean, method, rootIndex);
 
 
     }
@@ -79,6 +86,9 @@ public class AutoMethodCheckerByDefaultReflectArgResolver extends AbstractMethod
 
         int length = method.getParameters().length;
         Object[] objects = new Object[length];
+        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher(matchStr);
+        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
+        System.out.println(matchFieldObjectMap.keySet());
         for (int i = 0; i < method.getParameters().length; i++) {
             FieldParameter fieldParameter = fieldParameterMap.get(i);
             if (fieldParameter == null) {
@@ -89,9 +99,13 @@ public class AutoMethodCheckerByDefaultReflectArgResolver extends AbstractMethod
                     objects[i] = inputToCheckerArg;
                     continue;
                 }
-                InputToCheckerArg<?> childArg = resolver.getMatchFieldObjectMap(inputToCheckerArg, new GeneralFieldMatcher(value)).get(value);
+                InputToCheckerArg<?> childArg = matchFieldObjectMap.get(fieldParameter.FVal.value());
                 if (childArg == null || childArg.isNull()) {
                     objects[i] = null;
+                    continue;
+                }
+                if (fieldParameter.clazz.isAnnotation()) {
+                    objects[i] = childArg.annOnField((Class) fieldParameter.clazz);
                     continue;
                 }
                 if (!fieldParameter.clazz.isAssignableFrom(childArg.argClass())) {
@@ -104,4 +118,6 @@ public class AutoMethodCheckerByDefaultReflectArgResolver extends AbstractMethod
         return purahEnableMethod.invokeResult(inputToCheckerArg, objects);
 
     }
+
+
 }

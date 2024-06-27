@@ -5,8 +5,8 @@ package org.purah.core.base;
 import java.lang.annotation.*;
 
 /**
- * 一些接口是必须要有名字,
- * 将这个注解放到类上面即可
+ * The class implementing IName needs to implement the name interface.
+ * This annotation allows for quick and easy setting of a fixed value.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE,ElementType.METHOD})

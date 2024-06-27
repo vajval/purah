@@ -1,7 +1,7 @@
 package org.purah.springboot.config;
 
 import com.google.common.base.Splitter;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.ResultLevel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,20 +18,19 @@ import java.util.stream.Collectors;
 @ConfigurationProperties(value = "purah")
 public class PurahConfigProperties {
 
-    List<CombinatorialCheckerProperties> combinatorialCheckers = Collections.emptyList();
+    List<ChildComboProperties> comboChecker = Collections.emptyList();
 
-
-    public List<CombinatorialCheckerProperties> getCombinatorialCheckers() {
-        return combinatorialCheckers;
+    public List<ChildComboProperties> getComboChecker() {
+        return comboChecker;
     }
 
-    public void setCombinatorialCheckers(List<CombinatorialCheckerProperties> combinatorialCheckers) {
-        this.combinatorialCheckers = combinatorialCheckers;
+    public void setComboChecker(List<ChildComboProperties> comboChecker) {
+        this.comboChecker = comboChecker;
     }
 
-    public List<CombinatorialCheckerConfigBuilder> toCombinatorialCheckerConfigPropertiesList() {
+    public List<CombinatorialCheckerConfigProperties> toCombinatorialCheckerConfigPropertiesList() {
 
-        return combinatorialCheckers.stream().map(CombinatorialCheckerProperties::toCombinatorialCheckerConfigProperties).collect(Collectors.toList());
+        return comboChecker.stream().map(ChildComboProperties::toCombinatorialCheckerConfigProperties).collect(Collectors.toList());
 
 
     }
@@ -42,7 +41,7 @@ public class PurahConfigProperties {
         return Splitter.on(",").splitToList(str);
     }
 
-    static class CombinatorialCheckerProperties {
+    static class ChildComboProperties {
 
         protected String name;
 
@@ -55,19 +54,15 @@ public class PurahConfigProperties {
         protected LinkedHashMap<String, LinkedHashMap<String, String>> mapping = new LinkedHashMap<>(0);
 
 
-        public CombinatorialCheckerConfigBuilder toCombinatorialCheckerConfigProperties() {
-            CombinatorialCheckerConfigBuilder result = new CombinatorialCheckerConfigBuilder(name);
+        public CombinatorialCheckerConfigProperties toCombinatorialCheckerConfigProperties() {
+            CombinatorialCheckerConfigProperties result = new CombinatorialCheckerConfigProperties(name);
             result.setLogicFrom("PurahConfigProperties.CombinatorialCheckerProperties{" + this + "}");
-
             result.setUseCheckerNames(split(useCheckers));
             for (Map.Entry<String, LinkedHashMap<String, String>> entry : mapping.entrySet()) {
-
                 LinkedHashMap<String, List<String>> valueMap = new LinkedHashMap<>();
                 for (Map.Entry<String, String> listEntry : entry.getValue().entrySet()) {
                     valueMap.put(listEntry.getKey(), Splitter.on(",").splitToList(listEntry.getValue()));
                 }
-
-
                 result.add(entry.getKey(), valueMap);
             }
             result.setResultLevel(ResultLevel.valueOf(resultLevel));
@@ -134,7 +129,7 @@ public class PurahConfigProperties {
     @Override
     public String toString() {
         return "PurahConfigProperties{" +
-                "combinatorialCheckers=" + combinatorialCheckers +
+                "combinatorialCheckers=" + comboChecker +
                 '}';
     }
 }

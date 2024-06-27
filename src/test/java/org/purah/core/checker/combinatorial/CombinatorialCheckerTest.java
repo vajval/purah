@@ -7,9 +7,7 @@ import org.purah.core.PurahContext;
 import org.purah.core.Util;
 import org.purah.core.checker.*;
 import org.purah.core.checker.factory.LambdaCheckerFactory;
-import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
-import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
 import org.purah.core.matcher.clazz.ClassNameMatcher;
@@ -72,7 +70,7 @@ class CombinatorialCheckerTest {
     public void test() {
 
 
-        CombinatorialCheckerConfigBuilder properties = new CombinatorialCheckerConfigBuilder("交易检测");
+        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("交易检测");
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("initia*.i*", "id为1");
         map.put("*ator.nam?", "必须姓张");
@@ -89,14 +87,14 @@ class CombinatorialCheckerTest {
         CombinatorialCheckResult combinatorialCheckResult = (CombinatorialCheckResult) checker.check(Util.trade);
 
         Assertions.assertFalse(combinatorialCheckResult.isSuccess());
-        Assertions.assertEquals(1, combinatorialCheckResult.value().size());
+        Assertions.assertEquals(1, combinatorialCheckResult.data().size());
     }
 
     @Test
     public void tes2() {
 
 
-        CombinatorialCheckerConfigBuilder properties = new CombinatorialCheckerConfigBuilder("交易检测");
+        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("交易检测");
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("initia*.i*", "id为1");
         map.put("*ator.nam?", "必须姓李");
@@ -112,16 +110,16 @@ class CombinatorialCheckerTest {
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
         CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(Util.trade);
         Assertions.assertFalse(CheckResult.isSuccess());
-        System.out.println(CheckResult.value());
+        System.out.println(CheckResult.data());
 
-        Assertions.assertEquals(CheckResult.value().size(), 2);
+        Assertions.assertEquals(CheckResult.data().size(), 2);
     }
 
     @Test
     public void tes3() {
 
 
-        CombinatorialCheckerConfigBuilder properties = new CombinatorialCheckerConfigBuilder("交易检测");
+        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("交易检测");
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("initia*.i*", "id为1");
         map.put("*ator.nam?", "必须姓李");
@@ -139,7 +137,7 @@ class CombinatorialCheckerTest {
 
         CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(Util.trade);
         Assertions.assertTrue(CheckResult.isSuccess());
-        Assertions.assertEquals(CheckResult.value().size(), 1);
+        Assertions.assertEquals(CheckResult.data().size(), 1);
 
     }
 
@@ -147,7 +145,7 @@ class CombinatorialCheckerTest {
     public void tes4() {
 
 
-        CombinatorialCheckerConfigBuilder properties = new CombinatorialCheckerConfigBuilder("交易检测");
+        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("交易检测");
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("initia*.i*", "id为1");
         map.put("*ator.nam?", "必须姓李");
@@ -163,9 +161,9 @@ class CombinatorialCheckerTest {
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
         CombinatorialCheckResult checkResult = (CombinatorialCheckResult) checker.check(Util.trade);
         Assertions.assertTrue(checkResult.isSuccess());
-        System.out.println(checkResult.value());
+        System.out.println(checkResult.data());
 
-        Assertions.assertEquals(2, checkResult.value().size());
+        Assertions.assertEquals(2, checkResult.data().size());
 
     }
 
@@ -174,7 +172,7 @@ class CombinatorialCheckerTest {
     public void tes5() {
 
 
-        CombinatorialCheckerConfigBuilder properties = new CombinatorialCheckerConfigBuilder("交易检测");
+        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("交易检测");
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("initia*.i*", "id为1");
         map.put("*ator.nam?", "必须姓李");
@@ -191,7 +189,7 @@ class CombinatorialCheckerTest {
         CombinatorialCheckResult checkResult = (CombinatorialCheckResult) checker.check(Util.trade);
 
         Assertions.assertTrue(checkResult.isSuccess());
-        Assertions.assertEquals(checkResult.value().size(), 2);
+        Assertions.assertEquals(checkResult.data().size(), 2);
 
     }
 }

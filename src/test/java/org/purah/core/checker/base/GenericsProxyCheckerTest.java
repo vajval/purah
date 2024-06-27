@@ -27,7 +27,7 @@ public class GenericsProxyCheckerTest {
         GenericsProxyChecker genericsProxyChecker = GenericsProxyChecker.createByChecker(tradeChecker);
 
         CheckResult<Object> result = genericsProxyChecker.check(trade);
-        Assertions.assertEquals(result.value(), trade);
+        Assertions.assertEquals(result.data(), trade);
         Assertions.assertTrue(result.isSuccess());
 
 
@@ -37,7 +37,7 @@ public class GenericsProxyCheckerTest {
         genericsProxyChecker.addNewChecker(userChecker);
         result = genericsProxyChecker.check(initiator);
 
-        Assertions.assertEquals(result.value(), initiator);
+        Assertions.assertEquals(result.data(), initiator);
         Assertions.assertTrue(result.isSuccess());
         Assertions.assertFalse(genericsProxyChecker.check(recipients).isSuccess());
 

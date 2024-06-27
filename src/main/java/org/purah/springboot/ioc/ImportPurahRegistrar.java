@@ -4,19 +4,17 @@ package org.purah.springboot.ioc;
 import org.purah.core.PurahContext;
 import org.purah.core.matcher.BaseStringMatcher;
 import org.purah.core.matcher.factory.BaseMatcherFactory;
-import org.purah.springboot.ann.EnableBeanOnPurahContext;
+import org.purah.springboot.ann.IgnoreBeanOnPurahContext;
 import org.purah.springboot.ann.EnablePurah;
-import org.purah.springboot.ann.PurahInterface;
+import org.purah.springboot.ann.convert.ToBaseMatcherFactory;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.*;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
@@ -66,6 +64,8 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
 
 
         List<Class<BaseStringMatcher>> classes = scanStringMatcherClass(beanDefinitions, BaseStringMatcher.class);
+        System.out.println("purahContextBeanDefinition");
+        System.out.println(classes);
         definitionBuilder.addPropertyValue("baseStringMatcherClass", classes);
 
         definitionBuilder.addPropertyValue("enablePurah", enablePurah);
@@ -84,7 +84,8 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     private LinkedHashSet<BeanDefinition> enableOnPurahContextCandidateComponent(AnnotationMetadata metadata) {
         ClassPathScanningCandidateComponentProvider scanner = this.getScanner();
         scanner.setResourceLoader(resourceLoader);
-        scanner.addIncludeFilter(new AnnotationTypeFilter(EnableBeanOnPurahContext.class));
+        scanner.addIncludeFilter(new AnnotationTypeFilter(ToBaseMatcherFactory.class));
+        scanner.addExcludeFilter(new AnnotationTypeFilter(IgnoreBeanOnPurahContext.class));
         String packageName = ClassUtils.getPackageName(metadata.getClassName());
         return new LinkedHashSet<>(scanner.findCandidateComponents(packageName));
     }

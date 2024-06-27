@@ -1,24 +1,37 @@
-package org.purah.core.checker.method;
+package org.purah.core.checker.converter.checker;
 
 import org.purah.core.base.NameUtil;
-import org.purah.core.checker.PurahMethod;
+import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.result.CheckResult;
+import org.purah.core.exception.InitCheckerException;
 
 import java.lang.reflect.Method;
+/*
+ * Convert a method like this
+ * See unit test
+ *
+ *   @Name("test")
+ *   public static boolean test(Intager ) {
+ *        if (testAnn == null) {
+ *             return false;
+ *        }
+ *        return StringUtils.hasText(testAnn.value());
+ *   }
+ *
+ *
+ */
 
-
-public class ByLogicMethodChecker extends AbstractMethodToChecker {
+public class ByLogicMethodChecker extends AbstractWrapMethodToChecker {
 
 
     public ByLogicMethodChecker(Object methodsToCheckersBean, Method method, String name) {
         super(methodsToCheckersBean, method, name);
         String errorMsg = errorMsgCheckerByLogicMethod(methodsToCheckersBean, method);
-
         if (errorMsg != null) {
-            throw new RuntimeException(errorMsg);
+            throw new InitCheckerException(errorMsg);
         }
-        purahEnableMethod = new PurahMethod(methodsToCheckersBean, method);
+        purahEnableMethod = new PurahWrapMethod(methodsToCheckersBean, method);
 
 
     }
@@ -26,7 +39,6 @@ public class ByLogicMethodChecker extends AbstractMethodToChecker {
 
     public ByLogicMethodChecker(Object methodsToCheckersBean, Method method) {
         this(methodsToCheckersBean, method, NameUtil.nameByAnnOnMethod(method));
-
     }
 
 
@@ -40,7 +52,7 @@ public class ByLogicMethodChecker extends AbstractMethodToChecker {
 
     public static String errorMsgCheckerByLogicMethod(Object methodsToCheckersBean, Method method) {
         if (method.getParameters().length != 1) {
-            return "入参只能有一個將被填充為需要檢查的對象";
+            return "Only one parameter ["+method.toGenericString()+"]";
         }
         return null;
 

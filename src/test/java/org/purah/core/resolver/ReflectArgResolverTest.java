@@ -61,12 +61,6 @@ class ReflectArgResolverTest {
     @Test
     void matchst() {
 
-
-        Log log = LogFactory.getLog(ReflectArgResolverTest.class);
-
-        log.info("You do not want to see me");
-        TestObject object = TestObject.create();
-
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher(
                 "ma*.mapKe*.key"
         );

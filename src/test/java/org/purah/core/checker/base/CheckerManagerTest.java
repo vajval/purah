@@ -4,15 +4,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.checker.CheckerManager;
-import org.purah.core.checker.factory.method.converter.DefaultMethodToCheckerFactoryConverter;
-import org.purah.core.checker.factory.method.converter.MethodToCheckerFactoryConverter;
+import org.purah.core.checker.converter.DefaultMethodConverter;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckerException;
 import org.purah.core.exception.CheckerRegException;
+import org.purah.core.exception.InitCheckerException;
 
 public class CheckerManagerTest {
     CheckerManager checkerManager;
-    MethodToCheckerFactoryConverter methodToCheckerFactoryConverter = new DefaultMethodToCheckerFactoryConverter();
+    DefaultMethodConverter defaultMethodConverter = new DefaultMethodConverter();
 
     public static boolean id(String name, long id) {
         long parseId = Long.parseLong(name.replace("id", ""));
@@ -22,7 +22,6 @@ public class CheckerManagerTest {
 
     public static boolean id(String name, Integer id) {
         long parseId = Long.parseLong(name.replace("id", ""));
-
         return parseId == id.longValue();
     }
 
@@ -37,13 +36,13 @@ public class CheckerManagerTest {
         checkerManager.reg(GenericsProxyCheckerTest.userChecker);
         checkerManager.reg(GenericsProxyCheckerTest.tradeChecker);
 
-        Assertions.assertThrows(CheckerRegException.class, () -> checkerManager.get("id2"));
-        checkerManager.addCheckerFactory(methodToCheckerFactoryConverter.toCheckerFactory(null, CheckerManagerTest.class.getMethod("id", String.class, Integer.class), "id*", true));
+        Assertions.assertThrows(InitCheckerException.class, () -> checkerManager.get("id2"));
+        checkerManager.addCheckerFactory(defaultMethodConverter.toCheckerFactory(null, CheckerManagerTest.class.getMethod("id", String.class, Integer.class), "id*", true));
 
         Assertions.assertThrows(CheckerException.class, () -> checkerManager.get("id2").check(2L));
         Assertions.assertDoesNotThrow(() -> checkerManager.get("id2").check(2));
 
-        checkerManager.addCheckerFactory(methodToCheckerFactoryConverter.toCheckerFactory(null, CheckerManagerTest.class.getMethod("id", String.class, long.class), "id*", true));
+        checkerManager.addCheckerFactory(defaultMethodConverter.toCheckerFactory(null, CheckerManagerTest.class.getMethod("id", String.class, long.class), "id*", true));
 
         CheckResult<Object> result = checkerManager.get("id2").check(2L);
         Assertions.assertTrue(result.isSuccess());

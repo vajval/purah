@@ -5,10 +5,8 @@ import org.purah.core.checker.AbstractBaseSupportCacheChecker;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.springboot.ann.EnableBeanOnPurahContext;
 import org.springframework.stereotype.Component;
 
-@EnableBeanOnPurahContext
 @Name("IocTestChecker")
 @Component
 public class IocTestChecker extends AbstractBaseSupportCacheChecker<String, Object> {

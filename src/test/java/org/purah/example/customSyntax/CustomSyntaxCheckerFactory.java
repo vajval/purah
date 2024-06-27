@@ -3,11 +3,10 @@ package org.purah.example.customSyntax;
 import com.google.common.base.Splitter;
 
 import org.purah.core.PurahContext;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.checker.factory.AbstractCustomSyntaxCheckerFactory;
-import org.purah.springboot.ann.EnableBeanOnPurahContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -16,7 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@EnableBeanOnPurahContext
+
 @Component
 public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFactory {
 
@@ -54,14 +53,14 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
      */
 
     @Override
-    public CombinatorialCheckerConfigBuilder combinatorialCheckerConfigProperties(String needMatchCheckerName) {
+    public CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties(String needMatchCheckerName) {
 
-        CombinatorialCheckerConfigBuilder combinatorialCheckerConfigBuilder = expToProperties(needMatchCheckerName);
-        combinatorialCheckerConfigBuilder.setLogicFrom("[" + needMatchCheckerName + "]" + "[" + this.getClass().getName() + "]");
-        return combinatorialCheckerConfigBuilder;
+        CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties = expToProperties(needMatchCheckerName);
+        combinatorialCheckerConfigProperties.setLogicFrom("[" + needMatchCheckerName + "]" + "[" + this.getClass().getName() + "]");
+        return combinatorialCheckerConfigProperties;
     }
 
-    public static CombinatorialCheckerConfigBuilder expToProperties(String needMatchCheckerName) {
+    public static CombinatorialCheckerConfigProperties expToProperties(String needMatchCheckerName) {
 
 
         // example: 0[x,y][a:b,c;e:d,e]
@@ -72,7 +71,7 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
         // 0[x,y][a:b,c;e:d,e]
 
 
-        CombinatorialCheckerConfigBuilder properties = new CombinatorialCheckerConfigBuilder(needMatchCheckerName);
+        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties(needMatchCheckerName);
 
         properties.setMainExecType(mainExecType);
         properties.setResultLevel(ResultLevel.failedAndIgnoreNotBaseLogic);

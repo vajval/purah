@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.exception.CheckerRegException;
+import org.purah.core.exception.InitCheckerException;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class CheckerManager {
 
             }
             if (checkers.size() == 0) {
-                throw new CheckerRegException("未经注册也无法匹配的规则:" + name);
+                throw new InitCheckerException("checker no reg and cannot be matched :[  " + name+"  ]");
             }
             GenericsProxyChecker genericsProxyChecker = GenericsProxyChecker.createAndSupportUpdateByCheckerFactory(name, size, this::updateGenericsCheckerContext);
 

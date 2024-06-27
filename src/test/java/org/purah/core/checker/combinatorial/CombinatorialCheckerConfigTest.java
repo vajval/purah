@@ -63,7 +63,7 @@ class CombinatorialCheckerConfigTest {
     void user_id_check() {
 
 
-        CombinatorialCheckerConfigBuilder properties = new CombinatorialCheckerConfigBuilder("用户id检测");
+        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("用户id检测");
         LinkedHashMap<@Nullable String, @Nullable String> map = Maps.newLinkedHashMap();
         map.put("i*", "id为1");
         properties.addByStrMap("wild_card", map);
@@ -90,7 +90,7 @@ class CombinatorialCheckerConfigTest {
     @Test
     void initiator_id_check() {
 
-        CombinatorialCheckerConfigBuilder properties = new CombinatorialCheckerConfigBuilder("test_properties");
+        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("test_properties");
         LinkedHashMap<@Nullable String, @Nullable String> multiLevelMap = Maps.newLinkedHashMap();
         multiLevelMap.put("i*.i*", "id为1");
         properties.addByStrMap("general", multiLevelMap);

@@ -3,7 +3,7 @@ package org.purah.core.checker.factory;
 
 import org.purah.core.PurahContext;
 import org.purah.core.checker.Checker;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigBuilder;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 
 public abstract class AbstractCustomSyntaxCheckerFactory implements CheckerFactory {
 
@@ -14,12 +14,12 @@ public abstract class AbstractCustomSyntaxCheckerFactory implements CheckerFacto
     public abstract boolean match(String needMatchCheckerName);
 
 
-    public abstract CombinatorialCheckerConfigBuilder combinatorialCheckerConfigProperties(String needMatchCheckerName);
+    public abstract CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties(String needMatchCheckerName);
 
     @Override
     public Checker createChecker(String needMatchCheckerName) {
         PurahContext purahContext = purahContext();
-        CombinatorialCheckerConfigBuilder properties = combinatorialCheckerConfigProperties(needMatchCheckerName);
+        CombinatorialCheckerConfigProperties properties = combinatorialCheckerConfigProperties(needMatchCheckerName);
         String logicFrom = properties.getLogicFrom();
         if (logicFrom == null) {
             properties.setLogicFrom(this.getClass().getName());

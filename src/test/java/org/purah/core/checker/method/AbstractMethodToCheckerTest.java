@@ -7,6 +7,8 @@ import org.purah.core.base.Name;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.CheckerManager;
 import org.purah.core.checker.GenericsProxyChecker;
+import org.purah.core.checker.converter.checker.AbstractWrapMethodToChecker;
+import org.purah.core.checker.converter.checker.ByLogicMethodChecker;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 
 import java.lang.reflect.Method;
@@ -45,7 +47,7 @@ class AbstractMethodToCheckerTest {
 
         TestCheckers testCheckers = new TestCheckers();
         Method testMethod = TestCheckers.class.getMethod("checkById", Long.class);
-        AbstractMethodToChecker abstractMethodToChecker = new ByLogicMethodChecker(testCheckers, testMethod);
+        AbstractWrapMethodToChecker abstractMethodToChecker = new ByLogicMethodChecker(testCheckers, testMethod);
         Assertions.assertTrue(abstractMethodToChecker.check(1L).isSuccess());
 
         testMethod = TestCheckers.class.getMethod("checkById", InputToCheckerArg.class);
@@ -64,7 +66,7 @@ class AbstractMethodToCheckerTest {
         CheckerManager checkerManager = new CheckerManager();
         TestCheckers testCheckers = new TestCheckers();
 
-        AbstractMethodToChecker abstractMethodToChecker = new ByLogicMethodChecker(testCheckers, TestCheckers.class.getMethod("checkById", Long.class));
+        AbstractWrapMethodToChecker abstractMethodToChecker = new ByLogicMethodChecker(testCheckers, TestCheckers.class.getMethod("checkById", Long.class));
         checkerManager.reg(abstractMethodToChecker);
 
         abstractMethodToChecker = new ByLogicMethodChecker(testCheckers, TestCheckers.class.getMethod("checkById", InputToCheckerArg.class));

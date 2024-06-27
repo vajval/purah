@@ -1,10 +1,10 @@
-package org.purah.core.checker.factory.method;
+package org.purah.core.checker.converter.factory;
 
 
 import org.purah.core.checker.AbstractBaseSupportCacheChecker;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.Checker;
-import org.purah.core.checker.PurahMethod;
+import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.checker.result.CheckResult;
 
@@ -14,7 +14,7 @@ import java.lang.reflect.Parameter;
 public class ByLogicMethodCheckerFactory extends AbstractByMethodCheckerFactory implements CheckerFactory {
 
 
-    PurahMethod purahEnableMethod;
+    PurahWrapMethod purahEnableMethod;
 
 
     public ByLogicMethodCheckerFactory(Object bean, Method method, String matchStr, boolean cacheBeCreatedChecker) {
@@ -23,7 +23,7 @@ public class ByLogicMethodCheckerFactory extends AbstractByMethodCheckerFactory 
         if (errorMsg != null) {
             throw new RuntimeException(errorMsg);
         }
-        purahEnableMethod = new PurahMethod(bean, method, 1);
+        purahEnableMethod = new PurahWrapMethod(bean, method, 1);
 
     }
 

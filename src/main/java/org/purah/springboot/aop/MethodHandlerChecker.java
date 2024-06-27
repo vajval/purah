@@ -124,7 +124,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker {
 
         return new MethodCheckResult(
                 multiCheckResult.mainCheckResult(),
-                multiCheckResult.value(), methodsToCheckersBean, method
+                multiCheckResult.data(), methodsToCheckersBean, method
         );
 
 
@@ -156,7 +156,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker {
 
 
         return ArgCheckResult.create(multiCheckResult.mainCheckResult(), methodArgCheckConfig.checkerNameList(),
-                multiCheckResult.value(),
+                multiCheckResult.data(),
                 checkIt, checkArg, methodExecType);
 
 

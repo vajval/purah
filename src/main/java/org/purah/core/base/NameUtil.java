@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * 获取注册或者打印日志时显示的名字
+ * Retrieve a class's name information or use it to populate logging parameters
  */
 public class NameUtil {
 
@@ -18,11 +18,8 @@ public class NameUtil {
     private static final Map<Method, String> methodCacheMap = new ConcurrentHashMap<>();
 
     /**
-     * 通常是打印日志时显示一个对象名字用的
-     * 优先级 Name接口 > Name注解 > 对象类名字
+     * Priority: IName > @Name > className
      */
-
-
     public static String logClazzName(Object object) {
         if (object == null) return NULL_OBJECT_SHOW_NAME;
         if (object instanceof IName) {

@@ -1,4 +1,4 @@
-package org.purah.core.checker.method;
+package org.purah.core.checker.converter.checker;
 
 import java.lang.annotation.*;
 

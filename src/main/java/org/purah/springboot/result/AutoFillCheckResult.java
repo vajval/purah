@@ -43,11 +43,11 @@ public class AutoFillCheckResult implements CheckResult<MethodCheckResult> {
 
 
     public MethodCheckResult methodCheckResult() {
-        return value();
+        return data();
     }
 
     @Override
-    public MethodCheckResult value() {
+    public MethodCheckResult data() {
         return methodCheckResult;
     }
 

@@ -1,7 +1,7 @@
 package org.purah.springboot.ann.convert;
 
 
-import org.purah.core.checker.method.converter.MethodToCheckerConverter;
+import org.purah.core.checker.converter.MethodConverter;
 
 import java.lang.annotation.*;
 
@@ -12,5 +12,4 @@ import java.lang.annotation.*;
 public @interface ToChecker {
 
 
-    Class<? extends MethodToCheckerConverter> value() default MethodToCheckerConverter.class;
 }

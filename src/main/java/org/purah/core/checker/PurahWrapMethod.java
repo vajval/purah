@@ -5,11 +5,10 @@ import org.purah.core.checker.result.CheckResult;
 import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.*;
-import java.util.Arrays;
 import java.util.Objects;
 
 
-public class PurahMethod {
+public class PurahWrapMethod {
 
     protected Method method;
 
@@ -25,11 +24,11 @@ public class PurahMethod {
     protected Class<?> resultDataClazz = boolean.class;
 
 
-    public PurahMethod(Object bean, Method method) {
+    public PurahWrapMethod(Object bean, Method method) {
         this(bean, method, 0);
     }
 
-    public PurahMethod(Object bean, Method method, int needCheckArgIndex) {
+    public PurahWrapMethod(Object bean, Method method, int needCheckArgIndex) {
         this.method = method;
         this.bean = bean;
 

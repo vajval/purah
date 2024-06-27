@@ -8,6 +8,10 @@ import org.purah.core.matcher.FieldMatcher;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * config for combo checkers
+ */
 public class CombinatorialCheckerConfig {
 
     PurahContext purahContext;
@@ -18,7 +22,7 @@ public class CombinatorialCheckerConfig {
 
     public String logicFrom;
 
-    public ResultLevel resultLevel ;
+    public ResultLevel resultLevel=ResultLevel.failedAndIgnoreNotBaseLogic;
 
     public List<String> extendCheckerNames = new ArrayList<>();
 
@@ -67,5 +71,18 @@ public class CombinatorialCheckerConfig {
 
     public void setResultLevel(ResultLevel resultLevel) {
         this.resultLevel = resultLevel;
+    }
+
+    @Override
+    public String toString() {
+        return "CombinatorialCheckerConfig{" +
+                "purahContext=" + purahContext +
+                ", mainExecType=" + mainExecType +
+                ", name='" + name + '\'' +
+                ", logicFrom='" + logicFrom + '\'' +
+                ", resultLevel=" + resultLevel +
+                ", extendCheckerNames=" + extendCheckerNames +
+                ", fieldMatcherCheckerConfigList=" + fieldMatcherCheckerConfigList +
+                '}';
     }
 }

@@ -1,4 +1,4 @@
-package org.purah.core.checker.factory.method;
+package org.purah.core.checker.converter.factory;
 
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.combinatorial.CombinatorialChecker;

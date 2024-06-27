@@ -3,7 +3,7 @@ package org.purah.core.checker.method.converter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.base.Name;
-import org.purah.core.checker.method.ByLogicMethodChecker;
+import org.purah.core.checker.converter.checker.ByLogicMethodChecker;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.result.CheckResult;
 import org.springframework.util.StringUtils;

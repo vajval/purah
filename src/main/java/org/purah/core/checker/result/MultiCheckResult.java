@@ -50,7 +50,7 @@ public class MultiCheckResult<T extends CheckResult> implements CheckResult<List
 
 
     @Override
-    public List<T> value() {
+    public List<T> data() {
         return valueList;
     }
 

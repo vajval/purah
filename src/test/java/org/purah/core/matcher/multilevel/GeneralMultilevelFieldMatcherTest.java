@@ -1,45 +1,38 @@
 package org.purah.core.matcher.multilevel;
 
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.purah.core.People;
+import org.purah.util.People;
 import org.purah.core.Util;
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.resolver.DefaultArgResolver;
 
 
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 
 public class GeneralMultilevelFieldMatcherTest {
 
     @Test
+    void math() {
+
+        DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
+        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("child#0.name");
+
+
+    }
+
+    @Test
     void match1() {
+
+        DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
+        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("{name,child#0.name,child#0.child#*.name}");
+        System.out.println(generalFieldMatcher.childFieldMatcher(People.of("长者"),"name",People.of("长者").getName()));
+
 //
-//        DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
-//        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("{child#0,child#0.child#1}.name");
-//        System.out.println(generalFieldMatcher);
-//        System.out.println("-------------");
-//        generalFieldMatcher = (GeneralFieldMatcher) generalFieldMatcher.childFieldMatcher("child", null);
-//        System.out.println(111111);
-//        System.out.println(generalFieldMatcher);
-//
-//        generalFieldMatcher = (GeneralFieldMatcher) generalFieldMatcher.childFieldMatcher("#0", null);
-//        System.out.println(222222);
-//        System.out.println(generalFieldMatcher);
-//        System.out.println(generalFieldMatcher.match("name"));
-////        FieldMatcher child = generalFieldMatcher.childFieldMatcher("child");
-////
-////        System.out.println(()child.match("#0"));
-//        Map<String, InputToCheckerArg<People>> objectMap = (Map) defaultArgResolver.getMatchFieldObjectMap(People.of("长者"), generalFieldMatcher);
-//        System.out.println(objectMap.keySet());
-//        System.out.println(objectMap.get("child").fieldStr());
-//        System.out.println(objectMap.get("child").argValue());
+//        System.out.println(()child.match("#0"));
+        Map<String, InputToCheckerArg<People>> objectMap = (Map) defaultArgResolver.getMatchFieldObjectMap(People.of("长者"), generalFieldMatcher);
+        System.out.println(objectMap.keySet());
 
 
     }
@@ -59,10 +52,10 @@ public class GeneralMultilevelFieldMatcherTest {
 
         Map<String, InputToCheckerArg<?>> objectMap = defaultArgResolver.getMatchFieldObjectMap(People.of("长者"), generalFieldMatcher);
         System.out.println(objectMap);
+
         Assertions.assertTrue(objectMap.get("child#0.child#0.name").argEquals("孙子"));
         Assertions.assertTrue(objectMap.get("child#1.child#0.name").argEquals("外孙子"));
         Assertions.assertTrue(objectMap.get("child#0.child#1.name").argEquals("孙女"));
-
         Assertions.assertTrue(objectMap.get("child#1.child#1.name").argEquals("外孙女"));
 
     }

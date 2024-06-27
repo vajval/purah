@@ -63,6 +63,15 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
 
     }
 
+    public static <T> BaseLogicCheckResult<T> success(T data) {
+        return new BaseLogicCheckResult<>(ExecInfo.success, data, null);
+    }
+
+    public static <T> BaseLogicCheckResult<T> failed(T data) {
+        return new BaseLogicCheckResult<>(ExecInfo.failed, data, null);
+
+    }
+
     public static <T> BaseLogicCheckResult<T > success() {
         return new BaseLogicCheckResult<>(ExecInfo.success, null, null);
     }
@@ -116,7 +125,7 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
 
     }
     @Override
-    public T value() {
+    public T data() {
         return data;
     }
 

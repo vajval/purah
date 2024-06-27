@@ -4,6 +4,9 @@ import org.purah.core.checker.InputToCheckerArg;
 
 import java.util.Objects;
 
+/**
+ * cache key
+ */
 public class InputToCheckerArgCacheKey {
     InputToCheckerArg inputToCheckerArg;
     String checkerName;
@@ -16,11 +19,10 @@ public class InputToCheckerArgCacheKey {
 
     @Override
     public String toString() {
-
-
-
-
-        return "["+ inputToCheckerArg.fieldStr()+"]["+ inputToCheckerArg.argValue()+"]["+checkerName+"]";
+        if (inputToCheckerArg == null) {
+            return "[#NULL#][" + checkerName + "]";
+        }
+        return "[" + inputToCheckerArg.fieldStr() + "][" + inputToCheckerArg.argValue() + "][" + checkerName + "]";
 
 
     }

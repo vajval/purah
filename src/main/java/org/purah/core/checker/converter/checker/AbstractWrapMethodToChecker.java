@@ -1,55 +1,55 @@
-package org.purah.core.checker.method;
+package org.purah.core.checker.converter.checker;
 
 
 import org.purah.core.checker.AbstractBaseSupportCacheChecker;
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.checker.PurahMethod;
+import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.result.CheckResult;
 
 import java.lang.reflect.Method;
 
 /**
- * 直接将函数生成规则
- * 如果返回结果是
+ * wrap the method into a checker.
  */
-public abstract class AbstractMethodToChecker extends AbstractBaseSupportCacheChecker {
+public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCacheChecker {
 
 
-    protected PurahMethod purahEnableMethod;
+    protected PurahWrapMethod purahEnableMethod;
 
     protected String name;
-    protected Method method;
-    public AbstractMethodToChecker(Object methodsToCheckersBean, Method method, String name) {
-        String errorMsg = errorMsgAbstractMethodToChecker(methodsToCheckersBean, method);
 
+    protected Method method;
+
+    public AbstractWrapMethodToChecker(Object methodsToCheckersBean, Method method, String name) {
+        String errorMsg = errorMsgAbstractMethodToChecker(methodsToCheckersBean, method);
         if (errorMsg != null) {
             throw new RuntimeException(errorMsg);
         }
         this.name = name;
         this.method = method;
+        //  purahEnableMethod build by subclasses
     }
-
 
 
     public static String errorMsgAbstractMethodToChecker(Object methodsToCheckersBean, Method method) {
         if (method == null) {
-            return "不支持null method";
+            return "Hmph, the method must not be null!";
         }
 
 
         if (!java.lang.reflect.Modifier.isPublic(method.getModifiers())) {
-            return "非public 不生效" + method.toGenericString();
+            return "if the method isn't public, it just won't work, okay? [" + method.toGenericString() + "]";
         }
 
         boolean isStatic = java.lang.reflect.Modifier.isStatic(method.getModifiers());
 
         if (!isStatic && methodsToCheckersBean == null) {
-            return "非静态函数 bean 不能为null" + method.toGenericString();
+            return "When the method is non-static, the parameter `bean` must not be null. [" + method.toGenericString() + "]";
         }
 
         Class<?> returnType = method.getReturnType();
         if (!(CheckResult.class.isAssignableFrom(returnType)) && !(boolean.class.isAssignableFrom(returnType))) {
-            return "返回值必须是 CheckResult  或者 boolean " + method;
+            return "Only supports return types of CheckResult or boolean. [" + method + "]";
 
         }
         return null;

@@ -1,17 +1,19 @@
 package org.purah.core.checker.combinatorial;
 
 
+import org.purah.core.exception.UnexpectedException;
+
 public class ExecType {
     public enum Main {
 
 
-        // 要求必须要全部成功，才算成功,发现有错误就不继续了，后面的被填充为ignore
+        // Require all checkers to pass for success; if a  failed is found, stop further checks, Fill with "ignore" for fields that are not checked.
         all_success(0),
-        // 要求必须要全部成功，才算成功，但是必须检查完,发现有错误也要继续
+        // Require all checkers to pass for success and continue checking even if failed are found.
         all_success_but_must_check_all(1),
-        //只要一个成功就够了
+        // Only one success is sufficient.
         at_least_one(2),
-        //只要一个成功就够了，但是必须检查完
+        // Only one success is sufficient, but all checks must be completed.
         at_least_one_but_must_check_all(3);
         final int value;
 
@@ -35,14 +37,20 @@ public class ExecType {
             } else if (value == 3) {
                 return at_least_one_but_must_check_all;
             } else {
-                throw new RuntimeException();
+                throw new UnexpectedException("Error value for : ExecType.Main " + value);
             }
         }
     }
 
+
+    /**
+     * Fine, here are two ways to check things:
+     * Go through each arg and apply every single check, then move on to the next arg.
+     * Apply one check to all the args, then move on to the next check.
+     */
     public enum Matcher {
-        checker_instance(1),
-        instance_checker(2);
+        checker_arg(1),
+        arg_checker(2);
         final int value;
 
 

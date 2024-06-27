@@ -5,7 +5,7 @@ import org.purah.core.base.Name;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.combinatorial.ExecType;
-import org.purah.core.checker.method.ByAnnMethodChecker;
+import org.purah.core.checker.converter.checker.ByAnnMethodChecker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.AbstractCustomAnnChecker;
@@ -14,7 +14,6 @@ import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmptyTest;
 import org.purah.example.customAnn.ann.NotNull;
 import org.purah.example.customAnn.ann.Range;
-import org.purah.springboot.ann.EnableBeanOnPurahContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -22,7 +21,6 @@ import java.lang.reflect.Method;
 
 
 @Name("自定义注解检测")
-@EnableBeanOnPurahContext
 @Component
 public class CustomAnnChecker extends AbstractCustomAnnChecker {
 

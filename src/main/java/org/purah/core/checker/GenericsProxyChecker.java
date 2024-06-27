@@ -5,6 +5,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckerException;
+import org.purah.core.exception.InitCheckerException;
 import org.purah.core.exception.PurahException;
 
 import java.util.Map;
@@ -61,8 +62,11 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
      */
 
     public GenericsProxyChecker addNewChecker(Checker<?, ?> checker) {
+        if (checker == null) {
+            throw new InitCheckerException("checker cannot be null");
+        }
         if (checker instanceof GenericsProxyChecker) {
-            throw new RuntimeException("不支持嵌套");
+            throw new InitCheckerException("GenericsProxyChecker no nested support ");
         }
         InputArgClass checkerSupportInputArgClass = InputArgClass.byChecker(checker);
         if (defaultChecker == null) {
@@ -87,10 +91,12 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
     @Override
     public CheckResult check(InputToCheckerArg<Object> inputToCheckerArg) {
 
-        InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputToCheckerArg);
         Checker<?, ?> checker = getChecker(inputToCheckerArg);
 
         if (checker == null) {
+
+            InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputToCheckerArg);
+
             throw new CheckerException(this, "checker " + this.name + "没有对该类的解析方法" + inputCheckInstanceArgClass.clazz);
         }
         try {
@@ -103,7 +109,14 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
     protected Checker<?, ?> getChecker(InputToCheckerArg<Object> inputToCheckerArg) {
 
+        if (inputToCheckerArg == null) {
+            return defaultChecker;
+        }
+        if (inputToCheckerArg.argValue() == null && inputToCheckerArg.argClass().equals(Object.class)) {
+            return defaultChecker;
+        }
         InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputToCheckerArg);
+
 
         int oldCount = this.checkerFactoryCount;
         Checker<?, ?> result = getCheckerBySupportClass(inputCheckInstanceArgClass);

@@ -3,9 +3,9 @@ package org.purah.core.matcher.multilevel;
 import org.junit.jupiter.api.Test;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.resolver.ReflectArgResolver;
+import org.purah.util.TestAnn;
 import org.springframework.util.StringUtils;
 
-import java.lang.annotation.*;
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -19,8 +19,8 @@ class AnnByPackageMatcherTest {
         AnnByPackageMatcher annByPackageMatcher = new AnnByPackageMatcher("org*") {
             @Override
             protected boolean fieldCheck(Field field) {
-                PackageAnn packageAnn = field.getDeclaredAnnotation(PackageAnn.class);
-                return packageAnn != null && StringUtils.hasText(packageAnn.value());
+                TestAnn testAnn = field.getDeclaredAnnotation(TestAnn.class);
+                return testAnn != null && StringUtils.hasText(testAnn.value());
             }
         };
 
@@ -36,15 +36,9 @@ class AnnByPackageMatcherTest {
 
     }
 
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD})
-    @Documented
-    public @interface PackageAnn {
-        String value() default "";
-    }
 
     public static class AnnTest {
-        @PackageAnn("name")
+        @TestAnn("name")
         String name;
         Integer value;
 
@@ -90,11 +84,10 @@ class AnnByPackageMatcherTest {
     }
 
     public static class ChildAnnTest {
-        @PackageAnn("name")
+        @TestAnn("name")
         String name;
 
         Integer value;
-//        @PackageAnn("child")
         ChildAnnTest child;
 
         public ChildAnnTest(String name, Integer value) {

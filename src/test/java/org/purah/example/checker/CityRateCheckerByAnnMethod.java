@@ -1,11 +1,9 @@
 package org.purah.example.checker;
 
 import org.purah.core.base.Name;
-import org.purah.springboot.ann.EnableBeanOnPurahContext;
 import org.purah.springboot.ann.PurahMethodsRegBean;
 
 @PurahMethodsRegBean
-@EnableBeanOnPurahContext
 public class CityRateCheckerByAnnMethod {
 
 

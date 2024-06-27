@@ -50,13 +50,13 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
             return;
         }
         try {
-            boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableOnThisThreadContext();
+            boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableCacheContext();
             if (!enableOnThisContext) {
                 return;
             }
 
             InputToCheckerArgCacheKey inputToCheckerArgCacheKey = new InputToCheckerArgCacheKey(inputToCheckerArg, this.name());
-            PurahCheckInstanceCacheContext.put(inputToCheckerArgCacheKey, checkResult);
+            PurahCheckInstanceCacheContext.putIntoCache(inputToCheckerArgCacheKey, checkResult);
         } catch (Exception e) {
             logger.error(e);
         }
@@ -67,16 +67,34 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
             return null;
         }
         try {
-            boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableOnThisThreadContext();
+            boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableCacheContext();
             if (enableOnThisContext) {
                 InputToCheckerArgCacheKey inputToCheckerArgCacheKey = new InputToCheckerArgCacheKey(inputToCheckerArg, this.name());
-                return PurahCheckInstanceCacheContext.get(inputToCheckerArgCacheKey);
+                return PurahCheckInstanceCacheContext.getResultFromCache(inputToCheckerArgCacheKey);
             }
             return null;
         } catch (Exception e) {
             logger.error(e);
             return null;
         }
+    }
+
+    Class<?> inputArgClass;
+    Class<?> resultDataClass;
+
+    @Override
+    public Class<?> inputArgClass() {
+        if (inputArgClass != null) return inputArgClass;
+        inputArgClass = Checker.super.inputArgClass();
+
+        return inputArgClass;
+    }
+
+    @Override
+    public Class<?> resultDataClass() {
+        if (resultDataClass != null) return resultDataClass;
+        resultDataClass = Checker.super.resultDataClass();
+        return resultDataClass;
     }
 
     public void setLogicFrom(CheckResult checkResult) {
@@ -87,19 +105,18 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
     public abstract CheckResult<RESULT> doCheck(InputToCheckerArg<INPUT_ARG> inputToCheckerArg);
 
 
-
-    public  BaseLogicCheckResult<RESULT> success(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
+    public BaseLogicCheckResult<RESULT> success(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
         return BaseLogicCheckResult.successBuildLog(inputToCheckerArg, result);
     }
 
-    public  BaseLogicCheckResult<RESULT> failed(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
+    public BaseLogicCheckResult<RESULT> failed(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
 
         return BaseLogicCheckResult.failedBuildLog(inputToCheckerArg, result);
     }
 
-    public  BaseLogicCheckResult<RESULT> error(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, Exception e) {
+    public BaseLogicCheckResult<RESULT> error(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, Exception e) {
 
-        return BaseLogicCheckResult.errorBuildLog(inputToCheckerArg,e);
+        return BaseLogicCheckResult.errorBuildLog(inputToCheckerArg, e);
 
     }
 

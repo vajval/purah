@@ -6,7 +6,6 @@ import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.example.customAnn.ann.NotEmptyTest;
-import org.purah.springboot.ann.EnableBeanOnPurahContext;
 import org.purah.springboot.ann.PurahMethodsRegBean;
 import org.purah.springboot.ann.convert.ToChecker;
 import org.purah.springboot.ann.convert.ToCheckerFactory;
@@ -15,7 +14,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @PurahMethodsRegBean//将这个对象的函数转化为核对器
-@EnableBeanOnPurahContext//使之生效
 public class IocTest {
 
 

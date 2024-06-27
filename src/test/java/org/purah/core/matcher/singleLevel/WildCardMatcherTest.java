@@ -28,7 +28,7 @@ public class WildCardMatcherTest {
 
     @Test
     public void matc() {
-        FieldMatcher fieldMatcher = new WildCardMatcher("{a?,abc?}");
+        FieldMatcher fieldMatcher = new WildCardMatcher("a?|abc?");
         Set<String> matchFields = fieldMatcher.matchFields(testFields);
         Assertions.assertEquals(matchFields, Sets.newHashSet("ab", "abcd"));
     }

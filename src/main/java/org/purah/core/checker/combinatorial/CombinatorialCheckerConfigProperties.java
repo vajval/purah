@@ -11,7 +11,11 @@ import org.purah.core.matcher.FieldMatcher;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class CombinatorialCheckerConfigBuilder {
+
+/**
+ * config builder
+ */
+public class CombinatorialCheckerConfigProperties {
     private String checkerName;
     private ResultLevel resultLevel = ResultLevel.failedAndIgnoreNotBaseLogic;
     private String logicFrom;
@@ -76,7 +80,7 @@ public class CombinatorialCheckerConfigBuilder {
         this.resultLevel = resultLevel;
     }
 
-    public CombinatorialCheckerConfigBuilder(String checkerName) {
+    public CombinatorialCheckerConfigProperties(String checkerName) {
         this.checkerName = checkerName;
     }
 
@@ -88,7 +92,7 @@ public class CombinatorialCheckerConfigBuilder {
         this.useCheckerNames = useCheckerNames;
     }
 
-    public CombinatorialCheckerConfigBuilder add(String matchFactoryType, LinkedHashMap<String, List<String>> fieldCheckerMapping) {
+    public CombinatorialCheckerConfigProperties add(String matchFactoryType, LinkedHashMap<String, List<String>> fieldCheckerMapping) {
         LinkedHashMap<String, List<String>> valueMap = new LinkedHashMap<>();
 
         for (Map.Entry<String, List<String>> entry : fieldCheckerMapping.entrySet()) {
@@ -104,7 +108,7 @@ public class CombinatorialCheckerConfigBuilder {
 
     }
 
-    public CombinatorialCheckerConfigBuilder addByStrMap(String matchFactoryType, LinkedHashMap<String, String> fieldCheckerStrMapping) {
+    public CombinatorialCheckerConfigProperties addByStrMap(String matchFactoryType, LinkedHashMap<String, String> fieldCheckerStrMapping) {
         LinkedHashMap<String, List<String>> valueMap = new LinkedHashMap<>();
 
         for (Map.Entry<String, String> entry : fieldCheckerStrMapping.entrySet()) {
