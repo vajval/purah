@@ -6,25 +6,26 @@ import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.base.Name;
 import org.purah.core.checker.ComboBuilderChecker;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
+import org.purah.core.resolver.ReflectArgResolver;
 import org.purah.util.People;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ByLogicMethodCheckerTest {
     @Name("nameNotEmpty")
     public static boolean nameNotEmpty(String name) {
-        System.out.println(name);
+
         return StringUtils.hasText(name);
     }
 
 
     @Name("nameNotEmpty")
     public static boolean nameNotEmpty(People people) {
-        System.out.println(people);
         return StringUtils.hasText(people.getName());
     }
 
@@ -47,23 +48,26 @@ public class ByLogicMethodCheckerTest {
     @Test
     void doCheck() {
         ComboBuilderChecker checker = purahContext.combo("nameNotEmpty");
-        Assertions.assertTrue(checker.check("123").isSuccess());
-        Assertions.assertFalse(checker.check("").isSuccess());
 
-        Assertions.assertFalse(checker.check(new People()).isSuccess());
-        Assertions.assertTrue(checker.check(People.of("长者")).isSuccess());
+        Assertions.assertTrue(checker.check("123"));
+        Assertions.assertTrue(checker.check(People.elder));
+
+        Assertions.assertFalse(checker.check(""));
+        Assertions.assertFalse(checker.check(new People()));
 
 
         checker = purahContext.combo().match(new GeneralFieldMatcher("child#0.name"), "nameNotEmpty");
-        Assertions.assertTrue(checker.check(People.of("长者")).isSuccess());
-        System.out.println(People.of("孙子"));
-        Assertions.assertFalse(checker.check(People.of("孙子")).isSuccess());
 
-        Assertions.assertTrue(checker.check(new People()).isSuccess());
-        Assertions.assertFalse(checker.check(People.of("长者")).isSuccess());
+        Assertions.assertTrue(checker.check(People.elder));
+
+
+        Assertions.assertFalse(checker.check(new People()));// no name
+        Assertions.assertTrue(checker.check(People.elder));//String
+        Assertions.assertFalse(checker.check(People.grandson));// no child
+
+
+
     }
 
-    @Test
-    void errorMsgCheckerByLogicMethod() {
-    }
+
 }

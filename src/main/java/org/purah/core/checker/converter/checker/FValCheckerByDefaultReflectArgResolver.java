@@ -3,7 +3,9 @@ package org.purah.core.checker.converter.checker;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
+import org.purah.core.exception.InitCheckerException;
+import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.matcher.multilevel.NormalMultiLevelMatcher;
 import org.purah.core.resolver.ArgResolver;
 import org.purah.core.resolver.ReflectArgResolver;
 
@@ -14,12 +16,29 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+/*
+ * Convert a method like this
+ * See unit test
+ *
+ * public static boolean childNameCheck(@FVal("#root#") InputToCheckerArg<People> peopleArg,
+                                         @FVal("name") String name,
+                                         @FVal("name") TestAnn testAnnOnNameField,
+                                         @FVal("name") Name noExistAnn,
+                                         @FVal("child") List<People> childList,
+                                         @FVal("child#0") People child0,
+                                         @FVal("child#100") People child100,
+                                         @FVal("child#0.child") List<People> child0ChildList,
+                                         @FVal("child#0.child#0.name") String childChildName,
+                                         @FVal("child#0.child#0.child") List<People> superChildList) {
+* }
+ */
 
 public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodToChecker {
-    Map<Integer, FieldParameter> fieldParameterMap = new ConcurrentHashMap<>();
+    protected Map<Integer, FieldParameter> fieldParameterMap = new ConcurrentHashMap<>();
 
-    public static final ArgResolver resolver = new ReflectArgResolver();
+    FieldMatcher fieldMatcher;
+
+    private static final ArgResolver resolver = new ReflectArgResolver();
 
     static class FieldParameter {
         int index;
@@ -35,14 +54,12 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
     }
 
 
-    protected String matchStr;
-
     public FValCheckerByDefaultReflectArgResolver(Object methodsToCheckersBean, Method method, String name) {
         super(methodsToCheckersBean, method, name);
         String errorMsg = errorMsgAutoMethodCheckerByDefaultReflectArgResolver(methodsToCheckersBean, method);
 
         if (errorMsg != null) {
-            throw new RuntimeException(errorMsg);
+            throw new InitCheckerException(errorMsg);
         }
 
         int rootIndex = -1;
@@ -57,12 +74,11 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
                 } else {
                     matchStirs.add(fVal.value());
                 }
-
                 fieldParameterMap.put(index, new FieldParameter(index, fVal, parameter.getType()));
             }
         }
-        matchStr = matchStirs.stream().collect(Collectors.joining("|"));
-
+        String matchStr = String.join("|", matchStirs);
+        fieldMatcher = new NormalMultiLevelMatcher(matchStr);
         purahEnableMethod = new PurahWrapMethod(methodsToCheckersBean, method, rootIndex);
 
 
@@ -70,12 +86,9 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
 
     public static String errorMsgAutoMethodCheckerByDefaultReflectArgResolver(Object methodsToCheckersBean, Method method) {
 
-
         if (method.getParameters().length < 1) {
-            return "入参至少有1個参数" + method;
+            return "Come on, you need at least one parameter, okay? [" + method+"]";
         }
-
-
         return null;
     }
 
@@ -86,9 +99,7 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
 
         int length = method.getParameters().length;
         Object[] objects = new Object[length];
-        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher(matchStr);
-        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
-        System.out.println(matchFieldObjectMap.keySet());
+        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.getMatchFieldObjectMap(inputToCheckerArg, fieldMatcher);
         for (int i = 0; i < method.getParameters().length; i++) {
             FieldParameter fieldParameter = fieldParameterMap.get(i);
             if (fieldParameter == null) {
@@ -112,9 +123,10 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
                     throw new RuntimeException("无法支持" + "获取到的参数class为" + childArg.argClass() + "函数" + method.toGenericString() + "index:" + i + "    只支持" + fieldParameter.clazz);
                 }
                 objects[i] = childArg.argValue();
-
             }
         }
+
+
         return purahEnableMethod.invokeResult(inputToCheckerArg, objects);
 
     }

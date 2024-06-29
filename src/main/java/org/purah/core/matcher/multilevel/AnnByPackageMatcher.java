@@ -2,6 +2,7 @@ package org.purah.core.matcher.multilevel;
 
 import com.google.common.collect.Maps;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.WildCardMatcher;
 
 import java.beans.PropertyDescriptor;
@@ -10,7 +11,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-public abstract class AnnByPackageMatcher extends AbstractMultilevelFieldMatcher {
+public abstract class AnnByPackageMatcher implements MultilevelFieldMatcher {
 
     protected static final Map<Class<?>, Map<String, Supplier<MultilevelMatchInfo>>> clazzCacheMap = new ConcurrentHashMap<>();
     protected String allowPackagePatch;
@@ -18,7 +19,6 @@ public abstract class AnnByPackageMatcher extends AbstractMultilevelFieldMatcher
     protected WildCardMatcher wildCardMatcher;
 
     public AnnByPackageMatcher(String matchStr) {
-        super(matchStr);
         this.allowPackagePatch = matchStr;
         wildCardMatcher = new WildCardMatcher(matchStr);
     }
@@ -41,29 +41,29 @@ public abstract class AnnByPackageMatcher extends AbstractMultilevelFieldMatcher
     }
 
     @Override
-    public MultilevelMatchInfo childFieldMatcher(Object instance, String matchedField, Object matchedObject) {
-        Class<?> clazz = instance.getClass();
+    public MultilevelMatchInfo childFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
+        Class<?> clazz = inputArg.argClass();
         Map<String, Supplier<MultilevelMatchInfo>> cacheMap = clazzCacheMap.computeIfAbsent(clazz, i -> new ConcurrentHashMap<>());
-        return cacheMap.computeIfAbsent(matchedField, i -> supplier(instance, matchedField, matchedObject)).get();
-
+        return cacheMap.computeIfAbsent(matchedField, i -> supplier(inputArg, matchedField, childArg)).get();
 
     }
 
-    protected Supplier<MultilevelMatchInfo> supplier(Object instance, String matchedField, Object matchedObject) {
-        Field field = field(matchedField, instance.getClass());
+
+    protected Supplier<MultilevelMatchInfo> supplier(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
+        Field field = field(matchedField, inputArg.argClass());
         if (field == null) {
             return MultilevelMatchInfo::ignore;
         }
         boolean match = wildCardMatcher.match(field.getType().getPackage().getName());
         if (match) {
             if (fieldCheck(field)) {
-                return () -> MultilevelMatchInfo.addToFinalAndChildMatcher(this);
+                return () -> MultilevelMatchInfo.addToFinalAndChildMatcher(this, childArg);
             } else {
                 return () -> MultilevelMatchInfo.justChild(this);
             }
         } else {
             if (fieldCheck(field)) {
-                return MultilevelMatchInfo::addToFinal;
+                return () -> MultilevelMatchInfo.addToFinal(childArg);
             } else {
                 return MultilevelMatchInfo::ignore;
             }

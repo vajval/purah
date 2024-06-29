@@ -52,11 +52,9 @@ public class ByLogicMethodChecker extends AbstractWrapMethodToChecker {
 
     public static String errorMsgCheckerByLogicMethod(Object methodsToCheckersBean, Method method) {
         if (method.getParameters().length != 1) {
-            return "Only one parameter ["+method.toGenericString()+"]";
+            return "Only one parameter be check["+method.toGenericString()+"]";
         }
         return null;
-
-
     }
 
 

@@ -112,7 +112,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
         if (inputToCheckerArg == null) {
             return defaultChecker;
         }
-        if (inputToCheckerArg.argValue() == null && inputToCheckerArg.argClass().equals(Object.class)) {
+        if (inputToCheckerArg.argValue() == null && (inputToCheckerArg.argClass() == null || inputToCheckerArg.argClass().equals(Object.class))) {
             return defaultChecker;
         }
         InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputToCheckerArg);

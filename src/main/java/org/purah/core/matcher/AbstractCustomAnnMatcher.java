@@ -1,6 +1,7 @@
 package org.purah.core.matcher;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.clazz.AbstractClassCacheFieldMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.multilevel.MultilevelFieldMatcher;
@@ -57,7 +58,9 @@ public abstract class AbstractCustomAnnMatcher extends AbstractClassCacheFieldMa
     }
 
     @Override
-    public MultilevelMatchInfo childFieldMatcher(Object instance, String matchedField, Object matchedObject) {
-        return generalFieldMatcher.childFieldMatcher(instance,matchedField, matchedObject);
+    public MultilevelMatchInfo childFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
+        return generalFieldMatcher.childFieldMatcher(inputArg,matchedField, childArg);
     }
+
+
 }

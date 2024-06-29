@@ -82,6 +82,7 @@ public class PurahWrapMethod {
             invokeArgs[this.needCheckArgIndex] = ((InputToCheckerArg) invokeArgs[this.needCheckArgIndex]).argValue();
 
         }
+
         result = invoke(invokeArgs);
 
 

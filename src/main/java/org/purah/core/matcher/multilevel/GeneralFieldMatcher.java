@@ -1,102 +1,118 @@
 package org.purah.core.matcher.multilevel;
 
 
-import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
 import org.purah.core.base.Name;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.WildCardMatcher;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Name("general")
 public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher {
 
-    FieldMatcher firstLevelFieldMatcher;
-    String firstLevelStr;
-    String childStr;
 
-    List<GeneralFieldMatcher> wrapList = null;
-
+    boolean isOption;
+    boolean childIsWildCard;
+    boolean childIsMultiLevel;
 
     public GeneralFieldMatcher(String matchStr) {
         super(matchStr);
-        if (this.matchStr.contains("|")) {
-            wrapList = Splitter.on("|").splitToList(matchStr).stream().map(GeneralFieldMatcher::new).collect(Collectors.toList());
-            return;
+        isOption = !isWildCardMatcher(childStr) && !isWildCardMatcher(firstLevelStr);
+        if (childStr == null) {
+            childIsWildCard = false;
+            childIsMultiLevel = false;
+        } else {
+            childIsWildCard = isWildCardMatcher(childStr);
+            childIsMultiLevel = childStr.contains(".");
         }
 
-        int index = matchStr.indexOf(".");
-        firstLevelStr = matchStr;
-        childStr = "";
-        if (index != -1) {
-            firstLevelStr = matchStr.substring(0, index);
-            childStr = matchStr.substring(index + 1);
+    }
+
+    public static boolean isWildCardMatcher(String s) {
+        if (!StringUtils.hasText(s)) {
+            return false;
         }
-        index = firstLevelStr.indexOf("#");
-        if (index != -1 && index != 0) {
-            childStr = firstLevelStr.substring(index) + "." + childStr;
-            firstLevelStr = matchStr.substring(0, index);
-        }
-        if (!StringUtils.hasText(childStr)) {
-            childStr = null;
-        }
-        firstLevelFieldMatcher = new WildCardMatcher(firstLevelStr);
+        return s.contains("*") || s.contains("+") || s.contains("[") || s.contains("{") || s.contains("?") || s.contains("^") || s.contains("!");
     }
 
     @Override
-    public boolean match(String field, Object belongInstance) {
-        if (firstLevelFieldMatcher != null) {
-            return firstLevelFieldMatcher.match(field);
-        }
-        for (GeneralFieldMatcher generalFieldMatcher : wrapList) {
-            if (generalFieldMatcher.match(field)) {
-                return true;
-            }
-        }
-        return false;
+    protected FieldMatcher initFirstLevelFieldMatcher(String str) {
+        return new WildCardMatcher(str);
+    }
 
+    @Override
+    protected MultilevelFieldMatcher wrapChildMatcher(String matchStr) {
+        boolean isWildCardMatcher = isWildCardMatcher(matchStr);
+        if (isWildCardMatcher) {
+            return new GeneralFieldMatcher(matchStr);
+        }
+        return new FixedMatcher(matchStr);
     }
 
 
     @Override
-    public MultilevelMatchInfo childFieldMatcher(Object instance, String matchedField, Object matchedObject) {
-        if (wrapList != null) {
-            List<FieldMatcher> fieldMatchers = new ArrayList<>();
-            boolean addToFinal = false;
-            if(matchedField.equals("child")){
-                System.out.println(123);
-            }
-            for (GeneralFieldMatcher generalFieldMatcher : wrapList) {
-                if (generalFieldMatcher.match(matchedField, instance)) {
-                    MultilevelMatchInfo multilevelMatchInfo = generalFieldMatcher.childFieldMatcher(instance, matchedField, matchedObject);
-                    addToFinal = addToFinal || multilevelMatchInfo.isAddToFinal();
-                    if (multilevelMatchInfo.getChildFieldMatcherList() != null) {
-                        fieldMatchers.addAll(multilevelMatchInfo.getChildFieldMatcherList());
-                    }
-                }
-            }
-            if (addToFinal) {
-                return MultilevelMatchInfo.addToFinalAndChildMatcher(fieldMatchers);
-            }
-            return MultilevelMatchInfo.justChild(fieldMatchers);
+    public MultilevelMatchInfo childFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
+
+        if (wrapChildList != null) {
+            return multilevelMatchInfoByChild(inputArg, matchedField, childArg);
         }
         if (childStr == null) {
-            return MultilevelMatchInfo.addToFinal();
+            return MultilevelMatchInfo.addToFinal(childArg);
         }
-
-
+        if (isOption) {
+            return MultilevelMatchInfo.justChild(new FixedMatcher(childStr));
+        }
         FieldMatcher fieldMatcher;
-        if (childStr.contains(".") || childStr.contains("#")) {
-            fieldMatcher = new GeneralFieldMatcher(childStr);
+
+        if (childIsWildCard) {
+            if (childIsMultiLevel) {
+                fieldMatcher = new GeneralFieldMatcher(childStr);
+            } else {
+                fieldMatcher = new WildCardMatcher(childStr);
+            }
         } else {
-            fieldMatcher = new WildCardMatcher(childStr);
+            fieldMatcher = new NormalMultiLevelMatcher(childStr);
         }
         return MultilevelMatchInfo.justChild(fieldMatcher);
     }
 
+
+    @Override
+    public Map<String, Object> listMatch(List<?> objectList) {
+        if (!firstLevelStr.contains("#")) {
+            return Collections.emptyMap();
+        }
+
+        String substring = firstLevelStr.substring(firstLevelStr.indexOf("#") + 1);
+        if (substring.equals("*")) {
+            Map<String, Object> result = Maps.newHashMapWithExpectedSize(objectList.size());
+            for (int index = 0; index < objectList.size(); index++) {
+                String fieldStr = "#" + index;
+                result.put(fieldStr, objectList.get(index));
+            }
+            return result;
+
+        }
+        try {
+            int i = Integer.parseInt(substring);
+            if (i < objectList.size()) {
+                return Collections.singletonMap("#" + i, objectList.get(i));
+            }
+            return Collections.emptyMap();
+        } catch (Exception e) {
+            Map<String, Object> result = Maps.newHashMapWithExpectedSize(objectList.size());
+            for (int index = 0; index < objectList.size(); index++) {
+                String fieldStr = "#" + index;
+                if (this.match(fieldStr, objectList.get(index))) {
+                    result.put(fieldStr, objectList.get(index));
+                }
+            }
+            return result;
+        }
+    }
 
     @Override
     public String toString() {
@@ -106,5 +122,6 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher {
                 ", childStr='" + childStr + '\'' +
                 '}';
     }
+
+
 }
-//

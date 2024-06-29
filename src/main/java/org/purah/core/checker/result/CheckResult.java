@@ -1,12 +1,19 @@
 package org.purah.core.checker.result;
 
-public interface CheckResult<T> {
+import java.util.function.BooleanSupplier;
+
+public interface CheckResult<T> extends BooleanSupplier {
 
 
     T data();
 
     default boolean isSuccess() {
         return execInfo() == ExecInfo.success;
+    }
+
+    @Override
+    default boolean getAsBoolean() {
+        return isSuccess();
     }
 
     default boolean isFromCache() {

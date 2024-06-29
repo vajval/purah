@@ -27,7 +27,6 @@ public abstract class BaseStringMatcher implements FieldMatcher {
     @Override
     public boolean supportCache() {
         return true;
-
     }
 
     @Override

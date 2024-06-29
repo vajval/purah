@@ -26,10 +26,7 @@ public abstract class AbstractMatchArgResolver implements ArgResolver {
         if (fieldMatcher == null) {
             throw new RuntimeException("不要传空的fieldMatcher");
         }
-        if (inputToCheckerArg.isNull()) {
 
-            return new HashMap<>();
-        }
         Map<String, InputToCheckerArg<?>> result = new HashMap<>();
         putMatchFieldObjectMapToResult(inputToCheckerArg, fieldMatcher, result);
         return result;
@@ -38,12 +35,10 @@ public abstract class AbstractMatchArgResolver implements ArgResolver {
 
     public void putMatchFieldObjectMapToResult(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher, Map<String, InputToCheckerArg<?>> result) {
 
-        Object inputArg = inputToCheckerArg.argValue();
-        if (inputArg == null) {
-            return;
-        }
-
-        if (fieldMatcher instanceof MultilevelFieldMatcher) {
+        if (inputToCheckerArg.isNull()) {
+            Map<String, InputToCheckerArg<?>> thisLevelMatcherObjectMap = this.getThisLevelMatcherObjectMap(inputToCheckerArg, fieldMatcher);
+            thisLevelMatcherObjectMap.forEach((a, b) -> result.put(b.fieldStr(), b));
+        } else if (fieldMatcher instanceof MultilevelFieldMatcher) {
             MultilevelFieldMatcher multilevelFieldMatcher = (MultilevelFieldMatcher) fieldMatcher;
             this.putMultiLevelMapToResult(inputToCheckerArg, multilevelFieldMatcher, result);
         } else {
@@ -65,9 +60,10 @@ public abstract class AbstractMatchArgResolver implements ArgResolver {
         for (Map.Entry<String, InputToCheckerArg<?>> entry : fieldsObjectMap.entrySet()) {
             String field = entry.getKey();
             InputToCheckerArg<?> childArg = entry.getValue();
-            MultilevelMatchInfo multilevelMatchInfo = multilevelFieldMatcher.childFieldMatcher(inputToCheckerArg.argValue(), field, childArg);
+            MultilevelMatchInfo multilevelMatchInfo = multilevelFieldMatcher.childFieldMatcher(inputToCheckerArg, field, childArg);
             if (multilevelMatchInfo.isAddToFinal()) {
-                result.put(childArg.fieldStr(), childArg);
+                InputToCheckerArg<?> resultArg = multilevelMatchInfo.getInputToCheckerArg();
+                result.put(resultArg.fieldStr(), resultArg);
             }
             List<FieldMatcher> childFieldMatcherList = multilevelMatchInfo.getChildFieldMatcherList();
 
@@ -75,32 +71,15 @@ public abstract class AbstractMatchArgResolver implements ArgResolver {
             if (CollectionUtils.isEmpty(childFieldMatcherList)) {
                 continue;
             }
-            Object argValue = childArg.argValue();
-            //需要往底层看
-            if (argValue == null) {
-                continue;
-            }
-            if (!supportChildGet(argValue.getClass())) {
-                continue;
-            }
+
             for (FieldMatcher childFieldMatcher : childFieldMatcherList) {
                 this.putMatchFieldObjectMapToResult(childArg, childFieldMatcher, result);
-
             }
         }
     }
 
 
-    protected boolean supportChildGet(Class<?> clazz) {
-        ArrayList<Class<?>> unSupportGet = Lists.newArrayList(String.class,
-                boolean.class, Boolean.class,
-                int.class, Integer.class,
-                short.class, Short.class,
-                long.class, Long.class,
-                byte.class, Byte.class, String.class, char.class, Character.class);
-        return !unSupportGet.contains(clazz);
 
-    }
 
 
 }

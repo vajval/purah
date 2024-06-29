@@ -5,14 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.combinatorial.CombinatorialChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.matcher.FieldMatcher;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,8 +43,6 @@ public class ComboBuilderChecker extends AbstractBaseSupportCacheChecker<Object,
     @Override
     public CheckResult doCheck(InputToCheckerArg inputToCheckerArg) {
         if (combinatorialChecker != null) return combinatorialChecker.check(inputToCheckerArg);
-
-
         if (CollectionUtils.isEmpty(config.fieldMatcherCheckerConfigList)) {
             if (config.extendCheckerNames.size() == 1) {
                 return purahContext.checkManager().get(config.extendCheckerNames.get(0)).check(inputToCheckerArg);
@@ -55,7 +50,6 @@ public class ComboBuilderChecker extends AbstractBaseSupportCacheChecker<Object,
                 return BaseLogicCheckResult.success();
             }
         }
-        System.out.println(config);
         combinatorialChecker = new CombinatorialChecker(config);
         return combinatorialChecker.check(inputToCheckerArg);
 

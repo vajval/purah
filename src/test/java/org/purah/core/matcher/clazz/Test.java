@@ -205,7 +205,6 @@
 //        Object[] objects = new Object[length];
 //        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher(matchStr);
 //        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
-//        System.out.println(matchFieldObjectMap.keySet());
 //        for (int i = 0; i < method.getParameters().length; i++) {
 //            FieldParameter fieldParameter = fieldParameterMap.get(i);
 //            if (fieldParameter == null) {

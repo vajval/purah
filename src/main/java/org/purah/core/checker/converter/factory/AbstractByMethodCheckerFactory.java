@@ -9,10 +9,9 @@ public abstract class AbstractByMethodCheckerFactory implements CheckerFactory {
 
     protected WildCardMatcher wildCardMatcher;
     protected boolean cacheBeCreatedChecker;
-    Method method;
-    Object bean;
-
-    String matchStr;
+    protected   Method method;
+    protected   Object bean;
+    protected   String matchStr;
 
     public AbstractByMethodCheckerFactory(Object bean, Method method, String matchStr, boolean cacheBeCreatedChecker) {
         this.wildCardMatcher = new WildCardMatcher(matchStr);

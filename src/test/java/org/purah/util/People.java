@@ -17,58 +17,70 @@ public class People {
     @TestAnn("南方城市")
     String address;
     List<People> child;
-  public static final    String str = "{" +
-          "  \"name\": \"长者\"," +
-          "  \"address\": \"通辽\"," +
-          "  \"age\": 70," +
-          "  \"child\": [" +
-          "    {" +
-          "      \"name\": \"儿子\"," +
-          "      \"address\": \"北京\"," +
-          "      \"age\": 40," +
-          "      \"child\": [" +
-          "        {" +
-          "          \"name\": \"孙子\"," +
-          "          \"address\": \"北京\"," +
-          "          \"age\": 10" +
-          "        }," +
-          "        {" +
-          "          \"name\": \"孙女\"," +
-          "          \"address\": \"北京\"," +
-          "          \"age\": 10" +
-          "        }" +
-          "      ]" +
-          "    }," +
-          "    {" +
-          "      \"name\": \"女儿\"," +
-          "      \"address\": \"上海\"," +
-          "      \"age\": 40," +
-          "      \"child\": [" +
-          "        {" +
-          "          \"name\": \"外孙子\"," +
-          "          \"address\": \"上海\"," +
-          "          \"age\": 10" +
-          "        }," +
-          "        {" +
-          "          \"name\": \"外孙女\"," +
-          "          \"address\": \"上海\"," +
-          "          \"age\": 10" +
-          "        }" +
-          "      ]" +
-          "    }," +
-          "    {" +
-          "      \"name\": \"不知道在哪的孩子\"," +
-          "      \"address\": null," +
-          "      \"age\": null" +
-          "    }" +
-          "  ]" +
-          "}";
+
+    private static Map<String, People> testPeople = testPeople();
+    public static final String str = "{" +
+            "  \"name\": \"Elder\"," +
+            "  \"address\": \"Tongliao\"," +
+            "  \"age\": 70," +
+            "  \"child\": [" +
+            "    {" +
+            "      \"name\": \"son\"," +
+            "      \"address\": \"Beijing\"," +
+            "      \"age\": 40," +
+            "      \"child\": [" +
+            "        {" +
+            "          \"name\": \"grandson\"," +
+            "          \"address\": \"Beijing\"," +
+            "          \"age\": 10" +
+            "        }," +
+            "        {" +
+            "          \"name\": \"granddaughter\"," +
+            "          \"address\": \"Beijing\"," +
+            "          \"age\": 10" +
+            "        }" +
+            "      ]" +
+            "    }," +
+            "    {" +
+            "      \"name\": \"daughter\"," +
+            "      \"address\": \"Shanghai\"," +
+            "      \"age\": 40," +
+            "      \"child\": [" +
+            "        {" +
+            "          \"name\": \"grandson for daughter\"," +
+            "          \"address\": \"Shanghai\"," +
+            "          \"age\": 10" +
+            "        }," +
+            "        {" +
+            "          \"name\": \"granddaughter for daughter\"," +
+            "          \"address\": \"Shanghai\"," +
+            "          \"age\": 10" +
+            "        }" +
+            "      ]" +
+            "    }," +
+            "    {" +
+            "      \"name\": \"unknown\"," +
+            "      \"address\": null," +
+            "      \"age\": null" +
+            "    }" +
+            "  ]" +
+            "}";
 
     public People(String name) {
         this.name = name;
         this.id = UUID.randomUUID().toString();
     }
 
+
+    public static People elder;
+    public static People son;
+    public static People daughter;
+    public static People grandson;
+    public static People granddaughter;
+    public static People grandsonForDaughter;
+    public static People granddaughterForDaughter;
+
+    public static People unknown;
 
     public People() {
         this.id = UUID.randomUUID().toString().substring(0, 3);
@@ -78,21 +90,13 @@ public class People {
         return testPeople.get(name);
     }
 
-    public static void main(String[] args) {
-
-    }
 
     public static Map<String, Object> mapOf(String name) {
-
-
         Gson gson = new Gson();
         Map<String, Object> people = gson.fromJson(str, Map.class);
-
-
         return people;
     }
 
-    private static Map<String, People> testPeople = testPeople();
 
 
 
@@ -102,16 +106,16 @@ public class People {
         People people = gson.fromJson(str, People.class);
 
         Map<String, People> map = new HashMap<>();
-        map.put(people.name, people);
+        elder = people;
+        son = people.child.get(0);
+        daughter = people.child.get(1);
+        grandson = son.child.get(0);
+        granddaughter = son.child.get(1);
+        grandsonForDaughter = daughter.getChild().get(0);
+        granddaughterForDaughter =  daughter.getChild().get(1);
 
-        map.put(people.child.get(2).name,people.child.get(2));
+        unknown = people.child.get(2);
 
-        map.put(people.child.get(0).name,people.child.get(0));
-        map.put(people.child.get(1).name,people.child.get(1));
-        map.put(people.child.get(0).child.get(0).name,people.child.get(0).child.get(0));
-        map.put(people.child.get(0).child.get(1).name,people.child.get(0).child.get(1));
-        map.put(people.child.get(1).child.get(0).name,people.child.get(1).child.get(0));
-        map.put(people.child.get(1).child.get(1).name,people.child.get(1).child.get(1));
         return map;
 
     }

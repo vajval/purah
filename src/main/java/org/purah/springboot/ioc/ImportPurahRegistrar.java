@@ -64,8 +64,7 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
 
 
         List<Class<BaseStringMatcher>> classes = scanStringMatcherClass(beanDefinitions, BaseStringMatcher.class);
-        System.out.println("purahContextBeanDefinition");
-        System.out.println(classes);
+
         definitionBuilder.addPropertyValue("baseStringMatcherClass", classes);
 
         definitionBuilder.addPropertyValue("enablePurah", enablePurah);

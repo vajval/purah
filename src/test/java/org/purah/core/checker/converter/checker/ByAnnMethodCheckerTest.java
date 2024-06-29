@@ -10,6 +10,7 @@ import org.purah.core.checker.ComboBuilderChecker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.matcher.WildCardMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
+import org.purah.core.matcher.multilevel.NormalMultiLevelMatcher;
 import org.purah.core.resolver.ReflectArgResolver;
 import org.purah.util.People;
 import org.purah.util.TestAnn;
@@ -20,8 +21,8 @@ import java.lang.reflect.Method;
 public class ByAnnMethodCheckerTest {
 
     @Name("test")
-    public static boolean testByName(TestAnn testAnn, String name) {
-        if (!StringUtils.hasText(name)) {
+    public static boolean testByName(TestAnn testAnn, String str) {
+        if (!StringUtils.hasText(str)) {
             return false;
         }
         if (testAnn == null) {
@@ -30,15 +31,6 @@ public class ByAnnMethodCheckerTest {
         return StringUtils.hasText(testAnn.value());
     }
 
-
-    @Name("test")
-    public static boolean testByPeople(TestAnn testAnn, People people) {
-        if (people == null) {
-            return false;
-        }
-
-        return testByName(testAnn, people.getName());
-    }
 
     PurahContext purahContext;
 
@@ -49,37 +41,36 @@ public class ByAnnMethodCheckerTest {
         ByAnnMethodChecker byAnnMethodChecker = new ByAnnMethodChecker(null, method, "test");
         purahContext.checkManager().reg(byAnnMethodChecker);
 
-        method = ByAnnMethodCheckerTest.class.getMethod("testByPeople", TestAnn.class, People.class);
-        byAnnMethodChecker = new ByAnnMethodChecker(null, method, "test");
-        purahContext.checkManager().reg(byAnnMethodChecker);
-
     }
 
 
     @Test
-    void name() {
+    void test() {
 
-        Checker checker = purahContext.combo().match(new WildCardMatcher("name"), "test");
+        ComboBuilderChecker checker = purahContext.combo().match(new GeneralFieldMatcher("name"), "test");
 
-        CheckResult check = checker.check(People.of("长者"));
-        Assertions.assertTrue(check.isSuccess());
+        CheckResult<?> result = checker.check(People.elder);
+        Assertions.assertTrue(result);
+
         checker = purahContext.combo("test");
-        check = checker.check(People.of("长者"));
-        Assertions.assertTrue(check.isFailed());
-        ReflectArgResolver resolver = new ReflectArgResolver();
-        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("child#0.name");
-        System.out.println(resolver.getMatchFieldObjectMap(People.of("长者"), generalFieldMatcher).keySet());
+        result = checker.check("123");
+        Assertions.assertFalse(result);//no ann
+
         checker = purahContext.combo().match(new GeneralFieldMatcher("child#0.name"), "test");
-        check = checker.check(People.of("长者"));
-        Assertions.assertTrue(check.isSuccess());
+
+
+        result = checker.check(People.elder);
+        Assertions.assertTrue(result);
+
+
+        checker = purahContext.combo().match(new GeneralFieldMatcher("child#0.id"), "test");
+        result = checker.check(People.elder);
+        Assertions.assertFalse(result);  //no ann
+
+        checker = purahContext.combo().match(new GeneralFieldMatcher("child#0.child#0.child#0.id"), "test");
+        result = checker.check(People.elder);
+        Assertions.assertFalse(result);  //no child
 
     }
 
-    @Test
-    void doCheck() {
-    }
-
-    @Test
-    void errorMsgCheckerByAnnMethod() {
-    }
 }

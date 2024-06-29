@@ -24,26 +24,16 @@ public class InputToCheckerArg<INPUT_ARG> {
 
     Field fieldInClass;
     // 如果这个对象是父对象class的一个field ，此处保存field中的注解
-    List<Annotation> annotations;
+    List<Annotation> annotations=Collections.emptyList();
     InputToCheckerArg<?> parent;
 
-
-    private BiFunction<String, String, String> buildChildFieldStr = (levelSplitStr, childStr) -> {
-        String finalFieldStr = fieldStr;
-        if (StringUtils.hasText(finalFieldStr)) {
-            finalFieldStr = finalFieldStr + levelSplitStr + childStr;
-        } else {
-            finalFieldStr = childStr;
-        }
-        return finalFieldStr;
-
-    };
 
     private InputToCheckerArg(INPUT_ARG arg, Class<?> clazzInContext, String fieldStr, InputToCheckerArg<?> parent) {
         this(arg, fieldStr, null, Collections.emptyList(), null);
         this.arg = arg;
         if (clazzInContext == null) {
-            throw new RuntimeException("不要将class设置为null,实在不行就Object.class");
+            clazzInContext = Object.class;
+//            throw new RuntimeException("不要将class设置为null,实在不行就Object.class");
         }
         this.clazzInContext = clazzInContext;
         this.parent = parent;
@@ -55,12 +45,18 @@ public class InputToCheckerArg<INPUT_ARG> {
         this.fieldInClass = fieldInClass;
         if (this.fieldInClass != null) {
             this.clazzInContext = this.fieldInClass.getType();
+
+        } else {
+            this.clazzInContext = Object.class;
         }
         this.fieldStr = fieldStr;
         if (this.fieldStr == null) {
             this.fieldStr = "";
         }
-        this.annotations = annotations;
+        if(annotations!=null){
+            this.annotations = annotations;
+
+        }
         this.parent = parent;
 
 
@@ -157,7 +153,9 @@ public class InputToCheckerArg<INPUT_ARG> {
         return Objects.hash(arg, fieldStr);
     }
 
-
+    public void setFieldStr(String fieldStr) {
+        this.fieldStr = fieldStr;
+    }
 }
 
 

@@ -32,6 +32,8 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
 
 
     public static String errorMsgAbstractMethodToChecker(Object methodsToCheckersBean, Method method) {
+
+
         if (method == null) {
             return "Hmph, the method must not be null!";
         }
@@ -45,6 +47,12 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
 
         if (!isStatic && methodsToCheckersBean == null) {
             return "When the method is non-static, the parameter `bean` must not be null. [" + method.toGenericString() + "]";
+        }
+        if (methodsToCheckersBean != null) {
+            boolean clazzIsPublic = java.lang.reflect.Modifier.isPublic(methodsToCheckersBean.getClass().getModifiers());
+            if (!clazzIsPublic) {
+                return "if the bean class isn't public, it just won't work, okay? [" + method.toGenericString() + "]";
+            }
         }
 
         Class<?> returnType = method.getReturnType();

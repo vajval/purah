@@ -6,7 +6,9 @@ import java.lang.annotation.*;
 @Target({ElementType.PARAMETER})
 @Documented
 public @interface FVal {
+    //Fill in specified field values or annotations.
     String value();
 
+    //root field
     String root = "#root#";
 }
