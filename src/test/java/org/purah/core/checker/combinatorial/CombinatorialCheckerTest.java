@@ -9,8 +9,8 @@ import org.purah.core.checker.*;
 import org.purah.core.checker.factory.LambdaCheckerFactory;
 import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.checker.result.ResultLevel;
-import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
-import org.purah.core.matcher.clazz.ClassNameMatcher;
+import org.purah.core.matcher.extra.clazz.AnnTypeFieldMatcher;
+import org.purah.core.matcher.extra.clazz.ClassNameMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.WildCardMatcher;
 

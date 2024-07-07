@@ -12,8 +12,8 @@ import org.purah.core.checker.LambdaChecker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
 
-import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
-import org.purah.core.matcher.clazz.ClassNameMatcher;
+import org.purah.core.matcher.extra.clazz.AnnTypeFieldMatcher;
+import org.purah.core.matcher.extra.clazz.ClassNameMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.WildCardMatcher;
 
@@ -103,19 +103,5 @@ class CombinatorialCheckerConfigTest {
         Assertions.assertTrue(result.isSuccess());
     }
 
-    @Test
-    void setMainExecType() {
-    }
 
-    @Test
-    void setExtendCheckerNames() {
-    }
-
-    @Test
-    void setName() {
-    }
-
-    @Test
-    void addMatcherCheckerName() {
-    }
 }

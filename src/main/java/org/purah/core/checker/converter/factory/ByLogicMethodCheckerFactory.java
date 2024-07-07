@@ -16,7 +16,6 @@ public class ByLogicMethodCheckerFactory extends AbstractByMethodCheckerFactory 
 
     PurahWrapMethod purahEnableMethod;
 
-
     public ByLogicMethodCheckerFactory(Object bean, Method method, String matchStr, boolean cacheBeCreatedChecker) {
         super(bean, method, matchStr, cacheBeCreatedChecker);
         String errorMsg = errorMsgCheckerFactoryByLogicMethod(bean, method);

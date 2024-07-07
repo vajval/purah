@@ -1,4 +1,4 @@
-package org.purah.core.matcher.clazz.ann;
+package org.purah.core.matcher.extra.clazz.ann;
 
 import java.lang.annotation.*;
 

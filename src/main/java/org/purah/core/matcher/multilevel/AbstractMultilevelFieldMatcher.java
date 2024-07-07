@@ -1,34 +1,43 @@
 package org.purah.core.matcher.multilevel;
 
 
-import com.google.common.base.Splitter;
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.BaseStringMatcher;
-import org.purah.core.matcher.FieldMatcher;
-import org.purah.core.matcher.ListIndexMatcher;
-import org.purah.core.matcher.WildCardMatcher;
+import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.inft.IDefaultFieldMatcher;
+import org.purah.core.matcher.inft.ListIndexMatcher;
+import org.purah.core.matcher.inft.ListableFieldMatcher;
+import org.purah.core.matcher.inft.MultilevelFieldMatcher;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-public abstract class AbstractMultilevelFieldMatcher extends BaseStringMatcher implements MultilevelFieldMatcher, ListIndexMatcher {
+public abstract class AbstractMultilevelFieldMatcher<T extends MultilevelFieldMatcher> extends ListableFieldMatcher<T> implements MultilevelFieldMatcher, ListIndexMatcher {
 
     protected String firstLevelStr;
     protected String childStr;
-    protected FieldMatcher firstLevelFieldMatcher;
+    protected IDefaultFieldMatcher firstLevelFieldMatcher;
     protected String fullMatchStr;
 
-    List<MultilevelFieldMatcher> wrapChildList;
+    protected Integer listIndex = -1;
+
+    protected String listIndexStr;
+
+    protected static int NO_LIST_INDEX = 1;
+
 
     public AbstractMultilevelFieldMatcher(String matchStr) {
         super(matchStr);
-        if (matchStr.contains("|")) {
-            wrapChildList = Splitter.on("|").splitToList(matchStr).stream().map(this::wrapChildMatcher).collect(Collectors.toList());
+        if (wrapChildList != null) {
             return;
         }
+        initStr();
+        initListIndex();
+
+    }
+
+
+    protected void initStr() {
         fullMatchStr = matchStr;
         int index = matchStr.indexOf(".");
         firstLevelStr = matchStr;
@@ -46,23 +55,28 @@ public abstract class AbstractMultilevelFieldMatcher extends BaseStringMatcher i
             childStr = null;
         }
         firstLevelFieldMatcher = initFirstLevelFieldMatcher(firstLevelStr);
-
     }
+
+
+    protected void initListIndex() {
+        int index = firstLevelStr.indexOf("#");
+        if (index == -1) {
+            listIndex = -1;
+        } else {
+            listIndexStr = firstLevelStr.substring(index + 1);
+            try {
+                listIndex = Integer.parseInt(listIndexStr);
+            } catch (Exception e) {
+                listIndex = -2;
+            }
+        }
+    }
+
 
     @Override
-    public boolean match(String field, Object belongInstance) {
-
-        if (wrapChildList != null) {
-            for (FieldMatcher matcher : wrapChildList) {
-                if (matcher.match(field, belongInstance)) {
-                    return true;
-                }
-            }
-            return false;
-        }
+    public boolean matchBySelf(String field, Object belongInstance) {
         return firstLevelFieldMatcher.match(field, belongInstance);
     }
-
 
     @Override
     public MultilevelMatchInfo childFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
@@ -78,7 +92,7 @@ public abstract class AbstractMultilevelFieldMatcher extends BaseStringMatcher i
     protected MultilevelMatchInfo multilevelMatchInfoByChild(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
         boolean addToFinal = false;
         List<FieldMatcher> fieldMatchers = new ArrayList<>();
-        for (MultilevelFieldMatcher optionMatcher : wrapChildList) {
+        for (T optionMatcher : wrapChildList) {
             if (optionMatcher.match(matchedField, inputArg.argValue())) {
                 MultilevelMatchInfo multilevelMatchInfo = optionMatcher.childFieldMatcher(inputArg, matchedField, childArg);
                 addToFinal = addToFinal || multilevelMatchInfo.isAddToFinal();
@@ -93,8 +107,8 @@ public abstract class AbstractMultilevelFieldMatcher extends BaseStringMatcher i
         return MultilevelMatchInfo.justChild(fieldMatchers);
     }
 
-    protected abstract FieldMatcher initFirstLevelFieldMatcher(String str);
+    protected abstract IDefaultFieldMatcher initFirstLevelFieldMatcher(String str);
 
-    protected abstract MultilevelFieldMatcher wrapChildMatcher(String matchStr);
+    protected abstract T wrapChildMatcher(String matchStr);
 
 }

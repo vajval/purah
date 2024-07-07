@@ -1,10 +1,10 @@
-package org.purah.core.matcher;
+package org.purah.core.matcher.extra;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.clazz.AbstractClassCacheFieldMatcher;
+import org.purah.core.matcher.extra.clazz.AbstractClassCacheFieldMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
-import org.purah.core.matcher.multilevel.MultilevelFieldMatcher;
+import org.purah.core.matcher.inft.MultilevelFieldMatcher;
 import org.purah.core.matcher.multilevel.MultilevelMatchInfo;
 
 import java.beans.PropertyDescriptor;

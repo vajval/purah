@@ -1,5 +1,8 @@
 package org.purah.core.checker.converter.checker;
 
+import org.purah.core.matcher.BaseStringMatcher;
+import org.purah.core.matcher.multilevel.FixedMatcher;
+
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -8,7 +11,7 @@ import java.lang.annotation.*;
 public @interface FVal {
     //Fill in specified field values or annotations.
     String value();
-
     //root field
     String root = "#root#";
+    Class<? extends BaseStringMatcher> matcher() default FixedMatcher.class;
 }

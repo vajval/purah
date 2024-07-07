@@ -1,8 +1,7 @@
 package org.purah.core.matcher;
 
 import org.purah.core.base.Name;
-import org.purah.core.matcher.BaseStringMatcher;
-import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.matcher.inft.FieldMatcher;
 
 /**
  * 正则匹配器,配置文件写记得加上 []

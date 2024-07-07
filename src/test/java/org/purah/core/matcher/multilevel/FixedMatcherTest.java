@@ -9,33 +9,39 @@ import org.purah.core.checker.LambdaChecker;
 import org.purah.core.resolver.DefaultArgResolver;
 import org.purah.util.People;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 
-class NormalMultiLevelMatcherTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class FixedMatcherTest {
 
     @Test
-    void normalMultiLevelMatcher() {
+    void fixedMatcher() {
+
 
         DefaultArgResolver resolver = new DefaultArgResolver();
-        NormalMultiLevelMatcher normalMatcher = new NormalMultiLevelMatcher("name|address|noExistField|child#0.id|child#5.child#0.id");
-        Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(People.elder, normalMatcher);
+        FixedMatcher fixedMatcher = new FixedMatcher("name|address|noExistField|child#0.id|child#5.child#0.id");
+        Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(People.elder, fixedMatcher);
+        System.out.println(fixedMatcher);
         Assertions.assertEquals(map.get("name").argValue(), People.elder.getName());
         Assertions.assertEquals(map.get("address").argValue(), People.elder.getAddress());
         Assertions.assertEquals(map.get("child#0.id").argValue(), People.elder.getChild().get(0).getId());
-        Assertions.assertEquals(map.size(), 3);
-        Assertions.assertFalse(map.containsKey("noExistField"));
-        Assertions.assertFalse(map.containsKey("child#5.child#0.id"));
+        Assertions.assertNull(map.get("noExistField").argValue());
+        Assertions.assertNull(map.get("child#5.child#0.id").argValue());
+        Assertions.assertEquals(map.size(), 5);
 
         PurahContext purahContext = new PurahContext();
         purahContext.checkManager().reg(LambdaChecker.of(Object.class).build("notNull", Objects::nonNull));
-        ComboBuilderChecker checker = purahContext.combo().match(normalMatcher, "notNull");
-        //noExistField child#5.child#0.id not exist
-        Assertions.assertTrue(checker.check(People.elder));
+        ComboBuilderChecker checker = purahContext.combo().match(fixedMatcher, "notNull");
+        //noExistField child#5.child#0.id is null
+        Assertions.assertFalse(checker.check(People.elder));
+
 
     }
 
 
+    @Test
+    void listMatch() {
+    }
 }

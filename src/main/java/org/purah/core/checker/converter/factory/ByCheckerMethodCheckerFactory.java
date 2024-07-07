@@ -3,6 +3,8 @@ package org.purah.core.checker.converter.factory;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.ProxyChecker;
 import org.purah.core.checker.factory.CheckerFactory;
+import org.purah.core.exception.UnexpectedException;
+import org.purah.core.exception.init.InitCheckFactoryException;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +18,7 @@ public class ByCheckerMethodCheckerFactory extends AbstractByMethodCheckerFactor
         super(bean, method, matchStr, cacheBeCreatedChecker);
         String errorMsg = errorMsgCheckerFactoryByCheckerMethod(bean, method);
         if (errorMsg != null) {
-            throw new RuntimeException(errorMsg);
+            throw new InitCheckFactoryException(errorMsg);
         }
     }
 
@@ -25,12 +27,12 @@ public class ByCheckerMethodCheckerFactory extends AbstractByMethodCheckerFactor
         Class returnType = method.getReturnType();
 
         if (!Checker.class.isAssignableFrom(returnType)) {
-            return "返回类型只能是 Checker";
+            return "The return type can only be Checker, okay? That's how it is~";
         }
         Parameter[] parameters = method.getParameters();
 
-        if(!parameters[0].getParameterizedType().equals(String.class)){
-            return "第一个入参必须是 string 类型，将被填充为checker名字";
+        if (!parameters[0].getParameterizedType().equals(String.class)) {
+            return "The first parameter must be of type string and will be filled with the checker's name.";
         }
         return null;
     }
@@ -38,8 +40,6 @@ public class ByCheckerMethodCheckerFactory extends AbstractByMethodCheckerFactor
 
     @Override
     public Checker createChecker(String needMatchCheckerName) {
-
-
         try {
             Checker result = (Checker) method.invoke(bean, needMatchCheckerName);
             String name = needMatchCheckerName;
@@ -48,7 +48,7 @@ public class ByCheckerMethodCheckerFactory extends AbstractByMethodCheckerFactor
             }
             return new ProxyChecker(result, name, method.toGenericString());
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+            throw new UnexpectedException(e.getMessage());
         }
 
     }

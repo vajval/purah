@@ -3,7 +3,7 @@ package org.purah.core.checker.combinatorial;
 
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.CheckerManager;
-import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.matcher.inft.FieldMatcher;
 
 import java.util.List;
 import java.util.stream.Collectors;

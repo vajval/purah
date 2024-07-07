@@ -1,20 +1,20 @@
 package org.purah.core.checker.converter.checker;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.exception.InitCheckerException;
-import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.exception.init.InitCheckerException;
+import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.multilevel.NormalMultiLevelMatcher;
 import org.purah.core.resolver.ArgResolver;
 import org.purah.core.resolver.ReflectArgResolver;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 /*
  * Convert a method like this
@@ -43,13 +43,14 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
     static class FieldParameter {
         int index;
         FVal FVal;
-
         Class<?> clazz;
+        GeneralFieldMatcher generalFieldMatcher;
 
-        public FieldParameter(int index, FVal FVal, Class<?> clazz) {
+        public FieldParameter(int index, FVal FVal, Class<?> clazz, GeneralFieldMatcher generalFieldMatcher) {
             this.index = index;
             this.FVal = FVal;
             this.clazz = clazz;
+            this.generalFieldMatcher = generalFieldMatcher;
         }
     }
 
@@ -69,12 +70,16 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
             Parameter parameter = parameters[index];
             FVal fVal = parameter.getDeclaredAnnotation(FVal.class);
             if (fVal != null) {
-                if (fVal.value().toLowerCase(Locale.ROOT).equals(FVal.root)) {
-                    rootIndex = index;
+                if (!Map.class.equals(parameter.getType()) && !Set.class.equals(parameter.getType())) {
+                    if (fVal.value().toLowerCase(Locale.ROOT).equals(FVal.root)) {
+                        rootIndex = index;
+                    } else {
+                        matchStirs.add(fVal.value());
+                    }
+                    fieldParameterMap.put(index, new FieldParameter(index, fVal, parameter.getType(), null));
                 } else {
-                    matchStirs.add(fVal.value());
+                    fieldParameterMap.put(index, new FieldParameter(index, fVal, parameter.getType(), new GeneralFieldMatcher(fVal.value())));
                 }
-                fieldParameterMap.put(index, new FieldParameter(index, fVal, parameter.getType()));
             }
         }
         String matchStr = String.join("|", matchStirs);
@@ -87,14 +92,14 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
     public static String errorMsgAutoMethodCheckerByDefaultReflectArgResolver(Object methodsToCheckersBean, Method method) {
 
         if (method.getParameters().length < 1) {
-            return "Come on, you need at least one parameter, okay? [" + method+"]";
+            return "Come on, you need at least one parameter, okay? [" + method + "]";
         }
         return null;
     }
 
 
     @Override
-    public CheckResult doCheck(InputToCheckerArg inputToCheckerArg) {
+    public CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
 
 
         int length = method.getParameters().length;
@@ -110,19 +115,34 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
                     objects[i] = inputToCheckerArg;
                     continue;
                 }
-                InputToCheckerArg<?> childArg = matchFieldObjectMap.get(fieldParameter.FVal.value());
-                if (childArg == null || childArg.isNull()) {
-                    objects[i] = null;
-                    continue;
+                if (fieldParameter.generalFieldMatcher == null) {
+                    InputToCheckerArg<?> childArg = matchFieldObjectMap.get(fieldParameter.FVal.value());
+                    if (childArg == null || childArg.isNull()) {
+                        objects[i] = null;
+                        continue;
+                    }
+                    if (fieldParameter.clazz.isAnnotation()) {
+                        objects[i] = childArg.annOnField((Class) fieldParameter.clazz);
+                        continue;
+                    }
+                    if (!fieldParameter.clazz.isAssignableFrom(childArg.argClass())) {
+                        throw new RuntimeException("无法支持" + "获取到的参数class为" + childArg.argClass() + "函数" + method.toGenericString() + "index:" + i + "    只支持" + fieldParameter.clazz);
+                    }
+                    objects[i] = childArg.argValue();
                 }
-                if (fieldParameter.clazz.isAnnotation()) {
-                    objects[i] = childArg.annOnField((Class) fieldParameter.clazz);
-                    continue;
+                if (fieldParameter.clazz.equals(Map.class)) {
+                    Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(inputToCheckerArg, fieldParameter.generalFieldMatcher);
+                    Map<String, Object> objectMap = Maps.newHashMapWithExpectedSize(map.size());
+                    map.forEach((a, b) -> objectMap.put(a, b.argValue()));
+                    objects[i] = objectMap;
+                } else if (fieldParameter.clazz.equals(Set.class)) {
+                    Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(inputToCheckerArg, fieldParameter.generalFieldMatcher);
+                    Set<Object> set = Sets.newHashSetWithExpectedSize(map.size());
+                    map.values().forEach(w -> set.add(w.argValue()));
+                    objects[i] = set;
                 }
-                if (!fieldParameter.clazz.isAssignableFrom(childArg.argClass())) {
-                    throw new RuntimeException("无法支持" + "获取到的参数class为" + childArg.argClass() + "函数" + method.toGenericString() + "index:" + i + "    只支持" + fieldParameter.clazz);
-                }
-                objects[i] = childArg.argValue();
+
+
             }
         }
 

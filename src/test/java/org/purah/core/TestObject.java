@@ -1,6 +1,6 @@
 package org.purah.core;
 
-import org.purah.core.matcher.clazz.ann.FieldType;
+import org.purah.core.matcher.extra.clazz.ann.FieldType;
 
 import java.util.Collections;
 import java.util.Map;

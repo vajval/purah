@@ -6,7 +6,7 @@ import org.purah.core.checker.*;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.exception.UnexpectedException;
-import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.matcher.inft.FieldMatcher;
 import org.purah.core.resolver.ArgResolver;
 import org.purah.core.resolver.ArgResolverManager;
 

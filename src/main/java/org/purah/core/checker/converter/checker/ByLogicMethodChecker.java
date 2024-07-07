@@ -4,7 +4,7 @@ import org.purah.core.base.NameUtil;
 import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.exception.InitCheckerException;
+import org.purah.core.exception.init.InitCheckerException;
 
 import java.lang.reflect.Method;
 /*
@@ -43,7 +43,7 @@ public class ByLogicMethodChecker extends AbstractWrapMethodToChecker {
 
 
     @Override
-    public CheckResult doCheck(InputToCheckerArg inputToCheckerArg) {
+    public CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
         Object[] args = new Object[1];
         args[0] = inputToCheckerArg;
         return purahEnableMethod.invokeResult(inputToCheckerArg, args);

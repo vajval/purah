@@ -4,19 +4,32 @@ package org.purah.core.matcher.multilevel;
 import com.google.common.collect.Maps;
 import org.purah.core.base.Name;
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.inft.IDefaultFieldMatcher;
 import org.purah.core.matcher.WildCardMatcher;
+import org.purah.core.matcher.inft.MultilevelFieldMatcher;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
 
+/**
+ * People people=new People(id:123,name:123,address:123,child:[new People(id:0,name:null),new People(id:1,name:null)]);
+ * GeneralFieldMatcher "na*|address|noExistField|child#*.id|child#5.child#5.id|child#*.child#4.id"
+ * return{"name":123,"address":123,noExistField:null,"child#0.id":0,"child#1.id":1,"child#5.child#5.id":null}
+ * checker will check "noExistField" "child#5.child#5.id" as null even not exist
+ * <p>
+ * no field match  child#*.child#4.id so ignore
+ */
 @Name("general")
-public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher {
+public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<MultilevelFieldMatcher> {
 
 
     boolean isOption;
     boolean childIsWildCard;
     boolean childIsMultiLevel;
+
+    protected static int WILD_CARD_LIST_MATCH=-2;
+
 
     public GeneralFieldMatcher(String matchStr) {
         super(matchStr);
@@ -26,8 +39,9 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher {
             childIsMultiLevel = false;
         } else {
             childIsWildCard = isWildCardMatcher(childStr);
-            childIsMultiLevel = childStr.contains(".");
+            childIsMultiLevel = childStr.contains(".") || childStr.contains("#");
         }
+
 
     }
 
@@ -39,8 +53,26 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher {
     }
 
     @Override
-    protected FieldMatcher initFirstLevelFieldMatcher(String str) {
+    protected IDefaultFieldMatcher initFirstLevelFieldMatcher(String str) {
         return new WildCardMatcher(str);
+    }
+
+
+    @Override
+    public Set<String> matchFields(Set<String> fields, Object belongInstance) {
+        Set<String> result = new HashSet<>();
+        if (wrapChildList == null) {
+            for (String field : fields) {
+                if (firstLevelFieldMatcher.match(field, belongInstance)) {
+                    result.add(field);
+                }
+            }
+            return result;
+        }
+        for (MultilevelFieldMatcher multilevelFieldMatcher : wrapChildList) {
+            result.addAll(multilevelFieldMatcher.matchFields(fields, belongInstance));
+        }
+        return result;
     }
 
     @Override
@@ -82,36 +114,33 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher {
 
     @Override
     public Map<String, Object> listMatch(List<?> objectList) {
-        if (!firstLevelStr.contains("#")) {
+        if (listIndex ==NO_LIST_INDEX) {
             return Collections.emptyMap();
         }
-
-        String substring = firstLevelStr.substring(firstLevelStr.indexOf("#") + 1);
-        if (substring.equals("*")) {
+        if (listIndex ==WILD_CARD_LIST_MATCH) {
             Map<String, Object> result = Maps.newHashMapWithExpectedSize(objectList.size());
-            for (int index = 0; index < objectList.size(); index++) {
-                String fieldStr = "#" + index;
-                result.put(fieldStr, objectList.get(index));
-            }
-            return result;
 
-        }
-        try {
-            int i = Integer.parseInt(substring);
-            if (i < objectList.size()) {
-                return Collections.singletonMap("#" + i, objectList.get(i));
-            }
-            return Collections.emptyMap();
-        } catch (Exception e) {
-            Map<String, Object> result = Maps.newHashMapWithExpectedSize(objectList.size());
-            for (int index = 0; index < objectList.size(); index++) {
-                String fieldStr = "#" + index;
-                if (this.match(fieldStr, objectList.get(index))) {
+            if (listIndexStr.equals("*")) {
+                for (int index = 0; index < objectList.size(); index++) {
+                    String fieldStr = "#" + index;
                     result.put(fieldStr, objectList.get(index));
+                }
+                return result;
+            } else {
+                for (int index = 0; index < objectList.size(); index++) {
+                    String fieldStr = "#" + index;
+                    if (this.match(fieldStr, objectList.get(index))) {
+                        result.put(fieldStr, objectList.get(index));
+                    }
                 }
             }
             return result;
+
         }
+        if (listIndex < objectList.size()) {
+            return Collections.singletonMap("#" + listIndex, objectList.get(listIndex));
+        }
+        return Collections.emptyMap();
     }
 
     @Override

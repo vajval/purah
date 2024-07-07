@@ -2,23 +2,12 @@ package org.purah.core.resolver;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.checkerframework.checker.units.qual.C;
-import org.purah.core.base.NameUtil;
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.exception.ArgResolverException;
-import org.purah.core.matcher.FieldMatcher;
-import org.purah.core.matcher.ListIndexMatcher;
-import org.springframework.util.StringUtils;
+import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.inft.ListIndexMatcher;
 
-import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 
 /**
@@ -64,7 +53,7 @@ public class ReflectArgResolver extends AbstractMatchArgResolver {
 
     public Map<String, InputToCheckerArg<?>> getResultFromMap(InputToCheckerArg<? extends Map<String, Object>> inputToCheckerArg, FieldMatcher fieldMatcher) {
         Map<String, Object> objectMap = inputToCheckerArg.argValue();
-        Set<String> matchFieldList = fieldMatcher.matchFields(objectMap.keySet());
+        Set<String> matchFieldList = fieldMatcher.matchFields(objectMap.keySet(), inputToCheckerArg);
         Map<String, InputToCheckerArg<?>> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
         for (String matchField : matchFieldList) {
             String childStr = ClassConfigCache.childStr(inputToCheckerArg.fieldStr(), matchField, ".");

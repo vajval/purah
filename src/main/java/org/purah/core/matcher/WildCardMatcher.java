@@ -1,54 +1,29 @@
 package org.purah.core.matcher;
 
-import com.google.common.base.Splitter;
 import org.apache.commons.io.FilenameUtils;
 import org.purah.core.base.Name;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.purah.core.matcher.inft.ListableFieldMatcher;
 
 /**
- * 通配符 匹配器
+ * a* ->a ab abc
+ * a? -> ab ac ad
  */
 @Name("wild_card")
-public class WildCardMatcher extends BaseStringMatcher {
+public class WildCardMatcher extends ListableFieldMatcher<WildCardMatcher> {
 
-
-    List<String> wildCardList;
 
     public WildCardMatcher(String matchStr) {
         super(matchStr);
-        if (this.matchStr.contains("|")) {
-
-            this.wildCardList = Splitter.on("|").splitToList(this.matchStr);
-        } else {
-            this.wildCardList = Collections.singletonList(this.matchStr);
-        }
-
-
-    }
-
-    public WildCardMatcher(List<String> wildCardList) {
-        super(wildCardList.stream().collect(Collectors.joining(",", "{", "}")));
-        this.wildCardList = wildCardList;
-
-
     }
 
     @Override
-    public boolean supportCache() {
-        return super.supportCache();
+    protected WildCardMatcher wrapChildMatcher(String matchStr) {
+        return new WildCardMatcher(matchStr);
     }
 
     @Override
-    public boolean match(String field, Object belongInstance) {
-        for (String wildCard : this.wildCardList) {
-            if (FilenameUtils.wildcardMatch(field, wildCard)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean matchBySelf(String field, Object belongInstance) {
+        return FilenameUtils.wildcardMatch(field, this.matchStr);
     }
 
 

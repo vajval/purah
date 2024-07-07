@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 /**
  * wrap the method into a checker.
  */
-public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCacheChecker {
+public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCacheChecker<Object, Object> {
 
 
     protected PurahWrapMethod purahEnableMethod;
@@ -67,7 +67,7 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
 
 
     @Override
-    public abstract CheckResult doCheck(InputToCheckerArg inputToCheckerArg);
+    public abstract CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg);
 
     @Override
     public String name() {

@@ -1,9 +1,9 @@
 package org.purah.core.matcher.singleLevel;
 
 import com.google.common.collect.Sets;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.WildCardMatcher;
 
 import java.util.Set;
@@ -11,42 +11,31 @@ import java.util.Set;
 public class WildCardMatcherTest {
 
 
-    static Set<String> testFields = Sets.newHashSet("a", "ab", "abc", "abcd", "ba");
+    /**
+     * a* ->a, ab, ac, abc, ad, af
+     * a? -> ab ac ad
+     * ab* -> ab,abc,abcd
+     */
 
-
-    public static void assertMatch_X(FieldMatcher fieldMatcher) {
-
-        Set<String> matchFields = fieldMatcher.matchFields(testFields);
-        Assertions.assertEquals(matchFields, Sets.newHashSet("a", "ab", "abc", "abcd"));
-    }
-
-    public static void assertMatch_W(FieldMatcher fieldMatcher) {
-
-        Set<String> matchFields = fieldMatcher.matchFields(testFields);
-        Assertions.assertEquals(matchFields, Sets.newHashSet("ab"));
-    }
+    static Set<String> testFields = Sets.newHashSet("a", "ab", "abc", "ac", "ad", "af", "abcd", "b");
 
     @Test
-    public void matc() {
-        FieldMatcher fieldMatcher = new WildCardMatcher("a?|abc?");
-        Set<String> matchFields = fieldMatcher.matchFields(testFields);
-        Assertions.assertEquals(matchFields, Sets.newHashSet("ab", "abcd"));
-    }
-
-    @Test
-    public void match_x() {
-        FieldMatcher fieldMatcher = new WildCardMatcher("a*");
-        Set<String> matchFields = fieldMatcher.matchFields(testFields);
-        Assertions.assertEquals(matchFields, Sets.newHashSet("a", "ab", "abc", "abcd"));
+    public void match() {
+        Assertions.assertEquals(new WildCardMatcher("a*").matchFields(testFields), Sets.newHashSet("a", "ab", "ac", "abc", "ad", "af","abcd"));
+        Assertions.assertEquals(new WildCardMatcher("a?").matchFields(testFields), Sets.newHashSet("ab", "ac", "ad", "af"));
+        Assertions.assertEquals(new WildCardMatcher("ab*").matchFields(testFields), Sets.newHashSet( "ab", "abc","abcd"));
+        Assertions.assertEquals(new WildCardMatcher("ab*|a?").matchFields(testFields), Sets.newHashSet("ab", "ac", "ad", "af","abcd","abc"));
 
     }
 
     @Test
-    public void match_w() {
-        WildCardMatcher wildCardMatcher = new WildCardMatcher("a?");
-        Set<String> matchFields = wildCardMatcher.matchFields(testFields);
-        Assertions.assertEquals(matchFields, Sets.newHashSet("ab"));
-    }
+    public void listMatch() {
 
+        Assertions.assertEquals(new WildCardMatcher("a*|a?").matchFields(testFields), Sets.newHashSet("a", "ab", "ac", "abc", "ad", "af","abcd"));
+        Assertions.assertEquals(new WildCardMatcher("a?").matchFields(testFields), Sets.newHashSet("ab", "ac", "ad", "af"));
+
+
+    }
 
 }
+

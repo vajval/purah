@@ -2,12 +2,13 @@ package org.purah.core.matcher;
 
 
 import org.purah.core.base.Name;
+import org.purah.core.matcher.inft.FieldMatcher;
 
 @Name("match_all")
-public class AllMatcher extends BaseStringMatcher implements FieldMatcher {
+public class EqualMatcher extends BaseStringMatcher implements FieldMatcher {
 
 
-    public AllMatcher(String matchStr) {
+    public EqualMatcher(String matchStr) {
         super(matchStr);
     }
 

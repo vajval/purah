@@ -1,9 +1,11 @@
-package org.purah.core.matcher.multilevel;
+package org.purah.core.matcher.extra;
 
 import com.google.common.collect.Maps;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.WildCardMatcher;
+import org.purah.core.matcher.inft.MultilevelFieldMatcher;
+import org.purah.core.matcher.multilevel.MultilevelMatchInfo;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;

@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.exception.CheckerRegException;
-import org.purah.core.exception.InitCheckerException;
+import org.purah.core.exception.init.InitCheckerException;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;

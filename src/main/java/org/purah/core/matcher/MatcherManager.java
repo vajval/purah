@@ -3,6 +3,7 @@ package org.purah.core.matcher;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.purah.core.matcher.inft.FieldMatcher;
 import org.purah.core.matcher.factory.BaseMatcherFactory;
 import org.purah.core.matcher.factory.MatcherFactory;
 

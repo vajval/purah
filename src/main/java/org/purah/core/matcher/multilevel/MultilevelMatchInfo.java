@@ -1,7 +1,7 @@
 package org.purah.core.matcher.multilevel;
 
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.matcher.inft.FieldMatcher;
 
 import java.util.Collections;
 import java.util.List;

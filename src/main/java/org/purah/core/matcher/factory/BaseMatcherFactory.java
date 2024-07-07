@@ -4,7 +4,7 @@ package org.purah.core.matcher.factory;
 import org.purah.core.base.NameUtil;
 import org.purah.core.exception.FieldMatcherException;
 import org.purah.core.matcher.BaseStringMatcher;
-import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.matcher.inft.FieldMatcher;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

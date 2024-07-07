@@ -9,6 +9,7 @@ import org.purah.util.TestAnn;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class FValCheckerByDefaultReflectArgResolverTest {
@@ -18,6 +19,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
                                          @FVal("name") String name,
                                          @FVal("name") TestAnn testAnnOnNameField,
                                          @FVal("name") Name noExistAnn,
+                                         @FVal("child#*.child#*") Map<String, People> childChildMap,
                                          @FVal("child") List<People> childList,
                                          @FVal("child#0") People child0,
                                          @FVal("child#100") People child100,
@@ -26,6 +28,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
                                          @FVal("child#0.child#0.child") List<People> superChildList) {
         People root = People.elder;
         People people = peopleArg.argValue();
+        System.out.println(childChildMap.keySet());
         if (!root.equals(people)) {
             return false;
         }
@@ -67,7 +70,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
 
         Method method = FValCheckerByDefaultReflectArgResolverTest.class.getDeclaredMethod(
                 "childNameCheck", InputToCheckerArg.class,
-                String.class, TestAnn.class, Name.class, List.class,
+                String.class, TestAnn.class, Name.class, Map.class, List.class,
                 People.class, People.class, List.class,
                 String.class,
                 List.class);

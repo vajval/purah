@@ -2,17 +2,18 @@ package org.purah.core.matcher;
 
 
 import org.purah.core.base.NameUtil;
+import org.purah.core.matcher.inft.IDefaultFieldMatcher;
 
 import java.util.Objects;
 
 /**
- * 基础的匹配器，内置一个简单的字符串创建
- * 从配置文件读取的数据都是将其中的内容 传入此类的构造器
- * 当然也可以自定义一些复杂的
+ * Basic matcher that constructs itself using an input string,
+ * allowing it to be configured using information from a configuration file.
  */
-public abstract class BaseStringMatcher implements FieldMatcher {
-    protected String matchStr;
 
+public abstract class BaseStringMatcher implements IDefaultFieldMatcher {
+
+    protected String matchStr;
 
     public BaseStringMatcher(String matchStr) {
         this.matchStr = matchStr;

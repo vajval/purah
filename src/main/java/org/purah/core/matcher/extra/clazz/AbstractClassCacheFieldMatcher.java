@@ -1,10 +1,10 @@
-package org.purah.core.matcher.clazz;
+package org.purah.core.matcher.extra.clazz;
 
 
 
 
 import org.purah.core.matcher.BaseStringMatcher;
-import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.matcher.inft.FieldMatcher;
 
 import java.util.List;
 import java.util.Set;

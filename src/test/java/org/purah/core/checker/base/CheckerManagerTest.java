@@ -7,8 +7,7 @@ import org.purah.core.checker.CheckerManager;
 import org.purah.core.checker.converter.DefaultMethodConverter;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckerException;
-import org.purah.core.exception.CheckerRegException;
-import org.purah.core.exception.InitCheckerException;
+import org.purah.core.exception.init.InitCheckerException;
 
 public class CheckerManagerTest {
     CheckerManager checkerManager;

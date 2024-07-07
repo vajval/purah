@@ -10,8 +10,8 @@ import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties
 import org.purah.core.checker.converter.DefaultMethodConverter;
 import org.purah.core.checker.converter.MethodConverter;
 import org.purah.core.matcher.MatcherManager;
-import org.purah.core.matcher.clazz.AnnTypeFieldMatcher;
-import org.purah.core.matcher.clazz.ClassNameMatcher;
+import org.purah.core.matcher.extra.clazz.AnnTypeFieldMatcher;
+import org.purah.core.matcher.extra.clazz.ClassNameMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.ReMatcher;
 import org.purah.core.matcher.WildCardMatcher;

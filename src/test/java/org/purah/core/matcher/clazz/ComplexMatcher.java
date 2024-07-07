@@ -1,7 +1,7 @@
 //package org.purah.core.matcher.multilevel;
 //
 //import com.google.common.base.Splitter;
-//import org.purah.core.matcher.FieldMatcher;
+//import org.purah.core.matcher.base.FieldMatcher;
 //import org.purah.core.matcher.WildCardMatcher;
 //
 //import java.util.ArrayList;

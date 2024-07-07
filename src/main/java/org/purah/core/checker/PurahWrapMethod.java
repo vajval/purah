@@ -76,7 +76,7 @@ public class PurahWrapMethod {
     }
 
 
-    public CheckResult invokeResult(InputToCheckerArg inputToCheckerArg, Object[] invokeArgs) {
+    public CheckResult<Object> invokeResult(InputToCheckerArg<?> inputToCheckerArg, Object[] invokeArgs) {
         Object result;
         if (this.needCheckArgIndex != -1 && !methodParamBeWrapped) {
             invokeArgs[this.needCheckArgIndex] = ((InputToCheckerArg) invokeArgs[this.needCheckArgIndex]).argValue();
