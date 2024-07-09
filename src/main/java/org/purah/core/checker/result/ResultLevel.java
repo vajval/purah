@@ -1,13 +1,13 @@
 package org.purah.core.checker.result;
 
+
+//todo
 public enum ResultLevel {
     all(1),
     failed(2),
     failedAndIgnoreNotBaseLogic(3),
     failedNotBaseLogic(4),
     error(0);
-
-//    errorIgnoreMatch(4);
 
     final int value;
 
@@ -30,9 +30,6 @@ public enum ResultLevel {
         } else if (value == 3) {
             return error;
         }
-//        else if (value == 4) {
-//            return errorIgnoreMatch;
-//        }
         throw new RuntimeException();
     }
 

@@ -1,10 +1,10 @@
-package org.purah.core.matcher.extra.clazz.ann;
+package org.purah.core.matcher.singlelevel;
 
 import java.lang.annotation.*;
 
 
 /**
- * 自带的一个，见单元测试
+ * "An example provided by default, as seen in the unit test."
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})

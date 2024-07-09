@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 import org.springframework.util.StringUtils;
 
 import java.beans.PropertyDescriptor;

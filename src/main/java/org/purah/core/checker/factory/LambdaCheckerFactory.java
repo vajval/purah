@@ -2,7 +2,7 @@ package org.purah.core.checker.factory;
 
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.LambdaChecker;
-import org.purah.core.matcher.WildCardMatcher;
+import org.purah.core.matcher.singlelevel.WildCardMatcher;
 
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;

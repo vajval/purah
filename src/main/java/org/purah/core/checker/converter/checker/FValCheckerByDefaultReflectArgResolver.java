@@ -6,7 +6,7 @@ import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.init.InitCheckerException;
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.multilevel.NormalMultiLevelMatcher;
 import org.purah.core.resolver.ArgResolver;

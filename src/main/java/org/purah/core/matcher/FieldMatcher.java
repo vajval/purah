@@ -1,4 +1,4 @@
-package org.purah.core.matcher.inft;
+package org.purah.core.matcher;
 
 import java.util.Set;
 

@@ -1,10 +1,9 @@
 package org.purah.core.matcher.singleLevel;
 
 import com.google.common.collect.Sets;
-import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.purah.core.matcher.WildCardMatcher;
+import org.purah.core.matcher.singlelevel.WildCardMatcher;
 
 import java.util.Set;
 

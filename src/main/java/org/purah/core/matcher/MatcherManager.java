@@ -3,7 +3,6 @@ package org.purah.core.matcher;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.purah.core.matcher.inft.FieldMatcher;
 import org.purah.core.matcher.factory.BaseMatcherFactory;
 import org.purah.core.matcher.factory.MatcherFactory;
 
@@ -11,14 +10,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MatcherManager {
-    private static final Logger logger = LogManager.getLogger(MatcherManager.class);
+    protected static final Logger logger = LogManager.getLogger(MatcherManager.class);
 
     Map<String, MatcherFactory> factoryMap = new ConcurrentHashMap<>();
 
     public void reg(MatcherFactory matcherFactory) {
         String name = matcherFactory.name();
-
-
         factoryMap.put(name, matcherFactory);
         if (logger.isInfoEnabled()) {
             logger.info("reg MatcherFactory: {}, name: {}", MatcherFactory.class, name);

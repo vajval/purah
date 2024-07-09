@@ -6,7 +6,7 @@ import org.purah.core.PurahContext;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.factory.MatcherFactory;
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 
 import javax.annotation.Nonnull;
 import java.util.*;

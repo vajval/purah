@@ -9,10 +9,10 @@ import org.purah.core.checker.*;
 import org.purah.core.checker.factory.LambdaCheckerFactory;
 import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.checker.result.ResultLevel;
-import org.purah.core.matcher.extra.clazz.AnnTypeFieldMatcher;
-import org.purah.core.matcher.extra.clazz.ClassNameMatcher;
+import org.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
+import org.purah.core.matcher.singlelevel.ClassNameMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
-import org.purah.core.matcher.WildCardMatcher;
+import org.purah.core.matcher.singlelevel.WildCardMatcher;
 
 
 import java.util.LinkedHashMap;
@@ -78,7 +78,7 @@ class CombinatorialCheckerTest {
         properties.addByStrMap("general", map);
 
         map = new LinkedHashMap<>();
-        map.put("短文本", "敏感词检测");
+        map.put("shortText", "敏感词检测");
 
         properties.addByStrMap("type_by_ann", map);
 
@@ -102,7 +102,7 @@ class CombinatorialCheckerTest {
         properties.addByStrMap("general", map);
 
         map = new LinkedHashMap<>();
-        map.put("短文本", "敏感词检测");
+        map.put("shortText", "敏感词检测");
         properties.setMainExecType(ExecType.Main.all_success_but_must_check_all);
         properties.addByStrMap("type_by_ann", map);
 
@@ -126,7 +126,7 @@ class CombinatorialCheckerTest {
         properties.addByStrMap("general", map);
 
         map = new LinkedHashMap<>();
-        map.put("短文本", "敏感词检测");
+        map.put("shortText", "敏感词检测");
         properties.setMainExecType(ExecType.Main.at_least_one);
         properties.setResultLevel(ResultLevel.all);
         properties.addByStrMap("type_by_ann", map);
@@ -153,7 +153,7 @@ class CombinatorialCheckerTest {
         properties.addByStrMap("general", map);
 
         map = new LinkedHashMap<>();
-        map.put("短文本", "敏感词检测");
+        map.put("shortText", "敏感词检测");
         properties.setMainExecType(ExecType.Main.at_least_one_but_must_check_all);
         properties.addByStrMap("type_by_ann", map);
 
@@ -161,8 +161,6 @@ class CombinatorialCheckerTest {
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
         CombinatorialCheckResult checkResult = (CombinatorialCheckResult) checker.check(Util.trade);
         Assertions.assertTrue(checkResult.isSuccess());
-        System.out.println(checkResult.data());
-
         Assertions.assertEquals(2, checkResult.data().size());
 
     }
@@ -180,14 +178,12 @@ class CombinatorialCheckerTest {
         properties.addByStrMap("general", map);
 
         map = new LinkedHashMap<>();
-        map.put("短文本", "敏感词检测");
+        map.put("shortText", "敏感词检测");
         properties.setMainExecType(ExecType.Main.at_least_one_but_must_check_all);
         properties.addByStrMap("type_by_ann", map);
 
-
         Checker checker = purahContext.regNewCombinatorialChecker(properties);
         CombinatorialCheckResult checkResult = (CombinatorialCheckResult) checker.check(Util.trade);
-
         Assertions.assertTrue(checkResult.isSuccess());
         Assertions.assertEquals(checkResult.data().size(), 2);
 

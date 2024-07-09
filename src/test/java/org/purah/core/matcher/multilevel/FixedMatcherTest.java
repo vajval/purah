@@ -23,7 +23,6 @@ class FixedMatcherTest {
         DefaultArgResolver resolver = new DefaultArgResolver();
         FixedMatcher fixedMatcher = new FixedMatcher("name|address|noExistField|child#0.id|child#5.child#0.id");
         Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(People.elder, fixedMatcher);
-        System.out.println(fixedMatcher);
         Assertions.assertEquals(map.get("name").argValue(), People.elder.getName());
         Assertions.assertEquals(map.get("address").argValue(), People.elder.getAddress());
         Assertions.assertEquals(map.get("child#0.id").argValue(), People.elder.getChild().get(0).getId());
@@ -40,8 +39,4 @@ class FixedMatcherTest {
 
     }
 
-
-    @Test
-    void listMatch() {
-    }
 }

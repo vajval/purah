@@ -3,7 +3,7 @@ package org.purah.core.checker.combinatorial;
 
 import org.purah.core.PurahContext;
 import org.purah.core.checker.result.ResultLevel;
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,10 +1,13 @@
-package org.purah.core.matcher;
+package org.purah.core.matcher.singlelevel;
 
 
 import org.purah.core.base.Name;
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.BaseStringMatcher;
+import org.purah.core.matcher.FieldMatcher;
 
-@Name("match_all")
+import java.util.Objects;
+
+@Name("equal")
 public class EqualMatcher extends BaseStringMatcher implements FieldMatcher {
 
 
@@ -14,6 +17,6 @@ public class EqualMatcher extends BaseStringMatcher implements FieldMatcher {
 
     @Override
     public boolean match(String field, Object belongInstance) {
-        return true;
+        return Objects.equals(matchStr,field);
     }
 }

@@ -1,11 +1,12 @@
-package org.purah.core.matcher;
+package org.purah.core.matcher.singlelevel;
 
 import org.purah.core.base.Name;
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.BaseStringMatcher;
+import org.purah.core.matcher.FieldMatcher;
 
 /**
- * 正则匹配器,配置文件写记得加上 []
- * 例如 '[a。*]' : 规则1,规则2
+ * Regular expression matcher, remember to enclose configurations in []
+ * For example, '[a.*]' : Rule 1, Rule 2
  *
  */
 @Name("re")

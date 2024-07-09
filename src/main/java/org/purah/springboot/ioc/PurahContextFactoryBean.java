@@ -4,7 +4,7 @@ package org.purah.springboot.ioc;
 import org.purah.core.PurahContext;
 import org.purah.core.PurahContextConfig;
 
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 
 import org.purah.springboot.ann.EnablePurah;
 import org.springframework.beans.factory.FactoryBean;

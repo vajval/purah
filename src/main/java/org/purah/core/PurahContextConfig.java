@@ -1,7 +1,7 @@
 package org.purah.core;
 
 import org.purah.core.checker.result.ResultLevel;
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 import org.purah.springboot.ann.EnablePurah;
 
 import java.util.ArrayList;

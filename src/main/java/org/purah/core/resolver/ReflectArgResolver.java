@@ -3,7 +3,7 @@ package org.purah.core.resolver;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.inft.ListIndexMatcher;
 
 import java.util.*;

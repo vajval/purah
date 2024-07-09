@@ -1,20 +1,20 @@
 package org.purah.core.matcher.multilevel;
 
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 
 import java.util.Collections;
 import java.util.List;
 
 public class MultilevelMatchInfo {
+
+
     List<FieldMatcher> childFieldMatcher;
+    InputToCheckerArg<?> addToFinalArg;
 
-
-    InputToCheckerArg<?> inputToCheckerArg;
-
-    public MultilevelMatchInfo(List<FieldMatcher> childFieldMatcher, InputToCheckerArg<?> inputToCheckerArg) {
+    protected MultilevelMatchInfo(List<FieldMatcher> childFieldMatcher, InputToCheckerArg<?> addToFinalArg) {
         this.childFieldMatcher = childFieldMatcher;
-        this.inputToCheckerArg = inputToCheckerArg;
+        this.addToFinalArg = addToFinalArg;
     }
 
 
@@ -51,10 +51,10 @@ public class MultilevelMatchInfo {
     }
 
     public boolean isAddToFinal() {
-        return inputToCheckerArg != null;
+        return addToFinalArg != null;
     }
 
-    public InputToCheckerArg<?> getInputToCheckerArg() {
-        return inputToCheckerArg;
+    public InputToCheckerArg<?> getAddToFinalArg() {
+        return addToFinalArg;
     }
 }

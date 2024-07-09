@@ -2,8 +2,8 @@ package org.purah.core.matcher.multilevel;
 
 import com.google.common.collect.Sets;
 import org.purah.core.base.Name;
+import org.purah.core.matcher.singlelevel.EqualMatcher;
 import org.purah.core.matcher.inft.IDefaultFieldMatcher;
-import org.purah.core.matcher.WildCardMatcher;
 
 import java.util.*;
 
@@ -19,9 +19,10 @@ import static java.util.stream.Collectors.*;
 
 @Name("fixed")
 public class FixedMatcher extends AbstractMultilevelFieldMatcher<FixedMatcher> {
-    Map<String, Set<String>> firstLevelToFullMap;
-    int resultExpectedSize = 1;
 
+    // child.id|child.name|name->{child=[child.id,child.name],name=name}
+    protected Map<String, Set<String>> firstLevelToFullMap;
+    protected int resultExpectedSize = 1;
 
 
     public FixedMatcher(String matchStr) {
@@ -38,38 +39,34 @@ public class FixedMatcher extends AbstractMultilevelFieldMatcher<FixedMatcher> {
 
     @Override
     protected IDefaultFieldMatcher initFirstLevelFieldMatcher(String str) {
-        return new WildCardMatcher(str);
+        return new EqualMatcher(str);
     }
 
     @Override
     public Map<String, Object> listMatch(List<?> objectList) {
-        int index = firstLevelStr.indexOf("#");
-        if (index == -1) {
+        if (listIndex == NO_LIST_INDEX) {
             return Collections.emptyMap();
         }
-        String substring = firstLevelStr.substring(index + 1);
-        int i = Integer.parseInt(substring);
-
-        if(i !=listIndex){
-            throw new RuntimeException("123");
+        int getIndex = listIndex;
+        if (listIndex < 0) {
+            getIndex = objectList.size() + listIndex;
         }
-        if (i < objectList.size()) {
-            return Collections.singletonMap("#" + i, objectList.get(i));
+        if (listIndex < objectList.size()) {
+            return Collections.singletonMap("#" + listIndex, objectList.get(getIndex));
         }
-        return Collections.singletonMap("#" + i, null);
+        return Collections.singletonMap("#" + listIndex, null);
     }
 
     @Override
     public Set<String> matchFields(Set<String> fields, Object belongInstance) {
 
-
         if (wrapChildList == null) {
             if (fields.contains(firstLevelStr)) {
-                return  Collections.singleton(firstLevelStr);
+                return Collections.singleton(firstLevelStr);
             }
             return Collections.singleton(fullMatchStr);
-
         }
+
         Set<String> result = Sets.newHashSetWithExpectedSize(resultExpectedSize);
         for (Map.Entry<String, Set<String>> entry : firstLevelToFullMap.entrySet()) {
             if (fields.contains(entry.getKey())) {

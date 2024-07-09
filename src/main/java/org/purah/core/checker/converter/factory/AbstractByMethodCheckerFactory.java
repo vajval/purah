@@ -2,7 +2,7 @@ package org.purah.core.checker.converter.factory;
 
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.exception.init.InitCheckFactoryException;
-import org.purah.core.matcher.WildCardMatcher;
+import org.purah.core.matcher.singlelevel.WildCardMatcher;
 
 import java.lang.reflect.Method;
 

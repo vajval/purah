@@ -1,14 +1,11 @@
 package org.purah.core.resolver;
 
-import com.google.common.collect.Sets;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.TestObject;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
-import org.purah.core.matcher.WildCardMatcher;
+import org.purah.core.matcher.singlelevel.WildCardMatcher;
 
 import java.util.*;
 

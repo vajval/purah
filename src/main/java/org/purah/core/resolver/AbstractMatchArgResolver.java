@@ -2,7 +2,7 @@ package org.purah.core.resolver;
 
 
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.inft.MultilevelFieldMatcher;
 import org.purah.core.matcher.multilevel.MultilevelMatchInfo;
 import org.springframework.util.CollectionUtils;
@@ -59,7 +59,7 @@ public abstract class AbstractMatchArgResolver implements ArgResolver {
             InputToCheckerArg<?> childArg = entry.getValue();
             MultilevelMatchInfo multilevelMatchInfo = multilevelFieldMatcher.childFieldMatcher(inputToCheckerArg, field, childArg);
             if (multilevelMatchInfo.isAddToFinal()) {
-                InputToCheckerArg<?> resultArg = multilevelMatchInfo.getInputToCheckerArg();
+                InputToCheckerArg<?> resultArg = multilevelMatchInfo.getAddToFinalArg();
                 result.put(resultArg.fieldStr(), resultArg);
             }
             List<FieldMatcher> childFieldMatcherList = multilevelMatchInfo.getChildFieldMatcherList();

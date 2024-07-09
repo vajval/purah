@@ -3,7 +3,7 @@
 //import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.Test;
 //import org.purah.core.checker.base.CheckInstance;
-//import org.purah.core.matcher.WildCardMatcher;
+//import org.purah.core.matcher.singlelevel.WildCardMatcher;
 //
 //import java.util.Map;
 //

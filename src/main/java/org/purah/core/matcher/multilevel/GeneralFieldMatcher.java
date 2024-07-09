@@ -4,9 +4,9 @@ package org.purah.core.matcher.multilevel;
 import com.google.common.collect.Maps;
 import org.purah.core.base.Name;
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.inft.IDefaultFieldMatcher;
-import org.purah.core.matcher.WildCardMatcher;
+import org.purah.core.matcher.singlelevel.WildCardMatcher;
 import org.purah.core.matcher.inft.MultilevelFieldMatcher;
 import org.springframework.util.StringUtils;
 
@@ -16,7 +16,7 @@ import java.util.*;
  * People people=new People(id:123,name:123,address:123,child:[new People(id:0,name:null),new People(id:1,name:null)]);
  * GeneralFieldMatcher "na*|address|noExistField|child#*.id|child#5.child#5.id|child#*.child#4.id"
  * return{"name":123,"address":123,noExistField:null,"child#0.id":0,"child#1.id":1,"child#5.child#5.id":null}
- * checker will check "noExistField" "child#5.child#5.id" as null even not exist
+ * checker will check "noExistField" "child#5.child#5.id" as null even not exist because it is fixed
  * <p>
  * no field match  child#*.child#4.id so ignore
  */
@@ -24,16 +24,16 @@ import java.util.*;
 public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<MultilevelFieldMatcher> {
 
 
-    boolean isOption;
-    boolean childIsWildCard;
-    boolean childIsMultiLevel;
+    protected boolean isFixed;
+    protected boolean childIsWildCard;
+    protected boolean childIsMultiLevel;
 
-    protected static int WILD_CARD_LIST_MATCH=-2;
+
 
 
     public GeneralFieldMatcher(String matchStr) {
         super(matchStr);
-        isOption = !isWildCardMatcher(childStr) && !isWildCardMatcher(firstLevelStr);
+        isFixed = !isWildCardMatcher(childStr) && !isWildCardMatcher(firstLevelStr);
         if (childStr == null) {
             childIsWildCard = false;
             childIsMultiLevel = false;
@@ -41,8 +41,6 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
             childIsWildCard = isWildCardMatcher(childStr);
             childIsMultiLevel = childStr.contains(".") || childStr.contains("#");
         }
-
-
     }
 
     public static boolean isWildCardMatcher(String s) {
@@ -94,7 +92,7 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
         if (childStr == null) {
             return MultilevelMatchInfo.addToFinal(childArg);
         }
-        if (isOption) {
+        if (isFixed) {
             return MultilevelMatchInfo.justChild(new FixedMatcher(childStr));
         }
         FieldMatcher fieldMatcher;
@@ -114,12 +112,11 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
 
     @Override
     public Map<String, Object> listMatch(List<?> objectList) {
-        if (listIndex ==NO_LIST_INDEX) {
+        if (listIndex == NO_LIST_INDEX) {
             return Collections.emptyMap();
         }
-        if (listIndex ==WILD_CARD_LIST_MATCH) {
+        if (listIndex == OTHER_LIST_MATCH) {
             Map<String, Object> result = Maps.newHashMapWithExpectedSize(objectList.size());
-
             if (listIndexStr.equals("*")) {
                 for (int index = 0; index < objectList.size(); index++) {
                     String fieldStr = "#" + index;
@@ -137,8 +134,12 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
             return result;
 
         }
+        int getIndex = listIndex;
+        if (listIndex < 0) {
+            getIndex = objectList.size() + listIndex;
+        }
         if (listIndex < objectList.size()) {
-            return Collections.singletonMap("#" + listIndex, objectList.get(listIndex));
+            return Collections.singletonMap("#" + listIndex, objectList.get(getIndex));
         }
         return Collections.emptyMap();
     }

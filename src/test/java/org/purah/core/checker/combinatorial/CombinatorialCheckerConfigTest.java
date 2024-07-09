@@ -12,10 +12,10 @@ import org.purah.core.checker.LambdaChecker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.factory.CheckerFactory;
 
-import org.purah.core.matcher.extra.clazz.AnnTypeFieldMatcher;
-import org.purah.core.matcher.extra.clazz.ClassNameMatcher;
+import org.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
+import org.purah.core.matcher.singlelevel.ClassNameMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
-import org.purah.core.matcher.WildCardMatcher;
+import org.purah.core.matcher.singlelevel.WildCardMatcher;
 
 
 import java.util.LinkedHashMap;

@@ -2,29 +2,37 @@ package org.purah.core.matcher.multilevel;
 
 
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.inft.FieldMatcher;
+import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.inft.IDefaultFieldMatcher;
 import org.purah.core.matcher.inft.ListIndexMatcher;
-import org.purah.core.matcher.inft.ListableFieldMatcher;
+import org.purah.core.matcher.WrapListFieldMatcher;
 import org.purah.core.matcher.inft.MultilevelFieldMatcher;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractMultilevelFieldMatcher<T extends MultilevelFieldMatcher> extends ListableFieldMatcher<T> implements MultilevelFieldMatcher, ListIndexMatcher {
+public abstract class AbstractMultilevelFieldMatcher<T extends MultilevelFieldMatcher> extends WrapListFieldMatcher<T> implements MultilevelFieldMatcher, ListIndexMatcher {
+
+    // The matching string at the current level, for example, in `child.name`,
+    // `firstLevelStr` is `child`, and `childStr` is `name`.
 
     protected String firstLevelStr;
     protected String childStr;
+    //  matcher build by firstLevelStr
     protected IDefaultFieldMatcher firstLevelFieldMatcher;
+    //  Constructor parameters are not split into the original string before firstLevelStr and childStr.
     protected String fullMatchStr;
-
-    protected Integer listIndex = -1;
-
+    // Support for lists, set the index to be matched. if child#5  listIndex=5
+    protected Integer listIndex = NO_LIST_INDEX;
+    // Support for lists, set the index str . if child#5  listIndexStr=#5.   if child#*  listIndexStr=#*
     protected String listIndexStr;
 
-    protected static int NO_LIST_INDEX = 1;
 
+
+    protected static int NO_LIST_INDEX = Integer.MIN_VALUE;
+
+    protected static int OTHER_LIST_MATCH = Integer.MIN_VALUE + 1;
 
     public AbstractMultilevelFieldMatcher(String matchStr) {
         super(matchStr);
@@ -36,6 +44,12 @@ public abstract class AbstractMultilevelFieldMatcher<T extends MultilevelFieldMa
 
     }
 
+    /**
+     * child#6.child#2.name ->
+     * fullMatchStr = child#6.child#2.name
+     * firstLevelStr = child
+     * childStr = #6.child#2.name
+     */
 
     protected void initStr() {
         fullMatchStr = matchStr;
@@ -57,6 +71,11 @@ public abstract class AbstractMultilevelFieldMatcher<T extends MultilevelFieldMa
         firstLevelFieldMatcher = initFirstLevelFieldMatcher(firstLevelStr);
     }
 
+    /**
+     * child#6 -> listIndex=6
+     * child#* -> listIndex=-2
+     * child ->   listIndex=-1
+     */
 
     protected void initListIndex() {
         int index = firstLevelStr.indexOf("#");
@@ -67,7 +86,7 @@ public abstract class AbstractMultilevelFieldMatcher<T extends MultilevelFieldMa
             try {
                 listIndex = Integer.parseInt(listIndexStr);
             } catch (Exception e) {
-                listIndex = -2;
+                listIndex = OTHER_LIST_MATCH;
             }
         }
     }
@@ -92,6 +111,7 @@ public abstract class AbstractMultilevelFieldMatcher<T extends MultilevelFieldMa
     protected MultilevelMatchInfo multilevelMatchInfoByChild(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
         boolean addToFinal = false;
         List<FieldMatcher> fieldMatchers = new ArrayList<>();
+        //todo  Improve efficiency
         for (T optionMatcher : wrapChildList) {
             if (optionMatcher.match(matchedField, inputArg.argValue())) {
                 MultilevelMatchInfo multilevelMatchInfo = optionMatcher.childFieldMatcher(inputArg, matchedField, childArg);

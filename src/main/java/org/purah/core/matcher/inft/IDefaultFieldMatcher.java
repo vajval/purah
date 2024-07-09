@@ -1,6 +1,6 @@
 package org.purah.core.matcher.inft;
 
-import com.google.common.collect.Sets;
+import org.purah.core.matcher.FieldMatcher;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +26,9 @@ public interface IDefaultFieldMatcher extends FieldMatcher {
         return result;
     }
 
-    boolean match(String field, Object belongInstance);
+    default boolean match(String field, Object belongInstance) {
+        return false;
+    }
 
     default boolean match(String field) {
         return match(field, null);
@@ -34,7 +36,7 @@ public interface IDefaultFieldMatcher extends FieldMatcher {
 
 
     default Set<String> matchFields(Set<String> fields) {
-        HashSet<String> result  = new HashSet<>();
+        HashSet<String> result = new HashSet<>();
         for (String field : fields) {
             if (this.match(field)) {
                 result.add(field);

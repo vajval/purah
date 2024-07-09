@@ -1,15 +1,16 @@
-package org.purah.core.matcher;
+package org.purah.core.matcher.singlelevel;
 
 import org.apache.commons.io.FilenameUtils;
 import org.purah.core.base.Name;
-import org.purah.core.matcher.inft.ListableFieldMatcher;
+import org.purah.core.matcher.WrapListFieldMatcher;
 
 /**
  * a* ->a ab abc
  * a? -> ab ac ad
+ * not support [] {}
  */
 @Name("wild_card")
-public class WildCardMatcher extends ListableFieldMatcher<WildCardMatcher> {
+public class WildCardMatcher extends WrapListFieldMatcher<WildCardMatcher> {
 
 
     public WildCardMatcher(String matchStr) {

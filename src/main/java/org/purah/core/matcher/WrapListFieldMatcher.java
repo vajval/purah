@@ -1,10 +1,10 @@
-package org.purah.core.matcher.inft;
+package org.purah.core.matcher;
 
 import com.google.common.base.Splitter;
 import org.purah.core.matcher.BaseStringMatcher;
+import org.purah.core.matcher.inft.IDefaultFieldMatcher;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
  */
 
 
-public abstract class ListableFieldMatcher<T extends IDefaultFieldMatcher> extends BaseStringMatcher {
+public abstract class WrapListFieldMatcher<T extends IDefaultFieldMatcher> extends BaseStringMatcher {
 
     protected List<T> wrapChildList;
 
-    public ListableFieldMatcher(String matchStr) {
+    public WrapListFieldMatcher(String matchStr) {
         super(matchStr);
         initWapChildList(matchStr);
 

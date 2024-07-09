@@ -1,10 +1,10 @@
 package org.purah.core;
 
 
-import org.purah.core.matcher.extra.clazz.ann.FieldType;
-import org.purah.core.matcher.extra.clazz.AnnTypeFieldMatcher;
-import org.purah.core.matcher.extra.clazz.ClassNameMatcher;
-import org.purah.core.matcher.WildCardMatcher;
+import org.purah.core.matcher.singlelevel.FieldType;
+import org.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
+import org.purah.core.matcher.singlelevel.ClassNameMatcher;
+import org.purah.core.matcher.singlelevel.WildCardMatcher;
 
 public class Util {
 
@@ -22,9 +22,9 @@ public class Util {
 
 
     public static class Trade {
-        @FieldType("短文本")
+        @FieldType("shortText")
         String title;
-        @FieldType("需要检测")
+        @FieldType("needCheck")
 
         User initiator;
         User recipients;

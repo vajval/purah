@@ -1,8 +1,8 @@
 package org.purah.core.matcher.multilevel;
 
 import org.purah.core.base.Name;
+import org.purah.core.matcher.singlelevel.EqualMatcher;
 import org.purah.core.matcher.inft.IDefaultFieldMatcher;
-import org.purah.core.matcher.WildCardMatcher;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 @Name("normal")
 public class NormalMultiLevelMatcher extends AbstractMultilevelFieldMatcher<NormalMultiLevelMatcher> {
 
+
+    // child.id|child.name|name->{child,name}
     Set<String> firstLevelStrSet;
 
     public NormalMultiLevelMatcher(String matchStr) {
@@ -41,22 +43,28 @@ public class NormalMultiLevelMatcher extends AbstractMultilevelFieldMatcher<Norm
         return result;
     }
 
-
+    @Override
     protected NormalMultiLevelMatcher wrapChildMatcher(String matchStr) {
         return new NormalMultiLevelMatcher(matchStr);
     }
 
     @Override
     protected IDefaultFieldMatcher initFirstLevelFieldMatcher(String str) {
-        return new WildCardMatcher(firstLevelStr);
+        return new EqualMatcher(firstLevelStr);
     }
 
 
     @Override
     public Map<String, Object> listMatch(List<?> objectList) {
-
+        if (listIndex == NO_LIST_INDEX) {
+            return Collections.emptyMap();
+        }
+        int getIndex = listIndex;
+        if (listIndex < 0) {
+            getIndex = objectList.size() + listIndex;
+        }
         if (listIndex < objectList.size()) {
-            return Collections.singletonMap("#" + listIndex, objectList.get(listIndex));
+            return Collections.singletonMap("#" + listIndex, objectList.get(getIndex));
         }
         return Collections.emptyMap();
     }

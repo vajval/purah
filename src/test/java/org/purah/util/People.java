@@ -16,6 +16,7 @@ public class People {
     String name;
     @TestAnn("南方城市")
     String address;
+
     List<People> child;
 
     private static Map<String, People> testPeople = testPeople();

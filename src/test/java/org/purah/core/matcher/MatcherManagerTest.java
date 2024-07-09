@@ -1,35 +1,30 @@
 package org.purah.core.matcher;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.purah.core.matcher.extra.clazz.AnnTypeFieldMatcher;
-import org.purah.core.matcher.extra.clazz.ClassNameMatcher;
+import org.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
+import org.purah.core.matcher.singlelevel.ClassNameMatcher;
+import org.purah.core.matcher.singlelevel.WildCardMatcher;
 
 public class MatcherManagerTest {
 
-    public static MatcherManager defaultMatcherManager = new MatcherManager();
-
-    static {
-        defaultMatcherManager.regBaseStrMatcher(AnnTypeFieldMatcher.class);
-        defaultMatcherManager.regBaseStrMatcher(ClassNameMatcher.class);
-        defaultMatcherManager.regBaseStrMatcher(WildCardMatcher.class);
-
-    }
-
     @Test
-    void main() {
-//
-//        MatcherManager matcherManager = defaultMatcherManager;
-//
-//        FieldMatcher fieldMatcher = matcherManager.factoryOf("type_by_ann").create("需要检测");
-//        AnnTypeFieldMatcherTest.assertMatch(fieldMatcher);
-//
-//
-//        fieldMatcher = matcherManager.factoryOf("class_name").create(Util.User.class.getName());
-//        ClassNameMatcherTest.assertMatch( fieldMatcher);
-//
-//        MatcherFactory matcherFactory = matcherManager.factoryOf("wild_card");
-//        WildCardMatcherTest.assertMatch_X(matcherFactory.create("a*"));
-//        WildCardMatcherTest.assertMatch_W(matcherFactory.create("a?"));
+    void reg() {
+        MatcherManager matcherManager = new MatcherManager();
+
+
+        matcherManager.regBaseStrMatcher(AnnTypeFieldMatcher.class);
+        matcherManager.regBaseStrMatcher(ClassNameMatcher.class);
+        matcherManager.regBaseStrMatcher(WildCardMatcher.class);
+
+        FieldMatcher fieldMatcher = matcherManager.factoryOf("type_by_ann").create("needCheck");
+        Assertions.assertEquals(new AnnTypeFieldMatcher("needCheck"), fieldMatcher);
+
+        fieldMatcher = matcherManager.factoryOf("class_name").create("java.lang.String");
+        Assertions.assertEquals(new ClassNameMatcher("java.lang.String"), fieldMatcher);
+
+        fieldMatcher = matcherManager.factoryOf("wild_card").create("a*");
+        Assertions.assertEquals(new WildCardMatcher("a*"), fieldMatcher);
 
     }
 }

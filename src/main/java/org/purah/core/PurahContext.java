@@ -10,11 +10,11 @@ import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties
 import org.purah.core.checker.converter.DefaultMethodConverter;
 import org.purah.core.checker.converter.MethodConverter;
 import org.purah.core.matcher.MatcherManager;
-import org.purah.core.matcher.extra.clazz.AnnTypeFieldMatcher;
-import org.purah.core.matcher.extra.clazz.ClassNameMatcher;
+import org.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
+import org.purah.core.matcher.singlelevel.ClassNameMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
-import org.purah.core.matcher.ReMatcher;
-import org.purah.core.matcher.WildCardMatcher;
+import org.purah.core.matcher.singlelevel.ReMatcher;
+import org.purah.core.matcher.singlelevel.WildCardMatcher;
 import org.purah.core.resolver.ArgResolverManager;
 
 public class PurahContext {
@@ -22,7 +22,7 @@ public class PurahContext {
     public static final MethodConverter DEFAULT_METHOD_CONVERTER = new DefaultMethodConverter();
 
 
-    private PurahContextConfig config;
+    private final PurahContextConfig config;
 
     private CheckerManager checkManager = new CheckerManager();
 
