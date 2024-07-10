@@ -3,6 +3,7 @@ package org.purah.core.matcher.multilevel;
 import org.purah.core.base.Name;
 import org.purah.core.matcher.singlelevel.EqualMatcher;
 import org.purah.core.matcher.inft.IDefaultFieldMatcher;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,6 +34,20 @@ public class NormalMultiLevelMatcher extends AbstractMultilevelFieldMatcher<Norm
     }
 
     @Override
+    public boolean supportCache() {
+        if (wrapChildList != null) {
+            for (NormalMultiLevelMatcher normalMultiLevelMatcher : wrapChildList) {
+                if (!normalMultiLevelMatcher.supportCache()) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return !fullMatchStr.contains("#");
+        }
+    }
+
+    @Override
     public Set<String> matchFields(Set<String> fields, Object belongInstance) {
         Set<String> result = new HashSet<>();
         for (String s : firstLevelStrSet) {
@@ -56,6 +71,9 @@ public class NormalMultiLevelMatcher extends AbstractMultilevelFieldMatcher<Norm
 
     @Override
     public Map<String, Object> listMatch(List<?> objectList) {
+        if (CollectionUtils.isEmpty(objectList)) {
+            return Collections.emptyMap();
+        }
         if (listIndex == NO_LIST_INDEX) {
             return Collections.emptyMap();
         }

@@ -10,7 +10,7 @@ import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.multilevel.NormalMultiLevelMatcher;
 import org.purah.core.resolver.ArgResolver;
-import org.purah.core.resolver.ReflectArgResolver;
+import org.purah.core.resolver.reflect.ReflectArgResolver;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;

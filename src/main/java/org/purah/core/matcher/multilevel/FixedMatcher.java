@@ -2,8 +2,10 @@ package org.purah.core.matcher.multilevel;
 
 import com.google.common.collect.Sets;
 import org.purah.core.base.Name;
+import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.singlelevel.EqualMatcher;
 import org.purah.core.matcher.inft.IDefaultFieldMatcher;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -44,6 +46,9 @@ public class FixedMatcher extends AbstractMultilevelFieldMatcher<FixedMatcher> {
 
     @Override
     public Map<String, Object> listMatch(List<?> objectList) {
+        if (CollectionUtils.isEmpty(objectList)) {
+            return Collections.singletonMap("#" + listIndex, null);
+        }
         if (listIndex == NO_LIST_INDEX) {
             return Collections.emptyMap();
         }
@@ -56,11 +61,26 @@ public class FixedMatcher extends AbstractMultilevelFieldMatcher<FixedMatcher> {
         }
         return Collections.singletonMap("#" + listIndex, null);
     }
-
+    @Override
+    public boolean supportCache() {
+        if (wrapChildList != null) {
+            for (FixedMatcher normalMultiLevelMatcher : wrapChildList) {
+                if (!normalMultiLevelMatcher.supportCache()) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return !fullMatchStr.contains("#");
+        }
+    }
     @Override
     public Set<String> matchFields(Set<String> fields, Object belongInstance) {
 
         if (wrapChildList == null) {
+            if (fields.contains(fullMatchStr)) {
+                return Collections.singleton(fullMatchStr);
+            }
             if (fields.contains(firstLevelStr)) {
                 return Collections.singleton(firstLevelStr);
             }
@@ -76,5 +96,14 @@ public class FixedMatcher extends AbstractMultilevelFieldMatcher<FixedMatcher> {
             }
         }
         return result;
+    }
+
+    @Override
+    public MultilevelMatchInfo childFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
+        if (Objects.equals(matchedField, fullMatchStr)) {
+            return MultilevelMatchInfo.addToFinal(childArg);
+        }
+        return super.childFieldMatcher(inputArg, matchedField, childArg);
+
     }
 }

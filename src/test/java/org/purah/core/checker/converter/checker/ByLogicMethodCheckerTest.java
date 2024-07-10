@@ -6,14 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.base.Name;
 import org.purah.core.checker.ComboBuilderChecker;
-import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
-import org.purah.core.resolver.ReflectArgResolver;
 import org.purah.util.People;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 
 
 public class ByLogicMethodCheckerTest {

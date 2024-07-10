@@ -2,7 +2,7 @@ package org.purah.core.matcher.multilevel;
 
 import org.junit.jupiter.api.Test;
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.resolver.ReflectArgResolver;
+import org.purah.core.resolver.reflect.ReflectArgResolver;
 import org.purah.util.People;
 import org.purah.util.TestAnn;
 import org.springframework.util.StringUtils;

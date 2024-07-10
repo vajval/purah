@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.ComboBuilderChecker;
 import org.purah.core.checker.LambdaChecker;
+import org.purah.core.resolver.reflect.TestUser;
 import org.purah.util.People;
 import org.purah.core.Util;
 import org.purah.core.checker.InputToCheckerArg;
@@ -76,7 +77,19 @@ public class GeneralMultilevelFieldMatcherTest {
         Assertions.assertEquals(map.get("initiator.id").argValue(), Util.trade.getInitiator().getId());
         Assertions.assertEquals(map.get("recipients.id").argValue(), Util.trade.getRecipients().getId());
     }
+    @Test
+    void matc2() {
+        TestUser    testUser = new TestUser(1L, "name", "address");
+//        testUser.child = new TestUser(2L, "child_name", "child_address");
 
+        DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
+        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("*.*");
+
+        Map<String, InputToCheckerArg<?>> map = defaultArgResolver.getMatchFieldObjectMap(testUser, generalFieldMatcher);
+        System.out.println(map);
+//        Assertions.assertEquals(map.get("initiator.id").argValue(), Util.trade.getInitiator().getId());
+//        Assertions.assertEquals(map.get("recipients.id").argValue(), Util.trade.getRecipients().getId());
+    }
     @Test
     void match3() {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();

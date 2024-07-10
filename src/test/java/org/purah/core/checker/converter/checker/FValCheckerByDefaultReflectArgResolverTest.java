@@ -28,7 +28,6 @@ public class FValCheckerByDefaultReflectArgResolverTest {
                                          @FVal("child#0.child#0.child") List<People> superChildList) {
         People root = People.elder;
         People people = peopleArg.argValue();
-        System.out.println(childChildMap.keySet());
         if (!root.equals(people)) {
             return false;
         }
@@ -78,8 +77,27 @@ public class FValCheckerByDefaultReflectArgResolverTest {
         FValCheckerByDefaultReflectArgResolver checker = new
                 FValCheckerByDefaultReflectArgResolver(
                 null, method, "test");
+
         Assertions.assertTrue(checker.check(People.elder).isSuccess());
     }
 
+    @Test
+    void check2() throws NoSuchMethodException {
+
+//        Method method = FValCheckerByDefaultReflectArgResolverTest.class.getDeclaredMethod(
+//                "childNameCheck", InputToCheckerArg.class,
+//                String.class, TestAnn.class, Name.class, Map.class, List.class,
+//                People.class, People.class, List.class,
+//                String.class,
+//                List.class);
+//
+//        FValCheckerByDefaultReflectArgResolver checker = new
+//                FValCheckerByDefaultReflectArgResolver(
+//                null, method, "test");
+//        for (int i = 0; i < 1000000; i++) {
+//            Assertions.assertTrue(checker.check(People.elder));
+//
+//        }
+    }
 
 }

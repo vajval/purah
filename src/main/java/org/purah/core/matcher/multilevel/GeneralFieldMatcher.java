@@ -8,6 +8,7 @@ import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.inft.IDefaultFieldMatcher;
 import org.purah.core.matcher.singlelevel.WildCardMatcher;
 import org.purah.core.matcher.inft.MultilevelFieldMatcher;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -27,8 +28,6 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
     protected boolean isFixed;
     protected boolean childIsWildCard;
     protected boolean childIsMultiLevel;
-
-
 
 
     public GeneralFieldMatcher(String matchStr) {
@@ -112,6 +111,9 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
 
     @Override
     public Map<String, Object> listMatch(List<?> objectList) {
+        if (CollectionUtils.isEmpty(objectList)) {
+            return Collections.emptyMap();
+        }
         if (listIndex == NO_LIST_INDEX) {
             return Collections.emptyMap();
         }
@@ -151,6 +153,24 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
                 ", firstLevelStr='" + firstLevelStr + '\'' +
                 ", childStr='" + childStr + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean supportCache() {
+        if (wrapChildList != null) {
+            for (MultilevelFieldMatcher normalMultiLevelMatcher : wrapChildList) {
+                if (!normalMultiLevelMatcher.supportCache()) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            if (isWildCardMatcher(fullMatchStr)) {
+                return false;
+            }
+            return !fullMatchStr.contains("#");
+
+        }
     }
 
 

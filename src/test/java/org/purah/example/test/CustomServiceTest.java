@@ -13,7 +13,7 @@ import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.exception.MethodArgCheckException;
 import org.purah.ExampleApplication;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
-import org.purah.core.resolver.ReflectArgResolver;
+import org.purah.core.resolver.reflect.ReflectArgResolver;
 import org.purah.example.customAnn.CustomService;
 import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmptyTest;
@@ -254,14 +254,11 @@ class CustomServiceTest {
 
     }
 
-    @Test
-    public void tesasdt() {
-        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
-        GeneralFieldMatcher r = new GeneralFieldMatcher("*.*");
-        goodCustomUser.setChildCustomUser(badCustomUser);
-
-
-    }
+//    @Test
+//    public void tesasdt() {
+//        test(1000000);
+//
+//    }
 
     public void test(int num) {
         CustomAnnChecker.cnPhoneNumCount = 0;

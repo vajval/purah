@@ -1,6 +1,7 @@
 package org.purah.core.checker;
 
 
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
@@ -24,23 +25,22 @@ public class InputToCheckerArg<INPUT_ARG> {
 
     Field fieldInClass;
     // 如果这个对象是父对象class的一个field ，此处保存field中的注解
-    List<Annotation> annotations=Collections.emptyList();
-    InputToCheckerArg<?> parent;
+    List<Annotation> annotations = Collections.emptyList();
 
 
-    private InputToCheckerArg(INPUT_ARG arg, Class<?> clazzInContext, String fieldStr, InputToCheckerArg<?> parent) {
-        this(arg, fieldStr, null, Collections.emptyList(), null);
+
+    private InputToCheckerArg(INPUT_ARG arg, Class<?> clazzInContext, String fieldStr) {
+        this(arg, fieldStr, null, Collections.emptyList());
         this.arg = arg;
         if (clazzInContext == null) {
             clazzInContext = Object.class;
 //            throw new RuntimeException("不要将class设置为null,实在不行就Object.class");
         }
         this.clazzInContext = clazzInContext;
-        this.parent = parent;
 
     }
 
-    private InputToCheckerArg(INPUT_ARG arg, String fieldStr, Field fieldInClass, List<Annotation> annotations, InputToCheckerArg<?> parent) {
+    private InputToCheckerArg(INPUT_ARG arg, String fieldStr, Field fieldInClass, List<Annotation> annotations) {
         this.arg = arg;
         this.fieldInClass = fieldInClass;
         if (this.fieldInClass != null) {
@@ -53,11 +53,11 @@ public class InputToCheckerArg<INPUT_ARG> {
         if (this.fieldStr == null) {
             this.fieldStr = "";
         }
-        if(annotations!=null){
+        if (annotations != null) {
             this.annotations = annotations;
 
         }
-        this.parent = parent;
+//        this.parent = parent;
 
 
     }
@@ -68,32 +68,22 @@ public class InputToCheckerArg<INPUT_ARG> {
     }
 
     public static <T> InputToCheckerArg<T> of(T INPUT_ARG, Class<?> clazzInContext) {
-        return new InputToCheckerArg<>(INPUT_ARG, clazzInContext, "", null);
+        return new InputToCheckerArg<>(INPUT_ARG, clazzInContext, "");
     }
 
 
-    public <T> InputToCheckerArg<T> createChild(T INPUT_ARG, String childFieldStr) {
-        return new InputToCheckerArg<>(INPUT_ARG, Object.class, childFieldStr, this);
+    public static <T> InputToCheckerArg<T> createChild(T INPUT_ARG, String childFieldStr) {
+        return new InputToCheckerArg<>(INPUT_ARG, Object.class, childFieldStr);
     }
 
-    public <T> InputToCheckerArg<T> createChildWithFieldConfig(T INPUT_ARG, String childFieldStr, Field fieldInClass, List<Annotation> annotations) {
-        return new InputToCheckerArg<>(INPUT_ARG, childFieldStr, fieldInClass, annotations, this);
-    }
-
-
-    public InputToCheckerArg<?> parent() {
-        return parent;
+    public static <T> InputToCheckerArg<T> createChildWithFieldConfig(T INPUT_ARG, String childFieldStr, Field fieldInClass, List<Annotation> annotations) {
+        return new InputToCheckerArg<>(INPUT_ARG, childFieldStr, fieldInClass, annotations);
     }
 
 
-    public InputToCheckerArg<?> root() {
-        InputToCheckerArg<?> result = this;
-        while (result.parent != null) {
-            result = result.parent;
-        }
-        return result;
+    public Field field() {
+        return fieldInClass;
     }
-
 
     public String fieldStr() {
         if (fieldStr == null) return "";
@@ -129,11 +119,13 @@ public class InputToCheckerArg<INPUT_ARG> {
 
     @Override
     public String toString() {
-        return "CheckInputArg{" +
-                "inputArg=" + arg +
-                ", fieldStr='" + fieldStr + '\'' +
-                '}';
+        String annStr = "";
+        if (!CollectionUtils.isEmpty(annotations)) {
+            annStr = ", ann=" + annotations;
+        }
+        return "ITCArg{" + "fieldStr='" + fieldStr + '\'' + ", arg=" + arg + annStr + '}';
     }
+
 
     @Override
     public boolean equals(Object o) {
