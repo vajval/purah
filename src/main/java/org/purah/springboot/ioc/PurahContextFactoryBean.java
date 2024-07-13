@@ -31,8 +31,6 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
     public Object getObject() {
         PurahContextConfig purahContextConfig = new PurahContextConfig(enablePurah);
         purahContextConfig.setBaseStringMatcherClass(baseStringMatcherClass);
-
-
         return new PurahContext(purahContextConfig);
 
     }

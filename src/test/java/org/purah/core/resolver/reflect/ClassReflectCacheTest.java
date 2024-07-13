@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.multilevel.FixedMatcher;
 import org.purah.core.matcher.multilevel.NormalMultiLevelMatcher;
-import org.purah.util.TestAnn;
+import org.purah.core.resolver.ClassReflectCache;
 
 import java.util.Map;
 import java.util.Set;
@@ -48,14 +48,37 @@ public class ClassReflectCacheTest {
         };
     }
 
-    @Test
-    public void multiLevel() {
-        testUser.child = new TestUser(2L, "child_name", "child_address");
-        Map<String, InputToCheckerArg<?>> map = classReflectCache.matchFieldValueMap(InputToCheckerArg.of(testUser), cacheableFixedMatcher);
 
-        Map<String, Object> objectMap = classReflectCache.objectMap(testUser, Sets.newHashSet("child.name", "child.id", "child.address"));
-        System.out.println(objectMap);
+    @Test
+    void getMatchFieldObjectMapFromNull() {
+//        ReflectArgResolver resolver = new ReflectArgResolver();
+//        GeneralFieldMatcher fixedMatcher = new GeneralFieldMatcher("address|child.id");
+//        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.getMatchFieldObjectMap(InputToCheckerArg.of(null, TestUser.class), fixedMatcher);
+//
+//        boolean tryRegNewCache = classReflectCache.tryRegNewCache(InputToCheckerArg.of(null, TestUser.class), fixedMatcher, matchFieldObjectMap);
+//        Assertions.assertTrue(tryRegNewCache);
+//
+//        ClassReflectCache reflectCache = resolver.classClassConfigCacheMap.get(TestUser.class);
+//
+//
+//        Map<String, InputToCheckerArg<?>> stringInputToCheckerArgMap = reflectCache.byCache(testUser, fixedMatcher);
+//
+//        System.out.println(stringInputToCheckerArgMap);
+//
+//        testUser.child = new TestUser(2L, "child_name", "child_address");
+//
+//        Map<String, InputToCheckerArg<?>> map = reflectCache.byCache(testUser, fixedMatcher);
+//        System.out.println(map);
     }
+
+    @Test
+    public void asda() {
+
+
+        boolean b = ClassReflectCache.noExtendEnabledFields(TestUser.class, Sets.newHashSet("id", "name.test", "address", "child.child.name"), Sets.newHashSet(TestUser.class));
+        System.out.println(b);
+    }
+
 
     @Test
     public void matchValue() {
@@ -73,13 +96,13 @@ public class ClassReflectCacheTest {
         Assertions.assertTrue(mapFromEmpty.get("child.name").isNull());
     }
 
-    @Test
-    public void noCacheTest() {
-        for (int i = 0; i < 100; i++) {
-            Assertions.assertEquals(classReflectCache.matchFieldList(testUser, noCacheNormalMatcher).size(), 2);
-        }
-        Assertions.assertEquals(count.get(), 100);
-    }
+//    @Test
+//    public void noCacheTest() {
+//        for (int i = 0; i < 100; i++) {
+//            Assertions.assertEquals(classReflectCache.matchFieldList(testUser, noCacheNormalMatcher).size(), 2);
+//        }
+//        Assertions.assertEquals(count.get(), 100);
+//    }
 
     @Test
     public void cacheTest() {

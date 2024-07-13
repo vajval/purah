@@ -1,6 +1,6 @@
 package org.purah.example.checker;
 
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.springboot.ann.PurahMethodsRegBean;
 
 @PurahMethodsRegBean

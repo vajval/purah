@@ -1,6 +1,6 @@
 package org.purah.util;
 
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.checker.converter.checker.FVal;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.CheckResult;

@@ -1,7 +1,7 @@
 package org.purah.core.matcher.singlelevel;
 
 import org.apache.commons.io.FilenameUtils;
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.matcher.WrapListFieldMatcher;
 
 /**

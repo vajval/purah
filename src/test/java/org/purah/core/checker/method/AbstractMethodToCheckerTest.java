@@ -3,7 +3,7 @@ package org.purah.core.checker.method;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.Util;
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.CheckerManager;
 import org.purah.core.checker.GenericsProxyChecker;

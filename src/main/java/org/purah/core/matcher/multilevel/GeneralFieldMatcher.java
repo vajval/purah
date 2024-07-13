@@ -1,8 +1,9 @@
 package org.purah.core.matcher.multilevel;
 
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.inft.IDefaultFieldMatcher;
@@ -12,6 +13,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * People people=new People(id:123,name:123,address:123,child:[new People(id:0,name:null),new People(id:1,name:null)]);
@@ -42,6 +44,24 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
         }
     }
 
+    protected void initWapChildList(String matchStr) {
+        if (matchStr.contains("|")) {
+            wrapChildList = Splitter.on("|").splitToList(matchStr).stream().filter(GeneralFieldMatcher::isWildCardMatcher).map(this::wrapChildMatcher).collect(Collectors.toList());
+            String collect = Splitter.on("|").splitToList(matchStr).stream().filter(i -> !isWildCardMatcher(i))
+                    .collect(Collectors.joining("|"));
+            wrapChildList.add(new FixedMatcher(collect));
+        }
+    }
+
+    @Override
+    protected MultilevelFieldMatcher wrapChildMatcher(String matchStr) {
+        boolean isWildCardMatcher = isWildCardMatcher(matchStr);
+        if (isWildCardMatcher) {
+            return new GeneralFieldMatcher(matchStr);
+        }
+        return new FixedMatcher(matchStr);
+    }
+
     public static boolean isWildCardMatcher(String s) {
         if (!StringUtils.hasText(s)) {
             return false;
@@ -70,15 +90,6 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
             result.addAll(multilevelFieldMatcher.matchFields(fields, belongInstance));
         }
         return result;
-    }
-
-    @Override
-    protected MultilevelFieldMatcher wrapChildMatcher(String matchStr) {
-        boolean isWildCardMatcher = isWildCardMatcher(matchStr);
-        if (isWildCardMatcher) {
-            return new GeneralFieldMatcher(matchStr);
-        }
-        return new FixedMatcher(matchStr);
     }
 
 
@@ -165,10 +176,14 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
             }
             return true;
         } else {
-            if (isWildCardMatcher(fullMatchStr)) {
+            if (fullMatchStr.contains("#")) {
                 return false;
             }
-            return !fullMatchStr.contains("#");
+
+            if (childStr == null) {
+                return true;
+            }
+            return !isWildCardMatcher(childStr);
 
         }
     }

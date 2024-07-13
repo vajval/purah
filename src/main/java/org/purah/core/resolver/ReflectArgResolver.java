@@ -1,4 +1,4 @@
-package org.purah.core.resolver.reflect;
+package org.purah.core.resolver;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -7,10 +7,8 @@ import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.inft.ListIndexMatcher;
 import org.purah.core.matcher.inft.MultilevelFieldMatcher;
 import org.purah.core.matcher.multilevel.MultilevelMatchInfo;
-import org.purah.core.resolver.ArgResolver;
 import org.springframework.util.CollectionUtils;
 
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,31 +25,34 @@ public class ReflectArgResolver implements ArgResolver {
     protected final ConcurrentHashMap<Class<?>, ClassReflectCache> classClassConfigCacheMap = new ConcurrentHashMap<>();
 
 
+    protected boolean enableCache = true;
+
     @Override
     public Map<String, InputToCheckerArg<?>> getMatchFieldObjectMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
         if (fieldMatcher == null) {
             throw new RuntimeException("不要传空的fieldMatcher");
         }
-        if (!fieldMatcher.supportCache()) {
-            return doGetMatchFieldObjectMap(inputToCheckerArg, fieldMatcher);
-        }
         ClassReflectCache classReflectCache = classConfigCacheOf(inputToCheckerArg);
+        Object argValue = inputToCheckerArg.argValue();
+
         if (classReflectCache.cached(fieldMatcher)) {
-            return classReflectCache.byCache(fieldMatcher, inputToCheckerArg.argValue());
+            return classReflectCache.byCache(argValue, fieldMatcher);
         }
-        Map<String, InputToCheckerArg<?>> result = doGetMatchFieldObjectMap(inputToCheckerArg, fieldMatcher);
-        classReflectCache.regNew(fieldMatcher, result);
-        return result;
+
+        if (!enableCache || !fieldMatcher.supportCache()) {
+            Map<String, InputToCheckerArg<?>> result = new HashMap<>();
+            putMatchFieldObjectMapToResult(inputToCheckerArg, fieldMatcher, result);
+            return result;
+        }
 
 
-    }
-
-
-    public Map<String, InputToCheckerArg<?>> doGetMatchFieldObjectMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
         Map<String, InputToCheckerArg<?>> result = new HashMap<>();
         putMatchFieldObjectMapToResult(inputToCheckerArg, fieldMatcher, result);
-        return result;
 
+        classReflectCache.tryRegNewCache(inputToCheckerArg, fieldMatcher, result);
+
+
+        return result;
     }
 
 
@@ -70,79 +71,35 @@ public class ReflectArgResolver implements ArgResolver {
      * 获取多级 matcher  从 instance中获取多级对象，
      */
     protected void putMultiLevelMapToResult(InputToCheckerArg<?> inputToCheckerArg, MultilevelFieldMatcher multilevelFieldMatcher, Map<String, InputToCheckerArg<?>> result) {
-
         Map<String, InputToCheckerArg<?>> fieldsObjectMap = this.getThisLevelMatcherObjectMap(inputToCheckerArg, multilevelFieldMatcher);
+
         for (Map.Entry<String, InputToCheckerArg<?>> entry : fieldsObjectMap.entrySet()) {
             String field = entry.getKey();
             InputToCheckerArg<?> childArg = entry.getValue();
             MultilevelMatchInfo multilevelMatchInfo = multilevelFieldMatcher.childFieldMatcher(inputToCheckerArg, field, childArg);
             if (multilevelMatchInfo.isAddToFinal()) {
                 InputToCheckerArg<?> resultArg = multilevelMatchInfo.getAddToFinalArg();
-                result.put(resultArg.fieldStr(), resultArg);
+                result.put(field, resultArg);
             }
             List<FieldMatcher> childFieldMatcherList = multilevelMatchInfo.getChildFieldMatcherList();
             //不需要往底层看
             if (CollectionUtils.isEmpty(childFieldMatcherList)) {
                 continue;
             }
-
             for (FieldMatcher childFieldMatcher : childFieldMatcherList) {
-                this.putMatchFieldObjectMapToResult(childArg, childFieldMatcher, result);
-            }
-        }
-    }
-
-
-    public Map<String, InputToCheckerArg<?>> getMatchFieldObjectMap2(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
-        if (fieldMatcher == null) {
-            throw new RuntimeException("不要传空的fieldMatcher");
-        }
-        if (!fieldMatcher.supportCache()) {
-            return doGetMatchFieldObjectMap(inputToCheckerArg, fieldMatcher);
-        }
-        ClassReflectCache classReflectCache = classConfigCacheOf(inputToCheckerArg);
-        if (classReflectCache.cached(fieldMatcher)) {
-            return classReflectCache.byCache(fieldMatcher, inputToCheckerArg.argValue());
-        }
-        Map<String, InputToCheckerArg<?>> result = doGetMatchFieldObjectMap(inputToCheckerArg, fieldMatcher);
-        classReflectCache.regNew(fieldMatcher, result);
-        return result;
-
-    }
-
-
-    protected void test(InputToCheckerArg<?> inputToCheckerArg, MultilevelFieldMatcher multilevelFieldMatcher, Map<String, InputToCheckerArg<?>> result) {
-
-        Map<String, InputToCheckerArg<?>> thisLevelMatcherObjectMap = this.getThisLevelMatcherObjectMap(inputToCheckerArg, multilevelFieldMatcher);
-
-        for (Map.Entry<String, InputToCheckerArg<?>> entry : thisLevelMatcherObjectMap.entrySet()) {
-            String field = entry.getKey();
-            InputToCheckerArg<?> childArg = entry.getValue();
-            MultilevelMatchInfo multilevelMatchInfo = multilevelFieldMatcher.childFieldMatcher(inputToCheckerArg, field, childArg);
-            String fieldStr = ClassReflectCache.childStr(inputToCheckerArg.fieldStr(), field, ".");
-            if (multilevelMatchInfo.isAddToFinal()) {
-                InputToCheckerArg<?> resultArg = multilevelMatchInfo.getAddToFinalArg();
-                result.put(fieldStr, resultArg);
-            }
-            List<FieldMatcher> childFieldMatcherList = multilevelMatchInfo.getChildFieldMatcherList();
-            //不需要往底层看
-            if (CollectionUtils.isEmpty(childFieldMatcherList)) {
-                continue;
-            }
-
-            for (FieldMatcher childFieldMatcher : childFieldMatcherList) {
-                Map<String, InputToCheckerArg<?>> matchFieldObjectMap = this.getMatchFieldObjectMap(childArg, childFieldMatcher);
-                for (Map.Entry<String, InputToCheckerArg<?>> input : matchFieldObjectMap.entrySet()) {
-                    String childStr = ClassReflectCache.childStr(fieldStr, input.getKey(), ".");
-                    result.put(childStr, input.getValue());
+                Map<String, InputToCheckerArg<?>> matchFieldObjectMap = getMatchFieldObjectMap(childArg, childFieldMatcher);
+                for (Map.Entry<String, InputToCheckerArg<?>> argEntry : matchFieldObjectMap.entrySet()) {
+                    String fullFieldStr = ClassReflectCache.childStr(field, argEntry.getKey(), ".");
+                    argEntry.getValue().setFullFieldName(fullFieldStr);
+                    result.put(fullFieldStr, argEntry.getValue());
                 }
+
             }
         }
     }
 
 
-    public Map<String, InputToCheckerArg<?>> getThisLevelMatcherObjectMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
-
+    protected Map<String, InputToCheckerArg<?>> getThisLevelMatcherObjectMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
         Class<?> inputArgClass = inputToCheckerArg.argClass();
         if (Map.class.isAssignableFrom(inputArgClass)) {
             return getResultFromMap((InputToCheckerArg) inputToCheckerArg, fieldMatcher);
@@ -154,13 +111,7 @@ public class ReflectArgResolver implements ArgResolver {
     }
 
 
-    @Override
-    public Map<String, Object> objectMap(Object inputArg, Set<String> fields) {
-        return null;
-    }
-
-    private Map<String, InputToCheckerArg<?>> getResultByReflect(
-            InputToCheckerArg<Object> inputToCheckerArg, FieldMatcher fieldMatcher) {
+    private Map<String, InputToCheckerArg<?>> getResultByReflect(InputToCheckerArg<Object> inputToCheckerArg, FieldMatcher fieldMatcher) {
 
         return classConfigCacheOf(inputToCheckerArg).matchFieldValueMap(inputToCheckerArg, fieldMatcher);
 
@@ -174,7 +125,7 @@ public class ReflectArgResolver implements ArgResolver {
         Map<String, InputToCheckerArg<?>> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
         for (String matchField : matchFieldList) {
             String childStr = ClassReflectCache.childStr(inputToCheckerArg.fieldStr(), matchField, ".");
-            InputToCheckerArg<Object> childArg = inputToCheckerArg.createChild(objectMap.get(matchField), childStr);
+            InputToCheckerArg<Object> childArg = InputToCheckerArg.createChild(objectMap.get(matchField), childStr);
             result.put(matchField, childArg);
         }
         return result;
@@ -186,48 +137,39 @@ public class ReflectArgResolver implements ArgResolver {
         if (fieldMatcher instanceof ListIndexMatcher) {
             ListIndexMatcher listIndexMatcher = (ListIndexMatcher) fieldMatcher;
             Map<String, Object> objectMap = listIndexMatcher.listMatch(objectList);
-
             Map<String, InputToCheckerArg<?>> result = Maps.newHashMapWithExpectedSize(objectMap.size());
             for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
                 String matchField = entry.getKey();
                 Object value = entry.getValue();
-                String childStr = ClassReflectCache
-                        .childStr(inputToCheckerArg.fieldStr(), matchField, "");
-                InputToCheckerArg<Object> childArg = inputToCheckerArg.createChild(value, childStr);
+                InputToCheckerArg<Object> childArg = InputToCheckerArg.createChild(value, matchField);
                 result.put(matchField, childArg);
-
-
             }
             return result;
-
         }
         return Collections.emptyMap();
-
 
     }
 
 
-    private static HashSet<Class<?>> unSupportChildMatchClassSet = Sets.newHashSet(String.class,
-            boolean.class, Boolean.class,
-            int.class, Integer.class,
-            short.class, Short.class,
-            long.class, Long.class,
-            byte.class, Byte.class, String.class, char.class, Character.class);
+    private static final HashSet<Class<?>> unSupportChildMatchClassSet = Sets.newHashSet(String.class, boolean.class, Boolean.class, int.class, Integer.class, short.class, Short.class, long.class, Long.class, byte.class, Byte.class, String.class, char.class, Character.class);
 
 
     private ClassReflectCache classConfigCacheOf(InputToCheckerArg<?> inputToCheckerArg) {
+
+
         Class<?> inputArgClass = inputToCheckerArg.argClass();
-        if (unSupportChildMatchClassSet.contains(inputArgClass)) {
+
+        ClassReflectCache result = classClassConfigCacheMap.get(inputArgClass);
+        if (inputToCheckerArg.isNull()) {
             return ClassReflectCache.nullOrEmptyValueReflectCache;
         }
 
-        if (inputToCheckerArg.isNull()) {
-            int modifiers = inputArgClass.getModifiers();
-            if (Modifier.isFinal(modifiers)) {
-                return classClassConfigCacheMap.computeIfAbsent(inputArgClass, i -> new ClassReflectCache(inputArgClass));
-            } else {
-                return ClassReflectCache.nullOrEmptyValueReflectCache;
-            }
+        if (result != null) {
+            return result;
+        }
+
+        if (unSupportChildMatchClassSet.contains(inputArgClass)) {
+            return ClassReflectCache.nullOrEmptyValueReflectCache;
         }
         return classClassConfigCacheMap.computeIfAbsent(inputArgClass, i -> new ClassReflectCache(inputArgClass));
 

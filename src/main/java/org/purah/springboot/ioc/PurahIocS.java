@@ -1,129 +1,126 @@
 package org.purah.springboot.ioc;
 
-import com.google.common.collect.Maps;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.purah.core.PurahContext;
-import org.purah.core.base.NameUtil;
+import org.purah.core.name.NameUtil;
 import org.purah.core.checker.Checker;
+import org.purah.core.checker.CheckerManager;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.checker.converter.MethodConverter;
+import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.MatcherManager;
-import org.purah.springboot.ann.IgnoreBeanOnPurahContext;
-import org.purah.springboot.ann.PurahMethodsRegBean;
+import org.purah.core.matcher.factory.MatcherFactory;
+import org.purah.core.resolver.ArgResolver;
 import org.purah.springboot.ann.convert.ToChecker;
 import org.purah.springboot.ann.convert.ToCheckerFactory;
-import org.springframework.aop.support.AopUtils;
-import org.springframework.beans.factory.ListableBeanFactory;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.purah.core.PurahContext.*;
 
 public class PurahIocS {
 
     private static final Logger logger = LogManager.getLogger(PurahIocS.class);
 
-    private final ListableBeanFactory applicationContext;
-    private final Map<Object, List<Method>> toCheckerMethodMap;
-    private final Map<Object, List<Method>> toCheckeFactroyMethodMap;
-    private final Set<Object> purahEnableMethodsBean;
-    protected MethodConverter methodConverter;
+    PurahContext purahContext;
+
+    public PurahIocS(PurahContext purahContext) {
+        this.purahContext = purahContext;
+    }
+
+    public void initMainBean(MethodConverter methodConverter, CheckerManager checkerManager, MatcherManager matcherManager, ArgResolver argResolver) {
+        if (checkerManager == null) {
+            logger.info("enable  default checkerManager");
+        } else {
+            logger.info("enable checkerManager:{} ", checkerManager.getClass());
+        }
+        if (matcherManager == null) {
+            logger.info("enable default matcherManager");
+        } else {
+            logger.info("enable matcherManager:{} ", matcherManager.getClass());
+        }
+        if (argResolver == null) {
+            logger.info("enable default argResolver");
+        } else {
+            logger.info("enable argResolver:{} ", argResolver.getClass());
+        }
+        if (methodConverter == null) {
+            logger.info("enable default methodConverter");
+        } else {
+            logger.info("enable methodConverter:{} ", methodConverter.getClass());
+        }
+        purahContext.override(checkerManager, argResolver, matcherManager, methodConverter);
+    }
 
 
-    protected PurahIocS(ListableBeanFactory applicationContext) {
-        this.applicationContext = applicationContext;
-        this.purahEnableMethodsBean = enableBeanSetByAnn(PurahMethodsRegBean.class);
-        this.toCheckerMethodMap = beanEnableMethodMap(ToChecker.class);
-        this.toCheckeFactroyMethodMap = beanEnableMethodMap(ToCheckerFactory.class);
+
+
+    public void regMatcherFactory(Class<? extends FieldMatcher> clazz) {
         try {
-            this.methodConverter = applicationContext.getBean(MethodConverter.class);
-        } catch (NoSuchBeanDefinitionException ignored) {
-            logger.info("使用默认CheckerManager");
-            this.methodConverter = DEFAULT_METHOD_CONVERTER;
+            this.purahContext.matcherManager().regBaseStrMatcher(clazz);
+            logger.info("123");
+        } catch (Exception e) {
+            logger.error(e);
         }
     }
 
-    public Set<Object> purahEnableMethodsBean() {
-        return purahEnableMethodsBean;
+
+    public void regMatcherFactory(MatcherFactory matcherFactory) {
+        try {
+            this.purahContext.matcherManager().reg(matcherFactory);
+            logger.info("123");
+
+        } catch (Exception e) {
+            logger.error(e);
+        }
     }
 
-    public List<Checker> checkersByBeanMethod() {
-        List<Checker> result = new ArrayList<>();
-        for (Map.Entry<Object, List<Method>> entry : toCheckerMethodMap.entrySet()) {
-            Object bean = entry.getKey();
-            List<Method> methodList = entry.getValue();
-            for (Method method : methodList) {
-                String name = NameUtil.nameByAnnOnMethod(method);
-                Checker checker = methodConverter.toChecker(bean, method, name);
-                if (checker != null) {
-                    result.add(checker);
-                }
 
+    public void regChecker(Checker<?, ?> checker) {
+        try {
+            purahContext.checkManager().reg(checker);
+            logger.info("123");
+
+        } catch (Exception e) {
+            logger.error(e);
+        }
+    }
+
+
+    public void regCheckerFactory(CheckerFactory checkerFactory) {
+        try {
+            purahContext.checkManager().addCheckerFactory(checkerFactory);
+            logger.info("123");
+
+        } catch (Exception e) {
+            logger.error(e);
+        }
+    }
+
+    public void regPurahMethodsRegBean(Object enableBean) {
+        MethodConverter enableMethodConverter = purahContext.enableMethodConverter();
+        CheckerManager checkerManager = purahContext.checkManager();
+
+        List<Method> checkMethods = Stream.of(enableBean.getClass().getMethods()).filter(i -> i.getDeclaredAnnotation(ToChecker.class) != null).collect(Collectors.toList());
+
+        for (Method checkMethod : checkMethods) {
+            String name = NameUtil.nameByAnnOnMethod(checkMethod);
+            Checker<?, ?> checker = enableMethodConverter.toChecker(enableBean, checkMethod, name);
+            if (checker != null) {
+                checkerManager.reg(checker);
             }
         }
-        return result;
-    }
 
-
-    public List<CheckerFactory> checkerFactoriesByBeanMethod() {
-        List<CheckerFactory> checkerFactoryList = new ArrayList<>();
-        for (Map.Entry<Object, List<Method>> entry : toCheckeFactroyMethodMap.entrySet()) {
-            Object bean = entry.getKey();
-            List<Method> methodList = entry.getValue();
-            for (Method method : methodList) {
-                ToCheckerFactory toCheckerFactory = method.getDeclaredAnnotation(ToCheckerFactory.class);
-                CheckerFactory checkerFactory = methodConverter.toCheckerFactory(bean, method, toCheckerFactory.match(), toCheckerFactory.cacheBeCreatedChecker());
-                if (checkerFactory != null) {
-                    checkerFactoryList.add(checkerFactory);
-
-                }
+        List<Method> checkFactoryMethods = Stream.of(enableBean.getClass().getMethods()).filter(i -> i.getDeclaredAnnotation(ToCheckerFactory.class) != null).collect(Collectors.toList());
+        for (Method checkMethod : checkFactoryMethods) {
+            ToCheckerFactory toCheckerFactory = checkMethod.getDeclaredAnnotation(ToCheckerFactory.class);
+            CheckerFactory checkerFactory = enableMethodConverter.toCheckerFactory(enableBean, checkMethod, toCheckerFactory.match(), toCheckerFactory.cacheBeCreatedChecker());
+            if (checkerFactory != null) {
+                checkerManager.addCheckerFactory(checkerFactory);
             }
         }
-
-        return checkerFactoryList;
-    }
-
-
-    protected Map<Object, List<Method>> beanEnableMethodMap(Class<? extends Annotation> annType) {
-        Map<Object, List<Method>> result = Maps.newHashMapWithExpectedSize(purahEnableMethodsBean.size());
-        for (Object bean : purahEnableMethodsBean) {
-            Class<?> clazz = AopUtils.getTargetClass(bean);
-            List<Method> methodList = Stream.of(clazz.getMethods()).filter(i -> i.getDeclaredAnnotation(annType) != null).collect(Collectors.toList());
-            result.put(bean, methodList);
-        }
-        return result;
-
-    }
-
-
-    public Set<Object> enableBeanSetByAnn(Class<? extends Annotation> annType) {
-        Collection<Object> beans = applicationContext.getBeansWithAnnotation(annType).values();
-        return filterEnableBean(beans);
-    }
-
-    public <T> Set<T> enableBeanSetByClass(Class<T> searchBeanClazz) {
-        Collection<T> beans = applicationContext.getBeansOfType(searchBeanClazz).values();
-        return filterEnableBean(beans);
-    }
-
-    protected static <T> Set<T> filterEnableBean(Collection<T> beans) {
-        Set<T> result = new HashSet<>();
-        for (T bean : beans) {
-            Class<?> beanClazz = AopUtils.getTargetClass(bean);
-            IgnoreBeanOnPurahContext ignoreBeanOnPurahContext = beanClazz.getDeclaredAnnotation(IgnoreBeanOnPurahContext.class);
-            if (ignoreBeanOnPurahContext != null) {
-                continue;
-            }
-            result.add(bean);
-        }
-        return result;
     }
 
 

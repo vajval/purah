@@ -11,9 +11,6 @@ public class PurahContextConfig {
 
     boolean cache;
 
-
-
-
     ResultLevel defaultResultLevel = ResultLevel.failedAndIgnoreNotBaseLogic;
 
 

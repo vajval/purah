@@ -1,14 +1,13 @@
 package org.purah.core.checker.combinatorial;
 
 
-import org.purah.core.base.IName;
+import org.purah.core.name.IName;
 import org.purah.core.checker.*;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.exception.UnexpectedException;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.resolver.ArgResolver;
-import org.purah.core.resolver.ArgResolverManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,16 +109,13 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
     }
 
 
-    public ArgResolverManager getArgResolverManager() {
-        return config.purahContext.argResolverManager();
+    public ArgResolver getArgResolverManager() {
+        return config.purahContext.argResolver();
     }
 
     private MultiCheckerExecutor createMultiCheckerExecutor() {
         return new MultiCheckerExecutor(this.config.mainExecType, this.config.resultLevel);
     }
-
-
-
 
 
     class FieldMatcherCheckerConfigExecutor {
@@ -133,7 +129,7 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
         }
 
         protected List<Supplier<CheckResult<?>>> checkResultSupplierList(InputToCheckerArg<Object> inputToCheckerArg) {
-            ArgResolver argResolver = getArgResolverManager().getArgResolver(inputToCheckerArg.argClass());
+            ArgResolver argResolver = getArgResolverManager();
             Map<String, InputToCheckerArg<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(inputToCheckerArg, fieldMatcherCheckerConfig.fieldMatcher);
             ExecType.Matcher execType = fieldMatcherCheckerConfig.execType;
             List<Supplier<CheckResult<?>>> result = new ArrayList<>(checkerList.size() * matchFieldObjectMap.size());

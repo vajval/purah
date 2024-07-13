@@ -1,4 +1,4 @@
-package org.purah.core.base;
+package org.purah.core.name;
 
 
 import org.springframework.util.StringUtils;

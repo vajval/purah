@@ -1,7 +1,7 @@
 package org.purah.core.matcher;
 
 
-import org.purah.core.base.NameUtil;
+import org.purah.core.name.NameUtil;
 import org.purah.core.matcher.inft.IDefaultFieldMatcher;
 
 import java.util.Objects;

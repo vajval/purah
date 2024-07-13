@@ -1,7 +1,7 @@
 package org.purah.core.matcher.factory;
 
 
-import org.purah.core.base.NameUtil;
+import org.purah.core.name.NameUtil;
 import org.purah.core.exception.FieldMatcherException;
 import org.purah.core.exception.init.InitMatcherException;
 import org.purah.core.matcher.BaseStringMatcher;

@@ -1,5 +1,6 @@
 package org.purah.core.resolver.reflect;
 
+import org.purah.util.People;
 import org.purah.util.TestAnn;
 
 public final class TestUser {
@@ -9,6 +10,8 @@ public final class TestUser {
     public String address;
 
     public TestUser child;
+
+    public People people;
 
     public TestUser(Long id, String name, String address) {
         this.id = id;
@@ -26,5 +29,9 @@ public final class TestUser {
 
     public TestUser getChild() {
         return child;
+    }
+
+    public People getPeople() {
+        return people;
     }
 }

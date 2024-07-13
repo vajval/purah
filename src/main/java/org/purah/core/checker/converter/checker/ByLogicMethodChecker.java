@@ -1,6 +1,6 @@
 package org.purah.core.checker.converter.checker;
 
-import org.purah.core.base.NameUtil;
+import org.purah.core.name.NameUtil;
 import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.result.CheckResult;

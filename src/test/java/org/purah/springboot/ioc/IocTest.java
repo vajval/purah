@@ -1,7 +1,7 @@
 package org.purah.springboot.ioc;
 
 import com.google.common.collect.Lists;
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.CheckResult;

@@ -2,15 +2,13 @@ package org.purah.core.matcher.singlelevel;
 
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.matcher.BaseStringMatcher;
 
 import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * People{

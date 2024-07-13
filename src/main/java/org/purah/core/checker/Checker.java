@@ -1,7 +1,7 @@
 package org.purah.core.checker;
 
 
-import org.purah.core.base.IName;
+import org.purah.core.name.IName;
 import org.purah.core.checker.result.CheckResult;
 import org.springframework.core.ResolvableType;
 

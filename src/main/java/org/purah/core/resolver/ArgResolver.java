@@ -17,7 +17,7 @@ public interface ArgResolver {
     }
 
 
-    Map<String, Object> objectMap(Object inputArg, Set<String> fields);
+//    Map<String, Object> objectMap(Object inputArg, Set<String> fields);
 
 
 }

@@ -15,7 +15,8 @@ import org.purah.core.matcher.singlelevel.ClassNameMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.core.matcher.singlelevel.ReMatcher;
 import org.purah.core.matcher.singlelevel.WildCardMatcher;
-import org.purah.core.resolver.ArgResolverManager;
+import org.purah.core.resolver.ArgResolver;
+import org.purah.core.resolver.DefaultArgResolver;
 
 public class PurahContext {
 
@@ -26,7 +27,7 @@ public class PurahContext {
 
     private CheckerManager checkManager = new CheckerManager();
 
-    private ArgResolverManager argResolverManager = new ArgResolverManager();
+    private ArgResolver argResolver = new DefaultArgResolver();
 
     private MatcherManager matcherManager = new MatcherManager();
 
@@ -53,13 +54,13 @@ public class PurahContext {
 
     }
 
-    public void override(CheckerManager checkManager, ArgResolverManager argResolverManager, MatcherManager matcherManager, MethodConverter enableMethodConverter) {
+    public void override(CheckerManager checkManager, ArgResolver argResolver, MatcherManager matcherManager, MethodConverter enableMethodConverter) {
         if (checkManager != null) {
             this.checkManager = checkManager;
 
         }
-        if (argResolverManager != null) {
-            this.argResolverManager = argResolverManager;
+        if (argResolver != null) {
+            this.argResolver = argResolver;
 
         }
         if (matcherManager != null) {
@@ -85,14 +86,13 @@ public class PurahContext {
         return enableMethodConverter;
     }
 
-    public ArgResolverManager argResolverManager() {
-        return argResolverManager;
+    public ArgResolver argResolver() {
+        return argResolver;
     }
 
     public MatcherManager matcherManager() {
         return matcherManager;
     }
-
 
 
     public ComboBuilderChecker combo(String... checkerNames) {

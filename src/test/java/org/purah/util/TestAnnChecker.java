@@ -1,6 +1,6 @@
 package org.purah.util;
 
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.checker.AbstractCustomAnnChecker;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.combinatorial.ExecType;

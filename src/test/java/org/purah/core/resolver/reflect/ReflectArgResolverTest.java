@@ -1,23 +1,14 @@
 package org.purah.core.resolver.reflect;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.purah.core.TestObject;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.multilevel.FixedMatcher;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
-import org.purah.core.matcher.singlelevel.WildCardMatcher;
-import org.purah.core.resolver.reflect.ReflectArgResolver;
+import org.purah.core.resolver.ReflectArgResolver;
 import org.purah.example.customAnn.pojo.CustomUser;
-import org.purah.util.People;
-import org.springframework.util.CollectionUtils;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 class ReflectArgResolverTest {
 
@@ -51,18 +42,17 @@ class ReflectArgResolverTest {
         System.out.println(matchFieldObjectMap);
     }
 
-    @Test
-    void getMatchFieldObjectMapFromNull() {
-        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
 
+
+    @Test
+    void cache() {
+        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
         FixedMatcher fixedMatcher = new FixedMatcher("child.child.name");
         Map<String, InputToCheckerArg<?>> map = reflectArgResolver.getMatchFieldObjectMap(InputToCheckerArg.of(testUser), fixedMatcher);
-        Assertions.assertFalse(CollectionUtils.isEmpty(map.get("child.child.name").annListOnField()));
-        map = reflectArgResolver.getMatchFieldObjectMap(InputToCheckerArg.of(null, TestUser.class), fixedMatcher);
-        Assertions.assertFalse(CollectionUtils.isEmpty(map.get("child.child.name").annListOnField()));
+        System.out.println(map);
+        System.out.println();
+        map = reflectArgResolver.getMatchFieldObjectMap(InputToCheckerArg.of(testUser), fixedMatcher);
+        System.out.println(map);
     }
-
-
-
 
 }

@@ -1,5 +1,6 @@
 package org.purah.core.matcher.multilevel;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
@@ -17,6 +18,41 @@ import java.util.Objects;
 
 
 public class GeneralMultilevelFieldMatcherTest {
+
+    @Test
+
+    public void generalFieatcher2() {
+        DefaultArgResolver resolver = new DefaultArgResolver();
+        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("#0.id");
+        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.getMatchFieldObjectMap(Lists.newArrayList(People.elder), generalFieldMatcher);
+        Assertions.assertTrue(matchFieldObjectMap.get("#0.id").argEquals(People.elder.getId()));
+    }
+    @Test
+
+    public void generalFieldMatcher2() {
+        DefaultArgResolver resolver = new DefaultArgResolver();
+//        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("#0");
+//        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.getMatchFieldObjectMap(Lists.newArrayList("123"), generalFieldMatcher);
+//        Assertions.assertTrue(matchFieldObjectMap.get("#0").argEquals("123"));
+//
+//        generalFieldMatcher = new GeneralFieldMatcher("name");
+//        matchFieldObjectMap = resolver.getMatchFieldObjectMap(People.elder, generalFieldMatcher);
+//        Assertions.assertTrue(matchFieldObjectMap.get("name").argEquals(People.elder.getName()));
+//
+//        generalFieldMatcher = new GeneralFieldMatcher("child");
+//        matchFieldObjectMap = resolver.getMatchFieldObjectMap(People.elder, generalFieldMatcher);
+//        Assertions.assertTrue(matchFieldObjectMap.get("child").argEquals(People.elder.getChild()));
+
+
+//        generalFieldMatcher = new GeneralFieldMatcher("child#0");
+//        matchFieldObjectMap = resolver.getMatchFieldObjectMap(People.elder, generalFieldMatcher);
+//        Assertions.assertTrue(matchFieldObjectMap.get("child#0").argEquals(People.elder.getChild().get(0)));
+
+        GeneralFieldMatcher      generalFieldMatcher = new GeneralFieldMatcher("child#*.id");
+        Map<String, InputToCheckerArg<?>>    matchFieldObjectMap = resolver.getMatchFieldObjectMap(People.elder, generalFieldMatcher);
+        System.out.println(matchFieldObjectMap);
+        Assertions.assertTrue(matchFieldObjectMap.get("child#0.id").argEquals(People.elder.getChild().get(0).getId()));
+    }
 
 
     @Test
@@ -37,6 +73,17 @@ public class GeneralMultilevelFieldMatcherTest {
         Assertions.assertNull(map.get("child#5.child#5.id").argValue());
 
         Assertions.assertEquals(map.size(), 7);
+    }
+
+    @Test
+    void match2131() {
+
+
+        DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
+        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("child#*.name");
+        Map<String, InputToCheckerArg<?>> objectMap = defaultArgResolver.getMatchFieldObjectMap(People.elder, generalFieldMatcher);
+        System.out.println(objectMap);
+        Assertions.assertTrue(objectMap.get("child#0.name").argEquals(People.son.getName()));
 
 
     }
@@ -48,6 +95,7 @@ public class GeneralMultilevelFieldMatcherTest {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("child#*.child#*");
         Map<String, InputToCheckerArg<?>> objectMap = defaultArgResolver.getMatchFieldObjectMap(People.elder, generalFieldMatcher);
+        System.out.println(objectMap);
         Assertions.assertTrue(objectMap.get("child#0.child#0").argEquals(People.grandson));
         Assertions.assertTrue(objectMap.get("child#1.child#0").argEquals(People.grandsonForDaughter));
         Assertions.assertTrue(objectMap.get("child#0.child#1").argEquals(People.granddaughter));
@@ -77,9 +125,10 @@ public class GeneralMultilevelFieldMatcherTest {
         Assertions.assertEquals(map.get("initiator.id").argValue(), Util.trade.getInitiator().getId());
         Assertions.assertEquals(map.get("recipients.id").argValue(), Util.trade.getRecipients().getId());
     }
+
     @Test
     void matc2() {
-        TestUser    testUser = new TestUser(1L, "name", "address");
+        TestUser testUser = new TestUser(1L, "name", "address");
 //        testUser.child = new TestUser(2L, "child_name", "child_address");
 
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
@@ -90,6 +139,7 @@ public class GeneralMultilevelFieldMatcherTest {
 //        Assertions.assertEquals(map.get("initiator.id").argValue(), Util.trade.getInitiator().getId());
 //        Assertions.assertEquals(map.get("recipients.id").argValue(), Util.trade.getRecipients().getId());
     }
+
     @Test
     void match3() {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();

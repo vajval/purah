@@ -13,7 +13,7 @@ import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.exception.MethodArgCheckException;
 import org.purah.ExampleApplication;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
-import org.purah.core.resolver.reflect.ReflectArgResolver;
+import org.purah.core.resolver.ReflectArgResolver;
 import org.purah.example.customAnn.CustomService;
 import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmptyTest;
@@ -157,9 +157,19 @@ class CustomServiceTest {
 
         assertTrue(CheckResult.isSuccess());
         goodCustomUser.setChildCustomUser(badCustomUser);
+
+
+
+
+
+
         AutoFillCheckResult autoFillCheckResult = customService.checkByCustomSyntaxWithMultiLevel(goodCustomUser);
         assertFalse(autoFillCheckResult.isSuccess());
         List<BaseLogicCheckResult> resultList = autoFillCheckResult.childList(ResultLevel.all);
+
+        for (BaseLogicCheckResult baseLogicCheckResult : resultList) {
+            System.out.println(baseLogicCheckResult);
+        }
         String trim = resultList.stream().map(BaseLogicCheckResult::log)
                 .reduce("", (a, b) -> a + b).trim();
         /*
@@ -185,6 +195,7 @@ class CustomServiceTest {
         Assertions.assertTrue(arg0CheckResult.isFailed());
 
 
+
         Assertions.assertEquals(4, arg0CheckResult.resultChildList(ResultLevel.failedAndIgnoreNotBaseLogic).size());
 
         Assertions.assertTrue(methodCheckResult.isFailed());
@@ -192,6 +203,8 @@ class CustomServiceTest {
 
 //        Assertions.assertEquals(5, resultList.size());
 
+        ReflectArgResolver resolver=new ReflectArgResolver();
+        System.out.println(resolver.getMatchFieldObjectMap(goodCustomUser,new GeneralFieldMatcher("*.*")));
 
         assertTrue(trim.contains("childCustomUser.id:取值范围错误"));
         assertTrue(trim.contains("childCustomUser.name:这个字段不能为空"));

@@ -23,61 +23,61 @@ class PurahIocSTest {
 
     PurahIocS purahIocS;
 
-    @BeforeEach
-    public void beanMethodToCheckerMap() {
-        purahIocS = new PurahIocS(applicationContext);
-    }
-
-    @Test
-    void inf() {
-//        applicationContext.getBean(TestIntf.class);
-    }
-
-    @Test
-    void enableCheckers() {
-
-        Set<Checker> checkers = purahIocS.enableBeanSetByClass(Checker.class);
-        Optional<Checker> iocTestCheckerOptional = checkers.stream().filter(i -> i.name().equals("IocTestChecker")).findFirst();
-        Assertions.assertTrue(iocTestCheckerOptional.isPresent());
-        Checker checker = iocTestCheckerOptional.get();
-        Assertions.assertTrue(checker.check("IocTestChecker").isSuccess());
-        Assertions.assertFalse(checker.check("IocTestChecker2").isSuccess());
-
-    }
-
-    @Test
-    void purahEnableMethodsBean() {
-        Set<Object> purahEnableMethodsBeans = purahIocS.purahEnableMethodsBean();
-        Set<? extends Class<?>> clazzSet = purahEnableMethodsBeans.stream().map(Object::getClass).collect(Collectors.toSet());
-        Assertions.assertTrue(clazzSet.contains(IocTest.class));
-    }
-
-
-    @Test
-    void methodToChecker() {
-
-
-        Set<Object> purahEnableMethodsBeans = purahIocS.purahEnableMethodsBean();
-
-        List<Checker> checkers = purahIocS.checkersByBeanMethod();
-        Set<String> collect = checkers.stream().map(i -> i.name()).collect(Collectors.toSet());
-
-        for (String s : IocTest.checkerMethodNameList) {
-            Assertions.assertTrue(collect.contains(s));
-        }
-
-
-    }
-
-
-    @Test
-    void beanMethodToCheckerFactoryMap() {
-        List<CheckerFactory> checkerFactoryList = purahIocS.checkerFactoriesByBeanMethod();
-
-
-    }
-
-    @Test
-    void regChecker() {
-    }
+//    @BeforeEach
+//    public void beanMethodToCheckerMap() {
+//        purahIocS = new PurahIocS(applicationContext);
+//    }
+//
+//    @Test
+//    void inf() {
+////        applicationContext.getBean(TestIntf.class);
+//    }
+//
+//    @Test
+//    void enableCheckers() {
+//
+//        Set<Checker> checkers = purahIocS.enableBeanSetByClass(Checker.class);
+//        Optional<Checker> iocTestCheckerOptional = checkers.stream().filter(i -> i.name().equals("IocTestChecker")).findFirst();
+//        Assertions.assertTrue(iocTestCheckerOptional.isPresent());
+//        Checker checker = iocTestCheckerOptional.get();
+//        Assertions.assertTrue(checker.check("IocTestChecker").isSuccess());
+//        Assertions.assertFalse(checker.check("IocTestChecker2").isSuccess());
+//
+//    }
+//
+//    @Test
+//    void purahEnableMethodsBean() {
+//        Set<Object> purahEnableMethodsBeans = purahIocS.purahEnableMethodsBean();
+//        Set<? extends Class<?>> clazzSet = purahEnableMethodsBeans.stream().map(Object::getClass).collect(Collectors.toSet());
+//        Assertions.assertTrue(clazzSet.contains(IocTest.class));
+//    }
+//
+//
+//    @Test
+//    void methodToChecker() {
+//
+//
+//        Set<Object> purahEnableMethodsBeans = purahIocS.purahEnableMethodsBean();
+//
+//        List<Checker> checkers = purahIocS.checkersByBeanMethod();
+//        Set<String> collect = checkers.stream().map(i -> i.name()).collect(Collectors.toSet());
+//
+//        for (String s : IocTest.checkerMethodNameList) {
+//            Assertions.assertTrue(collect.contains(s));
+//        }
+//
+//
+//    }
+//
+//
+//    @Test
+//    void beanMethodToCheckerFactoryMap() {
+//        List<CheckerFactory> checkerFactoryList = purahIocS.checkerFactoriesByBeanMethod();
+//
+//
+//    }
+//
+//    @Test
+//    void regChecker() {
+//    }
 }

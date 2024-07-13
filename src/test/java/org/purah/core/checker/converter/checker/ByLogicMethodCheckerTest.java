@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.checker.ComboBuilderChecker;
 import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
 import org.purah.util.People;

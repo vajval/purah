@@ -2,16 +2,13 @@ package org.purah.core.matcher.singlelevel;
 
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.exception.init.InitMatcherException;
 import org.purah.core.matcher.BaseStringMatcher;
 
 import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Match based on the class name of the field

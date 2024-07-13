@@ -1,7 +1,7 @@
 package org.purah.core.matcher.multilevel;
 
 import com.google.common.collect.Sets;
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.singlelevel.EqualMatcher;
 import org.purah.core.matcher.inft.IDefaultFieldMatcher;

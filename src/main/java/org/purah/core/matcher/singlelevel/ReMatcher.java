@@ -1,6 +1,6 @@
 package org.purah.core.matcher.singlelevel;
 
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.matcher.BaseStringMatcher;
 import org.purah.core.matcher.FieldMatcher;
 

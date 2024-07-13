@@ -1,7 +1,7 @@
 package org.purah.example.customAnn.checker;
 
 
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.combinatorial.ExecType;

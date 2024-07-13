@@ -3,7 +3,7 @@ package org.purah.springboot.aop;
 import com.google.common.collect.Lists;
 
 import org.purah.core.PurahContext;
-import org.purah.core.base.Name;
+import org.purah.core.name.Name;
 import org.purah.core.checker.AbstractBaseSupportCacheChecker;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.Checker;
