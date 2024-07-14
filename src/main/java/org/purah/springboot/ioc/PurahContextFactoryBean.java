@@ -22,19 +22,18 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
      * 将扫描到的类注册到此list
      */
     List<Class<? extends FieldMatcher>> baseStringMatcherClass;
-
-
     EnablePurah enablePurah;
-
-
     @Override
     public Object getObject() {
         PurahContextConfig purahContextConfig = new PurahContextConfig(enablePurah);
         purahContextConfig.setBaseStringMatcherClass(baseStringMatcherClass);
         return new PurahContext(purahContextConfig);
-
     }
 
+    @Override
+    public Class<?> getObjectType() {
+        return PurahContext.class;
+    }
 
     public List<Class<? extends FieldMatcher>> getBaseStringMatcherClass() {
         return baseStringMatcherClass;
@@ -44,14 +43,7 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
         this.baseStringMatcherClass = baseStringMatcherClass;
     }
 
-
-    @Override
-    public Class<?> getObjectType() {
-        return PurahContext.class;
-    }
-
     public EnablePurah getEnablePurah() {
-
         return enablePurah;
     }
 

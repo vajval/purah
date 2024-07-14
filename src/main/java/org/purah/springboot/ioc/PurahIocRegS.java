@@ -20,17 +20,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PurahIocS {
+public class PurahIocRegS {
 
-    private static final Logger logger = LogManager.getLogger(PurahIocS.class);
+    private static final Logger logger = LogManager.getLogger(PurahIocRegS.class);
 
     PurahContext purahContext;
 
-    public PurahIocS(PurahContext purahContext) {
+    public PurahIocRegS(PurahContext purahContext) {
         this.purahContext = purahContext;
     }
 
     public void initMainBean(MethodConverter methodConverter, CheckerManager checkerManager, MatcherManager matcherManager, ArgResolver argResolver) {
+        logger.info("init purahContext");
         if (checkerManager == null) {
             logger.info("enable  default checkerManager");
         } else {
@@ -52,12 +53,18 @@ public class PurahIocS {
             logger.info("enable methodConverter:{} ", methodConverter.getClass());
         }
         purahContext.override(checkerManager, argResolver, matcherManager, methodConverter);
+        for (Class<? extends FieldMatcher> baseStringMatcherClass : purahContext.config().getBaseStringMatcherClass()) {
+            this.regBaseStringMatcher(baseStringMatcherClass);
+        }
+        logger.info("init purahContext finish");
+
+
     }
 
 
 
 
-    public void regMatcherFactory(Class<? extends FieldMatcher> clazz) {
+    public void regBaseStringMatcher(Class<? extends FieldMatcher> clazz) {
         try {
             this.purahContext.matcherManager().regBaseStrMatcher(clazz);
             logger.info("123");
@@ -67,7 +74,7 @@ public class PurahIocS {
     }
 
 
-    public void regMatcherFactory(MatcherFactory matcherFactory) {
+    public void regBaseStringMatcher(MatcherFactory matcherFactory) {
         try {
             this.purahContext.matcherManager().reg(matcherFactory);
             logger.info("123");

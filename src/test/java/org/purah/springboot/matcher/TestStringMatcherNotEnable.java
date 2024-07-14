@@ -13,8 +13,8 @@ public class TestStringMatcherNotEnable extends BaseStringMatcher {
         super(matchStr);
     }
 
-    @Override
-    public boolean match(String field, Object belongInstance) {
+
+    public boolean doMatchBySelf(String field, Object belongInstance) {
         return false;
     }
 }

@@ -1,5 +1,6 @@
 package org.purah.core.matcher.multilevel;
 
+import com.google.common.collect.Sets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
@@ -11,11 +12,13 @@ import org.purah.util.People;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FixedMatcherTest {
     DefaultArgResolver resolver = new DefaultArgResolver();
+
 
     @Test
     void test() {
@@ -32,6 +35,7 @@ class FixedMatcherTest {
         FixedMatcher fixedMatcher = new FixedMatcher("name|address|noExistField|child#0.id|child#5.child#0.id");
 
         Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(People.elder, fixedMatcher);
+        System.out.println(map);
         Assertions.assertNull(map.get("child#5.child#0.id").argValue());
 
         Assertions.assertEquals(map.get("name").argValue(), People.elder.getName());

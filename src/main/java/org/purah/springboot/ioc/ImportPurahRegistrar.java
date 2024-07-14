@@ -3,6 +3,7 @@ package org.purah.springboot.ioc;
 
 import org.purah.core.PurahContext;
 import org.purah.core.matcher.BaseStringMatcher;
+import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.factory.BaseMatcherFactory;
 import org.purah.springboot.ann.IgnoreBeanOnPurahContext;
 import org.purah.springboot.ann.EnablePurah;
@@ -25,6 +26,7 @@ import org.springframework.util.ClassUtils;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 注册器将扫描过的class 设置为factoryBean 方便储存
@@ -63,9 +65,11 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
         EnablePurah enablePurah = ((StandardAnnotationMetadata) metadata).getIntrospectedClass().getDeclaredAnnotation(EnablePurah.class);
 
 
-        List<Class<BaseStringMatcher>> classes = scanStringMatcherClass(beanDefinitions, BaseStringMatcher.class);
+        List<Class<FieldMatcher>> classes = scanStringMatcherClass(beanDefinitions, FieldMatcher.class);
 
-        definitionBuilder.addPropertyValue("baseStringMatcherClass", classes);
+        List<Class<FieldMatcher>> collect = classes.stream().filter(BaseMatcherFactory::clazzVerify).collect(Collectors.toList());
+
+        definitionBuilder.addPropertyValue("baseStringMatcherClass", collect);
 
         definitionBuilder.addPropertyValue("enablePurah", enablePurah);
 

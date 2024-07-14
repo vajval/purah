@@ -51,11 +51,9 @@ public class BaseMatcherFactory implements MatcherFactory {
     }
 
     public static boolean clazzVerify(Class<?> clazz) {
-        if (BaseStringMatcher.class.isAssignableFrom(clazz)) {
-            Constructor<? extends FieldMatcher> constructor = singleStringConstructor((Class) clazz);
-            return constructor != null;
-        }
-        return false;
+        Constructor<? extends FieldMatcher> constructor = singleStringConstructor((Class) clazz);
+        return constructor != null;
+
 
     }
 

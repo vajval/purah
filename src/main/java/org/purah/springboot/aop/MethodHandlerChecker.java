@@ -32,6 +32,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker {
     protected PurahContext purahContext;
     protected List<MethodArgCheckConfig> methodArgCheckConfigList;
     protected boolean fillToMethodResult;
+    
     protected Object methodsToCheckersBean;
 
     protected Method method;

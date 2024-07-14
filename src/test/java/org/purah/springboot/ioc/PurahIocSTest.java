@@ -1,19 +1,9 @@
 package org.purah.springboot.ioc;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.purah.ExampleApplication;
-import org.purah.core.checker.Checker;
-import org.purah.core.checker.factory.CheckerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @SpringBootTest(classes = ExampleApplication.class)
 class PurahIocSTest {
@@ -21,7 +11,7 @@ class PurahIocSTest {
     @Autowired
     ApplicationContext applicationContext;
 
-    PurahIocS purahIocS;
+    PurahIocRegS purahIocRegS;
 
 //    @BeforeEach
 //    public void beanMethodToCheckerMap() {

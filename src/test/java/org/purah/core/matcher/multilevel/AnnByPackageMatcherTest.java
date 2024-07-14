@@ -2,6 +2,7 @@ package org.purah.core.matcher.multilevel;
 
 import org.junit.jupiter.api.Test;
 import org.purah.core.checker.InputToCheckerArg;
+import org.purah.core.matcher.BaseStringMatcher;
 import org.purah.core.resolver.ReflectArgResolver;
 import org.purah.util.People;
 import org.purah.util.TestAnn;
@@ -23,6 +24,7 @@ class AnnByPackageMatcherTest {
                 TestAnn testAnn = field.getDeclaredAnnotation(TestAnn.class);
                 return testAnn != null && StringUtils.hasText(testAnn.value());
             }
+
 
         };
 
