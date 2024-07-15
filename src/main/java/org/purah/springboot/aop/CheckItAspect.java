@@ -10,8 +10,8 @@ import org.purah.core.PurahContext;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.exception.MethodArgCheckException;
-import org.purah.springboot.result.AutoFillCheckResult;
-import org.purah.springboot.result.MethodCheckResult;
+import org.purah.springboot.aop.result.AutoFillCheckResult;
+import org.purah.springboot.aop.result.MethodCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class CheckItAspect {
     private final Map<Method, MethodHandlerChecker> methodCheckerMap = new ConcurrentHashMap<>();
 
 
-    @Pointcut("execution(* *(.., @org.purah.springboot.ann.CheckIt (*), ..))")
+    @Pointcut("execution(* *(.., @org.purah.springboot.aop.ann.CheckIt (*), ..))")
     public void pointcut() {
 
 

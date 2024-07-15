@@ -1,13 +1,15 @@
 package org.purah.springboot.ioc;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.purah.core.PurahContext;
-import org.purah.core.matcher.BaseStringMatcher;
+import org.purah.core.exception.UnexpectedException;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.factory.BaseMatcherFactory;
-import org.purah.springboot.ann.IgnoreBeanOnPurahContext;
-import org.purah.springboot.ann.EnablePurah;
-import org.purah.springboot.ann.convert.ToBaseMatcherFactory;
+import org.purah.springboot.IgnoreBeanOnPurahContext;
+import org.purah.springboot.EnablePurah;
+import org.purah.springboot.ioc.ann.ToBaseMatcherFactory;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.*;
@@ -29,24 +31,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 注册器将扫描过的class 设置为factoryBean 方便储存
- * 下面代码抄的feign自带的
+ * scan for fieldMatcher annotated with ToBaseMatcherFactory.
+ * The class must have a constructor that takes only one string parameter.
  *
  * @author vajva
  */
 @Configuration
 public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
 
-
+    private static final Logger log = LogManager.getLogger(ImportPurahRegistrar.class);
     protected Environment environment;
-
     protected ResourceLoader resourceLoader;
 
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry, BeanNameGenerator importBeanNameGenerator) {
 
-        LinkedHashSet<BeanDefinition> beanDefinitions = enableOnPurahContextCandidateComponent(metadata);
+        LinkedHashSet<BeanDefinition> beanDefinitions = filterFieldMatcherByAnn(metadata);
 
 
         AbstractBeanDefinition purahContextBeanDefinition = purahContextBeanDefinition(metadata, beanDefinitions);
@@ -69,7 +70,7 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
 
         List<Class<FieldMatcher>> collect = classes.stream().filter(BaseMatcherFactory::clazzVerify).collect(Collectors.toList());
 
-        definitionBuilder.addPropertyValue("baseStringMatcherClass", collect);
+        definitionBuilder.addPropertyValue("singleStringConstructorFieldMatcherClassSet", collect);
 
         definitionBuilder.addPropertyValue("enablePurah", enablePurah);
 
@@ -84,7 +85,7 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     }
 
 
-    private LinkedHashSet<BeanDefinition> enableOnPurahContextCandidateComponent(AnnotationMetadata metadata) {
+    private LinkedHashSet<BeanDefinition> filterFieldMatcherByAnn(AnnotationMetadata metadata) {
         ClassPathScanningCandidateComponentProvider scanner = this.getScanner();
         scanner.setResourceLoader(resourceLoader);
         scanner.addIncludeFilter(new AnnotationTypeFilter(ToBaseMatcherFactory.class));
@@ -97,37 +98,30 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     private <T> List<Class<T>> scanStringMatcherClass(LinkedHashSet<BeanDefinition> candidateComponents, Class<T> matchClazz) {
         List<Class<T>> result = new ArrayList<>();
         for (BeanDefinition beanDefinition : candidateComponents) {
-
             Class<?> clazz;
-
             try {
                 clazz = Class.forName(beanDefinition.getBeanClassName());
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-
+                log.error("Unexpected" + e);
+                throw new UnexpectedException(e.getMessage());
             }
-
             boolean verify = BaseMatcherFactory.clazzVerify(clazz);
             if (verify) {
                 result.add((Class) clazz);
             }
-
-
         }
         return result;
     }
 
 
     /**
-     * 看不懂，feign里复制的
-     *
-     * @return 扫描器
+     * copy from feign
      */
 
 
     protected ClassPathScanningCandidateComponentProvider getScanner() {
         return new ClassPathScanningCandidateComponentProvider(false, this.environment) {
+
             @Override
             protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
                 boolean isCandidate = false;
@@ -157,43 +151,4 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
         this.resourceLoader = resourceLoader;
     }
 
-//  ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
-//        TypeFilter typeFilter = new AssignableTypeFilter(MyService.class);
-//        scanner.addIncludeFilter(typeFilter);
-//
-//        String basePackage = "com.example.services"; // 指定要扫描的包路径
-//        Set<BeanDefinition> candidateComponents = scanner.findCandidateComponents(basePackage);
-//
-//        for (BeanDefinition bd : candidateComponents) {
-//            try {
-//                Class<?> clazz = Class.forName(bd.getBeanClassName());
-//                Object target = clazz.getDeclaredConstructor().newInstance();
-//                MyServiceCglibProxy cglibProxy = new MyServiceCglibProxy(target);
-//                Object proxyBean = cglibProxy.getProxy();
-//
-//                BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(clazz);
-//                builder.setFactoryMethodOnBean("getProxy", "myServiceProxy");
-//
-//                registry.registerBeanDefinition("myServiceProxy", builder.getBeanDefinition());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
-//        List<Class<Object>> classes1 = scanPurahInterfaceClass(beanDefinitions);
-//
-//
-//        GenericBeanDefinition genericBeanDefinition = new GenericBeanDefinition();
-//        genericBeanDefinition.setBeanClass(TestIntf.class);
-//
-//        genericBeanDefinition.setSource(new TestIntf() {
-//
-//        });
-//        registry.registerBeanDefinition(TestIntf.class.getName(), genericBeanDefinition);
-//        BeanDefinitionHolder holder2 = new BeanDefinitionHolder(genericBeanDefinition, TestIntf.class.getName());
-//如果我想扫描指定目录下的接口，然后手动将其cglib增强注册到applicationContext中怎么办
-//        BeanDefinitionReaderUtils.registerBeanDefinition(holder2, registry);
-
-//        registry.registerBeanDefinition();
 }

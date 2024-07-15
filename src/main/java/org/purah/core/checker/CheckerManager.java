@@ -83,7 +83,7 @@ public class CheckerManager {
         return checkerFactoryList.size();
     }
 
-    public GenericsProxyChecker get(String name) {
+    public GenericsProxyChecker of(String name) {
         GenericsProxyChecker result = cacheMap.get(name);
         if (result == null) {
             List<Checker<?, ?>> checkers = new ArrayList<>();

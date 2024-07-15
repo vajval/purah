@@ -27,5 +27,8 @@ public class WildCardMatcher extends WrapListFieldMatcher<WildCardMatcher> {
         return FilenameUtils.wildcardMatch(field, this.matchStr);
     }
 
-
+    @Override
+    protected boolean supportCacheBySelf() {
+        return true;
+    }
 }

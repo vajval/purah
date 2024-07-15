@@ -73,7 +73,7 @@ class AbstractMethodToCheckerTest {
         checkerManager.reg(abstractMethodToChecker);
         abstractMethodToChecker = new ByLogicMethodChecker(testCheckers, TestCheckers.class.getMethod("checkByUser", Util.User.class));
         checkerManager.reg(abstractMethodToChecker);
-        GenericsProxyChecker genericsProxyChecker = checkerManager.get("id为1");
+        GenericsProxyChecker genericsProxyChecker = checkerManager.of("id为1");
         Assertions.assertTrue(genericsProxyChecker.check(Util.initiator).isSuccess());
         Assertions.assertFalse(genericsProxyChecker.check(Util.recipients).isSuccess());
 

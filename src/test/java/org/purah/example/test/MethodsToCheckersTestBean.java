@@ -7,9 +7,9 @@ import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
-import org.purah.springboot.ann.PurahMethodsRegBean;
-import org.purah.springboot.ann.convert.ToChecker;
-import org.purah.springboot.ann.convert.ToCheckerFactory;
+import org.purah.springboot.ioc.ann.PurahMethodsRegBean;
+import org.purah.springboot.ioc.ann.ToChecker;
+import org.purah.springboot.ioc.ann.ToCheckerFactory;
 import org.springframework.util.StringUtils;
 
 

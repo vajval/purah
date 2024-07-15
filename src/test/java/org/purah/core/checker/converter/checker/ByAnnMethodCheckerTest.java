@@ -7,7 +7,7 @@ import org.purah.core.PurahContext;
 import org.purah.core.name.Name;
 import org.purah.core.checker.ComboBuilderChecker;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
+import org.purah.core.matcher.nested.GeneralFieldMatcher;
 import org.purah.util.People;
 import org.purah.util.TestAnn;
 import org.springframework.util.StringUtils;

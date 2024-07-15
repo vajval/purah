@@ -1,7 +1,7 @@
 package org.purah.core.checker.converter.checker;
 
 import org.purah.core.matcher.BaseStringMatcher;
-import org.purah.core.matcher.multilevel.FixedMatcher;
+import org.purah.core.matcher.nested.FixedMatcher;
 
 import java.lang.annotation.*;
 

@@ -12,7 +12,7 @@ import org.purah.core.checker.converter.MethodConverter;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
 import org.purah.core.matcher.singlelevel.ClassNameMatcher;
-import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
+import org.purah.core.matcher.nested.GeneralFieldMatcher;
 import org.purah.core.matcher.singlelevel.ReMatcher;
 import org.purah.core.matcher.singlelevel.WildCardMatcher;
 import org.purah.core.resolver.ArgResolver;
@@ -50,7 +50,7 @@ public class PurahContext {
         matcherManager.regBaseStrMatcher(ReMatcher.class);
         matcherManager.regBaseStrMatcher(WildCardMatcher.class);
         matcherManager.regBaseStrMatcher(GeneralFieldMatcher.class);
-        config().getBaseStringMatcherClass().forEach(matcherManager::regBaseStrMatcher);
+        config().getSingleStringConstructorFieldMatcherClassSet().forEach(matcherManager::regBaseStrMatcher);
 
     }
 
@@ -102,15 +102,14 @@ public class PurahContext {
 
     }
 
-    public CombinatorialChecker createNewCombinatorialChecker(CombinatorialCheckerConfigProperties builder) {
+    public CombinatorialChecker createByProperties(CombinatorialCheckerConfigProperties builder) {
         CombinatorialCheckerConfig config = builder.build(this);
-
         return new CombinatorialChecker(config);
 
     }
 
-    public Checker<?, ?> regNewCombinatorialChecker(CombinatorialCheckerConfigProperties properties) {
-        Checker newCombinatorialChecker = createNewCombinatorialChecker(properties);
+    public Checker<?, ?> createAndRegByProperties(CombinatorialCheckerConfigProperties properties) {
+        Checker newCombinatorialChecker = createByProperties(properties);
         return checkManager.reg(newCombinatorialChecker);
     }
 

@@ -4,12 +4,12 @@ import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.example.customAnn.pojo.CustomUser;
-import org.purah.springboot.ann.CheckIt;
+import org.purah.springboot.aop.ann.CheckIt;
 
-import org.purah.springboot.ann.method.FillToMethodResult;
-import org.purah.springboot.result.ArgCheckResult;
-import org.purah.springboot.result.AutoFillCheckResult;
-import org.purah.springboot.result.MethodCheckResult;
+import org.purah.springboot.aop.ann.FillToMethodResult;
+import org.purah.springboot.aop.result.ArgCheckResult;
+import org.purah.springboot.aop.result.AutoFillCheckResult;
+import org.purah.springboot.aop.result.MethodCheckResult;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 

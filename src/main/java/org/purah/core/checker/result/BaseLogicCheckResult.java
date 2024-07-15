@@ -10,6 +10,11 @@ import static org.purah.core.checker.Checker.*;
 
 public class BaseLogicCheckResult<T> implements CheckResult<T> {
 
+    static String DEFAULT_SUCCESS_INFO = "SUCCESS";
+    static String DEFAULT_FAILED_INFO = "FAILED";
+    static String DEFAULT_ERROR_INFO = "ERROR";
+
+
     protected ExecInfo execInfo;
 
     protected Exception e;

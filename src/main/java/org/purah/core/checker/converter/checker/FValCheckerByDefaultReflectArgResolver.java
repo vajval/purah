@@ -7,8 +7,8 @@ import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.init.InitCheckerException;
 import org.purah.core.matcher.FieldMatcher;
-import org.purah.core.matcher.multilevel.FixedMatcher;
-import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
+import org.purah.core.matcher.nested.FixedMatcher;
+import org.purah.core.matcher.nested.GeneralFieldMatcher;
 import org.purah.core.resolver.ArgResolver;
 import org.purah.core.resolver.ReflectArgResolver;
 

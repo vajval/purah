@@ -9,16 +9,6 @@ import org.purah.core.matcher.singlelevel.WildCardMatcher;
 public class Util {
 
 
-    public static PurahContext defaultPurahContext() {
-
-        PurahContext purahContext = new PurahContext();
-        purahContext.matcherManager().regBaseStrMatcher(AnnTypeFieldMatcher.class);
-        purahContext.matcherManager().regBaseStrMatcher(ClassNameMatcher.class);
-        purahContext.matcherManager().regBaseStrMatcher(WildCardMatcher.class);
-
-
-        return purahContext;
-    }
 
 
     public static class Trade {

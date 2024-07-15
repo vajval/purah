@@ -35,23 +35,23 @@ public class CheckerManagerTest {
         checkerManager.reg(GenericsProxyCheckerTest.userChecker);
         checkerManager.reg(GenericsProxyCheckerTest.tradeChecker);
 
-        Assertions.assertThrows(InitCheckerException.class, () -> checkerManager.get("id2"));
+        Assertions.assertThrows(InitCheckerException.class, () -> checkerManager.of("id2"));
         checkerManager.addCheckerFactory(defaultMethodConverter.toCheckerFactory(null, CheckerManagerTest.class.getMethod("id", String.class, Integer.class), "id*", true));
 
-        Assertions.assertThrows(CheckerException.class, () -> checkerManager.get("id2").check(2L));
-        Assertions.assertDoesNotThrow(() -> checkerManager.get("id2").check(2));
+        Assertions.assertThrows(CheckerException.class, () -> checkerManager.of("id2").check(2L));
+        Assertions.assertDoesNotThrow(() -> checkerManager.of("id2").check(2));
 
         checkerManager.addCheckerFactory(defaultMethodConverter.toCheckerFactory(null, CheckerManagerTest.class.getMethod("id", String.class, long.class), "id*", true));
 
-        CheckResult<Object> result = checkerManager.get("id2").check(2L);
+        CheckResult<Object> result = checkerManager.of("id2").check(2L);
         Assertions.assertTrue(result.isSuccess());
-        result = checkerManager.get("id3").check(3L);
+        result = checkerManager.of("id3").check(3L);
         Assertions.assertTrue(result.isSuccess());
-        result = checkerManager.get("id5").check(5);
+        result = checkerManager.of("id5").check(5);
         Assertions.assertTrue(result.isSuccess());
-        result = checkerManager.get("id100").check(100L);
+        result = checkerManager.of("id100").check(100L);
         Assertions.assertTrue(result.isSuccess());
-        result = checkerManager.get("id4396").check(7891);
+        result = checkerManager.of("id4396").check(7891);
         Assertions.assertTrue(result.isFailed());
     }
 

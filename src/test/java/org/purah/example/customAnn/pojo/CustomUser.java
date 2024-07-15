@@ -5,7 +5,7 @@ import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmptyTest;
 import org.purah.example.customAnn.ann.NotNull;
 import org.purah.example.customAnn.ann.Range;
-import org.purah.springboot.ann.CheckIt;
+import org.purah.springboot.aop.ann.CheckIt;
 
 @CheckIt("所有字段自定义注解检测")
 public class CustomUser {

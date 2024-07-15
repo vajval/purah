@@ -24,7 +24,7 @@ public abstract class AbstractCustomSyntaxCheckerFactory implements CheckerFacto
         if (logicFrom == null) {
             properties.setLogicFrom(this.getClass().getName());
         }
-        return purahContext.createNewCombinatorialChecker(properties);
+        return purahContext.createByProperties(properties);
 
     }
 }

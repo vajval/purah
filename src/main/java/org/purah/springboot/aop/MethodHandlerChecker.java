@@ -11,12 +11,12 @@ import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.combinatorial.ExecType;
 import org.purah.core.checker.MultiCheckerExecutor;
 import org.purah.core.checker.result.*;
-import org.purah.springboot.ann.CheckIt;
-import org.purah.springboot.ann.method.FillToMethodResult;
-import org.purah.springboot.ann.method.MethodCheckExecType;
-import org.purah.springboot.result.ArgCheckResult;
-import org.purah.springboot.result.AutoFillCheckResult;
-import org.purah.springboot.result.MethodCheckResult;
+import org.purah.springboot.aop.ann.CheckIt;
+import org.purah.springboot.aop.ann.FillToMethodResult;
+import org.purah.springboot.aop.ann.MethodCheckExecType;
+import org.purah.springboot.aop.result.ArgCheckResult;
+import org.purah.springboot.aop.result.AutoFillCheckResult;
+import org.purah.springboot.aop.result.MethodCheckResult;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -144,7 +144,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker {
         MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.execType(), checkIt.resultLevel());
 
 
-        List<? extends GenericsProxyChecker> checkerList = methodArgCheckConfig.checkerNameList().stream().map(i -> purahContext.checkManager().get(i)).collect(Collectors.toList());
+        List<? extends GenericsProxyChecker> checkerList = methodArgCheckConfig.checkerNameList().stream().map(i -> purahContext.checkManager().of(i)).collect(Collectors.toList());
 
         for (Checker checker : checkerList) {
             executor.add(InputToCheckerArg.of(checkArg, methodArgCheckConfig.argClazz()), checker);

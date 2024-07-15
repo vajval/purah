@@ -2,7 +2,7 @@ package org.purah.core.matcher.inft;
 
 
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.multilevel.MultilevelMatchInfo;
+import org.purah.core.matcher.nested.NestedMatchInfo;
 
 
 public interface MultilevelFieldMatcher extends IDefaultFieldMatcher {
@@ -22,7 +22,7 @@ public interface MultilevelFieldMatcher extends IDefaultFieldMatcher {
 
 
 
-    MultilevelMatchInfo childFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg);
+    NestedMatchInfo nestedFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg);
 
 
 }

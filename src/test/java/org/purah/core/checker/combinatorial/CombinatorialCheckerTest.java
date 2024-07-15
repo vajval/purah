@@ -11,7 +11,7 @@ import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
 import org.purah.core.matcher.singlelevel.ClassNameMatcher;
-import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
+import org.purah.core.matcher.nested.GeneralFieldMatcher;
 import org.purah.core.matcher.singlelevel.WildCardMatcher;
 
 
@@ -83,7 +83,7 @@ class CombinatorialCheckerTest {
         properties.addByStrMap("type_by_ann", map);
 
 
-        Checker checker = purahContext.regNewCombinatorialChecker(properties);
+        Checker checker = purahContext.createAndRegByProperties(properties);
         CombinatorialCheckResult combinatorialCheckResult = (CombinatorialCheckResult) checker.check(Util.trade);
 
         Assertions.assertFalse(combinatorialCheckResult.isSuccess());
@@ -107,7 +107,7 @@ class CombinatorialCheckerTest {
         properties.addByStrMap("type_by_ann", map);
 
 
-        Checker checker = purahContext.regNewCombinatorialChecker(properties);
+        Checker checker = purahContext.createAndRegByProperties(properties);
         CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(Util.trade);
         Assertions.assertFalse(CheckResult.isSuccess());
         System.out.println(CheckResult.data());
@@ -132,7 +132,7 @@ class CombinatorialCheckerTest {
         properties.addByStrMap("type_by_ann", map);
 
 
-        Checker checker = purahContext.regNewCombinatorialChecker(properties);
+        Checker checker = purahContext.createAndRegByProperties(properties);
 
 
         CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(Util.trade);
@@ -158,7 +158,7 @@ class CombinatorialCheckerTest {
         properties.addByStrMap("type_by_ann", map);
 
 
-        Checker checker = purahContext.regNewCombinatorialChecker(properties);
+        Checker checker = purahContext.createAndRegByProperties(properties);
         CombinatorialCheckResult checkResult = (CombinatorialCheckResult) checker.check(Util.trade);
         Assertions.assertTrue(checkResult.isSuccess());
         Assertions.assertEquals(2, checkResult.data().size());
@@ -182,7 +182,7 @@ class CombinatorialCheckerTest {
         properties.setMainExecType(ExecType.Main.at_least_one_but_must_check_all);
         properties.addByStrMap("type_by_ann", map);
 
-        Checker checker = purahContext.regNewCombinatorialChecker(properties);
+        Checker checker = purahContext.createAndRegByProperties(properties);
         CombinatorialCheckResult checkResult = (CombinatorialCheckResult) checker.check(Util.trade);
         Assertions.assertTrue(checkResult.isSuccess());
         Assertions.assertEquals(checkResult.data().size(), 2);

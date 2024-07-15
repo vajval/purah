@@ -38,12 +38,12 @@ class PurahEnableMethodsTest {
         map.put("id", "数值判断FromTestBean");
         properties.addByStrMap("general", map);
         properties.setMainExecType(ExecType.Main.all_success_but_must_check_all);
-        purahContext.regNewCombinatorialChecker(properties);
+        purahContext.createAndRegByProperties(properties);
 
 
         CustomUser badCustomUser = new CustomUser(-1L, null, null, 35);
 
-        GenericsProxyChecker genericsProxyChecker = purahContext.checkManager().get("测试MethodsToCheckers注解");
+        GenericsProxyChecker genericsProxyChecker = purahContext.checkManager().of("测试MethodsToCheckers注解");
         CheckResult check = genericsProxyChecker.check(badCustomUser);
 
 

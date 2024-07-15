@@ -12,7 +12,7 @@ import org.purah.core.checker.result.BaseLogicCheckResult;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.exception.MethodArgCheckException;
 import org.purah.ExampleApplication;
-import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
+import org.purah.core.matcher.nested.GeneralFieldMatcher;
 import org.purah.core.resolver.ReflectArgResolver;
 import org.purah.example.customAnn.CustomService;
 import org.purah.example.customAnn.ann.CNPhoneNum;
@@ -20,9 +20,9 @@ import org.purah.example.customAnn.ann.NotEmptyTest;
 import org.purah.example.customAnn.ann.NotNull;
 import org.purah.example.customAnn.checker.CustomAnnChecker;
 import org.purah.example.customAnn.pojo.CustomUser;
-import org.purah.springboot.result.ArgCheckResult;
-import org.purah.springboot.result.AutoFillCheckResult;
-import org.purah.springboot.result.MethodCheckResult;
+import org.purah.springboot.aop.result.ArgCheckResult;
+import org.purah.springboot.aop.result.AutoFillCheckResult;
+import org.purah.springboot.aop.result.MethodCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -68,7 +68,7 @@ class CustomServiceTest {
         properties.setLogicFrom("CustomServiceTest.beforeEach");
 
 
-        purahContext.regNewCombinatorialChecker(properties);
+        purahContext.createAndRegByProperties(properties);
 
     }
 

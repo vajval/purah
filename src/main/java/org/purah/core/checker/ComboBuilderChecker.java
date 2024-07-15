@@ -45,7 +45,7 @@ public class ComboBuilderChecker extends AbstractBaseSupportCacheChecker<Object,
         if (combinatorialChecker != null) return combinatorialChecker.check(inputToCheckerArg);
         if (CollectionUtils.isEmpty(config.fieldMatcherCheckerConfigList)) {
             if (config.extendCheckerNames.size() == 1) {
-                return purahContext.checkManager().get(config.extendCheckerNames.get(0)).check(inputToCheckerArg);
+                return purahContext.checkManager().of(config.extendCheckerNames.get(0)).check(inputToCheckerArg);
             } else if (config.extendCheckerNames.size() == 0) {
                 return BaseLogicCheckResult.success();
             }

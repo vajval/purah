@@ -15,6 +15,7 @@ import org.purah.core.checker.result.BaseLogicCheckResult;
 public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> implements Checker<INPUT_ARG, RESULT> {
     private static final Logger logger = LogManager.getLogger(AbstractBaseSupportCacheChecker.class);
 
+
     @Override
     public CheckResult<RESULT> check(InputToCheckerArg<INPUT_ARG> inputToCheckerArg) {
         if (inputToCheckerArg == null) {

@@ -2,10 +2,11 @@ package org.purah.core;
 
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.matcher.FieldMatcher;
-import org.purah.springboot.ann.EnablePurah;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PurahContextConfig {
 
@@ -14,29 +15,31 @@ public class PurahContextConfig {
     ResultLevel defaultResultLevel = ResultLevel.failedAndIgnoreNotBaseLogic;
 
 
-    List<Class<? extends FieldMatcher>> baseStringMatcherClass=new ArrayList<>();
+    Set<Class<? extends FieldMatcher>> singleStringConstructorFieldMatcherClassSet =new HashSet<>();
 
     public PurahContextConfig() {
     }
 
-    public PurahContextConfig(EnablePurah enablePurah) {
-        this.cache = enablePurah.enableCache();
-        this.defaultResultLevel = enablePurah.defaultResultLevel();
+
+    public Set<Class<? extends FieldMatcher>> getSingleStringConstructorFieldMatcherClassSet() {
+        return singleStringConstructorFieldMatcherClassSet;
     }
 
-    public List<Class<? extends FieldMatcher>> getBaseStringMatcherClass() {
-        return baseStringMatcherClass;
-    }
-
-    public void setBaseStringMatcherClass(List<Class<? extends FieldMatcher>> baseStringMatcherClass) {
-        this.baseStringMatcherClass = baseStringMatcherClass;
+    public void setSingleStringConstructorFieldMatcherClassSet(Set<Class<? extends FieldMatcher>> singleStringConstructorFieldMatcherClassSet) {
+        this.singleStringConstructorFieldMatcherClassSet = singleStringConstructorFieldMatcherClassSet;
     }
 
     public boolean isCache() {
         return cache;
     }
 
+    public void setCache(boolean cache) {
+        this.cache = cache;
+    }
 
+    public void setDefaultResultLevel(ResultLevel defaultResultLevel) {
+        this.defaultResultLevel = defaultResultLevel;
+    }
 
     public ResultLevel getDefaultResultLevel() {
         return defaultResultLevel;

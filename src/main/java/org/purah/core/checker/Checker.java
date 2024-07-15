@@ -7,9 +7,6 @@ import org.springframework.core.ResolvableType;
 
 public interface Checker<INPUT_ARG, RESULT> extends IName {
 
-    String DEFAULT_SUCCESS_INFO = "SUCCESS";
-    String DEFAULT_FAILED_INFO = "FAILED";
-    String DEFAULT_ERROR_INFO = "ERROR";
 
 
     /**

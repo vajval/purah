@@ -1,6 +1,6 @@
 package org.purah.springboot.aop;
 
-import org.purah.springboot.ann.CheckIt;
+import org.purah.springboot.aop.ann.CheckIt;
 
 import java.util.List;
 

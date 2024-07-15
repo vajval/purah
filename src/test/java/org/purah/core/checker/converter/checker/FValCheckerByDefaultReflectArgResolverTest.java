@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.name.Name;
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.multilevel.FixedMatcher;
+import org.purah.core.matcher.nested.FixedMatcher;
 import org.purah.core.resolver.ReflectArgResolver;
-import org.purah.core.resolver.reflect.TestUser;
+import org.purah.util.TestUser;
 import org.purah.util.People;
 import org.purah.util.TestAnn;
 

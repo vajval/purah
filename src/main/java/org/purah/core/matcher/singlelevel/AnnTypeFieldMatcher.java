@@ -12,7 +12,9 @@ import java.util.Set;
 
 /**
  * People{
+ *
  * @FieldType("1") String name;
+ * @FieldType("1") String address;
  * @FieldType("2") String id;
  * }
  *

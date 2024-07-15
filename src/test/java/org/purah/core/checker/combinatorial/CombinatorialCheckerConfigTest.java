@@ -14,7 +14,7 @@ import org.purah.core.checker.factory.CheckerFactory;
 
 import org.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
 import org.purah.core.matcher.singlelevel.ClassNameMatcher;
-import org.purah.core.matcher.multilevel.GeneralFieldMatcher;
+import org.purah.core.matcher.nested.GeneralFieldMatcher;
 import org.purah.core.matcher.singlelevel.WildCardMatcher;
 
 
@@ -69,7 +69,7 @@ class CombinatorialCheckerConfigTest {
         properties.addByStrMap("wild_card", map);
 
 
-        Checker checker = purahContext.regNewCombinatorialChecker(properties);
+        Checker checker = purahContext.createAndRegByProperties(properties);
 
 
         CheckResult result = checker.check(Util.initiator);
@@ -96,7 +96,7 @@ class CombinatorialCheckerConfigTest {
         properties.addByStrMap("general", multiLevelMap);
 
 
-        Checker multiLevelchecker = purahContext.regNewCombinatorialChecker(properties);
+        Checker multiLevelchecker = purahContext.createAndRegByProperties(properties);
 
 
         CheckResult result = multiLevelchecker.check(Util.trade);

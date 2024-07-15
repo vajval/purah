@@ -11,19 +11,19 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class InputToCheckerArg<INPUT_ARG> {
-    //需要检查的对象
+    // input need check arg
     INPUT_ARG arg;
-    //相对于根节点的字段
-    //例如 title  user.id   user.childUser.id  等
+    //Relative fields to the root node.
+    //example title  user.id   user.childUser.id
     String fullFieldName;
 
-    // 参数在代码中明确使用的的class，inputArg为null时，inputArgClass()返回此class
+    // The class that can be determined within the context of the code.
     Class<?> clazzInContext;
-    // 如果这个对象是父对象class的一个field ，此处保存field信息
-
+    //If this object is a field of the parent object's class, store the field information here.
     Field fieldInClass;
-    // 如果这个对象是父对象class的一个field ，此处保存field中的注解
+    // If this object is a field of the parent object's class, store the ann information here.
     List<Annotation> annotations = Collections.emptyList();
+
     ITCArgNullType nullType = ITCArgNullType.null_value;
 
 
@@ -32,10 +32,8 @@ public class InputToCheckerArg<INPUT_ARG> {
         this.arg = arg;
         if (clazzInContext == null) {
             clazzInContext = Object.class;
-//            throw new RuntimeException("不要将class设置为null,实在不行就Object.class");
         }
         this.clazzInContext = clazzInContext;
-
     }
 
     private InputToCheckerArg(INPUT_ARG arg, String fullFieldName, Field fieldInClass, List<Annotation> annotations) {
@@ -43,7 +41,6 @@ public class InputToCheckerArg<INPUT_ARG> {
         this.fieldInClass = fieldInClass;
         if (this.fieldInClass != null) {
             this.clazzInContext = this.fieldInClass.getType();
-
         } else {
             this.clazzInContext = Object.class;
         }
@@ -53,18 +50,9 @@ public class InputToCheckerArg<INPUT_ARG> {
         }
         if (annotations != null) {
             this.annotations = annotations;
-
         }
-//        this.parent = parent;
-
-
     }
 
-    public static <T> InputToCheckerArg<T> nullForClazz(ITCArgNullType itcArgNullType, Class<?> clazzInContext) {
-        InputToCheckerArg<T> result = nullForClazz(clazzInContext);
-        result.nullType = itcArgNullType;
-        return result;
-    }
 
     public ITCArgNullType nullType() {
         if (this.arg != null) {
@@ -73,9 +61,6 @@ public class InputToCheckerArg<INPUT_ARG> {
         return nullType;
     }
 
-    public static <T> InputToCheckerArg<T> nullForClazz(Class<?> clazzInContext) {
-        return of(null, clazzInContext);
-    }
 
     public static <T> InputToCheckerArg<T> of(T INPUT_ARG) {
         return of(INPUT_ARG, Object.class);
@@ -94,7 +79,7 @@ public class InputToCheckerArg<INPUT_ARG> {
         return new InputToCheckerArg<>(INPUT_ARG, childFieldStr, fieldInClass, annotations);
     }
 
-    public static <T> InputToCheckerArg<T> createNullChildWithFieldConfig(String childFieldStr, Field fieldInClass, List<Annotation> annotations,ITCArgNullType nullType) {
+    public static <T> InputToCheckerArg<T> createNullChildWithFieldConfig(String childFieldStr, Field fieldInClass, List<Annotation> annotations, ITCArgNullType nullType) {
         InputToCheckerArg<T> result = new InputToCheckerArg<>(null, childFieldStr, fieldInClass, annotations);
         result.nullType = nullType;
         return result;
@@ -143,7 +128,7 @@ public class InputToCheckerArg<INPUT_ARG> {
         if (!CollectionUtils.isEmpty(annotations)) {
             annStr = ", ann=" + annotations;
         }
-        return "ITCArg{" + "fullFieldName='" + fullFieldName + '\'' + ", arg=" + arg + annStr + '}';
+        return "ITCArg{" + "field='" + fullFieldName + '\'' + ", arg=" + arg + annStr + '}';
     }
 
 
@@ -168,6 +153,7 @@ public class InputToCheckerArg<INPUT_ARG> {
     public void setFullFieldName(String fullFieldName) {
         this.fullFieldName = fullFieldName;
     }
+
 }
 
 

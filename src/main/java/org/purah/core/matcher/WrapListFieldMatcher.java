@@ -3,6 +3,7 @@ package org.purah.core.matcher;
 import com.google.common.base.Splitter;
 import org.purah.core.matcher.BaseStringMatcher;
 import org.purah.core.matcher.inft.IDefaultFieldMatcher;
+import org.purah.core.matcher.nested.NormalMultiLevelMatcher;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,9 +48,24 @@ public abstract class WrapListFieldMatcher<T extends IDefaultFieldMatcher> exten
         return false;
     }
 
+    @Override
+    public boolean supportCache() {
+        if (wrapChildList != null) {
+            for (FieldMatcher fieldMatcher : wrapChildList) {
+                if (!fieldMatcher.supportCache()) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return supportCacheBySelf();
+        }
+    }
+
+
     protected abstract T wrapChildMatcher(String matchStr);
 
     protected abstract boolean matchBySelf(String field, Object belongInstance);
 
-
+    protected abstract boolean supportCacheBySelf();
 }

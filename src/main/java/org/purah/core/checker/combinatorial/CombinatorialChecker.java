@@ -65,7 +65,7 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
     public CombinatorialChecker init() {
         if (this.init) return this;
         CheckerManager checkerManager = config.purahContext.checkManager();
-        this.rootInputArgCheckers = this.config.extendCheckerNames.stream().map(checkerManager::get).collect(Collectors.toList());
+        this.rootInputArgCheckers = this.config.extendCheckerNames.stream().map(checkerManager::of).collect(Collectors.toList());
         this.fieldMatcherCheckerConfigList = config.fieldMatcherCheckerConfigList;
         for (FieldMatcherCheckerConfig fieldMatcherCheckerConfig : this.fieldMatcherCheckerConfigList) {
             fieldMatcherCheckerConfig.buildCheckers(checkerManager);

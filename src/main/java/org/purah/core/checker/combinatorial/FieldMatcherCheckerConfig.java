@@ -25,7 +25,7 @@ public class FieldMatcherCheckerConfig {
     }
 
     public void buildCheckers(CheckerManager checkerManager) {
-        checkers = this.checkerNames.stream().map(checkerManager::get).collect(Collectors.toList());
+        checkers = this.checkerNames.stream().map(checkerManager::of).collect(Collectors.toList());
     }
 
     public FieldMatcherCheckerConfig(FieldMatcher fieldMatcher, List<String> ruleNames) {

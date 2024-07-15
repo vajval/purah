@@ -6,27 +6,31 @@ import org.purah.core.PurahContextConfig;
 
 import org.purah.core.matcher.FieldMatcher;
 
-import org.purah.springboot.ann.EnablePurah;
+import org.purah.springboot.EnablePurah;
 import org.springframework.beans.factory.FactoryBean;
 
-import java.util.List;
+import java.util.Set;
 
 /**
- * 这个类负责创建整个类的 核心上下文 对象 PurahContext
+ * by @EnablePurah
+ * `import ImportPurahRegistrar` in the `EnablePurah` annotation.
  */
 public class PurahContextFactoryBean implements FactoryBean<Object> {
 
 
     /**
-     * 在启动时通过*****类 扫描根路径下的FieldMatcher 类
-     * 将扫描到的类注册到此list
+     * all fieldMatcher classes under the root directory of the startup class
      */
-    List<Class<? extends FieldMatcher>> baseStringMatcherClass;
-    EnablePurah enablePurah;
+    protected Set<Class<? extends FieldMatcher>> singleStringConstructorFieldMatcherClassSet;
+    protected EnablePurah enablePurah;
+
     @Override
     public Object getObject() {
-        PurahContextConfig purahContextConfig = new PurahContextConfig(enablePurah);
-        purahContextConfig.setBaseStringMatcherClass(baseStringMatcherClass);
+        PurahContextConfig purahContextConfig = new PurahContextConfig();
+
+        purahContextConfig.setCache(enablePurah.enableCache());
+        purahContextConfig.setDefaultResultLevel(enablePurah.defaultResultLevel());
+        purahContextConfig.setSingleStringConstructorFieldMatcherClassSet(singleStringConstructorFieldMatcherClassSet);
         return new PurahContext(purahContextConfig);
     }
 
@@ -35,12 +39,12 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
         return PurahContext.class;
     }
 
-    public List<Class<? extends FieldMatcher>> getBaseStringMatcherClass() {
-        return baseStringMatcherClass;
+    public Set<Class<? extends FieldMatcher>> getSingleStringConstructorFieldMatcherClassSet() {
+        return singleStringConstructorFieldMatcherClassSet;
     }
 
-    public void setBaseStringMatcherClass(List<Class<? extends FieldMatcher>> baseStringMatcherClass) {
-        this.baseStringMatcherClass = baseStringMatcherClass;
+    public void setSingleStringConstructorFieldMatcherClassSet(Set<Class<? extends FieldMatcher>> singleStringConstructorFieldMatcherClassSet) {
+        this.singleStringConstructorFieldMatcherClassSet = singleStringConstructorFieldMatcherClassSet;
     }
 
     public EnablePurah getEnablePurah() {
