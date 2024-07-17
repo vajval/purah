@@ -1,6 +1,8 @@
 package org.purah.springboot.aop;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,8 +12,9 @@ import org.purah.core.PurahContext;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.exception.MethodArgCheckException;
-import org.purah.springboot.aop.result.AutoFillCheckResult;
+import org.purah.springboot.aop.ann.MethodCheck;
 import org.purah.springboot.aop.result.MethodCheckResult;
+import org.purah.springboot.ioc.ImportPurahRegistrar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -24,6 +27,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Aspect
 public class CheckItAspect {
+
+
+    private static final Logger log = LogManager.getLogger(CheckItAspect.class);
 
     @Autowired
     PurahContext purahContext;
@@ -41,8 +47,9 @@ public class CheckItAspect {
     public Object aroundAdvice(ProceedingJoinPoint joinPoint) {
 
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        boolean useCache = useCache(method);
-        if (useCache) {
+
+        boolean enableCache = enableCache(method);
+        if (enableCache) {
             return PurahCheckInstanceCacheContext.execOnCacheContext(() -> pointcut(joinPoint));
         }
         return pointcut(joinPoint);
@@ -51,17 +58,20 @@ public class CheckItAspect {
     }
 
 
-    public boolean useCache(Method method) {
-        return purahContext.config().isCache();
+    public boolean enableCache(Method method) {
+        MethodCheck methodCheck = method.getDeclaredAnnotation(MethodCheck.class);
+        if (methodCheck == null) {
+            return purahContext.config().isCache();
+        }
+        return methodCheck.enableCache();
     }
 
     public Object pointcut(ProceedingJoinPoint joinPoint) {
 
 
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        /*
-         * 找到对应函数使用的检查器材，然后检查
-         */
+
+
         MethodHandlerChecker methodHandlerChecker = this.checkerOf(joinPoint.getThis(), method);
         InputToCheckerArg<Object[]> inputToCheckerArg = InputToCheckerArg.of(joinPoint.getArgs(), Object[].class);
 
@@ -86,9 +96,8 @@ public class CheckItAspect {
             }
             return invokeObject;
         } else {
-            AutoFillCheckResult autoFillCheckResult = new AutoFillCheckResult(methodCheckResult);
 
-            return methodHandlerChecker.fillObject(autoFillCheckResult);
+            return methodHandlerChecker.fillObject(methodCheckResult);
         }
 
 
@@ -97,9 +106,7 @@ public class CheckItAspect {
     public MethodHandlerChecker checkerOf(Object bean, Method method) {
 
         MethodHandlerChecker methodHandlerChecker = methodCheckerMap.computeIfAbsent(method, i -> new MethodHandlerChecker(bean, method, purahContext));
-
         purahContext.checkManager().reg(methodHandlerChecker);
-
         return methodHandlerChecker;
     }
 

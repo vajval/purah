@@ -7,7 +7,7 @@ import org.purah.ExampleApplication;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
-import org.purah.core.checker.combinatorial.ExecType;
+import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.example.customAnn.pojo.CustomUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ class PurahEnableMethodsTest {
 
         map.put("id", "数值判断FromTestBean");
         properties.addByStrMap("general", map);
-        properties.setMainExecType(ExecType.Main.all_success_but_must_check_all);
+        properties.setMainExecType(ExecMode.Main.all_success_but_must_check_all);
         purahContext.createAndRegByProperties(properties);
 
 

@@ -131,22 +131,22 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
         protected List<Supplier<CheckResult<?>>> checkResultSupplierList(InputToCheckerArg<Object> inputToCheckerArg) {
             ArgResolver argResolver = getArgResolverManager();
             Map<String, InputToCheckerArg<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(inputToCheckerArg, fieldMatcherCheckerConfig.fieldMatcher);
-            ExecType.Matcher execType = fieldMatcherCheckerConfig.execType;
+            ExecMode.Matcher execType = fieldMatcherCheckerConfig.execType;
             List<Supplier<CheckResult<?>>> result = new ArrayList<>(checkerList.size() * matchFieldObjectMap.size());
-            if (execType == ExecType.Matcher.checker_arg) {
+            if (execType == ExecMode.Matcher.checker_arg) {
                 for (Checker checker : checkerList) {
                     for (Map.Entry<String, InputToCheckerArg<?>> entry : matchFieldObjectMap.entrySet()) {
                         result.add(() -> checker.check(entry.getValue()));
                     }
                 }
-            } else if (execType == ExecType.Matcher.arg_checker) {
+            } else if (execType == ExecMode.Matcher.arg_checker) {
                 for (Map.Entry<String, InputToCheckerArg<?>> entry : matchFieldObjectMap.entrySet()) {
                     for (Checker checker : checkerList) {
                         result.add(() -> checker.check(entry.getValue()));
                     }
                 }
             } else {
-                throw new UnexpectedException("execType:[" + execType + "]" + "  " + Arrays.toString(ExecType.Matcher.values()));
+                throw new UnexpectedException("execType:[" + execType + "]" + "  " + Arrays.toString(ExecMode.Matcher.values()));
             }
 
             return result;

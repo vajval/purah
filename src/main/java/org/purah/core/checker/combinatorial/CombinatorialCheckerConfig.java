@@ -16,7 +16,7 @@ public class CombinatorialCheckerConfig {
 
     PurahContext purahContext;
 
-    ExecType.Main mainExecType = ExecType.Main.all_success;
+    ExecMode.Main mainExecType = ExecMode.Main.all_success;
 
     public String name;
 
@@ -42,7 +42,7 @@ public class CombinatorialCheckerConfig {
         return logicFrom;
     }
 
-    public void setMainExecType(ExecType.Main mainExecType) {
+    public void setMainExecType(ExecMode.Main mainExecType) {
         this.mainExecType = mainExecType;
     }
 

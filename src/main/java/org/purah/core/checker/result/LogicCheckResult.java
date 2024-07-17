@@ -4,11 +4,10 @@ import com.google.gson.Gson;
 import org.purah.core.checker.InputToCheckerArg;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.purah.core.checker.Checker.*;
-
-public class BaseLogicCheckResult<T> implements CheckResult<T> {
+public class LogicCheckResult<T> implements CheckResult<T> {
 
     static String DEFAULT_SUCCESS_INFO = "SUCCESS";
     static String DEFAULT_FAILED_INFO = "FAILED";
@@ -18,12 +17,13 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
     protected ExecInfo execInfo;
 
     protected Exception e;
+
     protected T data;
 
     protected String log;
     protected String info;
 
-    protected BaseLogicCheckResult(ExecInfo execInfo, T data, String log) {
+    protected LogicCheckResult(ExecInfo execInfo, T data, String log) {
         this.execInfo = execInfo;
         this.data = data;
         this.log = log;
@@ -40,7 +40,7 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
         return checkLogicFrom;
     }
 
-    protected BaseLogicCheckResult(ExecInfo execInfo, Exception e) {
+    protected LogicCheckResult(ExecInfo execInfo, Exception e) {
         this.execInfo = execInfo;
         this.e = e;
     }
@@ -53,7 +53,7 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
         return e;
     }
 
-    public BaseLogicCheckResult<T> setInfo(String info) {
+    public LogicCheckResult<T> setInfo(String info) {
         this.info = info;
         return this;
 
@@ -68,37 +68,37 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
 
     }
 
-    public static <T> BaseLogicCheckResult<T> success(T data) {
-        return new BaseLogicCheckResult<>(ExecInfo.success, data, null);
+    public static <T> LogicCheckResult<T> success(T data) {
+        return new LogicCheckResult<>(ExecInfo.success, data, null);
     }
 
-    public static <T> BaseLogicCheckResult<T> failed(T data) {
-        return new BaseLogicCheckResult<>(ExecInfo.failed, data, null);
-
-    }
-
-    public static <T> BaseLogicCheckResult<T > success() {
-        return new BaseLogicCheckResult<>(ExecInfo.success, null, null);
-    }
-
-    public static <T> BaseLogicCheckResult<T> success(T data, String log) {
-        return new BaseLogicCheckResult<>(ExecInfo.success, data, log);
-    }
-
-    public static <T> BaseLogicCheckResult<T> failed(T data, String log) {
-        return new BaseLogicCheckResult<>(ExecInfo.failed, data, log);
+    public static <T> LogicCheckResult<T> failed(T data) {
+        return new LogicCheckResult<>(ExecInfo.failed, data, null);
 
     }
 
-    public static <T> BaseLogicCheckResult<T> ignore(String log) {
-        BaseLogicCheckResult<T> result = new BaseLogicCheckResult<>(ExecInfo.ignore, null, log);
+    public static <T> LogicCheckResult<T > success() {
+        return new LogicCheckResult<>(ExecInfo.success, null, null);
+    }
+
+    public static <T> LogicCheckResult<T> success(T data, String log) {
+        return new LogicCheckResult<>(ExecInfo.success, data, log);
+    }
+
+    public static <T> LogicCheckResult<T> failed(T data, String log) {
+        return new LogicCheckResult<>(ExecInfo.failed, data, log);
+
+    }
+
+    public static <T> LogicCheckResult<T> ignore(String log) {
+        LogicCheckResult<T> result = new LogicCheckResult<>(ExecInfo.ignore, null, log);
         result.log = log;
         return result;
 
     }
 
-    public static <T> BaseLogicCheckResult<T> error(Exception e, String log) {
-        BaseLogicCheckResult<T> result = new BaseLogicCheckResult<>(ExecInfo.error, e);
+    public static <T> LogicCheckResult<T> error(Exception e, String log) {
+        LogicCheckResult<T> result = new LogicCheckResult<>(ExecInfo.error, e);
         result.log = log;
         return result;
 
@@ -113,20 +113,20 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
     }
 
 
-    public static <A, R> BaseLogicCheckResult<R> successBuildLog(InputToCheckerArg<A> inputToCheckerArg, R result) {
+    public static <A, R> LogicCheckResult<R> successBuildLog(InputToCheckerArg<A> inputToCheckerArg, R result) {
         String log = logStr(inputToCheckerArg, DEFAULT_SUCCESS_INFO);
-        return BaseLogicCheckResult.success(result, log);
+        return LogicCheckResult.success(result, log);
     }
 
-    public static <A, R> BaseLogicCheckResult<R> failedBuildLog(InputToCheckerArg<A> inputToCheckerArg, R result) {
+    public static <A, R> LogicCheckResult<R> failedBuildLog(InputToCheckerArg<A> inputToCheckerArg, R result) {
         String log = logStr(inputToCheckerArg, DEFAULT_FAILED_INFO);
 
-        return BaseLogicCheckResult.failed(result, log);
+        return LogicCheckResult.failed(result, log);
     }
 
-    public static <A, R> BaseLogicCheckResult<R> errorBuildLog(InputToCheckerArg<A> inputToCheckerArg, Exception e) {
+    public static <A, R> LogicCheckResult<R> errorBuildLog(InputToCheckerArg<A> inputToCheckerArg, Exception e) {
         String log = logStr(inputToCheckerArg, DEFAULT_ERROR_INFO);
-        return BaseLogicCheckResult.error(e, log);
+        return LogicCheckResult.error(e, log);
 
     }
     @Override
@@ -150,7 +150,7 @@ public class BaseLogicCheckResult<T> implements CheckResult<T> {
 
         Gson gson = new Gson();
 
-        Map<String, Object> objectMap = new HashMap<>();
+        LinkedHashMap<String, Object> objectMap = new LinkedHashMap<>();
         objectMap.put("execInfo", execInfo.value());
         if (e != null) {
             objectMap.put("exception", e.getMessage());

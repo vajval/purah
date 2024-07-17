@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 
 public interface MethodConverter {
 
+
+
     Checker toChecker(Object methodsToCheckersBean, Method method,String name);
 
 

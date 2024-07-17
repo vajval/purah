@@ -150,7 +150,7 @@ public class ClassReflectCache {
         if (enabled) {
             fieldMatcherResultByCacheInvokeMap.computeIfAbsent(fieldMatcher, i -> new FieldMatcherResultReflectInvokeCache(inputArgClass, fieldMatcher, result));
         } else {
-            noSupportInovekCacheFieldMatcherSet.contains(fieldMatcher);
+            noSupportInovekCacheFieldMatcherSet.add(fieldMatcher);
         }
 
 

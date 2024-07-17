@@ -1,6 +1,6 @@
 package org.purah.core.checker;
 
-import org.purah.core.checker.result.BaseLogicCheckResult;
+import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.core.checker.result.CheckResult;
 import org.springframework.core.ResolvableType;
 
@@ -89,9 +89,9 @@ public class PurahWrapMethod {
         if (methodResultBeWrapped) {
             return (CheckResult) result;
         } else if (Objects.equals(result, true)) {
-            return BaseLogicCheckResult.successBuildLog(inputToCheckerArg, true);
+            return LogicCheckResult.successBuildLog(inputToCheckerArg, true);
         } else if (Objects.equals(result, false)) {
-            return BaseLogicCheckResult.failedBuildLog(inputToCheckerArg, false);
+            return LogicCheckResult.failedBuildLog(inputToCheckerArg, false);
         }
 
         throw new RuntimeException("bugaichucuo");

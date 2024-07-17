@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.purah.core.checker.cache.InputToCheckerArgCacheKey;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.checker.result.BaseLogicCheckResult;
+import org.purah.core.checker.result.LogicCheckResult;
 
 /**
  * @param <INPUT_ARG>
@@ -29,12 +29,9 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
         resultCheckResult = this.doCheck(inputToCheckerArg);
 
         if (resultCheckResult == null) {
-
-            logger.error("checker  result is NUll logicForm " + this.logicFrom());
+            logger.error("checker result is NUll logicForm " + this.logicFrom());
             throw new RuntimeException("result cannot be Null " + this.logicFrom());
         }
-
-
         setLogicFrom(resultCheckResult);
 
         putCacheIfNeed(inputToCheckerArg, resultCheckResult);
@@ -106,18 +103,18 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
     public abstract CheckResult<RESULT> doCheck(InputToCheckerArg<INPUT_ARG> inputToCheckerArg);
 
 
-    public BaseLogicCheckResult<RESULT> success(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
-        return BaseLogicCheckResult.successBuildLog(inputToCheckerArg, result);
+    public LogicCheckResult<RESULT> success(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
+        return LogicCheckResult.successBuildLog(inputToCheckerArg, result);
     }
 
-    public BaseLogicCheckResult<RESULT> failed(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
+    public LogicCheckResult<RESULT> failed(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
 
-        return BaseLogicCheckResult.failedBuildLog(inputToCheckerArg, result);
+        return LogicCheckResult.failedBuildLog(inputToCheckerArg, result);
     }
 
-    public BaseLogicCheckResult<RESULT> error(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, Exception e) {
+    public LogicCheckResult<RESULT> error(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, Exception e) {
 
-        return BaseLogicCheckResult.errorBuildLog(inputToCheckerArg, e);
+        return LogicCheckResult.errorBuildLog(inputToCheckerArg, e);
 
     }
 

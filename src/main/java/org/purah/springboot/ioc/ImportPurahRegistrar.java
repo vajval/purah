@@ -9,6 +9,7 @@ import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.factory.BaseMatcherFactory;
 import org.purah.springboot.IgnoreBeanOnPurahContext;
 import org.purah.springboot.EnablePurah;
+import org.purah.springboot.aop.CheckItAspect;
 import org.purah.springboot.ioc.ann.ToBaseMatcherFactory;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -54,6 +55,17 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
 
         registry.registerBeanDefinition(PurahContext.class.getName(), purahContextBeanDefinition);
 
+
+
+        BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(CheckItAspect.class);
+
+
+        definitionBuilder.setLazyInit(true);
+        AbstractBeanDefinition beanDefinition = definitionBuilder.getBeanDefinition();
+        beanDefinition.setAutowireCandidate(true);
+        beanDefinition.setPrimary(true);
+
+        registry.registerBeanDefinition(CheckItAspect.class.getName(), beanDefinition);
 
     }
 

@@ -6,7 +6,8 @@ import org.purah.core.name.Name;
 import org.purah.springboot.ioc.ann.ToBaseMatcherFactory;
 import org.springframework.stereotype.Component;
 
-import static org.purah.springboot.ioc.test_bean.matcher.ReverseStringMatcher.NAME;
+import static org.purah.springboot.ioc.test_bean.matcher.ReverseStringMatcherFactory.NAME;
+
 
 @Name(NAME)
 @Component

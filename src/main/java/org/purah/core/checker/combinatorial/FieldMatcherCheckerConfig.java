@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * The correspondence between fields matched by fieldMatcher and the checkers to be used.
  */
 public class FieldMatcherCheckerConfig {
-    ExecType.Matcher execType = ExecType.Matcher.arg_checker;
+    ExecMode.Matcher execType = ExecMode.Matcher.arg_checker;
     FieldMatcher fieldMatcher;
     List<String> checkerNames;
 

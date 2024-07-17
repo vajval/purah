@@ -1,7 +1,7 @@
 package org.purah.core.checker;
 
 
-import org.purah.core.checker.combinatorial.ExecType;
+import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.*;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 public class MultiCheckerExecutor {
 
 
-    private final ExecType.Main mainExecType;
+    private final ExecMode.Main mainExecType;
     private ExecInfo execInfo = ExecInfo.success;
     private final ResultLevel resultLevel;
     private Exception e;
@@ -28,7 +28,7 @@ public class MultiCheckerExecutor {
     private final List<Supplier<CheckResult<?>>> ruleResultSupplierList = new ArrayList<>();
 
 
-    public MultiCheckerExecutor(ExecType.Main mainExecType, ResultLevel resultLevel) {
+    public MultiCheckerExecutor(ExecMode.Main mainExecType, ResultLevel resultLevel) {
         this.mainExecType = mainExecType;
         this.resultLevel = resultLevel;
 
@@ -81,21 +81,21 @@ public class MultiCheckerExecutor {
                 return ExecInfo.error;
             }
             if (checkResult.isFailed()) {
-                if (mainExecType == ExecType.Main.all_success) {
+                if (mainExecType == ExecMode.Main.all_success) {
                     // 有错误 而要求必须要全部成功，才算成功
                     execInfo = ExecInfo.failed;
                     return execInfo;
-                } else if (mainExecType == ExecType.Main.all_success_but_must_check_all) {
+                } else if (mainExecType == ExecMode.Main.all_success_but_must_check_all) {
                     // 有错误 而要求必须要全部成功，但是必须检查完
                     execInfo = ExecInfo.failed;
                     result = execInfo;
                 }
             } else {
-                if (mainExecType == ExecType.Main.at_least_one) {
+                if (mainExecType == ExecMode.Main.at_least_one) {
                     // 没有错误 而且只要一个成功就够了
                     execInfo = ExecInfo.success;
                     return execInfo;
-                } else if (mainExecType == ExecType.Main.at_least_one_but_must_check_all) {
+                } else if (mainExecType == ExecMode.Main.at_least_one_but_must_check_all) {
                     // 没有错误  但是必须检查完
                     execInfo = ExecInfo.success;
                     result = execInfo;
@@ -133,13 +133,13 @@ public class MultiCheckerExecutor {
     private MultiCheckResult<CheckResult<?>> multiCheckResult(String log) {
 
 
-        MainOfMultiCheckResult<Object> mainResult = null;
+        BaseOfMultiCheckResult<Object> mainResult = null;
         if (execInfo.equals(ExecInfo.success)) {
-            mainResult = MainOfMultiCheckResult.success(null, execInfo.value() + " (" + log + ")");
+            mainResult = BaseOfMultiCheckResult.success(null, execInfo.value() + " (" + log + ")");
         } else if (execInfo.equals(ExecInfo.failed)) {
-            mainResult = MainOfMultiCheckResult.failed(null, execInfo.value() + " (" + log + ")");
+            mainResult = BaseOfMultiCheckResult.failed(null, execInfo.value() + " (" + log + ")");
         } else if (execInfo.equals(ExecInfo.error)) {
-            mainResult = MainOfMultiCheckResult.error(e, execInfo.value() + " (" + log + ")");
+            mainResult = BaseOfMultiCheckResult.error(e, execInfo.value() + " (" + log + ")");
 
         }
         return new MultiCheckResult(mainResult, finalExecResult);

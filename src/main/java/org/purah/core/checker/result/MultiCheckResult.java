@@ -5,31 +5,31 @@ import java.util.List;
 
 public class MultiCheckResult<T extends CheckResult> implements CheckResult<List<T>> {
 
-    protected MainOfMultiCheckResult mainCheckResult;
+    protected BaseOfMultiCheckResult base;
     protected List<T> valueList;
 
-    public MultiCheckResult(MainOfMultiCheckResult mainCheckResult, List<T> valueList) {
-        this.mainCheckResult = mainCheckResult;
+    public MultiCheckResult(BaseOfMultiCheckResult base, List<T> valueList) {
+        this.base = base;
         this.valueList = valueList;
     }
 
 
-    public List<BaseLogicCheckResult> resultChildList(ResultLevel resultLevel) {
-        List<BaseLogicCheckResult> resultList = new ArrayList<>();
-        List<MainOfMultiCheckResult> multiCheckResultList = new ArrayList<>();
+    public List<LogicCheckResult> resultChildList(ResultLevel resultLevel) {
 
+        List<LogicCheckResult> resultList = new ArrayList<>();
+        List<BaseOfMultiCheckResult> multiCheckResultList = new ArrayList<>();
         allBaseLogicCheckResultByRecursion(this, resultLevel, resultList, multiCheckResultList);
         return resultList;
     }
 
-    protected static void allBaseLogicCheckResultByRecursion(MultiCheckResult multiCheckResult, ResultLevel resultLevel, List<BaseLogicCheckResult> baseLogicCheckResultList, List<MainOfMultiCheckResult> multiCheckResultList) {
+    protected static void allBaseLogicCheckResultByRecursion(MultiCheckResult multiCheckResult, ResultLevel resultLevel, List<LogicCheckResult> logicCheckResultList, List<BaseOfMultiCheckResult> multiCheckResultList) {
 
         if (resultLevel.allowAddToFinalResult(multiCheckResult)) {
             if (resultLevel == ResultLevel.all) {
-                multiCheckResultList.add(multiCheckResult.mainCheckResult);
+                multiCheckResultList.add(multiCheckResult.base);
             }
             if (resultLevel == ResultLevel.failedNotBaseLogic) {
-                multiCheckResultList.add(multiCheckResult.mainCheckResult);
+                multiCheckResultList.add(multiCheckResult.base);
             }
         }
         if (multiCheckResult.valueList == null) return;
@@ -37,12 +37,12 @@ public class MultiCheckResult<T extends CheckResult> implements CheckResult<List
         for (Object o : multiCheckResult.valueList) {
             if (o instanceof MultiCheckResult) {
                 MultiCheckResult childResult = (MultiCheckResult) o;
-                allBaseLogicCheckResultByRecursion(childResult, resultLevel, baseLogicCheckResultList, multiCheckResultList);
-            } else if (o instanceof BaseLogicCheckResult) {
-                BaseLogicCheckResult baseLogicCheckResult = (BaseLogicCheckResult) o;
-                boolean allowAdd = resultLevel.allowAddToFinalResult(baseLogicCheckResult);
+                allBaseLogicCheckResultByRecursion(childResult, resultLevel, logicCheckResultList, multiCheckResultList);
+            } else if (o instanceof LogicCheckResult) {
+                LogicCheckResult logicCheckResult = (LogicCheckResult) o;
+                boolean allowAdd = resultLevel.allowAddToFinalResult(logicCheckResult);
                 if (allowAdd) {
-                    baseLogicCheckResultList.add(baseLogicCheckResult);
+                    logicCheckResultList.add(logicCheckResult);
                 }
             }
         }
@@ -56,37 +56,37 @@ public class MultiCheckResult<T extends CheckResult> implements CheckResult<List
 
     @Override
     public Exception exception() {
-        return mainCheckResult.exception();
+        return base.exception();
     }
 
     @Override
     public ExecInfo execInfo() {
-        return mainCheckResult.execInfo();
+        return base.execInfo();
     }
 
     @Override
     public String log() {
-        return this.mainCheckResult.log();
+        return this.base.log();
     }
 
     @Override
     public void setCheckLogicFrom(String logicFrom) {
-        this.mainCheckResult.setCheckLogicFrom(logicFrom);
+        this.base.setCheckLogicFrom(logicFrom);
     }
 
     @Override
     public String checkLogicFrom() {
-        return this.mainCheckResult.checkLogicFrom();
+        return this.base.checkLogicFrom();
     }
 
-    public MainOfMultiCheckResult mainCheckResult() {
-        return mainCheckResult;
+    public BaseOfMultiCheckResult mainCheckResult() {
+        return base;
     }
 
     @Override
     public String toString() {
         return "MultiCheckResult{" +
-                "mainCheckResult=" + mainCheckResult +
+                "base=" + base +
                 ", valueList=" + valueList +
                 '}';
     }

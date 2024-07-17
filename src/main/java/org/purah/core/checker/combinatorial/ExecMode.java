@@ -3,7 +3,7 @@ package org.purah.core.checker.combinatorial;
 
 import org.purah.core.exception.UnexpectedException;
 
-public class ExecType {
+public class ExecMode {
     public enum Main {
 
 

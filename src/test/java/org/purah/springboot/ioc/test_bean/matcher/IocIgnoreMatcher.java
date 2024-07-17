@@ -14,9 +14,8 @@ import static org.purah.springboot.ioc.test_bean.matcher.IocIgnoreMatcher.NAME;
 @Name(NAME)
 @ToBaseMatcherFactory
 @IgnoreBeanOnPurahContext
-
 public class IocIgnoreMatcher implements FieldMatcher {
-    public static final String NAME = "reverse_ioc_test";
+    public static final String NAME = "ioc_ignore_test";
     @Override
     public boolean supportCache() {
         return FieldMatcher.super.supportCache();

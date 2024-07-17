@@ -1,11 +1,10 @@
-package org.purah.example.customAnn;
+package notEnable;
 
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.CombinatorialCheckResult;
 import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.example.customAnn.pojo.CustomUser;
 import org.purah.springboot.aop.ann.CheckIt;
-
 import org.purah.springboot.aop.ann.FillToMethodResult;
 import org.purah.springboot.aop.result.ArgCheckResult;
 import org.purah.springboot.aop.result.MethodCheckResult;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 @Service
-public class CustomService {
+public class NoAopService {
 
 
     /*

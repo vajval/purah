@@ -119,6 +119,8 @@ public class PurahIocRegS {
             if (checker != null) {
                 this.regChecker(checker);
                 checkerNameList.add(checker.name());
+            } else {
+                logger.warn("converter method to checker failed bean class {} method {} ", enableBean.getClass(), checkMethod);
             }
         }
 
@@ -130,6 +132,8 @@ public class PurahIocRegS {
             CheckerFactory checkerFactory = enableMethodConverter.toCheckerFactory(enableBean, checkMethod, toCheckerFactory.match(), toCheckerFactory.cacheBeCreatedChecker());
             if (checkerFactory != null) {
                 this.regCheckerFactory(checkerFactory);
+            }else {
+                logger.warn("converter method to checkerFactory failed bean class {} method {} ", enableBean.getClass(), checkMethod);
             }
         }
 

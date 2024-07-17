@@ -2,7 +2,7 @@ package org.purah.springboot.config;
 
 import com.google.common.base.Splitter;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
-import org.purah.core.checker.combinatorial.ExecType;
+import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.ResultLevel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -47,7 +47,7 @@ public class PurahConfigProperties {
 
         protected int  resultLevel = ResultLevel.failedAndIgnoreNotBaseLogic.value();
 
-        protected int execType = ExecType.Main.all_success.value();
+        protected int execType = ExecMode.Main.all_success.value();
         protected String useCheckers = "";
 
 
@@ -66,7 +66,7 @@ public class PurahConfigProperties {
                 result.add(entry.getKey(), valueMap);
             }
             result.setResultLevel(ResultLevel.valueOf(resultLevel));
-            result.setMainExecType(ExecType.Main.valueOf(execType));
+            result.setMainExecType(ExecMode.Main.valueOf(execType));
             return result;
         }
 

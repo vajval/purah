@@ -1,6 +1,6 @@
 package org.purah.springboot.aop.ann;
 
-import org.purah.core.checker.combinatorial.ExecType;
+import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.ResultLevel;
 
 import java.lang.annotation.*;
@@ -48,10 +48,9 @@ public @interface CheckIt {
 
     String[] value() default {};
 
-    ExecType.Main execType() default ExecType.Main.all_success;
-
+    ExecMode.Main mainMode() default ExecMode.Main.all_success;
     //todo
-    ResultLevel resultLevel() default ResultLevel.failedAndIgnoreNotBaseLogic;
+    ResultLevel resultLevel() default ResultLevel.all;
 
 
 

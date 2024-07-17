@@ -9,7 +9,7 @@ import org.purah.core.checker.CheckerManager;
 import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.converter.checker.AbstractWrapMethodToChecker;
 import org.purah.core.checker.converter.checker.ByLogicMethodChecker;
-import org.purah.core.checker.result.BaseLogicCheckResult;
+import org.purah.core.checker.result.LogicCheckResult;
 
 import java.lang.reflect.Method;
 
@@ -23,17 +23,17 @@ class AbstractMethodToCheckerTest {
         }
 
         @Name("id为1")
-        public BaseLogicCheckResult<String> checkById(InputToCheckerArg<Long> id) {
+        public LogicCheckResult<String> checkById(InputToCheckerArg<Long> id) {
             boolean test = checkById(id.argValue());
             if (test) {
-                return BaseLogicCheckResult.success();
+                return LogicCheckResult.success();
             } else {
-                return BaseLogicCheckResult.failed("failed", "failed");
+                return LogicCheckResult.failed("failed", "failed");
             }
         }
 
         @Name("id为1")
-        public BaseLogicCheckResult checkByUser(Util.User user) {
+        public LogicCheckResult checkByUser(Util.User user) {
             return checkById(InputToCheckerArg.of(user.getId()));
 
         }

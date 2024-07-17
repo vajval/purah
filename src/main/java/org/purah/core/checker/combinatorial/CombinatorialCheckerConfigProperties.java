@@ -20,7 +20,7 @@ public class CombinatorialCheckerConfigProperties {
     private ResultLevel resultLevel = ResultLevel.failedAndIgnoreNotBaseLogic;
     private String logicFrom;
 
-    private ExecType.Main mainExecType = ExecType.Main.all_success;
+    private ExecMode.Main mainExecType = ExecMode.Main.all_success;
     private List<String> useCheckerNames = new ArrayList<>();
     private LinkedHashMap<String, Map<String, List<String>>> matcherFieldCheckerMapping = new LinkedHashMap<>();
 
@@ -124,11 +124,11 @@ public class CombinatorialCheckerConfigProperties {
 
     }
 
-    public ExecType.Main getMainExecType() {
+    public ExecMode.Main getMainExecType() {
         return mainExecType;
     }
 
-    public void setMainExecType(ExecType.Main mainExecType) {
+    public void setMainExecType(ExecMode.Main mainExecType) {
         this.mainExecType = mainExecType;
     }
 

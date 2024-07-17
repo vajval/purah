@@ -16,9 +16,9 @@ public interface CheckResult<T> extends BooleanSupplier {
         return isSuccess();
     }
 
-    default boolean isFromCache() {
-        return false;
-    }
+//    default boolean isFromCache() {
+//        return false;
+//    }
 
     default boolean isFailed() {
         return execInfo() == ExecInfo.failed;

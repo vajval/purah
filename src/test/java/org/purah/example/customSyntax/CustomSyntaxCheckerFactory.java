@@ -4,7 +4,7 @@ import com.google.common.base.Splitter;
 
 import org.purah.core.PurahContext;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
-import org.purah.core.checker.combinatorial.ExecType;
+import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.checker.factory.AbstractCustomSyntaxCheckerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,7 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
         // example: 0[x,y][a:b,c;e:d,e]
         String checkerExp = needMatchCheckerName.substring("example:".length()).trim();
 
-        ExecType.Main mainExecType = ExecType.Main.valueOf(Integer.parseInt(String.valueOf(checkerExp.charAt(0))));
+        ExecMode.Main mainExecType = ExecMode.Main.valueOf(Integer.parseInt(String.valueOf(checkerExp.charAt(0))));
 
         // 0[x,y][a:b,c;e:d,e]
 

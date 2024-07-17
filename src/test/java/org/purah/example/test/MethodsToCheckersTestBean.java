@@ -6,7 +6,7 @@ import org.purah.core.checker.AbstractBaseSupportCacheChecker;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.checker.result.BaseLogicCheckResult;
+import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.springboot.ioc.ann.PurahMethodsRegBean;
 import org.purah.springboot.ioc.ann.ToChecker;
 import org.purah.springboot.ioc.ann.ToCheckerFactory;
@@ -36,9 +36,9 @@ public class MethodsToCheckersTestBean {
     @Name("有文本判断FromTestBean")
     public CheckResult hasTest(String text) {
         if (StringUtils.hasText(text)) {
-            return BaseLogicCheckResult.success(null, "有文本");
+            return LogicCheckResult.success(null, "有文本");
         } else {
-            return BaseLogicCheckResult.failed(null, "无文本");
+            return LogicCheckResult.failed(null, "无文本");
         }
     }
 
@@ -53,9 +53,9 @@ public class MethodsToCheckersTestBean {
         boolean success = value.doubleValue() >= min && value.doubleValue() <= max;
 
         if (success) {
-            return BaseLogicCheckResult.success();
+            return LogicCheckResult.success();
         }
-        return BaseLogicCheckResult.failed(null, name + "取值错误" + value);
+        return LogicCheckResult.failed(null, name + "取值错误" + value);
     }
 
     @ToCheckerFactory(match = "3取值必须在[*-*]之间判断FromTestBean")
@@ -74,9 +74,9 @@ public class MethodsToCheckersTestBean {
     public CheckResult range(InputToCheckerArg<Number> inputToCheckerArg) {
         Integer value = inputToCheckerArg.argValue().intValue();
         if (value < 0) {
-            return BaseLogicCheckResult.failed(null, inputToCheckerArg.fieldStr() + ":取值错误:" + value);
+            return LogicCheckResult.failed(null, inputToCheckerArg.fieldStr() + ":取值错误:" + value);
         } else {
-            return BaseLogicCheckResult.success(null, inputToCheckerArg.fieldStr() + ":取值正确:" + value);
+            return LogicCheckResult.success(null, inputToCheckerArg.fieldStr() + ":取值正确:" + value);
         }
     }
 }

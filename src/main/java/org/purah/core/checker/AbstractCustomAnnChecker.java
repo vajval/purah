@@ -1,7 +1,7 @@
 package org.purah.core.checker;
 
 
-import org.purah.core.checker.combinatorial.ExecType;
+import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.*;
 
 import java.lang.annotation.Annotation;
@@ -16,11 +16,11 @@ public abstract class AbstractCustomAnnChecker extends AbstractBaseSupportCacheC
 
     Map<Class<? extends Annotation>, GenericsProxyChecker> map = new ConcurrentHashMap<>();
 
-    ExecType.Main mainExecType;
+    ExecMode.Main mainExecType;
 
     ResultLevel resultLevel;
 
-    public AbstractCustomAnnChecker(ExecType.Main mainExecType, ResultLevel resultLevel) {
+    public AbstractCustomAnnChecker(ExecMode.Main mainExecType, ResultLevel resultLevel) {
         this.mainExecType = mainExecType;
         this.resultLevel = resultLevel;
         initMethods();

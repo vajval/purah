@@ -4,10 +4,10 @@ package org.purah.example.customAnn.checker;
 import org.purah.core.name.Name;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.Checker;
-import org.purah.core.checker.combinatorial.ExecType;
+import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.converter.checker.ByAnnMethodChecker;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.checker.result.BaseLogicCheckResult;
+import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.core.checker.AbstractCustomAnnChecker;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.example.customAnn.ann.CNPhoneNum;
@@ -27,7 +27,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
     public static int cnPhoneNumCount = 0;
 
     public CustomAnnChecker() {
-        super(ExecType.Main.all_success, ResultLevel.failedAndIgnoreNotBaseLogic);
+        super(ExecMode.Main.all_success, ResultLevel.failedAndIgnoreNotBaseLogic);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
         if (strValue.matches("^1[3456789]\\d{9}$")) {
             return success(str, "正确的");
         }
-        return BaseLogicCheckResult.failed(str.argValue(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
+        return LogicCheckResult.failed(str.argValue(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
 
 
     }
@@ -62,7 +62,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
         if (StringUtils.hasText(strValue)) {
             return success(str, "正确的");
         }
-        return BaseLogicCheckResult.failed(str.argValue(), str.fieldStr() + ":" + notEmptyTest.errorMsg());
+        return LogicCheckResult.failed(str.argValue(), str.fieldStr() + ":" + notEmptyTest.errorMsg());
 
 
     }
@@ -71,7 +71,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
     public CheckResult range(Range range, InputToCheckerArg<Number> num) {
         Number numValue = num.argValue();
         if (numValue.doubleValue() < range.min() || numValue.doubleValue() > range.max()) {
-            return BaseLogicCheckResult.failed(num.argValue(), (num.fieldStr() + ":" + range.errorMsg()));
+            return LogicCheckResult.failed(num.argValue(), (num.fieldStr() + ":" + range.errorMsg()));
         }
         return success(num, "参数合规");
 
