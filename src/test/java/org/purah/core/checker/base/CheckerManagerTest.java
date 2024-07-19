@@ -3,15 +3,68 @@ package org.purah.core.checker.base;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.purah.core.PurahContext;
 import org.purah.core.checker.CheckerManager;
-import org.purah.core.checker.converter.DefaultMethodConverter;
+import org.purah.core.checker.GenericsProxyChecker;
+import org.purah.core.checker.factory.LambdaCheckerFactory;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckerException;
 import org.purah.core.exception.init.InitCheckerException;
 
+import java.util.Objects;
+
 public class CheckerManagerTest {
+
+
+    PurahContext purahContext;
     CheckerManager checkerManager;
-    DefaultMethodConverter defaultMethodConverter = new DefaultMethodConverter();
+
+    @BeforeEach
+    void beforeEach() {
+        purahContext = new PurahContext();
+        checkerManager = purahContext.checkManager();
+    }
+
+
+    @Test
+    void regAndFactoryTest() {
+
+        checkerManager.reg(GenericsProxyCheckerTest.userChecker);
+        GenericsProxyChecker genericsProxyChecker = checkerManager.of("id1");
+
+        Assertions.assertThrows(CheckerException.class, () -> checkerManager.of("id1").check(1L));//no long
+
+
+        checkerManager.reg(GenericsProxyCheckerTest.LongChecker);
+        Assertions.assertTrue(genericsProxyChecker.check(1L));//have long
+
+
+        Assertions.assertThrows(CheckerException.class, () -> genericsProxyChecker.check(1));//no int
+        LambdaCheckerFactory<Integer> intCheckerFactory = LambdaCheckerFactory.of(Integer.class).build("id*", (a, b) -> {
+            Integer name = Integer.parseInt(a.replace("id", ""));
+            return Objects.equals(name, b);
+        });
+        checkerManager.addCheckerFactory(intCheckerFactory);
+        Assertions.assertTrue(genericsProxyChecker.check(1));                           //have int
+
+
+        Assertions.assertThrows(CheckerException.class, () -> genericsProxyChecker.check("2"));//no String
+        LambdaCheckerFactory<String> stringCheckerFactory = LambdaCheckerFactory.of(String.class).build("id*", (a, b) -> {
+            return Objects.equals(a.replace("id", ""), b);
+        });
+        checkerManager.addCheckerFactory(stringCheckerFactory);
+        Assertions.assertTrue(checkerManager.of("id1").check("1"));   //have string
+
+        Assertions.assertThrows(CheckerException.class, () -> checkerManager.of("id2").check(2L));//no long
+
+
+        CheckResult<Object> result = checkerManager.of("id5").check(5);
+        Assertions.assertTrue(result);
+        result = checkerManager.of("id100").check("100");
+        Assertions.assertTrue(result);
+        result = checkerManager.of("id4396").check(2200);
+        Assertions.assertFalse(result);
+    }
 
     public static boolean id(String name, long id) {
         long parseId = Long.parseLong(name.replace("id", ""));
@@ -22,37 +75,6 @@ public class CheckerManagerTest {
     public static boolean id(String name, Integer id) {
         long parseId = Long.parseLong(name.replace("id", ""));
         return parseId == id.longValue();
-    }
-
-    @BeforeEach
-    void beforeEach() {
-        checkerManager = new CheckerManager();
-    }
-
-
-    @Test
-    void reg() throws NoSuchMethodException {
-        checkerManager.reg(GenericsProxyCheckerTest.userChecker);
-        checkerManager.reg(GenericsProxyCheckerTest.tradeChecker);
-
-        Assertions.assertThrows(InitCheckerException.class, () -> checkerManager.of("id2"));
-        checkerManager.addCheckerFactory(defaultMethodConverter.toCheckerFactory(null, CheckerManagerTest.class.getMethod("id", String.class, Integer.class), "id*", true));
-
-        Assertions.assertThrows(CheckerException.class, () -> checkerManager.of("id2").check(2L));
-        Assertions.assertDoesNotThrow(() -> checkerManager.of("id2").check(2));
-
-        checkerManager.addCheckerFactory(defaultMethodConverter.toCheckerFactory(null, CheckerManagerTest.class.getMethod("id", String.class, long.class), "id*", true));
-
-        CheckResult<Object> result = checkerManager.of("id2").check(2L);
-        Assertions.assertTrue(result.isSuccess());
-        result = checkerManager.of("id3").check(3L);
-        Assertions.assertTrue(result.isSuccess());
-        result = checkerManager.of("id5").check(5);
-        Assertions.assertTrue(result.isSuccess());
-        result = checkerManager.of("id100").check(100L);
-        Assertions.assertTrue(result.isSuccess());
-        result = checkerManager.of("id4396").check(7891);
-        Assertions.assertTrue(result.isFailed());
     }
 
 

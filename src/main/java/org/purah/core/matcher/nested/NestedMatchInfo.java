@@ -7,8 +7,8 @@ import java.util.List;
 
 public class NestedMatchInfo {
 
-    protected List<FieldMatcher> childFieldMatcher;
-    protected boolean addToResult;
+    protected final List<FieldMatcher> childFieldMatcher;
+    protected final boolean addToResult;
 
     private NestedMatchInfo(List<FieldMatcher> childFieldMatcher, boolean addToResult) {
         this.childFieldMatcher = childFieldMatcher;

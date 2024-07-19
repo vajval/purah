@@ -181,8 +181,8 @@ CheckResult 中可以携带自定义的返回信息 ，boolean 的不行
 
 想扩展的话 可以重写 initMethod函数来支持更多
 
-
 ```java
+
 @Name("自定义注解检测")  //自定义checker一定要加一个名字
 @EnableOnPurahContext//启用
 @Component// 放到spring里
@@ -190,10 +190,7 @@ CheckResult 中可以携带自定义的返回信息 ，boolean 的不行
 public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
     public boolean notNull(NotNull notNull, Integer age) {
-        if (age == null) {
-            return false;
-        }
-        return true;
+        return age != null;
 
 
     }

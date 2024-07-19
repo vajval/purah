@@ -61,7 +61,7 @@ public class CheckItAspectTest {
         assertFalse(aspectTestService.customSyntax(GOOD_USER_BAD_CHILD));
 
         MultiCheckResult<?> multiCheckResult = aspectTestService.customSyntax(GOOD_USER_BAD_CHILD);
-        List<LogicCheckResult> logicCheckResults = multiCheckResult.resultChildList(ResultLevel.failedAndIgnoreNotBaseLogic);
+        List<LogicCheckResult<?>> logicCheckResults = multiCheckResult.resultChildList(ResultLevel.failedAndIgnoreNotBaseLogic);
         String collect = logicCheckResults.stream().map(LogicCheckResult::log).collect(Collectors.joining(","));
         Assertions.assertTrue(collect.contains("childUser.id:range wrong"));
         Assertions.assertTrue(collect.contains("childUser.name:this field cannot empty"));

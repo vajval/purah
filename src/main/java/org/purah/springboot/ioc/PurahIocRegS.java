@@ -3,22 +3,24 @@ package org.purah.springboot.ioc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.purah.core.PurahContext;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
-import org.purah.core.name.NameUtil;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.CheckerManager;
-import org.purah.core.checker.factory.CheckerFactory;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.converter.MethodConverter;
+import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.factory.MatcherFactory;
+import org.purah.core.name.NameUtil;
 import org.purah.core.resolver.ArgResolver;
+import org.purah.springboot.config.PurahConfigProperties;
 import org.purah.springboot.ioc.ann.ToChecker;
 import org.purah.springboot.ioc.ann.ToCheckerFactory;
-import org.purah.springboot.config.PurahConfigProperties;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,7 +32,7 @@ public class PurahIocRegS {
 
     private static final Logger logger = LogManager.getLogger(PurahIocRegS.class);
 
-    protected PurahContext purahContext;
+    protected final PurahContext purahContext;
 
     public PurahIocRegS(PurahContext purahContext) {
         this.purahContext = purahContext;
@@ -39,7 +41,7 @@ public class PurahIocRegS {
     public void initMainBean(MethodConverter methodConverter, CheckerManager checkerManager, MatcherManager matcherManager, ArgResolver argResolver) {
         logger.info("init purahContext");
         if (checkerManager == null) {
-            logger.info("enable  default checkerManager");
+            logger.info("enable default checkerManager");
         } else {
             logger.info("enable checkerManager:{} ", checkerManager.getClass());
         }
@@ -59,19 +61,27 @@ public class PurahIocRegS {
             logger.info("enable methodConverter:{} ", methodConverter.getClass());
         }
         purahContext.override(checkerManager, argResolver, matcherManager, methodConverter);
+        for (Class<? extends FieldMatcher> defaultClazz : purahContext.config().purahDefaultFieldMatcherClass()) {
+            this.regBaseStringMatcher(defaultClazz);
+        }
+
         for (Class<? extends FieldMatcher> baseStringMatcherClass : purahContext.config().getSingleStringConstructorFieldMatcherClassSet()) {
             this.regBaseStringMatcher(baseStringMatcherClass);
         }
-        logger.info("init purahContext finish");
 
+
+        logger.info("init purahContext base finish");
+        logger.info("Ciallo～(∠・ω< )⌒★");
 
     }
 
 
     public void regBaseStringMatcher(Class<? extends FieldMatcher> clazz) {
         try {
-            this.purahContext.matcherManager().regBaseStrMatcher(clazz);
-            logger.info("reg field matcher class:{}", clazz);
+            String name = this.purahContext.matcherManager().regBaseStrMatcher(clazz).name();
+            logger.info("reg matcher by clazz name: [{}]   class: {}", name, clazz);
+//            logger.info("reg MatcherFactory: {}, name: {}", MatcherFactory.class, name);
+//            logger.info("reg field matcher class:{}", clazz);
         } catch (Exception e) {
             logger.error("reg field matcher error class:{}", clazz, e);
         }
@@ -81,9 +91,9 @@ public class PurahIocRegS {
     public void regBaseStringMatcher(MatcherFactory matcherFactory) {
         try {
             this.purahContext.matcherManager().reg(matcherFactory);
-            logger.info("reg matcher factory :{}", matcherFactory);
+            logger.info("reg matcher factory name: [{}]     class: {}", matcherFactory.name(), matcherFactory.getClass());
         } catch (Exception e) {
-            logger.error("reg matcher factory error :{}", matcherFactory, e);
+            logger.error("reg matcher factory error: {}", matcherFactory, e);
         }
     }
 
@@ -91,7 +101,7 @@ public class PurahIocRegS {
     public void regChecker(Checker<?, ?> checker) {
         try {
             purahContext.checkManager().reg(checker);
-            logger.info("reg checker :{}", checker);
+            logger.info("reg checker name: [{}]     logic from: {}", checker.name(), checker.logicFrom());
         } catch (Exception e) {
             logger.error("reg checker error:{}", checker, e);
         }
@@ -101,23 +111,29 @@ public class PurahIocRegS {
     public void regCheckerFactory(CheckerFactory checkerFactory) {
         try {
             purahContext.checkManager().addCheckerFactory(checkerFactory);
-            logger.info("reg checkerFactory :{}", checkerFactory);
+            logger.info("reg checkerFactory: {}", checkerFactory.name());
         } catch (Exception e) {
-            logger.error("reg checkerFactory :{}", checkerFactory, e);
+            logger.error("reg checkerFactory: {}", checkerFactory, e);
         }
+    }
+
+    public void regPurahMethodsRegBean(Set<Object> enableBean) {
+
     }
 
     public void regPurahMethodsRegBean(Object enableBean) {
         if (enableBean == null) return;
+        logger.info("start reg bean class: {} to purahContext", enableBean.getClass());
         MethodConverter enableMethodConverter = purahContext.enableMethodConverter();
         List<Method> checkMethods = Stream.of(enableBean.getClass().getMethods()).filter(i -> i.getDeclaredAnnotation(ToChecker.class) != null).collect(Collectors.toList());
 
         List<String> checkerNameList = new ArrayList<>(checkMethods.size());
+        List<Checker<?, ?>> checkerList = new ArrayList<>();
         for (Method checkMethod : checkMethods) {
             String name = NameUtil.nameByAnnOnMethod(checkMethod);
             Checker<?, ?> checker = enableMethodConverter.toChecker(enableBean, checkMethod, name);
             if (checker != null) {
-                this.regChecker(checker);
+                checkerList.add(checker);
                 checkerNameList.add(checker.name());
             } else {
                 logger.warn("converter method to checker failed bean class {} method {} ", enableBean.getClass(), checkMethod);
@@ -126,18 +142,25 @@ public class PurahIocRegS {
 
         List<Method> checkFactoryMethods = Stream.of(enableBean.getClass().getMethods()).filter(i -> i.getDeclaredAnnotation(ToCheckerFactory.class) != null).collect(Collectors.toList());
         List<String> checkerFactroyMatchList = new ArrayList<>(checkFactoryMethods.size());
+        List<CheckerFactory> checkerFactoryList = new ArrayList<>();
 
         for (Method checkMethod : checkFactoryMethods) {
             ToCheckerFactory toCheckerFactory = checkMethod.getDeclaredAnnotation(ToCheckerFactory.class);
             CheckerFactory checkerFactory = enableMethodConverter.toCheckerFactory(enableBean, checkMethod, toCheckerFactory.match(), toCheckerFactory.cacheBeCreatedChecker());
             if (checkerFactory != null) {
-                this.regCheckerFactory(checkerFactory);
-            }else {
+                checkerFactoryList.add(checkerFactory);
+                checkerFactroyMatchList.add(checkerFactory.name());
+            } else {
                 logger.warn("converter method to checkerFactory failed bean class {} method {} ", enableBean.getClass(), checkMethod);
             }
         }
-
-        logger.info("reg bean {} to purahContext {},{}", enableBean, checkerNameList, checkerFactroyMatchList);
+        for (Checker<?, ?> checker : checkerList) {
+            this.regChecker(checker);
+        }
+        for (CheckerFactory checkerFactory : checkerFactoryList) {
+            this.regCheckerFactory(checkerFactory);
+        }
+        logger.info("reg bean {} to purahContext checkers: {}, factories: {}", enableBean, checkerNameList, checkerFactroyMatchList);
     }
 
     public void regCheckerByProperties(PurahConfigProperties purahConfigProperties) {
@@ -153,5 +176,7 @@ public class PurahIocRegS {
         }
 
     }
+
+
 
 }

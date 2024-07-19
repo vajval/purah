@@ -92,7 +92,7 @@ public class CombinatorialCheckerConfigProperties {
         this.useCheckerNames = useCheckerNames;
     }
 
-    public CombinatorialCheckerConfigProperties add(String matchFactoryType, LinkedHashMap<String, List<String>> fieldCheckerMapping) {
+    public void add(String matchFactoryType, LinkedHashMap<String, List<String>> fieldCheckerMapping) {
         LinkedHashMap<String, List<String>> valueMap = new LinkedHashMap<>();
 
         for (Map.Entry<String, List<String>> entry : fieldCheckerMapping.entrySet()) {
@@ -104,7 +104,6 @@ public class CombinatorialCheckerConfigProperties {
         }
 
         matcherFieldCheckerMapping.put(matchFactoryType.trim(), valueMap);
-        return this;
 
     }
 

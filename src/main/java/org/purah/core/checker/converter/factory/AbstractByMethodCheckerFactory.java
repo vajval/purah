@@ -11,11 +11,11 @@ import java.lang.reflect.Method;
  */
 public abstract class AbstractByMethodCheckerFactory implements CheckerFactory {
 
-    protected WildCardMatcher wildCardMatcher;
-    protected boolean cacheBeCreatedChecker;
-    protected Method method;
-    protected Object bean;
-    protected String matchStr;
+    protected final WildCardMatcher wildCardMatcher;
+    protected final boolean cacheBeCreatedChecker;
+    protected final Method method;
+    protected final Object bean;
+    protected final String matchStr;
 
     public AbstractByMethodCheckerFactory(Object bean, Method method, String matchStr, boolean cacheBeCreatedChecker) {
         this.wildCardMatcher = new WildCardMatcher(matchStr);

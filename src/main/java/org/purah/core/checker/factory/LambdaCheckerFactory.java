@@ -10,10 +10,10 @@ import java.util.function.Predicate;
 public class LambdaCheckerFactory<INPUT_ARG> implements CheckerFactory {
 
 
-    BiPredicate<String, INPUT_ARG> checkLogic;
+    final BiPredicate<String, INPUT_ARG> checkLogic;
 
-    Predicate<String> matchLogic;
-    Class<INPUT_ARG> clazz;
+    final Predicate<String> matchLogic;
+    final Class<INPUT_ARG> clazz;
 
 
     private LambdaCheckerFactory(Predicate<String> matchLogic,
@@ -40,7 +40,7 @@ public class LambdaCheckerFactory<INPUT_ARG> implements CheckerFactory {
     }
 
     public static class Builder<T> {
-        Class<T> clazz;
+        final Class<T> clazz;
 
         private Builder(Class<T> clazz) {
             this.clazz = clazz;

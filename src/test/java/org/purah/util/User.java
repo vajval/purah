@@ -11,7 +11,7 @@ import org.purah.springboot.aop.ann.CheckIt;
 public class User {
 
     public static final User BAD_USER = new User(50L, null, "123", null);
-    public static final User GOOD_USER = new User(3L, "vajva", "15509931234", 15);
+    public static final User GOOD_USER = new User(1L, "vajva", "15509931234", 15);
     public static final User GOOD_USER_BAD_CHILD = goodUserBadChild();
     public static final User GOOD_USER_GOOD_CHILD = goodUserGoodChild();
 

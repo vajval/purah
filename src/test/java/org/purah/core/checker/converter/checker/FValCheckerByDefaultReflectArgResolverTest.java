@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.name.Name;
 import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.matcher.nested.FixedMatcher;
-import org.purah.core.resolver.ReflectArgResolver;
 import org.purah.util.TestUser;
 import org.purah.util.People;
 import org.purah.util.TestAnn;
@@ -64,11 +62,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
         if (!root.getChild().get(0).getChild().get(0).getName().equals(childChildName)) {
             return false;
         }
-        if (superChildList != null) {
-            return false;
-        }
-
-        return true;
+        return superChildList == null;
 
     }
 
@@ -76,60 +70,35 @@ public class FValCheckerByDefaultReflectArgResolverTest {
     void check() {
 
         Method method = Stream.of(FValCheckerByDefaultReflectArgResolverTest.class.getDeclaredMethods()).filter(i -> i.getName().equals("childNameCheck")).collect(Collectors.toList()).get(0);
-
-
-        FValCheckerByDefaultReflectArgResolver checker = new
-                FValCheckerByDefaultReflectArgResolver(
-                null, method, "test");
+        FValCheckerByDefaultReflectArgResolver checker = new FValCheckerByDefaultReflectArgResolver(null, method, "test");
 
         for (int i = 0; i < 3; i++) {
             Assertions.assertTrue(checker.check(People.elder));
-
         }
 
     }
 
 
     public static boolean childNameCheck2(
-//            @FVal("#root#") InputToCheckerArg<TestUser> toCheckerArg,
-//                                          @FVal("*") String name,
             @FVal("id") Long w,
             @FVal("name") Name e,
             @FVal("a.name") String r,
             @FVal("child.id") Long testAnnOnNameField,
             @FVal("child.name") Name noExistAnn,
             @FVal("child.address") String address,
-
             @FVal("child") TestUser testUser2,
             @FVal("child.child.id") Long testAnnOnNameField2,
             @FVal("child.child.name") Name noExistAnn2,
             @FVal("child.child.address") String address2,
-            @FVal("teest#5") String addres2,
             @FVal("child.child") TestUser testUse2r
 
 
     ) {
-//        System.out.println(address);
-        if (address2 == null) {
-            return false;
-        }
-
-        return true;
+        return address2 != null;
 
     }
 
-    @Test
-    void check54() {
-        ReflectArgResolver resolver = new ReflectArgResolver();
-        FixedMatcher fixedMatcher =
-                new FixedMatcher("a.name");
 
-        TestUser testUser = new TestUser(1L, "name", "address");
-        testUser.child = new TestUser(2L, "child_name", "child_address");
-        testUser.child.child = new TestUser(4L, "child_child_name", "child_child_address");
-
-        Map<String, InputToCheckerArg<?>> thisLevelMatcherObjectMap = resolver.getMatchFieldObjectMap(testUser, fixedMatcher);
-    }
 
     @Test
     void check2() {
@@ -164,7 +133,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
 
     public static class Test2 {
 
-        Map<String, String> map = Collections.singletonMap("1", "2");
+        final Map<String, String> map = Collections.singletonMap("1", "2");
 
         public Map<String, String> getMap() {
             return map;

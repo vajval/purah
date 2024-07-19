@@ -24,13 +24,13 @@ import java.util.stream.Stream;
 public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object[], List<ArgCheckResult>> {
 
 
-    protected PurahContext purahContext;
+    protected final PurahContext purahContext;
 
 
-    protected Object bean;
+    protected final Object bean;
 
-    protected Method method;
-    protected Type returnType;
+    protected final Method method;
+    protected final Type returnType;
 
     protected String name;
 
@@ -39,7 +39,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
     protected ExecMode.Main execMode = ExecMode.Main.all_success;
 
     protected ResultLevel resultLevel = ResultLevel.all;
-    protected Map<Integer, ParameterHandlerChecker> parameterHandlerCheckerMap = new HashMap<>();
+    protected final Map<Integer, ParameterHandlerChecker> parameterHandlerCheckerMap = new HashMap<>();
 
     public MethodHandlerChecker(Object bean, Method method, PurahContext purahContext) {
         this.purahContext = purahContext;

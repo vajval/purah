@@ -6,10 +6,10 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 public class MethodCheckResult extends MultiCheckResult<ArgCheckResult> {
-    Object belongBean;
-    Method method;
+    final Object belongBean;
+    final Method method;
 
-    public MethodCheckResult(LogicCheckResult mainCheckResult, List<ArgCheckResult> valueList, Object belongBean, Method method) {
+    public MethodCheckResult(LogicCheckResult<?> mainCheckResult, List<ArgCheckResult> valueList, Object belongBean, Method method) {
         super(mainCheckResult, valueList);
         this.belongBean = belongBean;
         this.method = method;
@@ -19,16 +19,16 @@ public class MethodCheckResult extends MultiCheckResult<ArgCheckResult> {
         return valueList.get(index);
     }
 
-    public List<LogicCheckResult> logicResultList(ResultLevel resultLevel) {
+    public List<LogicCheckResult<?>> logicResultList(ResultLevel resultLevel) {
 
         return resultChildList(resultLevel);
     }
 
-    public List<LogicCheckResult> logicResultList() {
+    public List<LogicCheckResult<?>> logicResultList() {
         return logicResultList(ResultLevel.failedAndIgnoreNotBaseLogic);
     }
 
-    public LogicCheckResult main() {
-        return base;
+    public LogicCheckResult<?> main() {
+        return mainResult;
     }
 }

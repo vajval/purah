@@ -34,17 +34,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodToChecker {
-    protected Map<Integer, FieldParameter> fieldParameterMap = new ConcurrentHashMap<>();
+    protected final Map<Integer, FieldParameter> fieldParameterMap = new ConcurrentHashMap<>();
 
     FieldMatcher fieldMatcher;
 
     private static final ArgResolver resolver = new ReflectArgResolver();
 
     static class FieldParameter {
-        int index;
-        FVal FVal;
-        Class<?> clazz;
-        GeneralFieldMatcher generalFieldMatcher;
+        final int index;
+        final FVal FVal;
+        final Class<?> clazz;
+        final GeneralFieldMatcher generalFieldMatcher;
 
         public FieldParameter(int index, FVal FVal, Class<?> clazz, GeneralFieldMatcher generalFieldMatcher) {
             this.index = index;

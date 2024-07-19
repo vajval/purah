@@ -68,7 +68,7 @@ public class ClassReflectCache {
     }
 
 
-    public static ClassReflectCache nullOrEmptyValueReflectCache = new ClassReflectCache() {
+    public static final ClassReflectCache nullOrEmptyValueReflectCache = new ClassReflectCache() {
         @Override
         public Map<String, InputToCheckerArg<?>> thisLevelMatchFieldValueMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
             Set<String> matchFieldList = fieldMatcher.matchFields(Collections.emptySet(), inputToCheckerArg.argValue());
@@ -80,8 +80,7 @@ public class ClassReflectCache {
         }
 
         @Override
-        public boolean tryRegNewInvokeCache(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher, Map<String, InputToCheckerArg<?>> result) {
-            return false;
+        public void tryRegNewInvokeCache(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher, Map<String, InputToCheckerArg<?>> result) {
         }
     };
 
@@ -119,15 +118,15 @@ public class ClassReflectCache {
     }
 
 
-    public boolean tryRegNewInvokeCache(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher, Map<String, InputToCheckerArg<?>> result) {
+    public void tryRegNewInvokeCache(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher, Map<String, InputToCheckerArg<?>> result) {
         if (fieldMatcherResultByCacheInvokeMap.containsKey(fieldMatcher)) {
-            return true;
+            return;
         }
         if (!fieldMatcher.supportCache()) {
-            return false;
+            return;
         }
         if (noSupportInovekCacheFieldMatcherSet.contains(fieldMatcher)) {
-            return false;
+            return;
         }
 
 
@@ -139,7 +138,6 @@ public class ClassReflectCache {
         }
 
 
-        return true;
     }
 
 

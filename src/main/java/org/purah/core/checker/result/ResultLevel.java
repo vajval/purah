@@ -34,27 +34,19 @@ public enum ResultLevel {
     }
 
 
-    public boolean allowAddToFinalResult(CheckResult checkResult) {
+    public boolean allowAddToFinalResult(CheckResult<?> checkResult) {
         if (this == ResultLevel.all) {
             return true;
         } else if (this == ResultLevel.failed) {
-            if (!checkResult.isSuccess()) {
-                return true;
-            }
+            return !checkResult.isSuccess();
 
         } else if (this == ResultLevel.failedAndIgnoreNotBaseLogic) {
-            if ((!checkResult.isSuccess())) {
-                return true;
-            }
+            return !checkResult.isSuccess();
 
         } else if (this == ResultLevel.error) {
-            if (checkResult.isError()) {
-                return true;
-            }
+            return checkResult.isError();
         } else if (this == ResultLevel.failedNotBaseLogic) {
-            if (!checkResult.isSuccess()) {
-                return true;
-            }
+            return !checkResult.isSuccess();
         }
         return false;
     }

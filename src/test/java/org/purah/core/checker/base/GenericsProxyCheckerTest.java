@@ -2,46 +2,41 @@ package org.purah.core.checker.base;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.purah.core.Util;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.LambdaChecker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckerException;
-
-import static org.purah.core.Util.*;
+import org.purah.util.User;
 
 public class GenericsProxyCheckerTest {
-    public static Checker<Trade, Object> tradeChecker =
-            LambdaChecker.of(Util.Trade.class).build("id1", i -> i.getInitiator().getId().equals(1L));
+    public static Checker<User, Object> userChecker =
+            LambdaChecker.of(User.class).build("id1", i -> i.getId().equals(1L));
 
 
-    public static Checker<Util.User, Object> userChecker =
-            LambdaChecker.of(Util.User.class).build("id1", i -> i.getId().equals(1L));
-
+    public static Checker<Long, Object> LongChecker =
+            LambdaChecker.of(Long.class).build("id1", i -> i == 1L);
 
 
     @Test
     void get() {
 
-        GenericsProxyChecker genericsProxyChecker = GenericsProxyChecker.createByChecker(tradeChecker);
+        GenericsProxyChecker genericsProxyChecker = GenericsProxyChecker.createByChecker(LongChecker);
 
-        CheckResult<Object> result = genericsProxyChecker.check(trade);
-        Assertions.assertEquals(result.data(), trade);
-        Assertions.assertTrue(result.isSuccess());
-
+        CheckResult<Object> result = genericsProxyChecker.check( 1L);
+        Assertions.assertTrue(result);
 
 
-        Assertions.assertThrows(CheckerException.class, () -> genericsProxyChecker.check(initiator));
+        Assertions.assertThrows(CheckerException.class, () -> genericsProxyChecker.check(User.GOOD_USER));
 
         genericsProxyChecker.addNewChecker(userChecker);
-        result = genericsProxyChecker.check(initiator);
+        result = genericsProxyChecker.check(User.GOOD_USER);
 
-        Assertions.assertEquals(result.data(), initiator);
-        Assertions.assertTrue(result.isSuccess());
-        Assertions.assertFalse(genericsProxyChecker.check(recipients).isSuccess());
+        Assertions.assertTrue(result);
 
-        Assertions.assertThrows(CheckerException.class, () -> genericsProxyChecker.check(money));
+        Assertions.assertFalse(genericsProxyChecker.check(User.BAD_USER));
+
+        Assertions.assertThrows(CheckerException.class, () -> genericsProxyChecker.check("123"));
 
 
     }

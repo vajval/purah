@@ -20,7 +20,7 @@ public class InputToCheckerArg<INPUT_ARG> {
     // The class that can be determined within the context of the code.
     Class<?> clazzInContext;
     //If this object is a field of the parent object's class, store the field information here.
-    Field fieldInClass;
+    final Field fieldInClass;
     // If this object is a field of the parent object's class, store the ann information here.
     List<Annotation> annotations = Collections.emptyList();
 

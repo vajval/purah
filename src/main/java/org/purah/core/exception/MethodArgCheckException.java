@@ -6,7 +6,7 @@ import org.purah.core.checker.result.CheckResult;
 public class MethodArgCheckException extends PurahException {
 
 
-    CheckResult checkResult;
+    final CheckResult checkResult;
     public MethodArgCheckException(CheckResult checkResult) {
 
         super(checkResult.execInfo().name());

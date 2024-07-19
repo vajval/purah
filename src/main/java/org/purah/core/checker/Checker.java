@@ -40,7 +40,8 @@ public interface Checker<INPUT_ARG, RESULT> extends IName {
         if (this.getClass().isAnonymousClass()) {
             clazzStr = "anonymous class from " + this.getClass().getName();
         }
-        return "[" + this.name() + "] " + clazzStr;
+        return clazzStr + "[" + this.name() + "] ";
+//        return "[" + this.name() + "] " + clazzStr;
     }
 
 

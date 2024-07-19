@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
  * The correspondence between fields matched by fieldMatcher and the checkers to be used.
  */
 public class FieldMatcherCheckerConfig {
-    ExecMode.Matcher execType = ExecMode.Matcher.arg_checker;
-    FieldMatcher fieldMatcher;
-    List<String> checkerNames;
+    final ExecMode.Matcher execType = ExecMode.Matcher.arg_checker;
+    final FieldMatcher fieldMatcher;
+    final List<String> checkerNames;
 
 
     private List<Checker<?,?>> checkers;

@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 
 
 public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Object, List<CheckResult<?>>> {
-    CheckIt checkIt;
-    PurahContext purahContext;
-    List<String> checkerNameList;
-    Class<?> argClazz;
-    Method method;
-    int index;
-    Parameter parameter;
+    final CheckIt checkIt;
+    final PurahContext purahContext;
+    final List<String> checkerNameList;
+    final Class<?> argClazz;
+    final Method method;
+    final int index;
+    final Parameter parameter;
 
     public ParameterHandlerChecker(PurahContext purahContext, Parameter parameter, Method method, List<String> checkerNameList, int index) {
         this.parameter = parameter;

@@ -1,191 +1,205 @@
-//package org.purah.core.checker.combinatorial;
-//
-//import org.junit.jupiter.api.Assertions;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.purah.core.PurahContext;
-//import org.purah.core.Util;
-//import org.purah.core.checker.*;
-//import org.purah.core.checker.factory.LambdaCheckerFactory;
-//import org.purah.core.checker.result.CombinatorialCheckResult;
-//import org.purah.core.checker.result.ResultLevel;
-//import org.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
-//import org.purah.core.matcher.singlelevel.ClassNameMatcher;
-//import org.purah.core.matcher.nested.GeneralFieldMatcher;
-//import org.purah.core.matcher.singlelevel.WildCardMatcher;
-//
-//
-//import java.util.LinkedHashMap;
-//
-//class CombinatorialCheckerTest {
-//
-//
-//    PurahContext purahContext;
-//
-//
-//    @BeforeEach
-//    public void beforeEach() {
-//        purahContext = new PurahContext();
-//        purahContext.matcherManager().regBaseStrMatcher(AnnTypeFieldMatcher.class);
-//        purahContext.matcherManager().regBaseStrMatcher(ClassNameMatcher.class);
-//        purahContext.matcherManager().regBaseStrMatcher(WildCardMatcher.class);
-//        purahContext.matcherManager().regBaseStrMatcher(GeneralFieldMatcher.class);
-//        purahContext.checkManager().addCheckerFactory(
-//                LambdaCheckerFactory.of(Number.class).build(i -> i.startsWith("id为"),
-//                        (name, inputArg) -> {
-//                            Long id = Long.parseLong(name.replace("id为", ""));
-//                            return inputArg.equals(id);
-//                        })
-//        );
-//        purahContext.checkManager().addCheckerFactory(
-//                LambdaCheckerFactory.of(String.class).build(i -> i.startsWith("必须姓"),
-//                        (name, inputArg) -> {
-//                            String namePre = name.replace("必须姓", "");
-//                            return inputArg.startsWith(namePre);
-//                        })
-//
-//        );
-//
-//
-//
-//        purahContext.checkManager().reg(
-//                LambdaChecker.of(String.class).build("敏感词检测", i -> !i.contains("sb"))
-//        );
-//
-//    }
-//
-//
-//    /*
-//     * 下面的 properties也可以通过 配置文件来编写
-//     * - name: 交易检测
-//     *     mapping:
-//     *        general:
-//     *           "[initia*.i*]":  id为1
-//     *           "[*ator.nam?]": 必须姓李
-//     *        type_by_ann:
-//     *              短文本: 敏感词检测
-//     */
-//
-//    @Test
-//    public void test() {
-//
-//
-//        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("交易检测");
-//        LinkedHashMap<String, String> map = new LinkedHashMap<>();
-//        map.put("initia*.i*", "id为1");
-//        map.put("*ator.nam?", "必须姓张");
-//
-//        properties.addByStrMap("general", map);
-//
-//        map = new LinkedHashMap<>();
-//        map.put("shortText", "敏感词检测");
-//
-//        properties.addByStrMap("type_by_ann", map);
-//
-//
-//        Checker checker = purahContext.createAndRegByProperties(properties);
-//        CombinatorialCheckResult combinatorialCheckResult = (CombinatorialCheckResult) checker.check(Util.trade);
-//
-//        Assertions.assertFalse(combinatorialCheckResult.isSuccess());
-//        Assertions.assertEquals(1, combinatorialCheckResult.data().size());
-//    }
-//
-//    @Test
-//    public void tes2() {
-//
-//
-//        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("交易检测");
-//        LinkedHashMap<String, String> map = new LinkedHashMap<>();
-//        map.put("initia*.i*", "id为1");
-//        map.put("*ator.nam?", "必须姓李");
-//
-//        properties.addByStrMap("general", map);
-//
-//        map = new LinkedHashMap<>();
-//        map.put("shortText", "敏感词检测");
-//        properties.setMainExecType(ExecMode.Main.all_success_but_must_check_all);
-//        properties.addByStrMap("type_by_ann", map);
-//
-//
-//        Checker checker = purahContext.createAndRegByProperties(properties);
-//        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(Util.trade);
-//        Assertions.assertFalse(CheckResult.isSuccess());
-//        System.out.println(CheckResult.data());
-//
-//        Assertions.assertEquals(CheckResult.data().size(), 2);
-//    }
-//
-//    @Test
-//    public void tes3() {
-//
-//
-//        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("交易检测");
-//        LinkedHashMap<String, String> map = new LinkedHashMap<>();
-//        map.put("initia*.i*", "id为1");
-//        map.put("*ator.nam?", "必须姓李");
-//        properties.addByStrMap("general", map);
-//
-//        map = new LinkedHashMap<>();
-//        map.put("shortText", "敏感词检测");
-//        properties.setMainExecType(ExecMode.Main.at_least_one);
-//        properties.setResultLevel(ResultLevel.all);
-//        properties.addByStrMap("type_by_ann", map);
-//
-//
-//        Checker checker = purahContext.createAndRegByProperties(properties);
-//
-//
-//        CombinatorialCheckResult CheckResult = (CombinatorialCheckResult) checker.check(Util.trade);
-//        Assertions.assertTrue(CheckResult.isSuccess());
-//        Assertions.assertEquals(CheckResult.data().size(), 1);
-//
-//    }
-//
-//    @Test
-//    public void tes4() {
-//
-//
-//        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("交易检测");
-//        LinkedHashMap<String, String> map = new LinkedHashMap<>();
-//        map.put("initia*.i*", "id为1");
-//        map.put("*ator.nam?", "必须姓李");
-//
-//        properties.addByStrMap("general", map);
-//
-//        map = new LinkedHashMap<>();
-//        map.put("shortText", "敏感词检测");
-//        properties.setMainExecType(ExecMode.Main.at_least_one_but_must_check_all);
-//        properties.addByStrMap("type_by_ann", map);
-//
-//
-//        Checker checker = purahContext.createAndRegByProperties(properties);
-//        CombinatorialCheckResult checkResult = (CombinatorialCheckResult) checker.check(Util.trade);
-//        Assertions.assertTrue(checkResult.isSuccess());
-//        Assertions.assertEquals(2, checkResult.data().size());
-//
-//    }
-//
-//
-//    @Test
-//    public void tes5() {
-//
-//
-//        CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties("交易检测");
-//        LinkedHashMap<String, String> map = new LinkedHashMap<>();
-//        map.put("initia*.i*", "id为1");
-//        map.put("*ator.nam?", "必须姓李");
-//
-//        properties.addByStrMap("general", map);
-//
-//        map = new LinkedHashMap<>();
-//        map.put("shortText", "敏感词检测");
-//        properties.setMainExecType(ExecMode.Main.at_least_one_but_must_check_all);
-//        properties.addByStrMap("type_by_ann", map);
-//
-//        Checker checker = purahContext.createAndRegByProperties(properties);
-//        CombinatorialCheckResult checkResult = (CombinatorialCheckResult) checker.check(Util.trade);
-//        Assertions.assertTrue(checkResult.isSuccess());
-//        Assertions.assertEquals(checkResult.data().size(), 2);
-//
-//    }
-//}
+package org.purah.core.checker.combinatorial;
+
+import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.purah.core.PurahContext;
+import org.purah.core.checker.ComboBuilderChecker;
+import org.purah.core.checker.GenericsProxyChecker;
+import org.purah.core.checker.LambdaChecker;
+import org.purah.core.checker.factory.LambdaCheckerFactory;
+import org.purah.core.checker.result.CheckResult;
+import org.purah.core.checker.result.MultiCheckResult;
+import org.purah.core.checker.result.ResultLevel;
+import org.purah.core.matcher.nested.FixedMatcher;
+import org.purah.core.matcher.nested.GeneralFieldMatcher;
+import org.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
+import org.purah.core.matcher.singlelevel.FieldType;
+
+import java.util.Objects;
+
+class CombinatorialCheckerTest {
+
+
+    PurahContext purahContext;
+    ComboBuilderChecker comboBuilderChecker;
+
+//    CombinatorialChecker combinatorialChecker;
+
+    final User alice = new User(1L, "alice");
+    final User bob = new User(2L, "bob");
+    final Trade trade = new Trade(alice, bob, 1.25, "abc");
+
+
+    @BeforeEach
+    public void beforeEach() {
+        purahContext = new PurahContext();
+
+        LambdaCheckerFactory<Number> idCheck = LambdaCheckerFactory.of(Number.class).build("id is *", (a, inputArg) -> {
+            String id = a.replace("id is ", "");
+            return inputArg.intValue() == Integer.parseInt(id);
+        });
+
+        LambdaCheckerFactory<String> nameCheck = LambdaCheckerFactory.of(String.class).build("name is *", (a, b) -> {
+            String name = a.replace("name is ", "");
+            return Objects.equals(name, b);
+        });
+        LambdaChecker<String> abcCheck = LambdaChecker.of(String.class).build("no abc", i -> !i.contains("abc"));
+        purahContext.checkManager().reg(abcCheck);
+        purahContext.checkManager().addCheckerFactory(idCheck);
+        purahContext.checkManager().addCheckerFactory(nameCheck);
+        comboBuilderChecker = purahContext.combo().match(new GeneralFieldMatcher("initiator.id"), "id is 1")        //√
+                .match(new AnnTypeFieldMatcher("shortText"), "no abc")            //x
+                .match(new GeneralFieldMatcher("initiator.name"), "name is alice")//√
+                .resultLevel(ResultLevel.all);
+
+        purahContext.combo().resultLevel(ResultLevel.all).match(new FixedMatcher("id"), "id is 1").match(new FixedMatcher("name"), "name is alice").reg("user_test");
+
+
+    }
+
+    @Test
+    public void test() {
+        CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(purahContext);
+        config.addMatcherCheckerName(new FixedMatcher("initiator"), Lists.newArrayList("user_test"));
+        config.addMatcherCheckerName(new FixedMatcher("recipients"), Lists.newArrayList("user_test"));
+        config.setMainExecType(ExecMode.Main.all_success_but_must_check_all);
+        config.setResultLevel(ResultLevel.all);
+        CombinatorialChecker combinatorialChecker = new CombinatorialChecker(config);
+
+        MultiCheckResult<CheckResult<?>> multiCheckResult = combinatorialChecker.check(trade);
+        Assertions.assertEquals(2, multiCheckResult.data().size());
+
+
+        CheckResult<?> checkResult = multiCheckResult.data().get(0);
+        Assertions.assertTrue(checkResult instanceof MultiCheckResult);
+        MultiCheckResult<?> childResult = (MultiCheckResult) checkResult;
+        Assertions.assertEquals(2, childResult.data().size());
+        Assertions.assertTrue(childResult.data().get(0));
+        Assertions.assertTrue(childResult.data().get(1));
+
+
+        checkResult = multiCheckResult.data().get(1);
+        Assertions.assertTrue(checkResult instanceof MultiCheckResult);
+        childResult = (MultiCheckResult) checkResult;
+        Assertions.assertEquals(1, childResult.data().size());
+        Assertions.assertFalse(childResult.data().get(0));
+
+    }
+
+    @Test
+    public void all() {
+        ComboBuilderChecker checker = comboBuilderChecker.mainMode(ExecMode.Main.all_success);
+        MultiCheckResult<CheckResult<?>> result = checker.check(trade);//
+        Assertions.assertFalse(result);
+        Assertions.assertEquals(result.data().size(), 2);
+    }
+
+    @Test
+    public void all_success_but_must_check_all() {
+        ComboBuilderChecker checker = comboBuilderChecker.mainMode(ExecMode.Main.all_success_but_must_check_all);
+        MultiCheckResult<CheckResult<?>> result = checker.check(trade);//xx√
+        Assertions.assertFalse(result);
+        Assertions.assertEquals(result.data().size(), 3);
+    }
+
+    @Test
+    public void at_least_one() {
+        ComboBuilderChecker checker = comboBuilderChecker.mainMode(ExecMode.Main.at_least_one);
+        MultiCheckResult<CheckResult<?>> result = checker.check(trade);//xx√
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(result.data().size(), 1);
+    }
+
+    @Test
+    public void at_least_one_but_must_check_all() {
+        ComboBuilderChecker checker = comboBuilderChecker.mainMode(ExecMode.Main.at_least_one_but_must_check_all);
+        MultiCheckResult<CheckResult<?>> result = checker.check(trade);//xx√
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(result.data().size(), 3);
+    }
+
+
+    public static class Trade {
+        @FieldType("shortText")
+        String title;
+        @FieldType("needCheck")
+
+        User initiator;
+        User recipients;
+
+        double money;
+
+        public Trade(User initiator, User recipients, double money, String title) {
+            this.initiator = initiator;
+            this.recipients = recipients;
+            this.money = money;
+            this.title = title;
+        }
+
+        public User getInitiator() {
+            return initiator;
+        }
+
+        public void setInitiator(User initiator) {
+            this.initiator = initiator;
+        }
+
+        public User getRecipients() {
+            return recipients;
+        }
+
+        public void setRecipients(User recipients) {
+            this.recipients = recipients;
+        }
+
+        public double getMoney() {
+            return money;
+        }
+
+        public void setMoney(double money) {
+            this.money = money;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+    }
+
+    public static class User {
+
+        Long id;
+        String name;
+
+        public User(Long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+
+}
+
+
+

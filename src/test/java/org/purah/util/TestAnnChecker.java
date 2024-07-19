@@ -21,10 +21,7 @@ public class TestAnnChecker  extends AbstractCustomAnnChecker
 
 
     public boolean notNull(NotNull notNull, Integer age) {
-        if (age == null) {
-            return false;
-        }
-        return true;
+        return age != null;
 
 
     }

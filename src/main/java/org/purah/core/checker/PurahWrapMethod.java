@@ -11,14 +11,14 @@ import java.util.Objects;
 
 public class PurahWrapMethod {
 
-    protected Method method;
+    protected final Method method;
 
-    protected Object bean;
+    protected final Object bean;
 
 
     protected boolean methodParamBeWrapped;
     protected Class<?> inputArgValueClazz = Object.class;
-    protected int needCheckArgIndex;
+    protected final int needCheckArgIndex;
 
 
     protected boolean methodResultBeWrapped;

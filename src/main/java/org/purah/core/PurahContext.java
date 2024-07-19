@@ -45,12 +45,8 @@ public class PurahContext {
 
     private void regBaseStringMatcher() {
 
-        matcherManager.regBaseStrMatcher(AnnTypeFieldMatcher.class);
-        matcherManager.regBaseStrMatcher(ClassNameMatcher.class);
-        matcherManager.regBaseStrMatcher(ReMatcher.class);
-        matcherManager.regBaseStrMatcher(WildCardMatcher.class);
-        matcherManager.regBaseStrMatcher(GeneralFieldMatcher.class);
-        config().getSingleStringConstructorFieldMatcherClassSet().forEach(matcherManager::regBaseStrMatcher);
+
+        config().purahDefaultFieldMatcherClass().forEach(matcherManager::regBaseStrMatcher);
 
     }
 
@@ -96,7 +92,7 @@ public class PurahContext {
 
 
     public ComboBuilderChecker combo(String... checkerNames) {
-        return new ComboBuilderChecker(this,checkerNames);
+        return new ComboBuilderChecker(this, checkerNames);
 
     }
 
@@ -107,7 +103,7 @@ public class PurahContext {
     }
 
     public Checker<?, ?> createAndRegByProperties(CombinatorialCheckerConfigProperties properties) {
-        Checker<?,?> newCombinatorialChecker = createByProperties(properties);
+        Checker<?, ?> newCombinatorialChecker = createByProperties(properties);
         return checkManager.reg(newCombinatorialChecker);
     }
 

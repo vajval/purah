@@ -40,11 +40,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AnnByPackageMatcher extends BaseStringMatcher implements MultilevelFieldMatcher, ListIndexMatcher {
 
-    protected WildCardMatcher fieldNeedNestedMatcher;
+    protected final WildCardMatcher fieldNeedNestedMatcher;
 
-    protected Map<Class<?>, Map<String, FieldInfoCache>> fieldCache = new ConcurrentHashMap<>();
+    protected final Map<Class<?>, Map<String, FieldInfoCache>> fieldCache = new ConcurrentHashMap<>();
 
-    public FieldInfoCache NULL = new FieldInfoCache();
+    public final FieldInfoCache NULL = new FieldInfoCache();
 
     public AnnByPackageMatcher(String needNestedPackagePatch) {
         super(needNestedPackagePatch);

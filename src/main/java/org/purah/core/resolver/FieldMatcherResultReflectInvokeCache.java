@@ -24,12 +24,12 @@ public class FieldMatcherResultReflectInvokeCache {
 
     protected static final Logger logger = LogManager.getLogger(ClassReflectCache.class);
 
-    protected Class<?> inputArgClass;
-    protected FieldMatcher cachedFieldMatcher;
+    protected final Class<?> inputArgClass;
+    protected final FieldMatcher cachedFieldMatcher;
 
-    protected Map<String, Function<Object, InputToCheckerArg<?>>> inputArgToResultNullInovkeMap = new ConcurrentHashMap<>();
-    protected int resultSize;
-    protected ReflectTrieCache reflectTrieCache;
+    protected final Map<String, Function<Object, InputToCheckerArg<?>>> inputArgToResultNullInovkeMap = new ConcurrentHashMap<>();
+    protected final int resultSize;
+    protected final ReflectTrieCache reflectTrieCache;
 
     public FieldMatcherResultReflectInvokeCache(Class<?> inputArgClass, FieldMatcher cachedFieldMatcher, Map<String, InputToCheckerArg<?>> result) {
         this.inputArgClass = inputArgClass;
@@ -75,10 +75,10 @@ public class FieldMatcherResultReflectInvokeCache {
     static class ReflectTrieCache {
 
 
-        Map<String, ReflectTrieCache> reflectNodeMap = new HashMap<>();
+        final Map<String, ReflectTrieCache> reflectNodeMap = new HashMap<>();
 
 
-        String fieldName;
+        final String fieldName;
 
         Field cacheField;
         List<Annotation> cacheAnnotationList;

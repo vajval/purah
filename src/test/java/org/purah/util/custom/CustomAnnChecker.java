@@ -31,36 +31,38 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
     }
 
     @Override
-    public Checker methodToChecker(Object methodsToCheckersBean, Method method, String name) {
+    public Checker<?, ?> methodToChecker(Object methodsToCheckersBean, Method method, String name) {
         return new ByAnnMethodChecker(methodsToCheckersBean, method, name);
     }
 
     public boolean notNull(NotNull notNull, Integer age) {
-        if (age == null) {
-            return false;
-        }
-        return true;
+        return age != null;
 
 
     }
 
-    public CheckResult cnPhoneNum(CNPhoneNum cnPhoneNum, InputToCheckerArg<String> str) {
+    public CheckResult<?> cnPhoneNum(CNPhoneNum cnPhoneNum, InputToCheckerArg<String> str) {
         String strValue = str.argValue();
         cnPhoneNumCount++;
 
         //gpt小姐 说的
         if (strValue.matches("^1[3456789]\\d{9}$")) {
-            return success(str, "正确的");
+
+
+            return LogicCheckResult.successBuildLog(str, "正确的");
         }
         return LogicCheckResult.failed(str.argValue(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
 
 
     }
 
-    public CheckResult notEmpty(NotEmptyTest notEmptyTest, InputToCheckerArg<String> str) {
+
+    public CheckResult<?> notEmpty(NotEmptyTest notEmptyTest, InputToCheckerArg<String> str) {
         String strValue = str.argValue();
         if (StringUtils.hasText(strValue)) {
-            return success(str, "正确的");
+            return LogicCheckResult.successBuildLog(str, "正确的");
+
+
         }
         return LogicCheckResult.failed(str.argValue(), str.fieldStr() + ":" + notEmptyTest.errorMsg());
 
@@ -68,12 +70,13 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
     }
 
 
-    public CheckResult range(Range range, InputToCheckerArg<Number> num) {
+    public CheckResult<?> range(Range range, InputToCheckerArg<Number> num) {
         Number numValue = num.argValue();
         if (numValue.doubleValue() < range.min() || numValue.doubleValue() > range.max()) {
             return LogicCheckResult.failed(num.argValue(), (num.fieldStr() + ":" + range.errorMsg()));
         }
-        return success(num, "参数合规");
+        return LogicCheckResult.successBuildLog(num, "参数合规");
+
 
     }
 

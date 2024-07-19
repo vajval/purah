@@ -1,22 +1,17 @@
 package org.purah.core.matcher.nested;
 
 
-import com.google.common.base.Splitter;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.inft.IDefaultFieldMatcher;
 import org.purah.core.matcher.inft.ListIndexMatcher;
 import org.purah.core.matcher.WrapListFieldMatcher;
 import org.purah.core.matcher.inft.MultilevelFieldMatcher;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.security.DigestInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 
 public abstract class AbstractMultilevelFieldMatcher<T extends MultilevelFieldMatcher> extends WrapListFieldMatcher<T> implements MultilevelFieldMatcher, ListIndexMatcher {
 
@@ -34,9 +29,9 @@ public abstract class AbstractMultilevelFieldMatcher<T extends MultilevelFieldMa
     // Support for lists, set the index str . if child#5  listIndexStr=#5.   if child#*  listIndexStr=#*
     protected String listIndexStr;
 
-    protected static int NO_LIST_INDEX = Integer.MIN_VALUE;
+    protected static final int NO_LIST_INDEX = Integer.MIN_VALUE;
 
-    protected static int OTHER_LIST_MATCH = Integer.MIN_VALUE + 1;
+    protected static final int OTHER_LIST_MATCH = Integer.MIN_VALUE + 1;
 
     public AbstractMultilevelFieldMatcher(String matchStr) {
         super(matchStr);

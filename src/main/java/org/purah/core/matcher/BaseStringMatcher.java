@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public abstract class BaseStringMatcher implements IDefaultFieldMatcher {
 
-    protected String matchStr;
+    protected final String matchStr;
 
     public BaseStringMatcher(String matchStr) {
         this.matchStr = matchStr;

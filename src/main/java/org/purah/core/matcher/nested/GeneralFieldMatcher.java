@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<MultilevelFieldMatcher> {
 
 
-    protected boolean isFixed;
-    protected boolean childIsWildCard;
-    protected boolean childIsMultiLevel;
+    protected final boolean isFixed;
+    protected final boolean childIsWildCard;
+    protected final boolean childIsMultiLevel;
 
 
     public GeneralFieldMatcher(String matchStr) {

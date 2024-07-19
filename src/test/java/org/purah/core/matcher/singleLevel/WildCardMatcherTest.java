@@ -16,7 +16,7 @@ public class WildCardMatcherTest {
      * ab* -> ab,abc,abcd
      */
 
-    static Set<String> testFields = Sets.newHashSet("a", "ab", "abc", "ac", "ad", "af", "abcd", "b");
+    static final Set<String> testFields = Sets.newHashSet("a", "ab", "abc", "ac", "ad", "af", "abcd", "b");
 
     @Test
     public void match() {

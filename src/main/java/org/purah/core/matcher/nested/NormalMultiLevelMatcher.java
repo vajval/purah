@@ -20,7 +20,7 @@ public class NormalMultiLevelMatcher extends AbstractMultilevelFieldMatcher<Norm
 
 
     // child.id|child.name|name->{child,name}
-    Set<String> firstLevelStrSet;
+    final Set<String> firstLevelStrSet;
 
     public NormalMultiLevelMatcher(String matchStr) {
         super(matchStr);

@@ -1,14 +1,15 @@
 package org.purah.core.checker;
 
 import org.purah.core.checker.result.CheckResult;
+import org.purah.core.checker.result.LogicCheckResult;
 
 import java.util.function.Predicate;
 
-public class LambdaChecker<INPUT_ARG> extends AbstractBaseSupportCacheChecker<INPUT_ARG, Object> {
+public class LambdaChecker<INPUT_ARG> implements Checker<INPUT_ARG, Object> {
 
-    String name;
-    Predicate<INPUT_ARG> predicate;
-    Class<INPUT_ARG> clazz;
+    final String name;
+    final Predicate<INPUT_ARG> predicate;
+    final Class<INPUT_ARG> clazz;
 
     private LambdaChecker(String name, Predicate<INPUT_ARG> predicate, Class<INPUT_ARG> clazz) {
         this.name = name;
@@ -23,7 +24,7 @@ public class LambdaChecker<INPUT_ARG> extends AbstractBaseSupportCacheChecker<IN
     }
 
     public static class Builder<T> {
-        Class<T> clazz;
+        final Class<T> clazz;
 
         private Builder(Class<T> clazz) {
             this.clazz = clazz;
@@ -51,12 +52,11 @@ public class LambdaChecker<INPUT_ARG> extends AbstractBaseSupportCacheChecker<IN
     }
 
     @Override
-    public CheckResult<Object> doCheck(InputToCheckerArg<INPUT_ARG> inputToCheckerArg) {
-        boolean test;
-        test = predicate.test(inputToCheckerArg.argValue());
-        if (test) {
-            return success(inputToCheckerArg, inputToCheckerArg.argValue());
+    public CheckResult<Object> check(InputToCheckerArg<INPUT_ARG> inputToCheckerArg) {
+        INPUT_ARG inputArg = inputToCheckerArg.argValue();
+        if (predicate.test(inputArg)) {
+            return LogicCheckResult.successBuildLog(inputToCheckerArg, inputArg);
         }
-        return failed(inputToCheckerArg, inputToCheckerArg.argValue());
+        return LogicCheckResult.failedBuildLog(inputToCheckerArg, inputArg);
     }
 }

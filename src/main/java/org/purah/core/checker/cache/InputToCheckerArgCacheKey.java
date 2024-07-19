@@ -8,8 +8,8 @@ import java.util.Objects;
  * cache key
  */
 public class InputToCheckerArgCacheKey {
-    InputToCheckerArg<?> inputToCheckerArg;
-    String checkerName;
+    final InputToCheckerArg<?> inputToCheckerArg;
+    final String checkerName;
 
     public InputToCheckerArgCacheKey(InputToCheckerArg<?> inputToCheckerArg, String checkerName) {
         this.inputToCheckerArg = inputToCheckerArg;

@@ -25,7 +25,7 @@ public class ReflectArgResolver implements ArgResolver {
     protected final ConcurrentHashMap<Class<?>, ClassReflectCache> classClassConfigCacheMap = new ConcurrentHashMap<>();
 
 
-    protected boolean enableCache = false;
+    protected final boolean enableCache = true;
 
     @Override
     public Map<String, InputToCheckerArg<?>> getMatchFieldObjectMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {

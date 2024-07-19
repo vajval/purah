@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object, List<CheckResult<?>>> {
 
 
-    CombinatorialCheckerConfig config;
+    final CombinatorialCheckerConfig config;
 
 
     /**
@@ -63,8 +63,8 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
         return config.name;
     }
 
-    public CombinatorialChecker init() {
-        if (this.init) return this;
+    public void init() {
+        if (this.init) return;
         CheckerManager checkerManager = config.purahContext.checkManager();
         this.rootInputArgCheckers = this.config.extendCheckerNames.stream().map(checkerManager::of).collect(Collectors.toList());
         this.fieldMatcherCheckerConfigList = config.fieldMatcherCheckerConfigList;
@@ -72,7 +72,16 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
             fieldMatcherCheckerConfig.buildCheckers(checkerManager);
         }
         this.init = true;
-        return this;
+    }
+
+    @Override
+    public MultiCheckResult<CheckResult<?>> check(InputToCheckerArg<Object> inputToCheckerArg) {
+        return (MultiCheckResult) super.check(inputToCheckerArg);
+    }
+
+    @Override
+    public MultiCheckResult<CheckResult<?>> check(Object o) {
+        return (MultiCheckResult) super.check(o);
     }
 
     @Override
@@ -118,8 +127,8 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
 
 
     class FieldMatcherCheckerConfigExecutor {
-        FieldMatcherCheckerConfig fieldMatcherCheckerConfig;
-        List<Checker<?, ?>> checkerList;
+        final FieldMatcherCheckerConfig fieldMatcherCheckerConfig;
+        final List<Checker<?, ?>> checkerList;
 
 
         public FieldMatcherCheckerConfigExecutor(FieldMatcherCheckerConfig fieldMatcherCheckerConfig) {

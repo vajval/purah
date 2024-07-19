@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 
 class FixedMatcherTest {
-    DefaultArgResolver resolver = new DefaultArgResolver();
+    final DefaultArgResolver resolver = new DefaultArgResolver();
 
 
     @Test

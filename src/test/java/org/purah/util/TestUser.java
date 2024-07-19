@@ -1,10 +1,10 @@
 package org.purah.util;
 
 public final class TestUser {
-    private Long id;
+    private final Long id;
     @TestAnn("name")
-    public String name;
-    public String address;
+    public final String name;
+    public final String address;
 
     public TestUser child;
 

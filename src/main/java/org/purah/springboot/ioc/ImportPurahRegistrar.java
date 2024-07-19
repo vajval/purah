@@ -88,7 +88,7 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
         EnablePurah enablePurah = ((StandardAnnotationMetadata) metadata).getIntrospectedClass().getDeclaredAnnotation(EnablePurah.class);
 
 
-        List<Class<FieldMatcher>> classes = scanStringMatcherClass(beanDefinitions, FieldMatcher.class);
+        List<Class<FieldMatcher>> classes = scanStringMatcherClass(beanDefinitions);
 
         List<Class<FieldMatcher>> collect = classes.stream().filter(BaseMatcherFactory::clazzVerify).collect(Collectors.toList());
 
@@ -117,7 +117,7 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     }
 
 
-    private <T> List<Class<T>> scanStringMatcherClass(LinkedHashSet<BeanDefinition> candidateComponents, Class<T> matchClazz) {
+    private <T> List<Class<T>> scanStringMatcherClass(LinkedHashSet<BeanDefinition> candidateComponents) {
         List<Class<T>> result = new ArrayList<>();
         for (BeanDefinition beanDefinition : candidateComponents) {
             Class<?> clazz;

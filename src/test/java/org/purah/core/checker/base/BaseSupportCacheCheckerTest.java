@@ -19,7 +19,7 @@ class BaseSupportCacheCheckerTest {
 
     }
 
-    Checker<Object, Object> checker = new AbstractBaseSupportCacheChecker<Object, Object>() {
+    final Checker<Object, Object> checker = new AbstractBaseSupportCacheChecker<Object, Object>() {
         @Override
         public CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
             count++;

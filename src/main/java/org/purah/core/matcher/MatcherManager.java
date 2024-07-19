@@ -12,19 +12,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MatcherManager {
     protected static final Logger logger = LogManager.getLogger(MatcherManager.class);
 
-    Map<String, MatcherFactory> factoryMap = new ConcurrentHashMap<>();
+    final Map<String, MatcherFactory> factoryMap = new ConcurrentHashMap<>();
 
     public void reg(MatcherFactory matcherFactory) {
         String name = matcherFactory.name();
         factoryMap.put(name, matcherFactory);
-        if (logger.isInfoEnabled()) {
-            logger.info("reg MatcherFactory: {}, name: {}", MatcherFactory.class, name);
-        }
+
+
     }
 
-    public void regBaseStrMatcher(Class<? extends FieldMatcher> clazz) {
+    public BaseMatcherFactory regBaseStrMatcher(Class<? extends FieldMatcher> clazz) {
         BaseMatcherFactory matcherFactory = new BaseMatcherFactory(clazz);
         this.reg(matcherFactory);
+        return matcherFactory;
 
 
     }

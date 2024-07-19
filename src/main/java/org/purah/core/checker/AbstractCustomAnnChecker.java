@@ -12,13 +12,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public abstract class AbstractCustomAnnChecker extends AbstractBaseSupportCacheChecker {
+public abstract class AbstractCustomAnnChecker extends AbstractBaseSupportCacheChecker<Object,List<CheckResult<?>>> {
 
-    Map<Class<? extends Annotation>, GenericsProxyChecker> map = new ConcurrentHashMap<>();
+    final Map<Class<? extends Annotation>, GenericsProxyChecker> map = new ConcurrentHashMap<>();
 
-    ExecMode.Main mainExecType;
+    final ExecMode.Main mainExecType;
 
-    ResultLevel resultLevel;
+    final ResultLevel resultLevel;
 
     public AbstractCustomAnnChecker(ExecMode.Main mainExecType, ResultLevel resultLevel) {
         this.mainExecType = mainExecType;
@@ -75,9 +75,9 @@ public abstract class AbstractCustomAnnChecker extends AbstractBaseSupportCacheC
 
 
     @Override
-    public CheckResult<?> doCheck(InputToCheckerArg inputToCheckerArg) {
+    public MultiCheckResult<CheckResult<?>> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
 
-        List<Annotation> enableAnnotations = ((InputToCheckerArg<?>) inputToCheckerArg).annListOnField().stream().filter(i -> map.containsKey(i.annotationType())).collect(Collectors.toList());
+        List<Annotation> enableAnnotations = inputToCheckerArg.annListOnField().stream().filter(i -> map.containsKey(i.annotationType())).collect(Collectors.toList());
 
 
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel);
@@ -97,6 +97,6 @@ public abstract class AbstractCustomAnnChecker extends AbstractBaseSupportCacheC
     }
 
 
-    public abstract Checker methodToChecker(Object methodsToCheckersBean, Method method, String name);
+    public abstract Checker<?,?> methodToChecker(Object methodsToCheckersBean, Method method, String name);
 
 }

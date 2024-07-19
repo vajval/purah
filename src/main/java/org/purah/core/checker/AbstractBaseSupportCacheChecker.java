@@ -104,16 +104,16 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
 
 
 
-    public LogicCheckResult<RESULT> success(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
+    protected LogicCheckResult<RESULT> success(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
         return LogicCheckResult.successBuildLog(inputToCheckerArg, result);
     }
 
-    public LogicCheckResult<RESULT> failed(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
+    protected LogicCheckResult<RESULT> failed(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
 
         return LogicCheckResult.failedBuildLog(inputToCheckerArg, result);
     }
 
-    public LogicCheckResult<RESULT> error(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, Exception e) {
+    protected LogicCheckResult<RESULT> error(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, Exception e) {
 
         return LogicCheckResult.errorBuildLog(inputToCheckerArg, e);
 

@@ -7,7 +7,7 @@ import org.purah.core.matcher.FieldMatcher;
 import java.util.Map;
 
 public class DefaultArgResolver implements ArgResolver {
-    ReflectArgResolver mainArgResolver = new ReflectArgResolver();
+    final ReflectArgResolver mainArgResolver = new ReflectArgResolver();
     @Override
     public Map<String, InputToCheckerArg<?>> getMatchFieldObjectMap(InputToCheckerArg<?> inputArg, FieldMatcher fieldMatcher) {
         return mainArgResolver.getMatchFieldObjectMap(inputArg, fieldMatcher);

@@ -22,10 +22,10 @@ import java.util.function.BiFunction;
 public class GenericsProxyChecker implements Checker<Object, Object> {
 
 
-    String name;
+    final String name;
     InputArgClass defaultInputArgClass;
     Checker<?, ?> defaultChecker;
-    Map<InputArgClass, Checker<?, ?>> cacheGenericsCheckerMapping = new ConcurrentHashMap<>();
+    final Map<InputArgClass, Checker<?, ?>> cacheGenericsCheckerMapping = new ConcurrentHashMap<>();
 
     BiFunction<GenericsProxyChecker, Integer, Integer> tryUpdateContext;
     int checkerFactoryCount;

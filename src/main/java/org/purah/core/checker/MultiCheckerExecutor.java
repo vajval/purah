@@ -19,10 +19,9 @@ public class MultiCheckerExecutor {
     private ExecInfo execInfo = ExecInfo.success;
     private final ResultLevel resultLevel;
     private Exception e;
-
     private boolean exec = false;
 
-    private final List<CheckResult> finalExecResult = new ArrayList<>();
+    private final List<CheckResult<?>> finalExecResult = new ArrayList<>();
 
 
     private final List<Supplier<CheckResult<?>>> ruleResultSupplierList = new ArrayList<>();
@@ -35,29 +34,27 @@ public class MultiCheckerExecutor {
     }
 
 
-    public MultiCheckerExecutor add(Supplier<CheckResult<?>> supplier) {
+    public void add(Supplier<CheckResult<?>> supplier) {
         if (exec) {
             throw new RuntimeException("已经执行完了，不能在添加了");
         }
         ruleResultSupplierList.add(supplier);
 
-        return this;
     }
 
 
-    public MultiCheckerExecutor add(InputToCheckerArg inputToCheckerArg, Checker checker) {
+    public void add(InputToCheckerArg<?> inputToCheckerArg, Checker<?, ?> checker) {
         if (exec) {
             throw new RuntimeException("已经执行完了，不能在添加了");
         }
-        Supplier<CheckResult<?>> supplier = () -> checker.check(inputToCheckerArg);
+        Supplier<CheckResult<?>> supplier = () -> ((Checker) checker).check(inputToCheckerArg);
 
         this.add((supplier));
-        return this;
     }
 
 
-    private ExecInfo execIfNotExec(List<Supplier<CheckResult<?>>> ruleResultSupplierList) {
-        if (exec) return execInfo;
+    private void execIfNotExec(List<Supplier<CheckResult<?>>> ruleResultSupplierList) {
+        if (exec) return;
         exec = true;
         ExecInfo result = ExecInfo.success;
 
@@ -78,13 +75,13 @@ public class MultiCheckerExecutor {
             if (checkResult.isError()) {
                 execInfo = ExecInfo.error;
                 e = checkResult.exception();
-                return ExecInfo.error;
+                return;
             }
             if (checkResult.isFailed()) {
                 if (mainExecType == ExecMode.Main.all_success) {
                     // 有错误 而要求必须要全部成功，才算成功
                     execInfo = ExecInfo.failed;
-                    return execInfo;
+                    return;
                 } else if (mainExecType == ExecMode.Main.all_success_but_must_check_all) {
                     // 有错误 而要求必须要全部成功，但是必须检查完
                     execInfo = ExecInfo.failed;
@@ -94,7 +91,7 @@ public class MultiCheckerExecutor {
                 if (mainExecType == ExecMode.Main.at_least_one) {
                     // 没有错误 而且只要一个成功就够了
                     execInfo = ExecInfo.success;
-                    return execInfo;
+                    return;
                 } else if (mainExecType == ExecMode.Main.at_least_one_but_must_check_all) {
                     // 没有错误  但是必须检查完
                     execInfo = ExecInfo.success;
@@ -102,13 +99,12 @@ public class MultiCheckerExecutor {
                 }
             }
         }
-        return result;
 
 
     }
+
     /**
      *
-
      */
 
     public MultiCheckResult<CheckResult<?>> toMultiCheckResult(String log) {
@@ -116,22 +112,9 @@ public class MultiCheckerExecutor {
         return multiCheckResult(log);
     }
 
-//    /**
-//     *
-//     * @param log
-//     * @return
-//     */
-//
-//    public CombinatorialCheckResult toCombinatorialCheckResult(String log) {
-//        execIfNotExec(ruleResultSupplierList);
-//        NestedCheckResult<CheckResult<?>> nestedCheckResult = multiCheckResult(log);
-//        return CombinatorialCheckResult.create(nestedCheckResult, resultLevel);
-//    }
-//
 
 
     private MultiCheckResult<CheckResult<?>> multiCheckResult(String log) {
-
 
         LogicCheckResult<Object> mainResult = null;
         if (execInfo.equals(ExecInfo.success)) {
@@ -140,9 +123,8 @@ public class MultiCheckerExecutor {
             mainResult = LogicCheckResult.failed(null, execInfo.value() + " (" + log + ")");
         } else if (execInfo.equals(ExecInfo.error)) {
             mainResult = LogicCheckResult.error(e, execInfo.value() + " (" + log + ")");
-
         }
-        return new MultiCheckResult(mainResult, finalExecResult);
+        return new MultiCheckResult<>(mainResult, finalExecResult);
 
 
     }

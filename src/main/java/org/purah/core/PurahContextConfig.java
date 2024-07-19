@@ -1,7 +1,13 @@
 package org.purah.core;
 
+import com.google.common.collect.Sets;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.matcher.FieldMatcher;
+import org.purah.core.matcher.nested.GeneralFieldMatcher;
+import org.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
+import org.purah.core.matcher.singlelevel.ClassNameMatcher;
+import org.purah.core.matcher.singlelevel.ReMatcher;
+import org.purah.core.matcher.singlelevel.WildCardMatcher;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +19,8 @@ public class PurahContextConfig {
     ResultLevel defaultResultLevel = ResultLevel.failedAndIgnoreNotBaseLogic;
 
 
-    Set<Class<? extends FieldMatcher>> singleStringConstructorFieldMatcherClassSet =new HashSet<>();
+    Set<Class<? extends FieldMatcher>> singleStringConstructorFieldMatcherClassSet = new HashSet<>();
+
 
     public PurahContextConfig() {
     }
@@ -41,5 +48,15 @@ public class PurahContextConfig {
 
     public ResultLevel getDefaultResultLevel() {
         return defaultResultLevel;
+    }
+
+    public Set<Class<? extends FieldMatcher>> purahDefaultFieldMatcherClass() {
+        Set<Class<? extends FieldMatcher>> result = new HashSet<>();
+        result.add(AnnTypeFieldMatcher.class);
+        result.add(ClassNameMatcher.class);
+        result.add(ReMatcher.class);
+        result.add(WildCardMatcher.class);
+        result.add(GeneralFieldMatcher.class);
+        return result;
     }
 }

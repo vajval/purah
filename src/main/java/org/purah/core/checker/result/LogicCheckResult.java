@@ -7,12 +7,12 @@ import java.util.LinkedHashMap;
 
 public class LogicCheckResult<T> implements CheckResult<T> {
 
-    static String DEFAULT_SUCCESS_INFO = "SUCCESS";
-    static String DEFAULT_FAILED_INFO = "FAILED";
-    static String DEFAULT_ERROR_INFO = "ERROR";
+    static final String DEFAULT_SUCCESS_INFO = "SUCCESS";
+    static final String DEFAULT_FAILED_INFO = "FAILED";
+    static final String DEFAULT_ERROR_INFO = "ERROR";
 
 
-    protected ExecInfo execInfo;
+    protected final ExecInfo execInfo;
 
     protected Exception e;
 

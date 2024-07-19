@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class CombinatorialCheckerConfig {
 
-    PurahContext purahContext;
+    final PurahContext purahContext;
 
     ExecMode.Main mainExecType = ExecMode.Main.all_success;
 
@@ -26,7 +26,7 @@ public class CombinatorialCheckerConfig {
 
     public List<String> extendCheckerNames = new ArrayList<>();
 
-    public List<FieldMatcherCheckerConfig> fieldMatcherCheckerConfigList = new ArrayList<>();
+    public final List<FieldMatcherCheckerConfig> fieldMatcherCheckerConfigList = new ArrayList<>();
 
 
     private CombinatorialCheckerConfig(PurahContext purahContext) {
