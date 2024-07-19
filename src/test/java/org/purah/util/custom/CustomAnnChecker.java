@@ -1,4 +1,4 @@
-package org.purah.example.customAnn.checker;
+package org.purah.util.custom;
 
 
 import org.purah.core.name.Name;
@@ -20,7 +20,7 @@ import org.springframework.util.StringUtils;
 import java.lang.reflect.Method;
 
 
-@Name("自定义注解检测")
+@Name("custom_ann_check")
 @Component
 public class CustomAnnChecker extends AbstractCustomAnnChecker {
 

@@ -3,12 +3,12 @@ package org.purah.core.checker.result;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultiCheckResult<T extends CheckResult> implements CheckResult<List<T>> {
+public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<List<T>> {
 
-    protected BaseOfMultiCheckResult base;
+    protected LogicCheckResult base;
     protected List<T> valueList;
 
-    public MultiCheckResult(BaseOfMultiCheckResult base, List<T> valueList) {
+    public MultiCheckResult(LogicCheckResult base, List<T> valueList) {
         this.base = base;
         this.valueList = valueList;
     }
@@ -17,12 +17,12 @@ public class MultiCheckResult<T extends CheckResult> implements CheckResult<List
     public List<LogicCheckResult> resultChildList(ResultLevel resultLevel) {
 
         List<LogicCheckResult> resultList = new ArrayList<>();
-        List<BaseOfMultiCheckResult> multiCheckResultList = new ArrayList<>();
+        List<LogicCheckResult> multiCheckResultList = new ArrayList<>();
         allBaseLogicCheckResultByRecursion(this, resultLevel, resultList, multiCheckResultList);
         return resultList;
     }
 
-    protected static void allBaseLogicCheckResultByRecursion(MultiCheckResult multiCheckResult, ResultLevel resultLevel, List<LogicCheckResult> logicCheckResultList, List<BaseOfMultiCheckResult> multiCheckResultList) {
+    protected static void allBaseLogicCheckResultByRecursion(MultiCheckResult multiCheckResult, ResultLevel resultLevel, List<LogicCheckResult> logicCheckResultList, List<LogicCheckResult> multiCheckResultList) {
 
         if (resultLevel.allowAddToFinalResult(multiCheckResult)) {
             if (resultLevel == ResultLevel.all) {
@@ -79,7 +79,7 @@ public class MultiCheckResult<T extends CheckResult> implements CheckResult<List
         return this.base.checkLogicFrom();
     }
 
-    public BaseOfMultiCheckResult mainCheckResult() {
+    public LogicCheckResult mainCheckResult() {
         return base;
     }
 

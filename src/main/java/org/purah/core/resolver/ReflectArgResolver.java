@@ -25,15 +25,16 @@ public class ReflectArgResolver implements ArgResolver {
     protected final ConcurrentHashMap<Class<?>, ClassReflectCache> classClassConfigCacheMap = new ConcurrentHashMap<>();
 
 
-    protected boolean enableCache = true;
+    protected boolean enableCache = false;
 
     @Override
     public Map<String, InputToCheckerArg<?>> getMatchFieldObjectMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
         if (fieldMatcher == null) {
-            throw new RuntimeException("不要传空的fieldMatcher");
+            throw new RuntimeException("fieldMatcher can not be null");
         }
         ClassReflectCache classReflectCache = classConfigCacheOf(inputToCheckerArg);
         Object argValue = inputToCheckerArg.argValue();
+
 
         if (classReflectCache.cached(fieldMatcher)) {
             return classReflectCache.fullResultByInvokeCache(argValue, fieldMatcher);
@@ -90,7 +91,7 @@ public class ReflectArgResolver implements ArgResolver {
             for (FieldMatcher nestedFieldMatcher : nestedFieldMatcherList) {
                 Map<String, InputToCheckerArg<?>> matchFieldObjectMap = getMatchFieldObjectMap(childArg, nestedFieldMatcher);
                 for (Map.Entry<String, InputToCheckerArg<?>> argEntry : matchFieldObjectMap.entrySet()) {
-                    String fullFieldStr = ClassReflectCache.childStr(field, argEntry.getKey());
+                    String fullFieldStr = ReflectUtils.childStr(field, argEntry.getKey());
                     argEntry.getValue().setFullFieldName(fullFieldStr);
                     result.put(fullFieldStr, argEntry.getValue());
                 }
@@ -123,7 +124,7 @@ public class ReflectArgResolver implements ArgResolver {
         Set<String> matchFieldList = fieldMatcher.matchFields(objectMap.keySet(), inputToCheckerArg);
         Map<String, InputToCheckerArg<?>> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
         for (String matchField : matchFieldList) {
-            String childStr = ClassReflectCache.childStr(inputToCheckerArg.fieldStr(), matchField);
+            String childStr = ReflectUtils.childStr(inputToCheckerArg.fieldStr(), matchField);
             InputToCheckerArg<Object> childArg = InputToCheckerArg.createChild(objectMap.get(matchField), childStr);
             result.put(matchField, childArg);
         }

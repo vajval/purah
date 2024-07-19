@@ -116,30 +116,30 @@ public class MultiCheckerExecutor {
         return multiCheckResult(log);
     }
 
-    /**
-     *
-     * @param log
-     * @return
-     */
-
-    public CombinatorialCheckResult toCombinatorialCheckResult(String log) {
-        execIfNotExec(ruleResultSupplierList);
-        MultiCheckResult<CheckResult<?>> multiCheckResult = multiCheckResult(log);
-        return CombinatorialCheckResult.create(multiCheckResult, resultLevel);
-    }
-
+//    /**
+//     *
+//     * @param log
+//     * @return
+//     */
+//
+//    public CombinatorialCheckResult toCombinatorialCheckResult(String log) {
+//        execIfNotExec(ruleResultSupplierList);
+//        NestedCheckResult<CheckResult<?>> nestedCheckResult = multiCheckResult(log);
+//        return CombinatorialCheckResult.create(nestedCheckResult, resultLevel);
+//    }
+//
 
 
     private MultiCheckResult<CheckResult<?>> multiCheckResult(String log) {
 
 
-        BaseOfMultiCheckResult<Object> mainResult = null;
+        LogicCheckResult<Object> mainResult = null;
         if (execInfo.equals(ExecInfo.success)) {
-            mainResult = BaseOfMultiCheckResult.success(null, execInfo.value() + " (" + log + ")");
+            mainResult = LogicCheckResult.success(null, execInfo.value() + " (" + log + ")");
         } else if (execInfo.equals(ExecInfo.failed)) {
-            mainResult = BaseOfMultiCheckResult.failed(null, execInfo.value() + " (" + log + ")");
+            mainResult = LogicCheckResult.failed(null, execInfo.value() + " (" + log + ")");
         } else if (execInfo.equals(ExecInfo.error)) {
-            mainResult = BaseOfMultiCheckResult.error(e, execInfo.value() + " (" + log + ")");
+            mainResult = LogicCheckResult.error(e, execInfo.value() + " (" + log + ")");
 
         }
         return new MultiCheckResult(mainResult, finalExecResult);

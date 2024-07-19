@@ -1,9 +1,7 @@
 package notEnable;
 
 import org.junit.jupiter.api.Test;
-import org.purah.ExampleApplication;
-import org.purah.example.customAnn.CustomService;
-import org.purah.example.customAnn.pojo.CustomUser;
+import org.purah.util.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -13,6 +11,6 @@ public class NotEnableService {
     NoAopService customService;
     @Test
     public void test(){
-        customService.methodCheckByCustomSyntaxWithMultiLevel(new CustomUser(50L, null, "123", null));
+        customService.noEnableTest(new User(50L, null, "123", null));
     }
 }

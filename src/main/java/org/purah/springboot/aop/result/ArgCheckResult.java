@@ -20,11 +20,11 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
     protected ExecMode.Main execMode;
 
 
-    private ArgCheckResult(BaseOfMultiCheckResult mainCheckResult, List<CheckResult<?>> valueList) {
+    private ArgCheckResult(LogicCheckResult mainCheckResult, List<CheckResult<?>> valueList) {
         super(mainCheckResult, valueList);
     }
 
-    private ArgCheckResult(BaseOfMultiCheckResult mainCheckResult, LinkedHashMap<String, CheckResult<?>> checkResultMap, List<CheckResult<?>> valueList, CheckIt checkItAnn, Object checkArg, ExecMode.Main execMode) {
+    private ArgCheckResult(LogicCheckResult mainCheckResult, LinkedHashMap<String, CheckResult<?>> checkResultMap, List<CheckResult<?>> valueList, CheckIt checkItAnn, Object checkArg, ExecMode.Main execMode) {
 
         super(mainCheckResult, valueList);
         this.checkItAnn = checkItAnn;
@@ -34,13 +34,13 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
     }
 
     public static ArgCheckResult noAnnIgnore() {
-        ArgCheckResult argCheckResult = new ArgCheckResult(BaseOfMultiCheckResult.ignore("no ann on Parameter"), Collections.emptyList());
+        ArgCheckResult argCheckResult = new ArgCheckResult(LogicCheckResult.ignore("no ann on Parameter"), Collections.emptyList());
         argCheckResult.checkResultMap = new LinkedHashMap<>();
         return argCheckResult;
     }
 
 
-    public static ArgCheckResult create(BaseOfMultiCheckResult mainCheckResult, List<String> checkNameList, List<CheckResult<?>> valueList, CheckIt checkItAnn, Object checkArg, ExecMode.Main methodExecType
+    public static ArgCheckResult create(LogicCheckResult mainCheckResult, List<String> checkNameList, List<CheckResult<?>> valueList, CheckIt checkItAnn, Object checkArg, ExecMode.Main methodExecType
 
     ) {
 

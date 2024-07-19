@@ -9,7 +9,7 @@ public class MethodCheckResult extends MultiCheckResult<ArgCheckResult> {
     Object belongBean;
     Method method;
 
-    public MethodCheckResult(BaseOfMultiCheckResult mainCheckResult, List<ArgCheckResult> valueList, Object belongBean, Method method) {
+    public MethodCheckResult(LogicCheckResult mainCheckResult, List<ArgCheckResult> valueList, Object belongBean, Method method) {
         super(mainCheckResult, valueList);
         this.belongBean = belongBean;
         this.method = method;
@@ -28,7 +28,7 @@ public class MethodCheckResult extends MultiCheckResult<ArgCheckResult> {
         return logicResultList(ResultLevel.failedAndIgnoreNotBaseLogic);
     }
 
-    public BaseOfMultiCheckResult main() {
+    public LogicCheckResult main() {
         return base;
     }
 }

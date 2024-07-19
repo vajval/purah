@@ -45,7 +45,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
         this.purahContext = purahContext;
         this.bean = bean;
         this.method = method;
-        this.returnType = method.getGenericReturnType();
+        this.returnType = method.getReturnType();
         this.init();
 
     }
@@ -159,7 +159,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
         } else if (this.isBaseLogicResultType()) {
             //获取基础结果
             return methodCheckResult.main();
-        } else if (this.isBooleanResultType()) {
+        }else if (this.isBooleanResultType()) {
             //获取boolean结果
             return methodCheckResult.isSuccess();
         } else {
@@ -193,7 +193,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
 
 
     private boolean isMethodCheckResultType() {
-        return MethodCheckResult.class.equals(returnType) || CheckResult.class.equals(returnType);
+        return MethodCheckResult.class.equals(returnType) || CheckResult.class.equals(returnType)|| MultiCheckResult.class.equals(returnType);
     }
 
     private boolean isBaseLogicResultType() {

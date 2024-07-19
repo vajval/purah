@@ -18,8 +18,8 @@
 //import org.purah.example.customAnn.ann.CNPhoneNum;
 //import org.purah.example.customAnn.ann.NotEmptyTest;
 //import org.purah.example.customAnn.ann.NotNull;
-//import org.purah.example.customAnn.checker.CustomAnnChecker;
-//import org.purah.example.customAnn.pojo.CustomUser;
+//import org.purah.util.customAnn.CustomAnnChecker;
+//import org.purah.util.CustomUser;
 //import org.purah.springboot.aop.result.ArgCheckResult;
 //import org.purah.springboot.aop.result.MethodCheckResult;
 //import org.springframework.beans.factory.annotation.Autowired;
@@ -221,22 +221,7 @@
 //    @Test
 //    void booleanCheckMultiArgs() {
 //
-//        assertTrue(customService.booleanCheck(goodCustomUser, goodCustomUser, goodCustomUser));
-//
-//        assertFalse(customService.booleanCheck(goodCustomUser, goodCustomUser, badCustomUser));
-//
-//        assertTrue(customService.booleanCheck(goodCustomUser, badCustomUser, goodCustomUser));
-//
-//        assertFalse(customService.booleanCheck(goodCustomUser, badCustomUser, badCustomUser));
-//
-//
-//        assertFalse(customService.booleanCheck(badCustomUser, goodCustomUser, goodCustomUser));
-//
-//        assertFalse(customService.booleanCheck(badCustomUser, goodCustomUser, badCustomUser));
-//
-//        assertFalse(customService.booleanCheck(badCustomUser, badCustomUser, goodCustomUser));
-//
-//        assertFalse(customService.booleanCheck(badCustomUser, badCustomUser, badCustomUser));
+
 //
 ////
 //

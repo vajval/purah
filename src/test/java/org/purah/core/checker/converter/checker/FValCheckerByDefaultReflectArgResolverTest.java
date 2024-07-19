@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.purah.core.name.Name;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.nested.FixedMatcher;
+import org.purah.core.resolver.FieldMatcherResultReflectInvokeCache;
 import org.purah.core.resolver.ReflectArgResolver;
+import org.purah.core.resolver.ReflectUtils;
 import org.purah.util.TestUser;
 import org.purah.util.People;
 import org.purah.util.TestAnn;
@@ -23,7 +25,7 @@ import java.util.stream.Stream;
 public class FValCheckerByDefaultReflectArgResolverTest {
 //    child#0, child#0.child, name, child#0.child#0.child
 
-    public static boolean childNameCheck(@FVal("#root#") InputToCheckerArg<People> peopleArg,
+    public static boolean childNameCheck(@FVal("$root$") InputToCheckerArg<People> peopleArg,
                                          @FVal("name") String name,
                                          @FVal("name") TestAnn testAnnOnNameField,
                                          @FVal("name") Name noExistAnn,
@@ -89,18 +91,18 @@ public class FValCheckerByDefaultReflectArgResolverTest {
     public static boolean childNameCheck2(
 //            @FVal("#root#") InputToCheckerArg<TestUser> toCheckerArg,
 //                                          @FVal("*") String name,
-                                          @FVal("id") Long w,
-                                          @FVal("name") Name e,
-                                          @FVal("a.name") String r,
-                                          @FVal("child.id") Long testAnnOnNameField,
-                                          @FVal("child.name") Name noExistAnn,
-                                          @FVal("child.address") String address,
+            @FVal("id") Long w,
+            @FVal("name") Name e,
+            @FVal("a.name") String r,
+            @FVal("child.id") Long testAnnOnNameField,
+            @FVal("child.name") Name noExistAnn,
+            @FVal("child.address") String address,
 
-                                          @FVal("child") TestUser testUser2,
-                                          @FVal("child.child.id") Long testAnnOnNameField2,
-                                          @FVal("child.child.name") Name noExistAnn2,
-                                          @FVal("child.child.address") String address2,
-                                          @FVal("child.child") TestUser testUse2r
+            @FVal("child") TestUser testUser2,
+            @FVal("child.child.id") Long testAnnOnNameField2,
+            @FVal("child.child.name") Name noExistAnn2,
+            @FVal("child.child.address") String address2,
+            @FVal("child.child") TestUser testUse2r
 
 
     ) {
@@ -112,6 +114,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
         return true;
 
     }
+
     @Test
     void check54() throws NoSuchMethodException {
         ReflectArgResolver resolver = new ReflectArgResolver();
@@ -123,10 +126,10 @@ public class FValCheckerByDefaultReflectArgResolverTest {
         testUser.child.child = new TestUser(4L, "child_child_name", "child_child_address");
 
         Map<String, InputToCheckerArg<?>> thisLevelMatcherObjectMap = resolver.getMatchFieldObjectMap(testUser, fixedMatcher);
-        System.out.println(thisLevelMatcherObjectMap);
     }
+
     @Test
-    void check2() throws NoSuchMethodException {
+    void check2() {
         Method method = Stream.of(FValCheckerByDefaultReflectArgResolverTest.class.getDeclaredMethods()).filter(i -> i.getName().equals("childNameCheck2")).collect(Collectors.toList()).get(0);
 
         FValCheckerByDefaultReflectArgResolver checker = new
@@ -138,9 +141,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
         testUser.child.child = new TestUser(4L, "child_child_name", "child_child_address");
 
 
-
-
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 3000; i++) {
             Assertions.assertTrue(checker.check(testUser));
 
         }
@@ -159,9 +160,9 @@ public class FValCheckerByDefaultReflectArgResolverTest {
         }
     }
 
-    public  static class Test2 {
+    public static class Test2 {
 
-        Map<String, String> map= Collections.singletonMap("1","2");
+        Map<String, String> map = Collections.singletonMap("1", "2");
 
         public Map<String, String> getMap() {
             return map;

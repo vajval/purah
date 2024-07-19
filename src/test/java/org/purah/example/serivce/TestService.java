@@ -2,7 +2,7 @@ package org.purah.example.serivce;
 
 
 import org.purah.core.checker.result.CheckResult;
-import org.purah.example.customAnn.pojo.CustomUser;
+import org.purah.util.User;
 import org.purah.springboot.aop.ann.CheckIt;
 import org.purah.springboot.aop.ann.FillToMethodResult;
 import org.springframework.stereotype.Service;
@@ -11,18 +11,18 @@ import org.springframework.stereotype.Service;
 public class TestService {
 
     //不符合规则时会抛出异常
-    public void voidCheck(@CheckIt("非空判断FromTestBean") CustomUser customUser) {
+    public void voidCheck(@CheckIt("非空判断FromTestBean") User user) {
 
     }
     // 将结果填充到返回信息里
     @FillToMethodResult
-    public boolean checkBoolTest(@CheckIt("非空判断FromTestBean") CustomUser customUser) {
+    public boolean checkBoolTest(@CheckIt("非空判断FromTestBean") User user) {
         return false;
     }
 
     // 如果你自定义了返回内容的话，会将自定义的内容一并返回
     @FillToMethodResult
-    public CheckResult checkResult(@CheckIt("非空判断FromTestBean") CustomUser customUser) {
+    public CheckResult checkResult(@CheckIt("非空判断FromTestBean") User user) {
         return null;
     }
     // 支持根据通配符匹配

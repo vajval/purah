@@ -71,13 +71,7 @@ public class LogicCheckResult<T> implements CheckResult<T> {
     public static <T> LogicCheckResult<T> success(T data) {
         return new LogicCheckResult<>(ExecInfo.success, data, null);
     }
-
-    public static <T> LogicCheckResult<T> failed(T data) {
-        return new LogicCheckResult<>(ExecInfo.failed, data, null);
-
-    }
-
-    public static <T> LogicCheckResult<T > success() {
+    public static <T> LogicCheckResult<T> success() {
         return new LogicCheckResult<>(ExecInfo.success, null, null);
     }
 
@@ -85,15 +79,24 @@ public class LogicCheckResult<T> implements CheckResult<T> {
         return new LogicCheckResult<>(ExecInfo.success, data, log);
     }
 
+    public static <T> LogicCheckResult<T> failed(T data) {
+        return new LogicCheckResult<>(ExecInfo.failed, data, null);
+    }
+
+
     public static <T> LogicCheckResult<T> failed(T data, String log) {
         return new LogicCheckResult<>(ExecInfo.failed, data, log);
-
     }
 
     public static <T> LogicCheckResult<T> ignore(String log) {
         LogicCheckResult<T> result = new LogicCheckResult<>(ExecInfo.ignore, null, log);
         result.log = log;
         return result;
+
+    }
+
+    public static <T> LogicCheckResult<T> ignore() {
+        return new LogicCheckResult<>(ExecInfo.ignore, null, null);
 
     }
 
@@ -127,8 +130,8 @@ public class LogicCheckResult<T> implements CheckResult<T> {
     public static <A, R> LogicCheckResult<R> errorBuildLog(InputToCheckerArg<A> inputToCheckerArg, Exception e) {
         String log = logStr(inputToCheckerArg, DEFAULT_ERROR_INFO);
         return LogicCheckResult.error(e, log);
-
     }
+
     @Override
     public T data() {
         return data;

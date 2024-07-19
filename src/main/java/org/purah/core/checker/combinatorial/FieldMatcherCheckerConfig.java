@@ -18,9 +18,9 @@ public class FieldMatcherCheckerConfig {
     List<String> checkerNames;
 
 
-    private List<Checker> checkers;
+    private List<Checker<?,?>> checkers;
 
-    public List<Checker> getCheckers() {
+    public List<Checker<?,?>> getCheckers() {
         return checkers;
     }
 

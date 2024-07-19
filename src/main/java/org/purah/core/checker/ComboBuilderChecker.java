@@ -21,16 +21,12 @@ public class ComboBuilderChecker extends AbstractBaseSupportCacheChecker<Object,
     CombinatorialCheckerConfig config;
     CombinatorialChecker combinatorialChecker;
 
-    public ComboBuilderChecker(PurahContext purahContext) {
+    public ComboBuilderChecker(PurahContext purahContext, String... checkerNames) {
         this.purahContext = purahContext;
         config = CombinatorialCheckerConfig.create(purahContext);
+        config.setExtendCheckerNames(Stream.of(checkerNames).collect(Collectors.toList()));
     }
 
-    public ComboBuilderChecker inputArg(String... checkerNames) {
-        config.setExtendCheckerNames(Stream.of(checkerNames).collect(Collectors.toList()));
-        combinatorialChecker = null;
-        return this;
-    }
 
     public ComboBuilderChecker match(FieldMatcher fieldMatcher, String... checkerNames) {
         config.addMatcherCheckerName(fieldMatcher, Stream.of(checkerNames).collect(Collectors.toList()));
@@ -39,9 +35,19 @@ public class ComboBuilderChecker extends AbstractBaseSupportCacheChecker<Object,
         return this;
     }
 
+    public GenericsProxyChecker reg(String name) {
+        config.setName(name);
+        CombinatorialChecker combinatorialChecker = new CombinatorialChecker(config);
+        return purahContext.checkManager().reg(combinatorialChecker);
+    }
 
     @Override
-    public CheckResult doCheck(InputToCheckerArg inputToCheckerArg) {
+    public boolean enableCache() {
+        return false;
+    }
+
+    @Override
+    protected CheckResult doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
         if (combinatorialChecker != null) return combinatorialChecker.check(inputToCheckerArg);
         if (CollectionUtils.isEmpty(config.fieldMatcherCheckerConfigList)) {
             if (config.extendCheckerNames.size() == 1) {

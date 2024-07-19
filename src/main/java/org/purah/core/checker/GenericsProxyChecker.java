@@ -89,7 +89,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
     }
 
     @Override
-    public CheckResult check(InputToCheckerArg<Object> inputToCheckerArg) {
+    public CheckResult<Object> check(InputToCheckerArg<Object> inputToCheckerArg) {
 
         Checker<?, ?> checker = getChecker(inputToCheckerArg);
 
@@ -99,11 +99,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
             throw new CheckerException(this, "checker " + this.name + "没有对该类的解析方法" + inputCheckInstanceArgClass.clazz);
         }
-        try {
-            return ((Checker) checker).check(inputToCheckerArg);
-        } catch (PurahException exception) {
-            throw exception;
-        }
+        return ((Checker) checker).check(inputToCheckerArg);
     }
 
 

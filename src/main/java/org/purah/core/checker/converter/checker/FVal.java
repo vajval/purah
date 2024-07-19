@@ -12,6 +12,6 @@ public @interface FVal {
     //Fill in specified field values or annotations.
     String value();
     //root field
-    String root = "#root#";
+    String root = "$root$";
     Class<? extends BaseStringMatcher> matcher() default FixedMatcher.class;
 }

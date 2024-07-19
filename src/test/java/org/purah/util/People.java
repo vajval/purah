@@ -17,6 +17,8 @@ public class People {
     @TestAnn("南方城市")
     String address;
 
+    Integer age;
+
     List<People> child;
 
     private static Map<String, People> testPeople = testPeople();
@@ -119,6 +121,14 @@ public class People {
 
         return map;
 
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public String getId() {

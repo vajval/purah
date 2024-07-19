@@ -31,4 +31,15 @@ public final class TestUser {
     public People getPeople() {
         return people;
     }
+
+    @Override
+    public String toString() {
+        return "TestUser{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", child=" + child +
+                ", people=" + people +
+                '}';
+    }
 }

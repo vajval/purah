@@ -96,9 +96,7 @@ public class PurahContext {
 
 
     public ComboBuilderChecker combo(String... checkerNames) {
-        ComboBuilderChecker comboBuilderChecker = new ComboBuilderChecker(this);
-        comboBuilderChecker.inputArg(checkerNames);
-        return comboBuilderChecker;
+        return new ComboBuilderChecker(this,checkerNames);
 
     }
 
@@ -109,7 +107,7 @@ public class PurahContext {
     }
 
     public Checker<?, ?> createAndRegByProperties(CombinatorialCheckerConfigProperties properties) {
-        Checker newCombinatorialChecker = createByProperties(properties);
+        Checker<?,?> newCombinatorialChecker = createByProperties(properties);
         return checkManager.reg(newCombinatorialChecker);
     }
 

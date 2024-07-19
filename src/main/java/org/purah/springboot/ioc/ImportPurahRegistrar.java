@@ -10,6 +10,7 @@ import org.purah.core.matcher.factory.BaseMatcherFactory;
 import org.purah.springboot.IgnoreBeanOnPurahContext;
 import org.purah.springboot.EnablePurah;
 import org.purah.springboot.aop.CheckItAspect;
+import org.purah.springboot.config.PurahConfigProperties;
 import org.purah.springboot.ioc.ann.ToBaseMatcherFactory;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -32,8 +33,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * scan for fieldMatcher annotated with ToBaseMatcherFactory.
- * The class must have a constructor that takes only one string parameter.
+ *
+ *
  *
  * @author vajva
  */
@@ -48,30 +49,39 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry, BeanNameGenerator importBeanNameGenerator) {
 
-        LinkedHashSet<BeanDefinition> beanDefinitions = filterFieldMatcherByAnn(metadata);
 
 
-        AbstractBeanDefinition purahContextBeanDefinition = purahContextBeanDefinition(metadata, beanDefinitions);
+        BeanDefinition purahContextBeanDefinition = purahContextBeanDefinition(metadata);
+        BeanDefinition propertiesBeanBeanDefinition = propertiesBean();
+        BeanDefinition aspectBeanBeanDefinition = aspectBean();
 
         registry.registerBeanDefinition(PurahContext.class.getName(), purahContextBeanDefinition);
-
-
-
-        BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(CheckItAspect.class);
-
-
-        definitionBuilder.setLazyInit(true);
-        AbstractBeanDefinition beanDefinition = definitionBuilder.getBeanDefinition();
-        beanDefinition.setAutowireCandidate(true);
-        beanDefinition.setPrimary(true);
-
-        registry.registerBeanDefinition(CheckItAspect.class.getName(), beanDefinition);
-
+        registry.registerBeanDefinition(CheckItAspect.class.getName(), aspectBeanBeanDefinition);
+        registry.registerBeanDefinition(PurahConfigProperties.class.getName(), propertiesBeanBeanDefinition);
     }
 
 
-    public AbstractBeanDefinition purahContextBeanDefinition(AnnotationMetadata metadata, LinkedHashSet<BeanDefinition> beanDefinitions) {
+    public BeanDefinition propertiesBean() {
+        GenericBeanDefinition genericBeanDefinition = new GenericBeanDefinition();
+        genericBeanDefinition.setBeanClass(PurahConfigProperties.class);
+        genericBeanDefinition.setLazyInit(true);
+        genericBeanDefinition.setPrimary(true);
+        genericBeanDefinition.setAutowireCandidate(true);
+        return genericBeanDefinition;
+    }
 
+    public BeanDefinition aspectBean() {
+        GenericBeanDefinition genericBeanDefinition = new GenericBeanDefinition();
+        genericBeanDefinition.setBeanClass(CheckItAspect.class);
+        genericBeanDefinition.setLazyInit(true);
+        genericBeanDefinition.setPrimary(true);
+        genericBeanDefinition.setAutowireCandidate(true);
+        return genericBeanDefinition;
+    }
+
+    public AbstractBeanDefinition purahContextBeanDefinition(AnnotationMetadata metadata) {
+
+        LinkedHashSet<BeanDefinition> beanDefinitions = filterFieldMatcherByAnn(metadata);
 
         BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(PurahContextFactoryBean.class);
 

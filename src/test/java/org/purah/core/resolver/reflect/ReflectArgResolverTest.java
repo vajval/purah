@@ -6,7 +6,7 @@ import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.nested.FixedMatcher;
 import org.purah.core.matcher.nested.GeneralFieldMatcher;
 import org.purah.core.resolver.ReflectArgResolver;
-import org.purah.example.customAnn.pojo.CustomUser;
+import org.purah.util.User;
 import org.purah.util.TestUser;
 
 import java.util.*;
@@ -25,7 +25,7 @@ class ReflectArgResolverTest {
 
     @Test
     void getMatchFieldObj() {
-        CustomUser goodCustomUser = new CustomUser(3L, "vajva", "15509931234", 15);
+        User goodUser = new User(3L, "vajva", "15509931234", 15);
         GeneralFieldMatcher fieldMatcher = new GeneralFieldMatcher("*.*");
         Map<String, InputToCheckerArg<?>> matchFieldObjectMap = reflectArgResolver.getMatchFieldObjectMap(InputToCheckerArg.of(testUser), fieldMatcher);
         System.out.println(matchFieldObjectMap);

@@ -127,7 +127,7 @@ public class MethodHandlerCheckerTest {
         Assertions.assertTrue(resultList.get(0));
         Assertions.assertFalse(resultList.get(1));
         for (int index = 2; index < resultList.size(); index++) {
-            System.out.println(methodCheckResult.argResultOf(index));
+            log.info(methodCheckResult.argResultOf(index));
             Assertions.assertTrue(methodCheckResult.argResultOf(index).isIgnore());
         }
     }
@@ -140,7 +140,7 @@ public class MethodHandlerCheckerTest {
         Assertions.assertFalse(resultList.get(1));
         for (int index =2; index < resultList.size(); index++) {
             ParameterHandlerChecker parameterHandlerChecker = methodHandlerChecker.parameterHandlerCheckerMap.get(index);
-            System.out.println(methodCheckResult.argResultOf(index));
+            log.info(methodCheckResult.argResultOf(index));
             if(parameterHandlerChecker==null){
                 Assertions.assertTrue(methodCheckResult.argResultOf(index).isIgnore());
             }else{

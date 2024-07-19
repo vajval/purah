@@ -9,7 +9,7 @@ import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.example.customAnn.pojo.CustomUser;
+import org.purah.util.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -41,15 +41,15 @@ class PurahEnableMethodsTest {
         purahContext.createAndRegByProperties(properties);
 
 
-        CustomUser badCustomUser = new CustomUser(-1L, null, null, 35);
+        User badUser = new User(-1L, null, null, 35);
 
         GenericsProxyChecker genericsProxyChecker = purahContext.checkManager().of("测试MethodsToCheckers注解");
-        CheckResult check = genericsProxyChecker.check(badCustomUser);
+        CheckResult check = genericsProxyChecker.check(badUser);
 
 
 
 
-        CheckResult checkResult = genericsProxyChecker.check(badCustomUser);
+        CheckResult checkResult = genericsProxyChecker.check(badUser);
         Assertions.assertFalse(checkResult.isError());
 
 

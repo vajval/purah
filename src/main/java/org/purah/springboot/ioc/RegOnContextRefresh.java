@@ -28,8 +28,14 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
     public void onApplicationEvent(ContextRefreshedEvent event) {
 
         ApplicationContext applicationContext = event.getApplicationContext();
+        PurahContext purahContext;
+        try {
+            purahContext = applicationContext.getBean(PurahContext.class);
 
-        PurahContext purahContext = applicationContext.getBean(PurahContext.class);
+        } catch (Exception e) {
+            return;
+        }
+
 
         PurahIocRegS purahIocRegS = new PurahIocRegS(purahContext);
 

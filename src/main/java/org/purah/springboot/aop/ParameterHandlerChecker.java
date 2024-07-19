@@ -4,7 +4,7 @@ import org.purah.core.PurahContext;
 import org.purah.core.checker.*;
 import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.checker.result.BaseOfMultiCheckResult;
+import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.core.checker.result.MultiCheckResult;
 import org.purah.springboot.aop.ann.CheckIt;
 import org.purah.springboot.aop.result.ArgCheckResult;
@@ -33,7 +33,11 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
         this.checkIt = parameter.getAnnotation(CheckIt.class);
         this.checkerNameList = checkerNameList;
         this.argClazz = parameter.getType();
+    }
 
+    @Override
+    public String name() {
+        return "arg " + index + " of " + method.toGenericString();
     }
 
     public Class<?> argClazz() {
@@ -84,7 +88,7 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
             log = "unable to know,mode:[all_success],at least one has already failed.So this check is skipped,If the check must be conducted regardless. @MethodCheck set mainMode  all_success_but_must_check_all";
         }
         InputToCheckerArg<Object> checkArg = InputToCheckerArg.of(arg, argClazz());
-        return ArgCheckResult.create(BaseOfMultiCheckResult.ignore(log), checkerNameList,
+        return ArgCheckResult.create(LogicCheckResult.ignore(log), checkerNameList,
                 Collections.emptyList(),
                 checkIt, checkArg, checkIt.mainMode());
     }

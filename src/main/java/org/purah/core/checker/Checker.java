@@ -8,7 +8,6 @@ import org.springframework.core.ResolvableType;
 public interface Checker<INPUT_ARG, RESULT> extends IName {
 
 
-
     /**
      * 校验 业务 在这里面
      */
@@ -37,9 +36,8 @@ public interface Checker<INPUT_ARG, RESULT> extends IName {
 
 
     default String logicFrom() {
-        Class<? extends Checker> clazz = this.getClass();
         String clazzStr = this.getClass().getName();
-        if (clazz.isAnonymousClass()) {
+        if (this.getClass().isAnonymousClass()) {
             clazzStr = "anonymous class from " + this.getClass().getName();
         }
         return "[" + this.name() + "] " + clazzStr;

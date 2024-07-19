@@ -63,23 +63,11 @@ public class ClassReflectCache {
                     (arg) -> {
                         Object childArg = null;
                         if (arg.argValue() != null) {
-                            childArg = get(arg.argValue(), fieldName);
+                            childArg = ReflectUtils.get(arg.argValue(), fieldName);
                         }
                         return InputToCheckerArg.createChildWithFieldConfig(childArg, fieldName, field, annotationList);
                     });
         }
-    }
-
-    protected static String childStr(String parentFieldStr, String thisFieldStr) {
-        if (!StringUtils.hasText(parentFieldStr)) {
-            return thisFieldStr;
-        }
-        if (thisFieldStr.startsWith("#")) {
-            return parentFieldStr + thisFieldStr;
-        }
-        return parentFieldStr + "." + thisFieldStr;
-
-
     }
 
 
@@ -168,7 +156,7 @@ public class ClassReflectCache {
         Class<?> inputArgClass = inputToCheckerArg.argClass();
         Set<String> nestedFields = result.keySet().stream().filter(i -> i.contains(".")).map(i -> i.substring(0, i.lastIndexOf("."))).collect(Collectors.toSet());
 
-        if (!FieldMatcherResultReflectInvokeCache.noExtendEnabledFields(inputArgClass, nestedFields, Sets.newHashSet(inputArgClass))) {
+        if (!ReflectUtils.noExtendEnabledFields(inputArgClass, nestedFields, Sets.newHashSet(inputArgClass))) {
             return false;
         }
         //Directly retrieving values from nested fields yields the same results as the actual return values.
@@ -177,45 +165,12 @@ public class ClassReflectCache {
             if (childArg.nullType() == ITCArgNullType.no_field_no_getter || childArg.nullType() == ITCArgNullType.have_field_no_getter) {
                 continue;
             }
-            Object ignoreNull = getIgnoreNull(argValue, entry.getKey());
+            Object ignoreNull = ReflectUtils.getIgnoreNull(argValue, entry.getKey());
             if (!Objects.equals(ignoreNull, entry.getValue().argValue())) {
                 return false;
             }
         }
         return true;
-    }
-
-    protected static Object get(Object inputArg, String field) {
-        if (inputArg == null) {
-            return null;
-        }
-        try {
-            return PropertyUtils.getProperty(inputArg, field);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            logger.error("get {} value from {}", field, inputArg.getClass(), e);
-            return null;
-        }
-    }
-
-    protected static Object getIgnoreNull(Object inputArg, String fullField) {
-        if (inputArg == null) {
-            return null;
-        }
-        Iterable<String> split = Splitter.on(".").split(fullField);
-        Object result = inputArg;
-        try {
-            for (String field : split) {
-                result = PropertyUtils.getProperty(inputArg, field);
-                if (result == null) {
-                    return null;
-                }
-            }
-            return result;
-        } catch (Exception e) {
-            logger.error("get {} value from {}", fullField, inputArg.getClass(), e);
-            return null;
-        }
-
     }
 
 

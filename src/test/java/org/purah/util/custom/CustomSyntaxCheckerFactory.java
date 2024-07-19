@@ -1,4 +1,4 @@
-package org.purah.example.customSyntax;
+package org.purah.util.custom;
 
 import com.google.common.base.Splitter;
 
