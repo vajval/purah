@@ -3,7 +3,6 @@ package org.purah.springboot.ioc.test_bean.matcher;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.factory.MatcherFactory;
 import org.purah.core.name.Name;
-import org.purah.springboot.ioc.ann.ToBaseMatcherFactory;
 import org.springframework.stereotype.Component;
 
 import static org.purah.springboot.ioc.test_bean.matcher.ReverseStringMatcherFactory.NAME;

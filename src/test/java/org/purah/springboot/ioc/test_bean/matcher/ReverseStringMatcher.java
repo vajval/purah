@@ -2,7 +2,6 @@ package org.purah.springboot.ioc.test_bean.matcher;
 
 import org.purah.core.matcher.WrapListFieldMatcher;
 import org.purah.core.name.Name;
-import org.purah.core.matcher.BaseStringMatcher;
 import org.purah.springboot.ioc.ann.ToBaseMatcherFactory;
 
 import java.util.Objects;
@@ -32,10 +31,9 @@ public class ReverseStringMatcher extends WrapListFieldMatcher<ReverseStringMatc
         return Objects.equals(reverse, field);
     }
 
+
     @Override
-    protected boolean supportCacheBySelf() {
+    protected boolean matchStrCanCache(String matchSer) {
         return false;
     }
-
-
 }

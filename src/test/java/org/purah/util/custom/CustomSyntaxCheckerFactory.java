@@ -48,8 +48,6 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
     /**
      * example: [a:b,c;e:d,e]
      *
-     * @param needMatchCheckerName
-     * @return
      */
 
     @Override

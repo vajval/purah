@@ -3,9 +3,7 @@ package org.purah.core.checker.result;
 import com.google.gson.Gson;
 import org.purah.core.checker.InputToCheckerArg;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class LogicCheckResult<T> implements CheckResult<T> {
 

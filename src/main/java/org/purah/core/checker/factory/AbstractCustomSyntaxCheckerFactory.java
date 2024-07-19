@@ -17,7 +17,7 @@ public abstract class AbstractCustomSyntaxCheckerFactory implements CheckerFacto
     public abstract CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties(String needMatchCheckerName);
 
     @Override
-    public Checker createChecker(String needMatchCheckerName) {
+    public Checker<?,?> createChecker(String needMatchCheckerName) {
         PurahContext purahContext = purahContext();
         CombinatorialCheckerConfigProperties properties = combinatorialCheckerConfigProperties(needMatchCheckerName);
         String logicFrom = properties.getLogicFrom();

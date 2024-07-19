@@ -16,10 +16,7 @@ import static org.purah.springboot.ioc.test_bean.matcher.IocIgnoreMatcher.NAME;
 @IgnoreBeanOnPurahContext
 public class IocIgnoreMatcher implements FieldMatcher {
     public static final String NAME = "ioc_ignore_test";
-    @Override
-    public boolean supportCache() {
-        return FieldMatcher.super.supportCache();
-    }
+
 
     @Override
     public Set<String> matchFields(Set<String> fields, Object inputArg) {

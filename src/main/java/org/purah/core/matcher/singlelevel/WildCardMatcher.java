@@ -28,7 +28,11 @@ public class WildCardMatcher extends WrapListFieldMatcher<WildCardMatcher> {
     }
 
     @Override
-    protected boolean supportCacheBySelf() {
+    protected boolean matchStrCanCache(String matchSer) {
         return true;
     }
+//    @Override
+//    protected boolean supportCacheBySelf() {
+//        return true;
+//    }
 }

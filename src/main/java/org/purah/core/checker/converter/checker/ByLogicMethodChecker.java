@@ -11,18 +11,16 @@ import java.lang.reflect.Method;
  * Convert a method like this
  * See unit test
  *
- *   @Name("test")
- *   public static boolean test(Intager ) {
- *        if (testAnn == null) {
- *             return false;
- *        }
- *        return StringUtils.hasText(testAnn.value());
+ *   @Name("hasText")
+ *   public static boolean test(String text ) {
+ *        return StringUtils.hasText(text);
  *   }
  *
  *
  */
 
 public class ByLogicMethodChecker extends AbstractWrapMethodToChecker {
+
 
 
     public ByLogicMethodChecker(Object methodsToCheckersBean, Method method, String name) {

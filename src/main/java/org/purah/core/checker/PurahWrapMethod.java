@@ -2,6 +2,7 @@ package org.purah.core.checker;
 
 import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.core.checker.result.CheckResult;
+import org.purah.core.exception.UnexpectedException;
 import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.*;
@@ -94,7 +95,7 @@ public class PurahWrapMethod {
             return LogicCheckResult.failedBuildLog(inputToCheckerArg, false);
         }
 
-        throw new RuntimeException("bugaichucuo");
+        throw new UnexpectedException();
 
     }
 

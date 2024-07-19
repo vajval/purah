@@ -84,7 +84,7 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
         }
         String matchStr = String.join("|", matchStirs);
         fieldMatcher = new FixedMatcher(matchStr);
-
+//        fieldMatcher = new GeneralFieldMatcher(matchStr);
         purahEnableMethod = new PurahWrapMethod(methodsToCheckersBean, method, rootIndex);
 
 

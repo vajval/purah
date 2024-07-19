@@ -33,10 +33,7 @@ public class NormalMultiLevelMatcher extends AbstractMultilevelFieldMatcher<Norm
 
     }
 
-    @Override
-    protected boolean supportCacheBySelf() {
-        return !fullMatchStr.contains("#") && !fullMatchStr.contains(".");
-    }
+
 
     @Override
     public Set<String> matchFields(Set<String> fields, Object belongInstance) {
@@ -78,5 +75,11 @@ public class NormalMultiLevelMatcher extends AbstractMultilevelFieldMatcher<Norm
         return Collections.emptyMap();
     }
 
+    @Override
+    protected boolean matchStrCanCache(String matchSer) {
+        return !matchSer.contains("#") && !matchSer.contains(".");
+    }
+
 
 }
+

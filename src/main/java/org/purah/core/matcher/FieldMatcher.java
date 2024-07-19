@@ -7,6 +7,8 @@ import java.util.Set;
  */
 public interface FieldMatcher {
 
+    String rootField = "$root$";
+
 
     /**
      * ChatGPT

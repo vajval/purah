@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  * See unit test
  *
  *   @Name("test")
- *   public static boolean test(TestAnn testAnn, String name) {
+ *   public static boolean test(@TestAnn testAnn, String name) {
  *        if (testAnn == null) {
  *             return false;
  *        }

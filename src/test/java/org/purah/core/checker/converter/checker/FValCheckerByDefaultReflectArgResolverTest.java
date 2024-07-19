@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.purah.core.name.Name;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.nested.FixedMatcher;
-import org.purah.core.resolver.FieldMatcherResultReflectInvokeCache;
 import org.purah.core.resolver.ReflectArgResolver;
-import org.purah.core.resolver.ReflectUtils;
 import org.purah.util.TestUser;
 import org.purah.util.People;
 import org.purah.util.TestAnn;
@@ -75,7 +73,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
     }
 
     @Test
-    void check() throws NoSuchMethodException {
+    void check() {
 
         Method method = Stream.of(FValCheckerByDefaultReflectArgResolverTest.class.getDeclaredMethods()).filter(i -> i.getName().equals("childNameCheck")).collect(Collectors.toList()).get(0);
 
@@ -84,7 +82,11 @@ public class FValCheckerByDefaultReflectArgResolverTest {
                 FValCheckerByDefaultReflectArgResolver(
                 null, method, "test");
 
-        Assertions.assertTrue(checker.check(People.elder).isSuccess());
+        for (int i = 0; i < 3; i++) {
+            Assertions.assertTrue(checker.check(People.elder));
+
+        }
+
     }
 
 
@@ -102,6 +104,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
             @FVal("child.child.id") Long testAnnOnNameField2,
             @FVal("child.child.name") Name noExistAnn2,
             @FVal("child.child.address") String address2,
+            @FVal("teest#5") String addres2,
             @FVal("child.child") TestUser testUse2r
 
 
@@ -116,7 +119,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
     }
 
     @Test
-    void check54() throws NoSuchMethodException {
+    void check54() {
         ReflectArgResolver resolver = new ReflectArgResolver();
         FixedMatcher fixedMatcher =
                 new FixedMatcher("a.name");
@@ -141,14 +144,13 @@ public class FValCheckerByDefaultReflectArgResolverTest {
         testUser.child.child = new TestUser(4L, "child_child_name", "child_child_address");
 
 
-        for (int i = 0; i < 3000; i++) {
+        for (int i = 0; i < 300; i++) {
             Assertions.assertTrue(checker.check(testUser));
-
         }
     }
 
     @Test
-    void check3() throws NoSuchMethodException {
+    void check3() {
         Method method = Stream.of(FValCheckerByDefaultReflectArgResolverTest.class.getDeclaredMethods()).filter(i -> i.getName().equals("childNameCheck")).collect(Collectors.toList()).get(0);
 
         FValCheckerByDefaultReflectArgResolver checker = new

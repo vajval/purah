@@ -16,7 +16,7 @@ public class PurahCheckInstanceCacheContext {
 
     private static final ThreadLocal<PurahCheckInstanceCacheContext> threadLocal = new ThreadLocal<>();
 
-    private Map<InputToCheckerArgCacheKey, CheckResult> cacheMap = new ConcurrentHashMap<>();
+    private final Map<InputToCheckerArgCacheKey, CheckResult<?>> cacheMap = new ConcurrentHashMap<>();
 
     private int stackNum = 0;
 
@@ -49,7 +49,7 @@ public class PurahCheckInstanceCacheContext {
 
     }
 
-    public static CheckResult getResultFromCache(InputToCheckerArg inputToCheckerArg, String checkerName) {
+    public static CheckResult<?> getResultFromCache(InputToCheckerArg inputToCheckerArg, String checkerName) {
 
         InputToCheckerArgCacheKey inputToCheckerArgCacheKey = new InputToCheckerArgCacheKey(inputToCheckerArg, checkerName);
         return getResultFromCache(inputToCheckerArgCacheKey);

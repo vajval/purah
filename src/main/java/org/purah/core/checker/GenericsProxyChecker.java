@@ -6,7 +6,6 @@ import com.google.common.collect.HashBiMap;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckerException;
 import org.purah.core.exception.init.InitCheckerException;
-import org.purah.core.exception.PurahException;
 
 import java.util.Map;
 import java.util.Objects;

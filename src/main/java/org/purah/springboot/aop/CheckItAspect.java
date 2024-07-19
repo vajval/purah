@@ -14,7 +14,6 @@ import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import org.purah.core.exception.MethodArgCheckException;
 import org.purah.springboot.aop.ann.MethodCheck;
 import org.purah.springboot.aop.result.MethodCheckResult;
-import org.purah.springboot.ioc.ImportPurahRegistrar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;

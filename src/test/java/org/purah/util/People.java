@@ -1,13 +1,11 @@
 package org.purah.util;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class People {
 
@@ -21,7 +19,7 @@ public class People {
 
     List<People> child;
 
-    private static Map<String, People> testPeople = testPeople();
+    private static final Map<String, People> testPeople = testPeople();
     public static final String str = "{" +
             "  \"name\": \"Elder\"," +
             "  \"address\": \"Tongliao\"," +

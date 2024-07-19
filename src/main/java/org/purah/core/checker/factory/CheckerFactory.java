@@ -8,7 +8,7 @@ public interface CheckerFactory extends IName {
 
     boolean match(String needMatchCheckerName);
 
-    Checker createChecker(String needMatchCheckerName);
+    Checker<?,?> createChecker(String needMatchCheckerName);
 
     default boolean cacheBeCreatedChecker() {
         return true;

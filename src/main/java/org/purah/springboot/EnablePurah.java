@@ -1,7 +1,6 @@
 package org.purah.springboot;
 
 
-import org.purah.core.checker.converter.MethodConverter;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.springboot.ioc.ImportPurahRegistrar;
 import org.springframework.context.annotation.Import;

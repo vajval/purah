@@ -3,9 +3,7 @@ package org.purah.core;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.matcher.FieldMatcher;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class PurahContextConfig {

@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = NotEnableApplication.class)
-public class NotEnableService {
+public class NotEnableTest {
     @Autowired
     NoAopService customService;
     @Test
-    public void test(){
+    public void test()
+    {
         customService.noEnableTest(new User(50L, null, "123", null));
     }
 }

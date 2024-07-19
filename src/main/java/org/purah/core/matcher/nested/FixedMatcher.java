@@ -64,8 +64,8 @@ public class FixedMatcher extends AbstractMultilevelFieldMatcher<FixedMatcher> {
 
 
     @Override
-    protected boolean supportCacheBySelf() {
-        return !fullMatchStr.contains("#");
+    protected boolean matchStrCanCache(String matchSer) {
+        return !matchSer.contains("#");
     }
 
     @Override
@@ -89,6 +89,7 @@ public class FixedMatcher extends AbstractMultilevelFieldMatcher<FixedMatcher> {
                 result.addAll(entry.getValue());
             }
         }
+        resultExpectedSize = result.size();
         return result;
     }
 

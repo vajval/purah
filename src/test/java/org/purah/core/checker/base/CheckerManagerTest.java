@@ -25,7 +25,7 @@ public class CheckerManagerTest {
     }
 
     @BeforeEach
-    void beforeEach() throws NoSuchMethodException {
+    void beforeEach() {
         checkerManager = new CheckerManager();
     }
 

@@ -16,13 +16,13 @@ import java.util.*;
  * config builder
  */
 public class CombinatorialCheckerConfigProperties {
-    private String checkerName;
+    private final String checkerName;
     private ResultLevel resultLevel = ResultLevel.failedAndIgnoreNotBaseLogic;
     private String logicFrom;
 
     private ExecMode.Main mainExecType = ExecMode.Main.all_success;
     private List<String> useCheckerNames = new ArrayList<>();
-    private LinkedHashMap<String, Map<String, List<String>>> matcherFieldCheckerMapping = new LinkedHashMap<>();
+    private final LinkedHashMap<String, Map<String, List<String>>> matcherFieldCheckerMapping = new LinkedHashMap<>();
 
 
     public CombinatorialCheckerConfig build(PurahContext purahContext) {

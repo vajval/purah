@@ -44,14 +44,36 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
         }
     }
 
+    @Override
     protected void initWapChildList(String matchStr) {
+
+//        if (matchStr.contains("|")) {
+//            wrapChildList = Splitter.on("|").splitToList(matchStr).stream().filter(GeneralFieldMatcher::isWildCardMatcher).map(this::wrapChildMatcher).collect(Collectors.toList());
+//            String collect = Splitter.on("|").splitToList(matchStr).stream().filter(i -> !isWildCardMatcher(i))
+//                    .collect(Collectors.joining("|"));
+//            wrapChildList.add(new FixedMatcher(collect));
+//        }
+        //todo cache support
         if (matchStr.contains("|")) {
-            wrapChildList = Splitter.on("|").splitToList(matchStr).stream().filter(GeneralFieldMatcher::isWildCardMatcher).map(this::wrapChildMatcher).collect(Collectors.toList());
-            String collect = Splitter.on("|").splitToList(matchStr).stream().filter(i -> !isWildCardMatcher(i))
-                    .collect(Collectors.joining("|"));
-            wrapChildList.add(new FixedMatcher(collect));
+            Map<Boolean, List<String>> map = Splitter.on("|").splitToList(matchStr).stream().collect(Collectors.groupingBy(this::matchStrCanCache));
+            List<String> cacheEnableList = map.get(true);
+            List<String> noCacheList = map.get(false);
+            if (CollectionUtils.isEmpty(cacheEnableList) || CollectionUtils.isEmpty(noCacheList)) {
+                wrapChildList = map.values().iterator().next().stream().map(this::wrapChildMatcher).collect(Collectors.toList());
+            } else {
+                String cacheEnable = String.join("|", cacheEnableList);
+                String noCache = String.join("|", noCacheList);
+                wrapChildList = new ArrayList<>();
+                wrapChildList.add(wrapChildMatcher(cacheEnable));
+                wrapChildList.add(wrapChildMatcher(noCache));
+            }
         }
     }
+
+    public List<MultilevelFieldMatcher> wrapChildList() {
+        return wrapChildList;
+    }
+
 
     @Override
     protected MultilevelFieldMatcher wrapChildMatcher(String matchStr) {
@@ -167,18 +189,16 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
     }
 
     @Override
-    protected boolean supportCacheBySelf() {
-        if (fullMatchStr.contains("#")) {
+    protected boolean matchStrCanCache(String matchSer) {
+        if (matchSer.contains("#")) {
             return false;
         }
-
-        if (childStr == null) {
+        int index = matchSer.indexOf(".");
+        if (index == -1) {
             return true;
         }
-        return !isWildCardMatcher(childStr);
+        return !isWildCardMatcher(matchSer.substring(index + 1));
     }
-
-
 
 
 }
