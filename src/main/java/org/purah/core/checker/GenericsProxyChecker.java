@@ -4,7 +4,8 @@ package org.purah.core.checker;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.purah.core.checker.result.CheckResult;
-import org.purah.core.exception.CheckerException;
+import org.purah.core.exception.CheckException;
+import org.purah.core.exception.UnexpectedException;
 import org.purah.core.exception.init.InitCheckerException;
 
 import java.util.Map;
@@ -13,11 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 /**
- * 对 同名  但是对支持的入参对象class不同的多个 checker封装
- * 例如两个 checker 都叫“checkId”
- * 但是一个支持的入参为String 另一个为Long
- * 这两个 会被封装到 typeEnableCheckerCacheMap中
- * 根据需要检查对象的
+ public static Checker<Long, Object> longChecker = LambdaChecker.of(Long.class).build("id1", i -> i == 1L);
+ public static Checker<Integer, Object> intChecker = LambdaChecker.of(Integer.class).build("id1", i -> i == 1);
+ genericsProxyChecker.addNewChecker(longChecker); genericsProxyChecker.addNewChecker(intChecker);
+ genericsProxyChecker.check(1)//use intChecker
+ genericsProxyChecker.check(1L)//use longChecker
  */
 public class GenericsProxyChecker implements Checker<Object, Object> {
 
@@ -56,16 +57,14 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
     }
 
-    /**
-     * 添加新的
-     */
 
-    public GenericsProxyChecker addNewChecker(Checker<?, ?> checker) {
+
+    protected GenericsProxyChecker addNewChecker(Checker<?, ?> checker) {
         if (checker == null) {
             throw new InitCheckerException("checker cannot be null");
         }
         if (checker instanceof GenericsProxyChecker) {
-            throw new InitCheckerException("GenericsProxyChecker no nested support ");
+            throw new InitCheckerException("GenericsProxyChecker no nested support");
         }
         InputArgClass checkerSupportInputArgClass = InputArgClass.byChecker(checker);
         if (defaultChecker == null) {
@@ -96,7 +95,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
             InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputToCheckerArg);
 
-            throw new CheckerException(this, "checker " + this.name + "没有对该类的解析方法" + inputCheckInstanceArgClass.clazz);
+            throw new CheckException(this, "checker [" + this.name + "] not support class " + inputCheckInstanceArgClass.clazz);
         }
         return ((Checker) checker).check(inputToCheckerArg);
     }
@@ -107,7 +106,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
         if (inputToCheckerArg == null) {
             return defaultChecker;
         }
-        if (inputToCheckerArg.argValue() == null && (inputToCheckerArg.argClass() == null || inputToCheckerArg.argClass().equals(Object.class))) {
+        if (inputToCheckerArg.isNull() && (inputToCheckerArg.argClass() == null || inputToCheckerArg.argClass().equals(Object.class))) {
             return defaultChecker;
         }
         InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputToCheckerArg);
@@ -219,7 +218,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
         private InputArgClass(Class<?> clazz) {
             if (clazz == null) {
-                throw new RuntimeException("不该出现这个错误");
+                throw new UnexpectedException("InputArgClass class cannnot null");
             }
             this.clazz = clazz;
         }
@@ -244,7 +243,9 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
                 return false;
             }
             /*
-             * 能处理Map 就一定能处理 HashMap
+             能处理Map 就一定能处理 HashMap                 吧
+             The ability to handle `Map` implies the ability to handle `HashMap`.
+             *
              */
             return this.clazz.isAssignableFrom(inputInputArgClass.clazz);
         }

@@ -1,4 +1,4 @@
-package org.purah.core.checker.base;
+package org.purah.core.checker;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

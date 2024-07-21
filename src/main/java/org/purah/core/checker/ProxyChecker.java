@@ -2,6 +2,7 @@ package org.purah.core.checker;
 
 
 import org.purah.core.checker.result.CheckResult;
+import org.purah.core.exception.init.InitCheckerException;
 
 public class ProxyChecker implements Checker<Object, Object> {
     Checker<?, ?> checker;
@@ -12,7 +13,7 @@ public class ProxyChecker implements Checker<Object, Object> {
 
     public ProxyChecker(Checker<?, ?> checker, String name, String logicFrom) {
         if (checker == null) {
-            throw new RuntimeException("代理checker不能为null");
+            throw new InitCheckerException("bei proxy checker cannot be null");
         }
         this.checker = checker;
         this.name = name;
@@ -26,7 +27,7 @@ public class ProxyChecker implements Checker<Object, Object> {
 
     @Override
     public CheckResult<Object> check(InputToCheckerArg<Object> inputToCheckerArg) {
-        CheckResult<Object> result = ((Checker)checker).check(inputToCheckerArg);
+        CheckResult<Object> result = ((Checker) checker).check(inputToCheckerArg);
         result.setCheckLogicFrom(this.logicFrom());
         return result;
     }

@@ -59,7 +59,7 @@ public class ReflectArgResolver implements ArgResolver {
             this.putMultiLevelMapToResult(inputToCheckerArg, multilevelFieldMatcher, result);
         } else {
             Map<String, InputToCheckerArg<?>> thisLevelMatcherObjectMap = this.getThisLevelMatcherObjectMap(inputToCheckerArg, fieldMatcher);
-            thisLevelMatcherObjectMap.forEach((a, b) -> result.put(b.fieldStr(), b));
+            thisLevelMatcherObjectMap.forEach((a, b) -> result.put(b.fieldPath(), b));
         }
     }
 
@@ -92,7 +92,7 @@ public class ReflectArgResolver implements ArgResolver {
                 Map<String, InputToCheckerArg<?>> matchFieldObjectMap = getMatchFieldObjectMap(childArg, nestedFieldMatcher);
                 for (Map.Entry<String, InputToCheckerArg<?>> argEntry : matchFieldObjectMap.entrySet()) {
                     String fullFieldStr = ReflectUtils.childStr(field, argEntry.getKey());
-                    argEntry.getValue().setFullFieldName(fullFieldStr);
+                    argEntry.getValue().setFieldPath(fullFieldStr);
                     result.put(fullFieldStr, argEntry.getValue());
                 }
             }
@@ -124,7 +124,7 @@ public class ReflectArgResolver implements ArgResolver {
         Set<String> matchFieldList = fieldMatcher.matchFields(objectMap.keySet(), inputToCheckerArg);
         Map<String, InputToCheckerArg<?>> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
         for (String matchField : matchFieldList) {
-            String childStr = ReflectUtils.childStr(inputToCheckerArg.fieldStr(), matchField);
+            String childStr = ReflectUtils.childStr(inputToCheckerArg.fieldPath(), matchField);
             InputToCheckerArg<Object> childArg = InputToCheckerArg.createChild(objectMap.get(matchField), childStr);
             result.put(matchField, childArg);
         }

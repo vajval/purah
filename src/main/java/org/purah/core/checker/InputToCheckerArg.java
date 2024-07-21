@@ -13,22 +13,26 @@ import java.util.Optional;
 public class InputToCheckerArg<INPUT_ARG> {
     // input need check arg
     INPUT_ARG arg;
-    //Relative fields to the root node.
-    //example title  user.id   user.childUser.id
-    String fullFieldName;
 
-    // The class that can be determined within the context of the code.
+    // user.id   user.childUser.id  child#0.id
+    String fieldPath;
+
+
+    // InputToCheckerArg.of(new People()) ->People.class
+    // InputToCheckerArg.of(null) ->Object.class
+    // InputToCheckerArg.of(null,String.class) ->String.class
+    // InputToCheckerArg.of(new People(),String.class) ->People.class
+    // use in reflect of null value
     Class<?> clazzInContext;
-    //If this object is a field of the parent object's class, store the field information here.
+
     final Field fieldInClass;
-    // If this object is a field of the parent object's class, store the ann information here.
-    List<Annotation> annotations = Collections.emptyList();
+    List<Annotation> annListOnField = Collections.emptyList();
 
     ITCArgNullType nullType = ITCArgNullType.null_value;
 
 
-    private InputToCheckerArg(INPUT_ARG arg, Class<?> clazzInContext, String fullFieldName) {
-        this(arg, fullFieldName, null, Collections.emptyList());
+    private InputToCheckerArg(INPUT_ARG arg, Class<?> clazzInContext, String fieldPath) {
+        this(arg, fieldPath, null, Collections.emptyList());
         this.arg = arg;
         if (clazzInContext == null) {
             clazzInContext = Object.class;
@@ -36,7 +40,7 @@ public class InputToCheckerArg<INPUT_ARG> {
         this.clazzInContext = clazzInContext;
     }
 
-    private InputToCheckerArg(INPUT_ARG arg, String fullFieldName, Field fieldInClass, List<Annotation> annotations) {
+    private InputToCheckerArg(INPUT_ARG arg, String fieldPath, Field fieldInClass, List<Annotation> annListOnField) {
         this.arg = arg;
         this.fieldInClass = fieldInClass;
         if (this.fieldInClass != null) {
@@ -44,12 +48,12 @@ public class InputToCheckerArg<INPUT_ARG> {
         } else {
             this.clazzInContext = Object.class;
         }
-        this.fullFieldName = fullFieldName;
-        if (this.fullFieldName == null) {
-            this.fullFieldName = "";
+        this.fieldPath = fieldPath;
+        if (this.fieldPath == null) {
+            this.fieldPath = "";
         }
-        if (annotations != null) {
-            this.annotations = annotations;
+        if (annListOnField != null) {
+            this.annListOnField = annListOnField;
         }
     }
 
@@ -90,19 +94,19 @@ public class InputToCheckerArg<INPUT_ARG> {
         return fieldInClass;
     }
 
-    public String fieldStr() {
-        if (fullFieldName == null) return "";
-        return fullFieldName;
+    public String fieldPath() {
+        if (fieldPath == null) return "";
+        return fieldPath;
     }
 
 
     public <E extends Annotation> E annOnField(Class<E> clazz) {
-        Optional<Annotation> first = annotations.stream().filter(i -> i.annotationType().equals(clazz)).findFirst();
+        Optional<Annotation> first = annListOnField.stream().filter(i -> i.annotationType().equals(clazz)).findFirst();
         return (E) (first.orElse(null));
     }
 
     public List<Annotation> annListOnField() {
-        return annotations;
+        return annListOnField;
     }
 
 
@@ -125,10 +129,10 @@ public class InputToCheckerArg<INPUT_ARG> {
     @Override
     public String toString() {
         String annStr = "";
-        if (!CollectionUtils.isEmpty(annotations)) {
-            annStr = ", ann=" + annotations;
+        if (!CollectionUtils.isEmpty(annListOnField)) {
+            annStr = ", ann=" + annListOnField;
         }
-        return "ITCArg{" + "field='" + fullFieldName + '\'' + ", arg=" + arg + annStr + '}';
+        return "ITCArg{" + "field='" + fieldPath + '\'' + ", arg=" + arg + annStr + '}';
     }
 
 
@@ -137,7 +141,7 @@ public class InputToCheckerArg<INPUT_ARG> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InputToCheckerArg<?> that = (InputToCheckerArg<?>) o;
-        return Objects.equals(arg, that.arg) && Objects.equals(fullFieldName, that.fullFieldName);
+        return Objects.equals(arg, that.arg) && Objects.equals(fieldPath, that.fieldPath);
     }
 
     public boolean argEquals(Object o) {
@@ -147,11 +151,11 @@ public class InputToCheckerArg<INPUT_ARG> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(arg, fullFieldName);
+        return Objects.hash(arg, fieldPath);
     }
 
-    public void setFullFieldName(String fullFieldName) {
-        this.fullFieldName = fullFieldName;
+    public void setFieldPath(String fieldPath) {
+        this.fieldPath = fieldPath;
     }
 
 }

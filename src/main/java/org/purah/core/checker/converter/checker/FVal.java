@@ -10,7 +10,17 @@ import java.lang.annotation.*;
 @Target({ElementType.PARAMETER})
 @Documented
 public @interface FVal {
-    //Fill in specified field values or annotations.
+    /*
+       class People{
+       @IdAnn("1")
+       Long id=1;
+       }
+       @FVal("id")  Long id,//id=1
+       @FVal("id")  IdAnn idAnn,//idAnn=  @IdAnn("1")
+     */
+
+
+
     String value();
 
     //root field

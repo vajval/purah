@@ -24,7 +24,7 @@ public class ByCheckerMethodCheckerFactory extends AbstractByMethodCheckerFactor
 
 
     public static String errorMsgCheckerFactoryByCheckerMethod(Object bean, Method method) {
-        Class returnType = method.getReturnType();
+        Class<?> returnType = method.getReturnType();
 
         if (!Checker.class.isAssignableFrom(returnType)) {
             return "The return type can only be Checker, okay? That's how it is~";
@@ -39,9 +39,9 @@ public class ByCheckerMethodCheckerFactory extends AbstractByMethodCheckerFactor
 
 
     @Override
-    public Checker createChecker(String needMatchCheckerName) {
+    public Checker<?,?> createChecker(String needMatchCheckerName) {
         try {
-            Checker result = (Checker) method.invoke(bean, needMatchCheckerName);
+            Checker<?,?> result = (Checker) method.invoke(bean, needMatchCheckerName);
             String name = needMatchCheckerName;
             if (StringUtils.hasText(result.name())) {
                 name = result.name();

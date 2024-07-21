@@ -3,6 +3,8 @@ package org.purah.core.checker.converter.factory;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.combinatorial.CombinatorialChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
+import org.purah.core.exception.init.InitCheckFactoryException;
+import org.purah.core.exception.init.InitCheckerException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,7 +18,7 @@ public class ByPropertiesMethodCheckerFactory extends AbstractByMethodCheckerFac
 
         String errorMsg = errorMsgCheckerFactoryByPropertiesMethod(bean, method);
         if (errorMsg != null) {
-            throw new RuntimeException(errorMsg);
+            throw new InitCheckFactoryException(errorMsg);
         }
     }
 
@@ -24,20 +26,20 @@ public class ByPropertiesMethodCheckerFactory extends AbstractByMethodCheckerFac
         Class<?> returnType = method.getReturnType();
         Parameter[] parameters = method.getParameters();
         if (parameters.length != 1) {
-            return "只支持1个入参，参数为需要匹配的名字";
+            return "Only support 1 input parameter, which is the name to be matched.";
         }
         if (!parameters[0].getParameterizedType().equals(String.class)) {
-            return "第一个参数只能String类型 是需要匹配的名字 ";
+            return "The first parameter must be of type String and represents the name to be matched.";
         }
         if (!CombinatorialCheckerConfig.class.isAssignableFrom(returnType)) {
-            return "返回值只能为 CombinatorialCheckerConfig";
+            return "The return value must be of type `CombinatorialCheckerConfig`.";
         }
         return null;
 
     }
 
     @Override
-    public Checker createChecker(String needMatchCheckerName) {
+    public Checker<?,?> createChecker(String needMatchCheckerName) {
         CombinatorialCheckerConfig config;
         try {
             config = (CombinatorialCheckerConfig) method.invoke(bean, needMatchCheckerName);

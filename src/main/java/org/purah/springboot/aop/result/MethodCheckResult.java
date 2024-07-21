@@ -25,7 +25,7 @@ public class MethodCheckResult extends MultiCheckResult<ArgCheckResult> {
     }
 
     public List<LogicCheckResult<?>> logicResultList() {
-        return logicResultList(ResultLevel.failedAndIgnoreNotBaseLogic);
+        return logicResultList(ResultLevel.only_failed_only_base_logic);
     }
 
     public LogicCheckResult<?> main() {

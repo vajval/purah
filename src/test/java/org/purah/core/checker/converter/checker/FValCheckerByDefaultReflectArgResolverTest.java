@@ -19,13 +19,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FValCheckerByDefaultReflectArgResolverTest {
-//    child#0, child#0.child, name, child#0.child#0.child
 
     public static boolean childNameCheck(@FVal("$root$") InputToCheckerArg<People> peopleArg,
                                          @FVal("name") String name,
                                          @FVal("name") TestAnn testAnnOnNameField,
                                          @FVal("name") Name noExistAnn,
-//                                         @FVal("child#*.child#*") Map<String, People> childChildMap,
                                          @FVal("child") List<People> childList,
                                          @FVal("child#0") People child0,
                                          @FVal("child#100") People child100,

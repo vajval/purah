@@ -3,6 +3,28 @@ package org.purah.core.checker.result;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+{  //MultiCheckResult
+  "main": "success",
+  "valueList": [
+    {   //MultiCheckResult
+      "main": "success: 'id|name':'check1,check2'",
+      "valueList": [
+        {  //MultiCheckResult
+          "main": "success: 'id':''check1,check2'",
+          "valueList": [{"logic": "success:'id':check1"},{"logic": "success:'id':check2"}]//LogicCheckResult
+        },
+        {
+          "main": "success: 'name':''check1,check2'",
+          "valueList": [{"logic": "success:'name':check1"}, {"logic": "success:'name':check2"}]
+        }
+      ]
+    }
+  ]
+}
+ */
+
+
 public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<List<T>> {
 
     protected final LogicCheckResult<?> mainResult;
@@ -17,29 +39,24 @@ public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<L
     public List<LogicCheckResult<?>> resultChildList(ResultLevel resultLevel) {
 
         List<LogicCheckResult<?>> resultList = new ArrayList<>();
-        List<LogicCheckResult<?>> multiCheckResultList = new ArrayList<>();
-        allBaseLogicCheckResultByRecursion(this, resultLevel, resultList, multiCheckResultList);
+        allBaseLogicCheckResultByRecursion(this, resultLevel, resultList);
         return resultList;
     }
 
-    protected static void allBaseLogicCheckResultByRecursion(MultiCheckResult<?> multiCheckResult, ResultLevel resultLevel, List<LogicCheckResult<?>> logicCheckResultList, List<LogicCheckResult<?>> multiCheckResultList) {
+    protected static void allBaseLogicCheckResultByRecursion(MultiCheckResult<?> multiCheckResult, ResultLevel resultLevel, List<LogicCheckResult<?>> logicCheckResultList) {
 
         if (resultLevel.allowAddToFinalResult(multiCheckResult)) {
-            if (resultLevel == ResultLevel.all) {
-                multiCheckResultList.add(multiCheckResult.mainResult);
-            }
-            if (resultLevel == ResultLevel.failedNotBaseLogic) {
-                multiCheckResultList.add(multiCheckResult.mainResult);
-            }
+            logicCheckResultList.add(multiCheckResult.mainResult);
         }
         if (multiCheckResult.valueList == null) return;
 
         for (Object o : multiCheckResult.valueList) {
             if (o instanceof MultiCheckResult) {
                 MultiCheckResult<?> childResult = (MultiCheckResult) o;
-                allBaseLogicCheckResultByRecursion(childResult, resultLevel, logicCheckResultList, multiCheckResultList);
+                allBaseLogicCheckResultByRecursion(childResult, resultLevel, logicCheckResultList);
             } else if (o instanceof LogicCheckResult) {
                 LogicCheckResult<?> logicCheckResult = (LogicCheckResult) o;
+
                 boolean allowAdd = resultLevel.allowAddToFinalResult(logicCheckResult);
                 if (allowAdd) {
                     logicCheckResultList.add(logicCheckResult);

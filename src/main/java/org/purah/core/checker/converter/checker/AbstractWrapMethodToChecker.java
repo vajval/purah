@@ -9,6 +9,7 @@ import org.purah.core.checker.result.CheckResult;
 import java.lang.reflect.Method;
 
 /**
+ * 函数转checker
  * wrap the method into a checker.
  */
 public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCacheChecker<Object, Object> {
@@ -27,7 +28,6 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
         }
         this.name = name;
         this.method = method;
-        //  purahEnableMethod build by subclasses
     }
 
 

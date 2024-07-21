@@ -9,7 +9,8 @@ import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.LogicCheckResult;
 
 /**
- * @param <INPUT_ARG>
+ * checker的基础类,实现了缓存功能,需要缓存的话需要 enableCache()返回true,name()要唯一
+ * Base class for checker, implements caching functionality. To enable caching, enableCache() should return true, and name() must be unique
  */
 
 public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> implements Checker<INPUT_ARG, RESULT> {
@@ -95,7 +96,7 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
         return resultDataClass;
     }
 
-    public void setLogicFrom(CheckResult checkResult) {
+    public void setLogicFrom(CheckResult<?> checkResult) {
         checkResult.setCheckLogicFrom(logicFrom());
     }
 

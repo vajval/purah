@@ -6,13 +6,16 @@ import org.purah.core.exception.UnexpectedException;
 public class ExecMode {
     public enum Main {
 
-
+        // 全成功才行,有错不继续
         // Require all checkers to pass for success; if a  failed is found, stop further checks, Fill with "ignore" for fields that are not checked.
         all_success(0),
+        // 全成功才行,有错也要检查完
         // Require all checkers to pass for success and continue checking even if failed are found.
         all_success_but_must_check_all(1),
+        // 一个就行,有错不继续
         // Only one success is sufficient.
         at_least_one(2),
+        // 一个就行,有错也要检查完
         // Only one success is sufficient, but all checks must be completed.
         at_least_one_but_must_check_all(3);
         final int value;
@@ -44,6 +47,8 @@ public class ExecMode {
 
 
     /**
+     * 用一个 checker 检查所有 field value,然后下一个 checker
+     * 一个field value被所有checker检查 ,然后下一个 field value
      * Fine, here are two ways to check things:
      * Go through each arg and apply every single check, then move on to the next arg.
      * Apply one check to all the args, then move on to the next check.

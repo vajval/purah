@@ -1,6 +1,5 @@
 package org.purah.core;
 
-import com.google.common.collect.Sets;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.nested.GeneralFieldMatcher;
@@ -16,7 +15,7 @@ public class PurahContextConfig {
 
     boolean cache;
 
-    ResultLevel defaultResultLevel = ResultLevel.failedAndIgnoreNotBaseLogic;
+    ResultLevel defaultResultLevel = ResultLevel.only_failed_only_base_logic;
 
 
     Set<Class<? extends FieldMatcher>> singleStringConstructorFieldMatcherClassSet = new HashSet<>();

@@ -11,7 +11,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
-import org.purah.core.exception.MethodArgCheckException;
+import org.purah.springboot.aop.exception.MethodArgCheckException;
 import org.purah.springboot.aop.ann.MethodCheck;
 import org.purah.springboot.aop.result.MethodCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;

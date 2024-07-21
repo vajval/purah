@@ -5,7 +5,7 @@ import org.purah.core.checker.InputToCheckerArg;
 import java.util.Objects;
 
 /**
- * cache key
+ * 缓存
  */
 public class InputToCheckerArgCacheKey {
     final InputToCheckerArg<?> inputToCheckerArg;
@@ -22,7 +22,7 @@ public class InputToCheckerArgCacheKey {
         if (inputToCheckerArg == null) {
             return "[#NULL#][" + checkerName + "]";
         }
-        return "[" + inputToCheckerArg.fieldStr() + "][" + inputToCheckerArg.argValue() + "][" + checkerName + "]";
+        return "[" + inputToCheckerArg.fieldPath() + "][" + inputToCheckerArg.argValue() + "][" + checkerName + "]";
 
 
     }

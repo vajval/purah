@@ -107,40 +107,40 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
         Object[] objects = new Object[length];
         Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.getMatchFieldObjectMap(inputToCheckerArg, fieldMatcher);
 
-        for (int i = 0; i < method.getParameters().length; i++) {
-            FieldParameter fieldParameter = fieldParameterMap.get(i);
+        for (int index = 0; index < method.getParameters().length; index++) {
+            FieldParameter fieldParameter = fieldParameterMap.get(index);
             if (fieldParameter == null) {
-                objects[i] = null;
+                objects[index] = null;
             } else {
                 String value = fieldParameter.FVal.value();
                 if (value.toLowerCase(Locale.ROOT).equals(FVal.root)) {
-                    objects[i] = inputToCheckerArg;
+                    objects[index] = inputToCheckerArg;
                     continue;
                 }
                 if (fieldParameter.generalFieldMatcher == null) {
                     InputToCheckerArg<?> childArg = matchFieldObjectMap.get(fieldParameter.FVal.value());
                     if (childArg == null || childArg.isNull()) {
-                        objects[i] = null;
+                        objects[index] = null;
                         continue;
                     }
                     if (fieldParameter.clazz.isAnnotation()) {
-                        objects[i] = childArg.annOnField((Class) fieldParameter.clazz);
+                        objects[index] = childArg.annOnField((Class) fieldParameter.clazz);
                         continue;
                     }
                     if (!fieldParameter.clazz.isAssignableFrom(childArg.argClass())) {
-                        throw new RuntimeException("无法支持" + "获取到的参数class为" + childArg.argClass() + "函数" + method.toGenericString() + "index:" + i + "    只支持" + fieldParameter.clazz);
+                        throw new InitCheckerException("method cannot support arg[" + index + "] class: " + childArg.argClass() + " param class: " + fieldParameter.clazz.getName() + "method:  " + method.toGenericString());
                     }
-                    objects[i] = childArg.argValue();
+                    objects[index] = childArg.argValue();
                 } else if (fieldParameter.clazz.equals(Map.class)) {
                     Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(inputToCheckerArg, fieldParameter.generalFieldMatcher);
                     Map<String, Object> objectMap = Maps.newHashMapWithExpectedSize(map.size());
                     map.forEach((a, b) -> objectMap.put(a, b.argValue()));
-                    objects[i] = objectMap;
+                    objects[index] = objectMap;
                 } else if (fieldParameter.clazz.equals(Set.class)) {
                     Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(inputToCheckerArg, fieldParameter.generalFieldMatcher);
                     Set<Object> set = Sets.newHashSetWithExpectedSize(map.size());
                     map.values().forEach(w -> set.add(w.argValue()));
-                    objects[i] = set;
+                    objects[index] = set;
                 }
 
 

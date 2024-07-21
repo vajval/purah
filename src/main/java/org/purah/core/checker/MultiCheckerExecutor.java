@@ -36,7 +36,7 @@ public class MultiCheckerExecutor {
 
     public void add(Supplier<CheckResult<?>> supplier) {
         if (exec) {
-            throw new RuntimeException("已经执行完了，不能在添加了");
+            throw new RuntimeException("can only execute once");
         }
         ruleResultSupplierList.add(supplier);
 
@@ -45,7 +45,7 @@ public class MultiCheckerExecutor {
 
     public void add(InputToCheckerArg<?> inputToCheckerArg, Checker<?, ?> checker) {
         if (exec) {
-            throw new RuntimeException("已经执行完了，不能在添加了");
+            throw new RuntimeException("can only execute once");
         }
         Supplier<CheckResult<?>> supplier = () -> ((Checker) checker).check(inputToCheckerArg);
 
@@ -56,14 +56,14 @@ public class MultiCheckerExecutor {
     private void execIfNotExec(List<Supplier<CheckResult<?>>> ruleResultSupplierList) {
         if (exec) return;
         exec = true;
-        ExecInfo result = ExecInfo.success;
+//        ExecInfo result = ExecInfo.success;
 
 
         for (Supplier<? extends CheckResult<?>> supplier : ruleResultSupplierList) {
             CheckResult<?> checkResult = supplier.get();
 
 
-            if (resultLevel.allowAddToFinalResult(checkResult)) {
+            if (resultLevel.needBeCollected(checkResult)) {
                 this.finalExecResult.add(checkResult);
             }
             if (checkResult.isIgnore()) {
@@ -85,7 +85,7 @@ public class MultiCheckerExecutor {
                 } else if (mainExecType == ExecMode.Main.all_success_but_must_check_all) {
                     // 有错误 而要求必须要全部成功，但是必须检查完
                     execInfo = ExecInfo.failed;
-                    result = execInfo;
+//                    result = execInfo;
                 }
             } else {
                 if (mainExecType == ExecMode.Main.at_least_one) {
@@ -95,7 +95,7 @@ public class MultiCheckerExecutor {
                 } else if (mainExecType == ExecMode.Main.at_least_one_but_must_check_all) {
                     // 没有错误  但是必须检查完
                     execInfo = ExecInfo.success;
-                    result = execInfo;
+//                    result = execInfo;
                 }
             }
         }

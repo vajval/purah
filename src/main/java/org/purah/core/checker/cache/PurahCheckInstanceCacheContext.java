@@ -8,6 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
+ *
+ * ThreadLocal 缓存
  * implement caching functionality using ThreadLocal
  */
 

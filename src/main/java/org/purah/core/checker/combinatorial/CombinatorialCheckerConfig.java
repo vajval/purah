@@ -18,13 +18,13 @@ public class CombinatorialCheckerConfig {
 
     ExecMode.Main mainExecType = ExecMode.Main.all_success;
 
-    public String name;
+     String name;
 
-    public String logicFrom;
+     String logicFrom;
 
-    public ResultLevel resultLevel=ResultLevel.failedAndIgnoreNotBaseLogic;
+     ResultLevel resultLevel=ResultLevel.only_failed_only_base_logic;
 
-    public List<String> extendCheckerNames = new ArrayList<>();
+     List<String> forRootInputArgCheckerNames = new ArrayList<>();
 
     public final List<FieldMatcherCheckerConfig> fieldMatcherCheckerConfigList = new ArrayList<>();
 
@@ -46,8 +46,8 @@ public class CombinatorialCheckerConfig {
         this.mainExecType = mainExecType;
     }
 
-    public void setExtendCheckerNames(List<String> extendCheckerNames) {
-        this.extendCheckerNames = extendCheckerNames;
+    public void setForRootInputArgCheckerNames(List<String> forRootInputArgCheckerNames) {
+        this.forRootInputArgCheckerNames = forRootInputArgCheckerNames;
 
     }
 
@@ -73,6 +73,10 @@ public class CombinatorialCheckerConfig {
         this.resultLevel = resultLevel;
     }
 
+    public List<String> getForRootInputArgCheckerNames() {
+        return forRootInputArgCheckerNames;
+    }
+
     @Override
     public String toString() {
         return "CombinatorialCheckerConfig{" +
@@ -81,7 +85,7 @@ public class CombinatorialCheckerConfig {
                 ", name='" + name + '\'' +
                 ", logicFrom='" + logicFrom + '\'' +
                 ", resultLevel=" + resultLevel +
-                ", extendCheckerNames=" + extendCheckerNames +
+                ", extendCheckerNames=" + forRootInputArgCheckerNames +
                 ", fieldMatcherCheckerConfigList=" + fieldMatcherCheckerConfigList +
                 '}';
     }

@@ -10,7 +10,7 @@
 //import org.purah.core.checker.result.CheckResult;
 //import org.purah.core.checker.result.LogicCheckResult;
 //import org.purah.core.checker.result.ResultLevel;
-//import org.purah.core.exception.MethodArgCheckException;
+//import org.purah.springboot.aop.exception.MethodArgCheckException;
 //import org.purah.ExampleApplication;
 //import org.purah.core.matcher.nested.GeneralFieldMatcher;
 //import org.purah.core.resolver.ReflectArgResolver;

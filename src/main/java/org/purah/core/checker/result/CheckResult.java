@@ -2,6 +2,7 @@ package org.purah.core.checker.result;
 
 import java.util.function.BooleanSupplier;
 
+
 public interface CheckResult<T> extends BooleanSupplier {
 
 
@@ -15,6 +16,8 @@ public interface CheckResult<T> extends BooleanSupplier {
     default boolean getAsBoolean() {
         return isSuccess();
     }
+
+    //todo isFromCache
 
 //    default boolean isFromCache() {
 //        return false;

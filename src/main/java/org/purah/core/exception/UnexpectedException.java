@@ -5,6 +5,10 @@ public class UnexpectedException  extends PurahException{
         super(message);
     }
 
+    public UnexpectedException(Throwable cause) {
+        super(cause);
+    }
+
     public UnexpectedException() {
         super("un expected");
     }

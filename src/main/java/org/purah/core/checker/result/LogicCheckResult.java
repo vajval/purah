@@ -11,7 +11,6 @@ public class LogicCheckResult<T> implements CheckResult<T> {
     static final String DEFAULT_FAILED_INFO = "FAILED";
     static final String DEFAULT_ERROR_INFO = "ERROR";
 
-
     protected final ExecInfo execInfo;
 
     protected Exception e;
@@ -25,6 +24,7 @@ public class LogicCheckResult<T> implements CheckResult<T> {
         this.execInfo = execInfo;
         this.data = data;
         this.log = log;
+        this.info = execInfo.value();
     }
 
     protected String checkLogicFrom;
@@ -69,6 +69,7 @@ public class LogicCheckResult<T> implements CheckResult<T> {
     public static <T> LogicCheckResult<T> success(T data) {
         return new LogicCheckResult<>(ExecInfo.success, data, null);
     }
+
     public static <T> LogicCheckResult<T> success() {
         return new LogicCheckResult<>(ExecInfo.success, null, null);
     }
@@ -110,7 +111,7 @@ public class LogicCheckResult<T> implements CheckResult<T> {
 
         String clazzStr = inputToCheckerArg.argClass().getName();
 
-        return pre + " (field [" + inputToCheckerArg.fieldStr() + "] type [" + clazzStr + "]" + ")";
+        return pre + " (field [" + inputToCheckerArg.fieldPath() + "] type [" + clazzStr + "]" + ")";
     }
 
 

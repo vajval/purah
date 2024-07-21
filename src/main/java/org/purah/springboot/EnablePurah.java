@@ -15,6 +15,6 @@ public @interface EnablePurah {
 
     boolean enableCache() default true;
 
-    ResultLevel defaultResultLevel() default ResultLevel.failedAndIgnoreNotBaseLogic;
+    ResultLevel defaultResultLevel() default ResultLevel.only_failed_only_base_logic;
 
 }

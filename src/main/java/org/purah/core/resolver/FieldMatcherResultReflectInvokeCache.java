@@ -42,13 +42,13 @@ public class FieldMatcherResultReflectInvokeCache {
             String fullFieldPath = entry.getKey();
             if (childArg.isNull()) {
                 if (childArg.nullType() == ITCArgNullType.no_field_no_getter) {
-                    inputArgToResultNullInovkeMap.put(fullFieldPath, i -> InputToCheckerArg.createNullChildWithFieldConfig(childArg.fieldStr(), childArg.field(), childArg.annListOnField(), ITCArgNullType.no_field_no_getter));
+                    inputArgToResultNullInovkeMap.put(fullFieldPath, i -> InputToCheckerArg.createNullChildWithFieldConfig(childArg.fieldPath(), childArg.field(), childArg.annListOnField(), ITCArgNullType.no_field_no_getter));
                     continue;
                 }
                 if (childArg.nullType() == ITCArgNullType.have_field_no_getter) {
                     inputArgToResultNullInovkeMap.put(fullFieldPath, i -> {
                         logger.warn("set null value because not getter function for class {}, field: {}", inputArgClass, childArg.field().getName());
-                        return InputToCheckerArg.createNullChildWithFieldConfig(childArg.fieldStr(), childArg.field(), childArg.annListOnField(), ITCArgNullType.have_field_no_getter);
+                        return InputToCheckerArg.createNullChildWithFieldConfig(childArg.fieldPath(), childArg.field(), childArg.annListOnField(), ITCArgNullType.have_field_no_getter);
                     });
                     continue;
                 }
@@ -97,7 +97,7 @@ public class FieldMatcherResultReflectInvokeCache {
             if (firstPath.equals(path)) {
                 ReflectTrieCache node = reflectNodeMap.computeIfAbsent(path, i -> new ReflectTrieCache(path));
                 node.fullPath = fullPath;
-                node.cacheFieldStr = arg.fieldStr();
+                node.cacheFieldStr = arg.fieldPath();
                 node.cacheAnnotationList = arg.annListOnField();
                 node.cacheField = arg.field();
 

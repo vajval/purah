@@ -5,6 +5,10 @@ import org.purah.core.checker.result.LogicCheckResult;
 
 import java.util.function.Predicate;
 
+
+/**
+ *  public static Checker<Long, Object> longChecker = LambdaChecker.of(Long.class).build("id1", i -> i == 1L);
+ */
 public class LambdaChecker<INPUT_ARG> implements Checker<INPUT_ARG, Object> {
 
     final String name;

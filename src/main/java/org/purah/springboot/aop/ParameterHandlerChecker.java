@@ -61,7 +61,7 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
         MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.mainMode(), checkIt.resultLevel());
 
 
-        List<? extends GenericsProxyChecker> checkerList = checkerNameList.stream().map(i -> purahContext.checkManager().of(i)).collect(Collectors.toList());
+        List<GenericsProxyChecker> checkerList = checkerNameList.stream().map(i -> purahContext.checkManager().of(i)).collect(Collectors.toList());
 
         for (Checker<?, ?> checker : checkerList) {
             executor.add(checkArg, checker);

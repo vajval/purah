@@ -7,6 +7,7 @@ import org.purah.core.matcher.singlelevel.WildCardMatcher;
 import java.lang.reflect.Method;
 
 /**
+ * method转CheckerFactory
  * wrap the method into a checker factory.
  */
 public abstract class AbstractByMethodCheckerFactory implements CheckerFactory {

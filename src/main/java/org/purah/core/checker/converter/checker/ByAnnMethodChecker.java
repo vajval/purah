@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 
 
 /*
+ * 函数转checker
  * Convert a method like this
  * See unit test
  *
@@ -43,6 +44,9 @@ public class ByAnnMethodChecker extends AbstractWrapMethodToChecker {
 
     }
 
+    public Class<? extends Annotation> annClazz() {
+        return annClazz;
+    }
 
     @Override
     public CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {

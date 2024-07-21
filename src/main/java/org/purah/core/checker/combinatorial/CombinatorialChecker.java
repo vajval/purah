@@ -18,9 +18,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /*
- * 配置的多个规则像结合形成的规则
  * purah:
- *  combo_checker:
+ *  test_combo_checker:
  *    - name: user_reg
  *      mapping:
  *         wild_card:
@@ -39,10 +38,11 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
 
 
     /**
-     * checkers for inputArg
+     * 对入参的检查
      */
     protected List<Checker<?, ?>> rootInputArgCheckers;
     /**
+     * 对匹配字段的检查
      * checkers for inputArg matched fields
      */
     public List<FieldMatcherCheckerConfig> fieldMatcherCheckerConfigList = new ArrayList<>();
@@ -66,13 +66,47 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
     public void init() {
         if (this.init) return;
         CheckerManager checkerManager = config.purahContext.checkManager();
-        this.rootInputArgCheckers = this.config.extendCheckerNames.stream().map(checkerManager::of).collect(Collectors.toList());
+        this.rootInputArgCheckers = this.config.forRootInputArgCheckerNames.stream().map(checkerManager::of).collect(Collectors.toList());
         this.fieldMatcherCheckerConfigList = config.fieldMatcherCheckerConfigList;
         for (FieldMatcherCheckerConfig fieldMatcherCheckerConfig : this.fieldMatcherCheckerConfigList) {
             fieldMatcherCheckerConfig.buildCheckers(checkerManager);
         }
         this.init = true;
     }
+
+
+    @Override
+    public MultiCheckResult<CheckResult<?>> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
+        if (!init) {
+            init();
+        }
+
+        MultiCheckerExecutor executor = new MultiCheckerExecutor(this.config.mainExecType, this.config.resultLevel);
+
+
+        /*
+           check inputArg
+         */
+        for (Checker<?, ?> checker : rootInputArgCheckers) {
+            executor.add(inputToCheckerArg, checker);
+        }
+        /*
+         * check  inputArg matched field values
+         */
+
+        for (FieldMatcherCheckerConfig fieldMatcherCheckerConfig : fieldMatcherCheckerConfigList) {
+            FieldMatcherCheckerConfigExecutor fieldMatcherCheckerConfigExecutor = new FieldMatcherCheckerConfigExecutor(fieldMatcherCheckerConfig);
+            fieldMatcherCheckerConfigExecutor.addToMultiCheckerExecutor(executor, inputToCheckerArg);
+
+
+        }
+        String log = "[" + inputToCheckerArg.fieldPath() + "]: " + this.name();
+        MultiCheckResult<CheckResult<?>> multiCheckResult = executor.toMultiCheckResult(log);
+        multiCheckResult.setCheckLogicFrom(this.logicFrom());
+        return multiCheckResult;
+
+    }
+
 
     @Override
     public MultiCheckResult<CheckResult<?>> check(InputToCheckerArg<Object> inputToCheckerArg) {
@@ -83,48 +117,6 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
     public MultiCheckResult<CheckResult<?>> check(Object o) {
         return (MultiCheckResult) super.check(o);
     }
-
-    @Override
-    public MultiCheckResult<CheckResult<?>> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
-        if (!init) {
-            init();
-        }
-
-        MultiCheckerExecutor executor = createMultiCheckerExecutor();
-
-
-        /*
-           check inputArg
-         */
-        for (Checker<?, ?> checker : rootInputArgCheckers) {
-            executor.add(inputToCheckerArg, checker);
-        }
-        /*
-         * check  inputArg matched fields
-         */
-
-        for (FieldMatcherCheckerConfig fieldMatcherCheckerConfig : fieldMatcherCheckerConfigList) {
-            FieldMatcherCheckerConfigExecutor fieldMatcherCheckerConfigExecutor = new FieldMatcherCheckerConfigExecutor(fieldMatcherCheckerConfig);
-            fieldMatcherCheckerConfigExecutor.addToMultiCheckerExecutor(executor, inputToCheckerArg);
-
-
-        }
-        String log = "[" + inputToCheckerArg.fieldStr() + "]: " + this.name();
-        MultiCheckResult<CheckResult<?>> multiCheckResult = executor.toMultiCheckResult(log);
-        multiCheckResult.setCheckLogicFrom(this.logicFrom());
-        return multiCheckResult;
-
-    }
-
-
-    public ArgResolver getArgResolverManager() {
-        return config.purahContext.argResolver();
-    }
-
-    private MultiCheckerExecutor createMultiCheckerExecutor() {
-        return new MultiCheckerExecutor(this.config.mainExecType, this.config.resultLevel);
-    }
-
 
     class FieldMatcherCheckerConfigExecutor {
         final FieldMatcherCheckerConfig fieldMatcherCheckerConfig;
@@ -137,7 +129,7 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
         }
 
         protected List<Supplier<CheckResult<?>>> checkResultSupplierList(InputToCheckerArg<Object> inputToCheckerArg) {
-            ArgResolver argResolver = getArgResolverManager();
+            ArgResolver argResolver = config.purahContext.argResolver();
             Map<String, InputToCheckerArg<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(inputToCheckerArg, fieldMatcherCheckerConfig.fieldMatcher);
             ExecMode.Matcher execType = fieldMatcherCheckerConfig.execType;
             List<Supplier<CheckResult<?>>> result = new ArrayList<>(checkerList.size() * matchFieldObjectMap.size());
@@ -171,13 +163,13 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
         }
 
         public MultiCheckResult<CheckResult<?>> check(InputToCheckerArg<Object> inputToCheckerArg) {
-            MultiCheckerExecutor multiCheckerExecutor = CombinatorialChecker.this.createMultiCheckerExecutor();
+            MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(CombinatorialChecker.this.config.mainExecType, CombinatorialChecker.this.config.resultLevel);
             addToMultiCheckerExecutor(multiCheckerExecutor, inputToCheckerArg);
 
             String checkerNamesStr = fieldMatcherCheckerConfig.getCheckers().stream().map(IName::name).collect(Collectors.joining(","));
             FieldMatcher fieldMatcher = fieldMatcherCheckerConfig.fieldMatcher;
 
-            String log = inputToCheckerArg.fieldStr() + " match:(" + fieldMatcher + ") checkers: " + checkerNamesStr;
+            String log = inputToCheckerArg.fieldPath() + " match:(" + fieldMatcher + ") checkers: " + checkerNamesStr;
             MultiCheckResult<CheckResult<?>> multiCheckResult = multiCheckerExecutor.toMultiCheckResult(log);
             multiCheckResult.setCheckLogicFrom("combinatorial by config,see log");
             return multiCheckResult;

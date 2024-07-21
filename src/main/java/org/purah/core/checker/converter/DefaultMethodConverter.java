@@ -18,17 +18,31 @@ import java.lang.reflect.Method;
 public class DefaultMethodConverter implements MethodConverter {
     private static final Logger logger = LogManager.getLogger(DefaultMethodConverter.class);
 
+    protected Checker<?, ?> doToChecker(Object methodsToCheckersBean, Method method, String name) {
+        return null;
+    }
+
+    protected CheckerFactory doToCheckerFactory(Object bean, Method method, String match, boolean cacheBeCreatedChecker) {
+        return null;
+    }
+
+
     @Override
-    public Checker toChecker(Object methodsToCheckersBean, Method method, String name) {
+    public Checker<?, ?> toChecker(Object methodsToCheckersBean, Method method, String name) {
 
         String errorMsg = AbstractWrapMethodToChecker.errorMsgAbstractMethodToChecker(methodsToCheckersBean, method);
 
 
         if (errorMsg != null) {
             logger.warn("{},{}", errorMsg, method.toGenericString());
-
             return null;
         }
+
+        Checker<?, ?> checker = doToChecker(methodsToCheckersBean, method, name);
+        if (checker != null) {
+            return checker;
+        }
+
         errorMsg = ByLogicMethodChecker.errorMsgCheckerByLogicMethod(methodsToCheckersBean, method);
         if (errorMsg == null) {
             logger.info("{}  {}", method, ByLogicMethodChecker.class);
@@ -63,6 +77,10 @@ public class DefaultMethodConverter implements MethodConverter {
         if (errorMsg != null) {
             logger.warn("{},{}", errorMsg, method.toGenericString());
             return null;
+        }
+        CheckerFactory checkerFactory = doToCheckerFactory(bean, method, match, cacheBeCreatedChecker);
+        if (checkerFactory != null) {
+            return checkerFactory;
         }
 
         errorMsg = ByCheckerMethodCheckerFactory.errorMsgCheckerFactoryByCheckerMethod(bean, method);

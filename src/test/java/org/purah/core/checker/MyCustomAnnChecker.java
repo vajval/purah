@@ -1,14 +1,10 @@
-package org.purah.util.custom;
+package org.purah.core.checker;
 
 
 import org.purah.core.name.Name;
-import org.purah.core.checker.InputToCheckerArg;
-import org.purah.core.checker.Checker;
 import org.purah.core.checker.combinatorial.ExecMode;
-import org.purah.core.checker.converter.checker.ByAnnMethodChecker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.LogicCheckResult;
-import org.purah.core.checker.AbstractCustomAnnChecker;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.example.customAnn.ann.CNPhoneNum;
 import org.purah.example.customAnn.ann.NotEmptyTest;
@@ -17,23 +13,22 @@ import org.purah.example.customAnn.ann.Range;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.Method;
+import static org.purah.core.checker.MyCustomAnnChecker.NAME;
 
 
-@Name("custom_ann_check")
+@Name(NAME)
 @Component
-public class CustomAnnChecker extends AbstractCustomAnnChecker {
+public class MyCustomAnnChecker extends CustomAnnChecker {
 
+    public static final String NAME="custom_ann_check";
     public static int cnPhoneNumCount = 0;
 
-    public CustomAnnChecker() {
-        super(ExecMode.Main.all_success, ResultLevel.failedAndIgnoreNotBaseLogic);
+    public MyCustomAnnChecker() {
+        super(ExecMode.Main.all_success, ResultLevel.only_failed_only_base_logic);
     }
 
-    @Override
-    public Checker<?, ?> methodToChecker(Object methodsToCheckersBean, Method method, String name) {
-        return new ByAnnMethodChecker(methodsToCheckersBean, method, name);
-    }
+
+
 
     public boolean notNull(NotNull notNull, Integer age) {
         return age != null;
@@ -51,7 +46,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
             return LogicCheckResult.successBuildLog(str, "正确的");
         }
-        return LogicCheckResult.failed(str.argValue(), str.fieldStr() + ":" + cnPhoneNum.errorMsg());
+        return LogicCheckResult.failed(str.argValue(), str.fieldPath() + ":" + cnPhoneNum.errorMsg());
 
 
     }
@@ -64,7 +59,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
 
 
         }
-        return LogicCheckResult.failed(str.argValue(), str.fieldStr() + ":" + notEmptyTest.errorMsg());
+        return LogicCheckResult.failed(str.argValue(), str.fieldPath() + ":" + notEmptyTest.errorMsg());
 
 
     }
@@ -73,7 +68,7 @@ public class CustomAnnChecker extends AbstractCustomAnnChecker {
     public CheckResult<?> range(Range range, InputToCheckerArg<Number> num) {
         Number numValue = num.argValue();
         if (numValue.doubleValue() < range.min() || numValue.doubleValue() > range.max()) {
-            return LogicCheckResult.failed(num.argValue(), (num.fieldStr() + ":" + range.errorMsg()));
+            return LogicCheckResult.failed(num.argValue(), (num.fieldPath() + ":" + range.errorMsg()));
         }
         return LogicCheckResult.successBuildLog(num, "参数合规");
 

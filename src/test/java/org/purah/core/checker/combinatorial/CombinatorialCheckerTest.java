@@ -25,7 +25,6 @@ class CombinatorialCheckerTest {
     PurahContext purahContext;
     ComboBuilderChecker comboBuilderChecker;
 
-//    CombinatorialChecker combinatorialChecker;
 
     final User alice = new User(1L, "alice");
     final User bob = new User(2L, "bob");

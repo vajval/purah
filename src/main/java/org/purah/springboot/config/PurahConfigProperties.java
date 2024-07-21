@@ -45,7 +45,7 @@ public class PurahConfigProperties {
 
         protected String name;
 
-        protected int  resultLevel = ResultLevel.failedAndIgnoreNotBaseLogic.value();
+        protected int  resultLevel = ResultLevel.only_failed_only_base_logic.value();
 
         protected int execType = ExecMode.Main.all_success.value();
         protected String useCheckers = "";
@@ -66,7 +66,7 @@ public class PurahConfigProperties {
                 result.add(entry.getKey(), valueMap);
             }
             result.setResultLevel(ResultLevel.valueOf(resultLevel));
-            result.setMainExecType(ExecMode.Main.valueOf(execType));
+            result.setMainMode(ExecMode.Main.valueOf(execType));
             return result;
         }
 

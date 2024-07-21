@@ -3,12 +3,17 @@ package org.purah.core.checker;
 import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.UnexpectedException;
+import org.purah.core.exception.init.InitCheckerException;
 import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.*;
 import java.util.Objects;
 
 
+/*
+ * wrap method
+ * boolean|CheckResult<?>  testMethod(Object|InputToCheckerArg<?> inputArg);
+ */
 public class PurahWrapMethod {
 
     protected final Method method;
@@ -52,7 +57,7 @@ public class PurahWrapMethod {
 
         this.resultDataClazz = resultWrapperDataClazz(method);
         if (this.resultDataClazz == null) {
-            throw new RuntimeException();
+            throw new UnexpectedException("result class cannot be null");
         }
         this.methodResultBeWrapped = true;
     }
@@ -104,7 +109,7 @@ public class PurahWrapMethod {
             return method.invoke(bean, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new UnexpectedException(e);
         }
     }
 

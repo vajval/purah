@@ -17,23 +17,23 @@ import java.util.*;
  */
 public class CombinatorialCheckerConfigProperties {
     private final String checkerName;
-    private ResultLevel resultLevel = ResultLevel.failedAndIgnoreNotBaseLogic;
+    private ResultLevel resultLevel = ResultLevel.only_failed_only_base_logic;
     private String logicFrom;
 
-    private ExecMode.Main mainExecType = ExecMode.Main.all_success;
+    private ExecMode.Main mainMode = ExecMode.Main.all_success;
     private List<String> useCheckerNames = new ArrayList<>();
     private final LinkedHashMap<String, Map<String, List<String>>> matcherFieldCheckerMapping = new LinkedHashMap<>();
 
 
-    public CombinatorialCheckerConfig build(PurahContext purahContext) {
+    public CombinatorialCheckerConfig buildToConfig(PurahContext purahContext) {
 
         CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(purahContext);
 
         MatcherManager matcherManager = purahContext.matcherManager();
 
 
-        config.setMainExecType(this.getMainExecType());
-        config.setExtendCheckerNames(this.getUseCheckerNames());
+        config.setMainExecType(this.getMainMode());
+        config.setForRootInputArgCheckerNames(this.getUseCheckerNames());
         config.setName(this.getCheckerName());
         config.setResultLevel(this.getResultLevel());
         config.setLogicFrom(this.getLogicFrom());
@@ -60,7 +60,7 @@ public class CombinatorialCheckerConfigProperties {
             objectMap.put("useCheckerNames", useCheckerNames);
             objectMap.put("matcherFieldCheckerMapping", matcherFieldCheckerMapping);
             objectMap.put("resultLevel", resultLevel);
-            objectMap.put("mainExecType", mainExecType);
+            objectMap.put("mainExecType", mainMode);
             Gson gson = new Gson();
             String json = gson.toJson(objectMap);
             return "properties: " + json;
@@ -123,12 +123,12 @@ public class CombinatorialCheckerConfigProperties {
 
     }
 
-    public ExecMode.Main getMainExecType() {
-        return mainExecType;
+    public ExecMode.Main getMainMode() {
+        return mainMode;
     }
 
-    public void setMainExecType(ExecMode.Main mainExecType) {
-        this.mainExecType = mainExecType;
+    public void setMainMode(ExecMode.Main mainMode) {
+        this.mainMode = mainMode;
     }
 
     public String getCheckerName() {
@@ -144,7 +144,7 @@ public class CombinatorialCheckerConfigProperties {
     public String toString() {
         return "CombinatorialCheckerConfigProperties{" +
                 "checkerName='" + checkerName + '\'' +
-                ", mainExecType=" + mainExecType +
+                ", mainExecType=" + mainMode +
                 ", useCheckerNames=" + useCheckerNames +
                 ", matcherFieldCheckerMapping=" + matcherFieldCheckerMapping +
                 '}';

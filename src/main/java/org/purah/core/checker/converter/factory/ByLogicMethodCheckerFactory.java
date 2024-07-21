@@ -7,6 +7,8 @@ import org.purah.core.checker.Checker;
 import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.checker.result.CheckResult;
+import org.purah.core.exception.init.InitCheckFactoryException;
+import org.purah.core.exception.init.InitCheckerException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -20,7 +22,7 @@ public class ByLogicMethodCheckerFactory extends AbstractByMethodCheckerFactory 
         super(bean, method, matchStr, cacheBeCreatedChecker);
         String errorMsg = errorMsgCheckerFactoryByLogicMethod(bean, method);
         if (errorMsg != null) {
-            throw new RuntimeException(errorMsg);
+            throw new InitCheckFactoryException(errorMsg);
         }
         purahEnableMethod = new PurahWrapMethod(bean, method, 1);
 
@@ -30,11 +32,11 @@ public class ByLogicMethodCheckerFactory extends AbstractByMethodCheckerFactory 
         Class<?> returnType = method.getReturnType();
         Parameter[] parameters = method.getParameters();
         if (parameters.length != 2) {
-            return "只支持两个入参，第一个为参数名字第二个为 需要检查的参数";
+            return "The function supports only two parameters: the first one is the parameter name, and the second one is the parameter to be checked.";
         }
 
         if (!parameters[0].getParameterizedType().equals(String.class)) {
-            return "第一个入参必须是 string 类型，将被填充为checker名字";
+            return "The first parameter must be of type string and will be filled with the name 'checker'.";
         }
         if (CheckResult.class.isAssignableFrom(returnType)) {
             return null;
@@ -42,17 +44,17 @@ public class ByLogicMethodCheckerFactory extends AbstractByMethodCheckerFactory 
         if (boolean.class.isAssignableFrom(returnType)) {
             return null;
         }
-        return "返回值只能为 boolean或者CheckResult";
+        return "The return value can only be either a boolean or a `CheckResult`.";
     }
 
 
     @Override
-    public Checker createChecker(String needMatchCheckerName) {
+    public Checker<?,?> createChecker(String needMatchCheckerName) {
 
 
-        return new AbstractBaseSupportCacheChecker() {
+        return new AbstractBaseSupportCacheChecker<Object,Object>() {
             @Override
-            public CheckResult doCheck(InputToCheckerArg inputToCheckerArg) {
+            public CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
 
                 Object[] args = new Object[2];
                 args[0] = needMatchCheckerName;

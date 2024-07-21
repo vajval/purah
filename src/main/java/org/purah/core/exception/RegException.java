@@ -5,4 +5,5 @@ public class RegException extends PurahException {
 
         super(message);
     }
+
 }

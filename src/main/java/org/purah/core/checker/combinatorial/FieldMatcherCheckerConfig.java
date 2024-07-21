@@ -17,7 +17,6 @@ public class FieldMatcherCheckerConfig {
     final FieldMatcher fieldMatcher;
     final List<String> checkerNames;
 
-
     private List<Checker<?,?>> checkers;
 
     public List<Checker<?,?>> getCheckers() {

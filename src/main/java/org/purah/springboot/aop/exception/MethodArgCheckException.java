@@ -1,7 +1,8 @@
-package org.purah.core.exception;
+package org.purah.springboot.aop.exception;
 
 
 import org.purah.core.checker.result.CheckResult;
+import org.purah.core.exception.PurahException;
 
 public class MethodArgCheckException extends PurahException {
 

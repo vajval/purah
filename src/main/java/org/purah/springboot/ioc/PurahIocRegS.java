@@ -171,10 +171,7 @@ public class PurahIocRegS {
             } catch (Exception e) {
                 logger.error("reg error by properties {}", properties, e);
             }
-
-
         }
-
     }
 
 

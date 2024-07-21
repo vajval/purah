@@ -71,8 +71,8 @@ public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFacto
 
         CombinatorialCheckerConfigProperties properties = new CombinatorialCheckerConfigProperties(needMatchCheckerName);
 
-        properties.setMainExecType(mainExecType);
-        properties.setResultLevel(ResultLevel.failedAndIgnoreNotBaseLogic);
+        properties.setMainMode(mainExecType);
+        properties.setResultLevel(ResultLevel.only_failed_only_base_logic);
         // x,y
         String useCheckersExp = checkerExp.substring(checkerExp.indexOf("[") + 1, checkerExp.indexOf("]"));
         if (StringUtils.hasText(useCheckersExp)) {

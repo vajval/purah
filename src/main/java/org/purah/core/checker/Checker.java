@@ -9,7 +9,8 @@ public interface Checker<INPUT_ARG, RESULT> extends IName {
 
 
     /**
-     * 校验 业务 在这里面
+     * checker 入口
+     * entry point
      */
 
     CheckResult<RESULT> check(InputToCheckerArg<INPUT_ARG> inputToCheckerArg);
@@ -40,8 +41,7 @@ public interface Checker<INPUT_ARG, RESULT> extends IName {
         if (this.getClass().isAnonymousClass()) {
             clazzStr = "anonymous class from " + this.getClass().getName();
         }
-        return clazzStr + "[" + this.name() + "] ";
-//        return "[" + this.name() + "] " + clazzStr;
+        return clazzStr + "  [" + this.name() + "] ";
     }
 
 

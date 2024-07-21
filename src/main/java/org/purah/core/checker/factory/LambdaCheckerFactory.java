@@ -7,6 +7,14 @@ import org.purah.core.matcher.singlelevel.WildCardMatcher;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+/*
+ *       LambdaCheckerFactory<Number> idCheck = LambdaCheckerFactory.of(Number.class).build("id is *", (a, inputArg) -> {
+            String id = a.replace("id is ", "");
+            return inputArg.intValue() == Integer.parseInt(id);
+        });
+ *
+ *
+ */
 public class LambdaCheckerFactory<INPUT_ARG> implements CheckerFactory {
 
 
@@ -16,8 +24,7 @@ public class LambdaCheckerFactory<INPUT_ARG> implements CheckerFactory {
     final Class<INPUT_ARG> clazz;
 
 
-    private LambdaCheckerFactory(Predicate<String> matchLogic,
-                                 BiPredicate<String, INPUT_ARG> checkLogic, Class<INPUT_ARG> clazz) {
+    private LambdaCheckerFactory(Predicate<String> matchLogic, BiPredicate<String, INPUT_ARG> checkLogic, Class<INPUT_ARG> clazz) {
         this.checkLogic = checkLogic;
         this.clazz = clazz;
         this.matchLogic = matchLogic;
@@ -31,8 +38,7 @@ public class LambdaCheckerFactory<INPUT_ARG> implements CheckerFactory {
 
     @Override
     public Checker<INPUT_ARG, Object> createChecker(String needMatchCheckerName) {
-        return LambdaChecker.of(clazz).build(needMatchCheckerName,
-                inputArg -> checkLogic.test(needMatchCheckerName, inputArg));
+        return LambdaChecker.of(clazz).build(needMatchCheckerName, inputArg -> checkLogic.test(needMatchCheckerName, inputArg));
     }
 
     public static <T> Builder<T> of(Class<T> clazz) {

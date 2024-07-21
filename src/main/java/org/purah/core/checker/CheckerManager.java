@@ -4,7 +4,7 @@ package org.purah.core.checker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.purah.core.checker.factory.CheckerFactory;
-import org.purah.core.exception.CheckerRegException;
+import org.purah.core.exception.RegException;
 import org.purah.core.exception.init.InitCheckerException;
 import org.springframework.util.StringUtils;
 
@@ -15,37 +15,29 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-/**
- * 规则的管理器
- * 最好先注册字段规则
- * 再处理instance 规则
- */
+
 public class CheckerManager {
 
     private static final Logger logger = LogManager.getLogger(CheckerManager.class);
 
-    /**
-     * 根据名字匹配规则
-     * 根据入参class选择使用的checker 在GenericsProxyChecker内部实现
-     */
 
-    private final Map<String, GenericsProxyChecker> cacheMap = new ConcurrentHashMap<>();
+    private final Map<String, GenericsProxyChecker> enableCheckerCacheMap = new ConcurrentHashMap<>();
 
     private final List<CheckerFactory> checkerFactoryList = new CopyOnWriteArrayList<>();
     private final Map<String, List<CheckerFactory>> checkerFactoryMapping = new ConcurrentHashMap<>();
 
     public GenericsProxyChecker reg(Checker<?, ?> checker) {
         if (checker == null) {
-            throw new CheckerRegException("注册规则不能为空");
+            throw new RegException("checker not be null");
         }
         String name = checker.name();
         if (!StringUtils.hasText(name)) {
-            throw new CheckerRegException(name.getClass() + "no name");
+            throw new RegException("no name error " + name.getClass());
         }
-        GenericsProxyChecker genericsProxyChecker = cacheMap.get(name);
+        GenericsProxyChecker genericsProxyChecker = enableCheckerCacheMap.get(name);
         if (genericsProxyChecker == null) {
             genericsProxyChecker = GenericsProxyChecker.createAndSupportUpdateByCheckerFactory(name, 0, this::updateGenericsCheckerContext).addNewChecker(checker);
-            cacheMap.put(name, genericsProxyChecker);
+            enableCheckerCacheMap.put(name, genericsProxyChecker);
 
             return genericsProxyChecker;
         }
@@ -84,26 +76,30 @@ public class CheckerManager {
     }
 
     public GenericsProxyChecker of(String name) {
-        GenericsProxyChecker result = cacheMap.get(name);
+        GenericsProxyChecker result = enableCheckerCacheMap.get(name);
         if (result == null) {
-            List<Checker<?, ?>> checkers = new ArrayList<>();
             int size = checkerFactoryList.size();
             List<CheckerFactory> enableFactoryList = searchEnableFactoryList(name, 0, size);
-            for (CheckerFactory checkerFactory : enableFactoryList) {
-                ProxyChecker checkerByFactory = this.createCheckerByFactory(checkerFactory, name);
-                checkers.add(checkerByFactory);
-                logger.info("create checker:{}  by factory:{} logicFrom :{} ", name, checkerFactory.getClass(), checkerByFactory.logicFrom());
 
-            }
-            if (checkers.size() == 0) {
-                throw new InitCheckerException("checker no reg and cannot be matched :[  " + name+"  ]");
+            if (enableFactoryList.size() == 0) {
+                throw new InitCheckerException("checker no reg and cannot be matched :[  " + name + "  ]");
             }
             GenericsProxyChecker genericsProxyChecker = GenericsProxyChecker.createAndSupportUpdateByCheckerFactory(name, size, this::updateGenericsCheckerContext);
 
-            for (Checker<?, ?> checker : checkers) {
-                genericsProxyChecker.addNewChecker(checker);
+            boolean cache = false;
+            //todo cache support
+
+            for (CheckerFactory checkerFactory : enableFactoryList) {
+                ProxyChecker checkerByFactory = this.createCheckerByFactory(checkerFactory, name);
+                genericsProxyChecker.addNewChecker(checkerByFactory);
+                logger.info("create checker:{}  by factory:{} logicFrom :{} ", name, checkerFactory.getClass(), checkerByFactory.logicFrom());
+
+                cache = cache || checkerFactory.cacheBeCreatedChecker();
+
             }
-            cacheMap.put(name, genericsProxyChecker);
+            if (cache) {
+                enableCheckerCacheMap.put(name, genericsProxyChecker);
+            }
             return genericsProxyChecker;
         } else {
             return result;
@@ -135,7 +131,7 @@ public class CheckerManager {
     }
 
     protected ProxyChecker createCheckerByFactory(CheckerFactory checkerFactory, String needCreateCheckerName) {
-        Checker<?,?> factoryCreatechecker = checkerFactory.createChecker(needCreateCheckerName);
+        Checker<?, ?> factoryCreatechecker = checkerFactory.createChecker(needCreateCheckerName);
 //        String enableCheckerName = needCreateCheckerName;
 //        if (factoryCreateChecker.name() != null) {
 //            enableCheckerName = factoryCreateChecker.name();

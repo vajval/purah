@@ -10,11 +10,6 @@ import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties
 import org.purah.core.checker.converter.DefaultMethodConverter;
 import org.purah.core.checker.converter.MethodConverter;
 import org.purah.core.matcher.MatcherManager;
-import org.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
-import org.purah.core.matcher.singlelevel.ClassNameMatcher;
-import org.purah.core.matcher.nested.GeneralFieldMatcher;
-import org.purah.core.matcher.singlelevel.ReMatcher;
-import org.purah.core.matcher.singlelevel.WildCardMatcher;
 import org.purah.core.resolver.ArgResolver;
 import org.purah.core.resolver.DefaultArgResolver;
 
@@ -97,7 +92,7 @@ public class PurahContext {
     }
 
     public CombinatorialChecker createByProperties(CombinatorialCheckerConfigProperties builder) {
-        CombinatorialCheckerConfig config = builder.build(this);
+        CombinatorialCheckerConfig config = builder.buildToConfig(this);
         return new CombinatorialChecker(config);
 
     }
