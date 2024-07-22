@@ -10,7 +10,8 @@ import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
+/*
+ * 获取有注解字段的匹配器,不支持嵌套
  * People{
  *
  * @FieldType("1") String name;

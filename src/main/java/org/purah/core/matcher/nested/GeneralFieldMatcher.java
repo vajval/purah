@@ -15,7 +15,11 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
+/*
+ * 对于有通配符的当作 normal
+ * 没有通配符 写死的 当作 fixed
+
+
  * People people=new People(id:123,name:123,address:123,child:[new People(id:0,name:null),new People(id:1,name:null)]);
  * GeneralFieldMatcher "na*|address|noExistField|child#*.id|child#5.child#5.id|child#*.child#4.id"
  * return{"name":123,"address":123,noExistField:null,"child#0.id":0,"child#1.id":1,"child#5.child#5.id":null}
@@ -54,15 +58,15 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
 //            wrapChildList.add(new FixedMatcher(collect));
 //        }
         //todo cache support
-        if (matchStr.contains("|")) {
-            Map<Boolean, List<String>> map = Splitter.on("|").splitToList(matchStr).stream().collect(Collectors.groupingBy(this::matchStrCanCache));
+        if (matchStr.contains(wrapSplitStr())) {
+            Map<Boolean, List<String>> map = Splitter.on(wrapSplitStr()).splitToList(matchStr).stream().collect(Collectors.groupingBy(this::matchStrCanCache));
             List<String> cacheEnableList = map.get(true);
             List<String> noCacheList = map.get(false);
             if (CollectionUtils.isEmpty(cacheEnableList) || CollectionUtils.isEmpty(noCacheList)) {
                 wrapChildList = map.values().iterator().next().stream().map(this::wrapChildMatcher).collect(Collectors.toList());
             } else {
-                String cacheEnable = String.join("|", cacheEnableList);
-                String noCache = String.join("|", noCacheList);
+                String cacheEnable = String.join(wrapSplitStr(), cacheEnableList);
+                String noCache = String.join(wrapSplitStr(), noCacheList);
                 wrapChildList = new ArrayList<>();
                 wrapChildList.add(wrapChildMatcher(cacheEnable));
                 wrapChildList.add(wrapChildMatcher(noCache));
@@ -70,9 +74,6 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
         }
     }
 
-    public List<MultilevelFieldMatcher> wrapChildList() {
-        return wrapChildList;
-    }
 
 
     @Override
@@ -119,10 +120,10 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
     public NestedMatchInfo nestedFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
 
         if (wrapChildList != null) {
-            return multilevelMatchInfoByChild(inputArg, matchedField, childArg);
+            return multilevelMatchInfoByWrapChild(inputArg, matchedField, childArg);
         }
         if (childStr == null) {
-            return NestedMatchInfo.addToResult();
+            return NestedMatchInfo.needCollected();
         }
         if (isFixed) {
             return NestedMatchInfo.justNested(new FixedMatcher(childStr));

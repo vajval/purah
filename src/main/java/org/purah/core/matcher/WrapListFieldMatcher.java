@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 
 /**
+ * 支持一个字符串生成一堆FieldMatcher,这一堆FieldMatcher被一个FieldMatcher封装了
  * A single string can create multiple field matchers.
  */
 
@@ -23,9 +24,12 @@ public abstract class WrapListFieldMatcher<T extends IDefaultFieldMatcher> exten
     }
 
     protected void initWapChildList(String matchStr) {
-        if (matchStr.contains("|")) {
-            wrapChildList = Splitter.on("|").splitToList(matchStr).stream().map(this::wrapChildMatcher).collect(Collectors.toList());
+        if (matchStr.contains(wrapSplitStr())) {
+            wrapChildList = Splitter.on(wrapSplitStr()).splitToList(matchStr).stream().map(this::wrapChildMatcher).collect(Collectors.toList());
         }
+    }
+    protected String wrapSplitStr(){
+        return "|";
     }
 
 

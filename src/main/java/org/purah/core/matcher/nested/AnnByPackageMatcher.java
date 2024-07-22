@@ -16,27 +16,35 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-/**
- * The input parameter represents the type that requires nested checks.
- * If the class of the field is within the specified package path,
- * then the value of this field will undergo the same matching process.
+/*
+ * 获取所有符合 needBeCollected ()的field,及其值
+ * 输入 needNestedPackagePatch , 如果Field的package 符合needNestedPackagePatch
+ * 就对这个Field 进行嵌套匹配
  *
  * <p>
  * package my.company.project
  * <p>
  * People{
+ *    @TestAnn
+ *    People child;
  *
- * @TestAnn People child;
- * @TestAnn String name;
- * String id;
+ *    @TestAnn
+ *    String name;
+ *
+ *    String id;
  * }
  * <p>
- * new People(name:1,id:11 ,new People(2,22,null))
- * new AnnByPackageMatcher("my.company.*")  ---------      fieldCheck(field)->field.hasAnn(@TestAnn.class)
+ * new People(name:1,id:11 ,child:new People(name:2,id:22,child:null))
+ * new AnnByPackageMatcher("my.company.*")  ---------      needBeCollected(field)->field.hasAnn(@TestAnn.class)
  * <p>
- * return {name:11,child.name:22,child.child:null}
+ * return {name:11,child:"name:2,id:22,child:null",child.name:22,child.child:null}
+ *
+ *  The input parameter represents the type that requires nested checks.
+ *  If the class of the field is within the specified package path,
+ *  then the value of this field will undergo the same matching process.
+ *
  */
-
+//todo    list nested
 
 public abstract class AnnByPackageMatcher extends BaseStringMatcher implements MultilevelFieldMatcher, ListIndexMatcher {
 
@@ -66,34 +74,23 @@ public abstract class AnnByPackageMatcher extends BaseStringMatcher implements M
     }
 
 
-    /**
-     * 搜集有注解的字段做返回值
-     * 还有 没有注解但是需要解析的向下解析
-     */
-
-
-
-
-
-
     @Override
     public NestedMatchInfo nestedFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
         FieldInfoCache fieldInfoCache = fieldInfoCache(matchedField, inputArg.argClass());
         boolean needNest = fieldInfoCache.needNest;
-        boolean needBeChecked = fieldInfoCache.needBeCollected;
+        boolean needBeCollected = fieldInfoCache.needBeCollected;
 
         if (fieldInfoCache == NULL) {
             needNest = fieldNeedNestedMatcher.match(childArg.argClass().getPackage().getName());
-            needBeChecked = false;
+            needBeCollected = false;
         }
 
 
-
-        if (needBeChecked) {
+        if (needBeCollected) {
             if (needNest) {
-                return NestedMatchInfo.addToResultAndMatchNested(this);
+                return NestedMatchInfo.needCollectedAndMatchNested(this);
             } else {
-                return NestedMatchInfo.addToResult();
+                return NestedMatchInfo.needCollected();
             }
         } else {
             if (needNest) {
@@ -119,8 +116,7 @@ public abstract class AnnByPackageMatcher extends BaseStringMatcher implements M
     }
 
 
-    protected abstract boolean needBeCollectedToChecker(Field field);
-
+    protected abstract boolean needBeCollected(Field field);
 
 
     class FieldInfoCache {
@@ -149,7 +145,7 @@ public abstract class AnnByPackageMatcher extends BaseStringMatcher implements M
             } else {
                 this.needNest = fieldNeedNestedMatcher.match(this.checkClazz.getPackage().getName());
             }
-            this.needBeCollected = needBeCollectedToChecker(field);
+            this.needBeCollected = needBeCollected(field);
             this.match = this.needNest || this.needBeCollected;
             this.field = field;
         }
@@ -187,8 +183,6 @@ public abstract class AnnByPackageMatcher extends BaseStringMatcher implements M
         }
         return result;
     }
-
-
 
 
 }

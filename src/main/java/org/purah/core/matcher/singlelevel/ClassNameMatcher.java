@@ -3,14 +3,15 @@ package org.purah.core.matcher.singlelevel;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.name.Name;
-import org.purah.core.exception.init.InitMatcherException;
+import org.purah.core.exception.init.InitMatcherExceptionBase;
 import org.purah.core.matcher.BaseStringMatcher;
 
 import java.beans.PropertyDescriptor;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
+/*
+ * 获取有指定class的匹配器,不支持嵌套
  * Match based on the class name of the field
  * Just an example
  * People{
@@ -33,7 +34,7 @@ public class ClassNameMatcher extends BaseStringMatcher {
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new InitMatcherException("no class for name: " + className);
+            throw new InitMatcherExceptionBase("no class for name: " + className);
         }
 
     }

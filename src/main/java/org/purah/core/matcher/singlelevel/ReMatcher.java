@@ -5,7 +5,6 @@ import org.purah.core.matcher.BaseStringMatcher;
 import org.purah.core.matcher.FieldMatcher;
 
 /**
- * Regular expression matcher, remember to enclose configurations in []
  * For example, '[a.*]' : Rule 1, Rule 2
  *
  */

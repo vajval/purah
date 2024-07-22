@@ -9,7 +9,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-/**
+/*
+ * 输入字段,获取存在的字段
+ * 没有这个字段,或这list长度够不到指定要获取的下标
+ * 那就不返回这些不存在的字段
+ *
  * People people=new People(id:123,name:123,address:123,child:[new People(id:123,name:null)]);
  * FixedMatcher "name|address|noExistField|child#0.id|child#5.child#0.id"
  * return{"name":123,"address":123,"child#0.id":123}

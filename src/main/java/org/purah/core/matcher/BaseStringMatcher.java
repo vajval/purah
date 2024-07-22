@@ -7,6 +7,7 @@ import org.purah.core.matcher.inft.IDefaultFieldMatcher;
 import java.util.Objects;
 
 /**
+ * 最基础的,有一个字符串配置就可以创建 FieldMatcher
  * Basic matcher that constructs itself using an input string,
  * allowing it to be configured using information from a configuration file.
  */

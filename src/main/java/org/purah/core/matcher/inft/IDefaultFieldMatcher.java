@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * 默认实现,只是方便调试
+ * 入口只有  Set<String> matchFields(Set<String> fields, Object belongInstance)
  * Default implementation
  */
 public interface IDefaultFieldMatcher extends FieldMatcher {

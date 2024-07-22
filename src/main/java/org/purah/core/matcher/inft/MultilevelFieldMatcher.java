@@ -8,6 +8,9 @@ import org.purah.core.matcher.nested.NestedMatchInfo;
 public interface MultilevelFieldMatcher extends IDefaultFieldMatcher {
 
     /**
+     * 将这个匹配到的对象 添加|不添加 到最后的结果
+     * 对这个匹配到的对象 使用|不使用 FieldMatcher多级匹配
+     * 2*2 = 4 种情况
      * 4 scenarios:
      * 1. Add the matched value to the final result.
      * 2. Add the matched value to the final result and apply some child field matcher(s) to match values within the field.

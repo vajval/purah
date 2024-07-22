@@ -8,24 +8,24 @@ import java.util.List;
 public class NestedMatchInfo {
 
     protected final List<FieldMatcher> childFieldMatcher;
-    protected final boolean addToResult;
+    protected final boolean needCollected;
 
-    private NestedMatchInfo(List<FieldMatcher> childFieldMatcher, boolean addToResult) {
+    private NestedMatchInfo(List<FieldMatcher> childFieldMatcher, boolean needCollected) {
         this.childFieldMatcher = childFieldMatcher;
-        this.addToResult = addToResult;
+        this.needCollected = needCollected;
     }
 
-    public static NestedMatchInfo addToResultAndMatchNested(FieldMatcher childFieldMatcher) {
+    public static NestedMatchInfo needCollectedAndMatchNested(FieldMatcher childFieldMatcher) {
         return new NestedMatchInfo(Collections.singletonList(childFieldMatcher), true);
 
     }
 
-    public static NestedMatchInfo addToResultAndMatchNested(List<FieldMatcher> childFieldMatcher) {
+    public static NestedMatchInfo needCollectedAndMatchNested(List<FieldMatcher> childFieldMatcher) {
         return new NestedMatchInfo(childFieldMatcher, true);
 
     }
 
-    public static NestedMatchInfo addToResult() {
+    public static NestedMatchInfo needCollected() {
         return new NestedMatchInfo(null, true);
 
     }
@@ -47,8 +47,8 @@ public class NestedMatchInfo {
         return childFieldMatcher;
     }
 
-    public boolean isAddToResult() {
-        return addToResult;
+    public boolean isNeedCollected() {
+        return needCollected;
     }
 
 }

@@ -12,6 +12,11 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 输入 fullMatchStr 分成firstLevelStr和childStr   child.name-> child     name
+ * listIndexStr对list支持,是数字就填充到 listIndex ,不是就自己实现解析
+ * @param <T>
+ */
 
 public abstract class AbstractMultilevelFieldMatcher<T extends MultilevelFieldMatcher> extends WrapListFieldMatcher<T> implements MultilevelFieldMatcher, ListIndexMatcher {
 
@@ -100,28 +105,28 @@ public abstract class AbstractMultilevelFieldMatcher<T extends MultilevelFieldMa
     @Override
     public NestedMatchInfo nestedFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
         if (wrapChildList != null) {
-            return multilevelMatchInfoByChild(inputArg, matchedField, childArg);
+            return multilevelMatchInfoByWrapChild(inputArg, matchedField, childArg);
         }
         if (childStr == null) {
-            return NestedMatchInfo.addToResult();
+            return NestedMatchInfo.needCollected();
         }
         return NestedMatchInfo.justNested(wrapChildMatcher(childStr));
     }
 
-    protected NestedMatchInfo multilevelMatchInfoByChild(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
+    protected NestedMatchInfo multilevelMatchInfoByWrapChild(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
         boolean addToFinal = false;
         List<FieldMatcher> fieldMatchers = new ArrayList<>();
         for (T optionMatcher : wrapChildList) {
             if (optionMatcher.match(matchedField, inputArg.argValue())) {
                 NestedMatchInfo nestedMatchInfo = optionMatcher.nestedFieldMatcher(inputArg, matchedField, childArg);
-                addToFinal = addToFinal || nestedMatchInfo.isAddToResult();
+                addToFinal = addToFinal || nestedMatchInfo.isNeedCollected();
                 if (nestedMatchInfo.getNestedFieldMatcherList() != null) {
                     fieldMatchers.addAll(nestedMatchInfo.getNestedFieldMatcherList());
                 }
             }
         }
         if (addToFinal) {
-            return NestedMatchInfo.addToResultAndMatchNested(fieldMatchers);
+            return NestedMatchInfo.needCollectedAndMatchNested(fieldMatchers);
         }
         return NestedMatchInfo.justNested(fieldMatchers);
     }
