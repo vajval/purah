@@ -9,11 +9,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * Retrieve a class's name information or use it to populate logging parameters
+ * 输入对象,获取名字
+ * Input object, retrieve name.
  */
 public class NameUtil {
 
-    public static final String NULL_OBJECT_SHOW_NAME = "<null_object>";
+    private static final String NULL_OBJECT_SHOW_NAME = "<null_object>";
     private static final Map<Class<?>, String> classAnnNameCacheMap = new ConcurrentHashMap<>();
     private static final Map<Method, String> methodCacheMap = new ConcurrentHashMap<>();
 

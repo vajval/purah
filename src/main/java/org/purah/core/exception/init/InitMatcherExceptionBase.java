@@ -2,10 +2,8 @@ package org.purah.core.exception.init;
 
 import org.purah.core.exception.BasePurahException;
 
-public class InitCheckFactoryException extends BasePurahException {
-    public InitCheckFactoryException(String message) {
+public class InitMatcherExceptionBase extends BasePurahException {
+    public InitMatcherExceptionBase(String message) {
         super(message);
     }
-
-
 }

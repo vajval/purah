@@ -1,6 +1,6 @@
 package org.purah.core.exception;
 
-public class UnexpectedException  extends PurahException{
+public class UnexpectedException extends BasePurahException {
     public UnexpectedException(String message) {
         super(message);
     }
