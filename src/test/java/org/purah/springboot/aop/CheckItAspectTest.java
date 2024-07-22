@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.ExampleApplication;
-import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.core.checker.result.MultiCheckResult;
@@ -27,7 +27,7 @@ public class CheckItAspectTest {
     @Autowired
     AspectTestService aspectTestService;
     @Autowired
-    PurahContext purahContext;
+    Purahs purahs;
 
     GenericsProxyChecker allFieldCustomAnnChecker;
 
@@ -35,8 +35,8 @@ public class CheckItAspectTest {
     public void beforeEach() {
 
         if (allFieldCustomAnnChecker == null) {
-            allFieldCustomAnnChecker = purahContext.combo().match(new GeneralFieldMatcher("*"), Checkers.Name.CUSTOM_ANN_CHECK).reg("all_field_custom_ann_check");
-            purahContext.combo().match(new GeneralFieldMatcher("*|*.*"), Checkers.Name.CUSTOM_ANN_CHECK).reg("all_field_and_child_all_field_custom_ann_check");
+            allFieldCustomAnnChecker = purahs.combo().match(new GeneralFieldMatcher("*"), Checkers.Name.CUSTOM_ANN_CHECK).regSelf("all_field_custom_ann_check");
+            purahs.combo().match(new GeneralFieldMatcher("*|*.*"), Checkers.Name.CUSTOM_ANN_CHECK).regSelf("all_field_and_child_all_field_custom_ann_check");
 
         }
 

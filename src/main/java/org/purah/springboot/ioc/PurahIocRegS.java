@@ -3,8 +3,11 @@ package org.purah.springboot.ioc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.CheckerManager;
+import org.purah.core.checker.GenericsProxyChecker;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.converter.MethodConverter;
 import org.purah.core.checker.factory.CheckerFactory;
@@ -33,9 +36,11 @@ public class PurahIocRegS {
     private static final Logger logger = LogManager.getLogger(PurahIocRegS.class);
 
     protected final PurahContext purahContext;
+    protected final Purahs purahs;
 
     public PurahIocRegS(PurahContext purahContext) {
         this.purahContext = purahContext;
+        this.purahs = purahContext.purahs();
     }
 
     public void initMainBean(MethodConverter methodConverter, CheckerManager checkerManager, MatcherManager matcherManager, ArgResolver argResolver) {
@@ -78,10 +83,9 @@ public class PurahIocRegS {
 
     public void regBaseStringMatcher(Class<? extends FieldMatcher> clazz) {
         try {
-            String name = this.purahContext.matcherManager().regBaseStrMatcher(clazz).name();
+
+            String name = purahs.reg(clazz).name();
             logger.info("reg matcher by clazz name: [{}]   class: {}", name, clazz);
-//            logger.info("reg MatcherFactory: {}, name: {}", MatcherFactory.class, name);
-//            logger.info("reg field matcher class:{}", clazz);
         } catch (Exception e) {
             logger.error("reg field matcher error class:{}", clazz, e);
         }
@@ -90,7 +94,7 @@ public class PurahIocRegS {
 
     public void regBaseStringMatcher(MatcherFactory matcherFactory) {
         try {
-            this.purahContext.matcherManager().reg(matcherFactory);
+            this.purahs.reg(matcherFactory);
             logger.info("reg matcher factory name: [{}]     class: {}", matcherFactory.name(), matcherFactory.getClass());
         } catch (Exception e) {
             logger.error("reg matcher factory error: {}", matcherFactory, e);
@@ -100,7 +104,7 @@ public class PurahIocRegS {
 
     public void regChecker(Checker<?, ?> checker) {
         try {
-            purahContext.checkManager().reg(checker);
+            this.purahs.reg(checker);
             logger.info("reg checker name: [{}]     logic from: {}", checker.name(), checker.logicFrom());
         } catch (Exception e) {
             logger.error("reg checker error:{}", checker, e);
@@ -110,16 +114,13 @@ public class PurahIocRegS {
 
     public void regCheckerFactory(CheckerFactory checkerFactory) {
         try {
-            purahContext.checkManager().addCheckerFactory(checkerFactory);
+            this.purahs.reg(checkerFactory);
             logger.info("reg checkerFactory: {}", checkerFactory.name());
         } catch (Exception e) {
             logger.error("reg checkerFactory: {}", checkerFactory, e);
         }
     }
 
-    public void regPurahMethodsRegBean(Set<Object> enableBean) {
-
-    }
 
     public void regPurahMethodsRegBean(Object enableBean) {
         if (enableBean == null) return;
@@ -166,14 +167,14 @@ public class PurahIocRegS {
     public void regCheckerByProperties(PurahConfigProperties purahConfigProperties) {
         for (CombinatorialCheckerConfigProperties properties : purahConfigProperties.toCombinatorialCheckerConfigPropertiesList()) {
             try {
-                Checker<?, ?> checker = purahContext.createAndRegByProperties(properties);
+
+                GenericsProxyChecker checker = purahs.reg(properties);
                 logger.info("reg checker {} by properties {}", checker.name(), properties);
             } catch (Exception e) {
                 logger.error("reg error by properties {}", properties, e);
             }
         }
     }
-
 
 
 }

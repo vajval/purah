@@ -5,6 +5,9 @@ import org.purah.core.checker.result.*;
 import java.lang.reflect.Method;
 import java.util.List;
 
+
+
+
 public class MethodCheckResult extends MultiCheckResult<ArgCheckResult> {
     final Object belongBean;
     final Method method;
@@ -28,7 +31,5 @@ public class MethodCheckResult extends MultiCheckResult<ArgCheckResult> {
         return logicResultList(ResultLevel.only_failed_only_base_logic);
     }
 
-    public LogicCheckResult<?> main() {
-        return mainResult;
-    }
+
 }

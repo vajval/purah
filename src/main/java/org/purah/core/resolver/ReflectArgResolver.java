@@ -25,7 +25,11 @@ public class ReflectArgResolver implements ArgResolver {
     protected final ConcurrentHashMap<Class<?>, ClassReflectCache> classClassConfigCacheMap = new ConcurrentHashMap<>();
 
 
-    protected final boolean enableCache = true;
+    protected boolean enableCache = false;
+
+    public void enableCache() {
+        enableCache = true;
+    }
 
     @Override
     public Map<String, InputToCheckerArg<?>> getMatchFieldObjectMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
@@ -80,7 +84,7 @@ public class ReflectArgResolver implements ArgResolver {
             String field = entry.getKey();
             InputToCheckerArg<?> childArg = entry.getValue();
             NestedMatchInfo nestedMatchInfo = multilevelFieldMatcher.nestedFieldMatcher(inputToCheckerArg, field, childArg);
-            if (nestedMatchInfo.isAddToResult()) {
+            if (nestedMatchInfo.isNeedCollected()) {
                 result.put(field, childArg);
             }
             List<FieldMatcher> nestedFieldMatcherList = nestedMatchInfo.getNestedFieldMatcherList();

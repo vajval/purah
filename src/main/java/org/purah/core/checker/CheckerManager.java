@@ -3,6 +3,9 @@ package org.purah.core.checker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.purah.core.checker.combinatorial.CombinatorialChecker;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
+import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.exception.RegException;
 import org.purah.core.exception.init.InitCheckerException;
@@ -25,6 +28,12 @@ public class CheckerManager {
 
     private final List<CheckerFactory> checkerFactoryList = new CopyOnWriteArrayList<>();
     private final Map<String, List<CheckerFactory>> checkerFactoryMapping = new ConcurrentHashMap<>();
+
+    public GenericsProxyChecker reg(CombinatorialCheckerConfig config) {
+        Checker<?, ?> newCombinatorialChecker = new CombinatorialChecker(config);
+        return this.reg(newCombinatorialChecker);
+    }
+
 
     public GenericsProxyChecker reg(Checker<?, ?> checker) {
         if (checker == null) {

@@ -4,6 +4,7 @@ package org.purah.springboot.ioc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.exception.UnexpectedException;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.factory.BaseMatcherFactory;
@@ -11,9 +12,11 @@ import org.purah.springboot.IgnoreBeanOnPurahContext;
 import org.purah.springboot.EnablePurah;
 import org.purah.springboot.aop.CheckItAspect;
 import org.purah.springboot.config.PurahConfigProperties;
+import org.purah.springboot.config.PurahConfiguration;
 import org.purah.springboot.ioc.ann.ToBaseMatcherFactory;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.*;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
@@ -33,9 +36,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *
- *
- *
  * @author vajva
  */
 @Configuration
@@ -50,34 +50,23 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry, BeanNameGenerator importBeanNameGenerator) {
 
 
-
-        BeanDefinition purahContextBeanDefinition = purahContextBeanDefinition(metadata);
-        BeanDefinition propertiesBeanBeanDefinition = propertiesBean();
-        BeanDefinition aspectBeanBeanDefinition = aspectBean();
-
-        registry.registerBeanDefinition(PurahContext.class.getName(), purahContextBeanDefinition);
-        registry.registerBeanDefinition(CheckItAspect.class.getName(), aspectBeanBeanDefinition);
-        registry.registerBeanDefinition(PurahConfigProperties.class.getName(), propertiesBeanBeanDefinition);
+        registry.registerBeanDefinition(PurahContext.class.getName(), purahContextBeanDefinition(metadata));
+        registry.registerBeanDefinition(CheckItAspect.class.getName(), genericBeanDefinition(CheckItAspect.class));
+        registry.registerBeanDefinition(PurahConfigProperties.class.getName(), genericBeanDefinition(PurahConfigProperties.class));
+        registry.registerBeanDefinition(PurahConfiguration.class.getName(), genericBeanDefinition(PurahConfiguration.class));
     }
 
 
-    public BeanDefinition propertiesBean() {
+    public BeanDefinition genericBeanDefinition(Class<?> clazz) {
         GenericBeanDefinition genericBeanDefinition = new GenericBeanDefinition();
-        genericBeanDefinition.setBeanClass(PurahConfigProperties.class);
+        genericBeanDefinition.setBeanClass(clazz);
         genericBeanDefinition.setLazyInit(true);
         genericBeanDefinition.setPrimary(true);
         genericBeanDefinition.setAutowireCandidate(true);
         return genericBeanDefinition;
     }
 
-    public BeanDefinition aspectBean() {
-        GenericBeanDefinition genericBeanDefinition = new GenericBeanDefinition();
-        genericBeanDefinition.setBeanClass(CheckItAspect.class);
-        genericBeanDefinition.setLazyInit(true);
-        genericBeanDefinition.setPrimary(true);
-        genericBeanDefinition.setAutowireCandidate(true);
-        return genericBeanDefinition;
-    }
+
 
     public AbstractBeanDefinition purahContextBeanDefinition(AnnotationMetadata metadata) {
 

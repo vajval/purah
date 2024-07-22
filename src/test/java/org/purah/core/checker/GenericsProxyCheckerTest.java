@@ -2,9 +2,6 @@ package org.purah.core.checker;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.purah.core.checker.Checker;
-import org.purah.core.checker.GenericsProxyChecker;
-import org.purah.core.checker.LambdaChecker;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckException;
 import org.purah.util.User;

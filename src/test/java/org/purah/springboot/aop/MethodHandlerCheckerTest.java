@@ -12,7 +12,7 @@ import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.core.name.Name;
 import org.purah.springboot.aop.ann.CheckIt;
 import org.purah.springboot.aop.ann.FillToMethodResult;
-import org.purah.springboot.aop.ann.MethodCheck;
+import org.purah.springboot.aop.ann.MethodCheckConfig;
 import org.purah.springboot.aop.result.ArgCheckResult;
 import org.purah.springboot.aop.result.MethodCheckResult;
 import org.purah.springboot.ioc.PurahIocRegS;
@@ -65,7 +65,7 @@ public class MethodHandlerCheckerTest {
     }
 
     @FillToMethodResult
-    @MethodCheck(mainMode = ExecMode.Main.all_success_but_must_check_all)
+    @MethodCheckConfig(mainMode = ExecMode.Main.all_success_but_must_check_all)
     public CheckResult<String> test4(@CheckIt("have_child") People parent0, @CheckIt("have_child") People parent1, @CheckIt People parent2, People parent3, @CheckIt("have_child") People parent4, People parent5, @CheckIt People parent6, @CheckIt("have_child") People parent7) {
         return null;
     }

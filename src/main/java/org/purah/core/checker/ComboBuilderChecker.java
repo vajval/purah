@@ -22,8 +22,12 @@ import java.util.stream.Stream;
    comboBuilderChecker.check(new User(123,bob));//true
    comboBuilderChecker.match(new GeneralFieldMatcher("name"), "name is alice")
    comboBuilderChecker.check(new User(123,bob));//false
+   comboBuilderChecker.regSelf("123|alice")
 
 
+   comboBuilderChecker =purahContext.combo("123|alice")
+   comboBuilderChecker.check(new User(123,bob));//false
+   comboBuilderChecker.check(new User(123,alice));//true
  */
 public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>> {
 
@@ -59,7 +63,7 @@ public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>
 
     }
 
-    public GenericsProxyChecker reg(String name) {
+    public GenericsProxyChecker regSelf(String name) {
         config.setName(name);
         CombinatorialChecker combinatorialChecker = new CombinatorialChecker(config);
         return purahContext.checkManager().reg(combinatorialChecker);

@@ -22,20 +22,26 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
+/**
+ * 对应类的反射信息缓存
+ */
 public class ClassReflectCache {
 
     protected static final Logger logger = LogManager.getLogger(ClassReflectCache.class);
 
     protected Class<?> inputArgClass;
+
+    // fieldName的缓存
     protected Map<String, Field> fieldByNameCacheMap;
     protected Map<String, List<Annotation>> annByFieldNameCacheMap;
+    protected final Map<String, Function<InputToCheckerArg<?>, InputToCheckerArg<?>>> fieldInvokeFunctionMapping = new ConcurrentHashMap<>();
 
-    protected final Map<String, Function<InputToCheckerArg<?>, InputToCheckerArg<?>>> factoryCacheByClassField = new ConcurrentHashMap<>();
-
-
+    // FieldMatcher 匹配字段的缓存
+    //todo 缓存区分
     protected final Map<FieldMatcher, Set<String>> matcherThisLevelFieldsCache = new ConcurrentHashMap<>();
 
 
+    //FieldMatcher最终结果的缓存,缓存之后不需要执行FieldMatcher中的逻辑,直接获取结果
     protected final Set<FieldMatcher> noSupportInovekCacheFieldMatcherSet = new HashSet<>();
     protected final Map<FieldMatcher, FieldMatcherResultReflectInvokeCache> fieldMatcherResultByCacheInvokeMap = new ConcurrentHashMap<>();
 
@@ -56,7 +62,7 @@ public class ClassReflectCache {
             String fieldName = propertyDescriptor.getName();
             Field field = fieldByNameCacheMap.get(fieldName);
             List<Annotation> annotationList = annByFieldNameCacheMap.get(fieldName);
-            factoryCacheByClassField.put(fieldName,
+            fieldInvokeFunctionMapping.put(fieldName,
                     (arg) -> {
                         Object childArg = null;
                         if (arg.argValue() != null) {
@@ -86,10 +92,10 @@ public class ClassReflectCache {
 
 
     public Map<String, InputToCheckerArg<?>> thisLevelMatchFieldValueMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
-        Set<String> matchFieldList = matcherThisLevelFieldsCache.computeIfAbsent(fieldMatcher, i -> fieldMatcher.matchFields(factoryCacheByClassField.keySet(), inputToCheckerArg.argValue()));
+        Set<String> matchFieldList = matcherThisLevelFieldsCache.computeIfAbsent(fieldMatcher, i -> fieldMatcher.matchFields(fieldInvokeFunctionMapping.keySet(), inputToCheckerArg.argValue()));
         Map<String, InputToCheckerArg<?>> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
         for (String matchFieldStr : matchFieldList) {
-            Function<InputToCheckerArg<?>, InputToCheckerArg<?>> function = factoryCacheByClassField.get(matchFieldStr);
+            Function<InputToCheckerArg<?>, InputToCheckerArg<?>> function = fieldInvokeFunctionMapping.get(matchFieldStr);
             if (function == null) {
                 Field field = fieldByNameCacheMap.get(matchFieldStr);
                 InputToCheckerArg<?> objectInputToCheckerArg;

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 /*
 
-    See unit test  ComponentMyCustomAnnChecker
+   See unit test    MyCustomAnnChecker
    add method to make it work
 
  * rangeLong (@Range range ,Long num)
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * returnType CheckerResult<?>|boolean
  */
 
-public  class CustomAnnChecker extends AbstractBaseSupportCacheChecker<Object, List<CheckResult<?>>> {
+public abstract class CustomAnnChecker extends AbstractBaseSupportCacheChecker<Object, List<CheckResult<?>>> {
 
     final Map<Class<? extends Annotation>, GenericsProxyChecker> annCheckerMapping = new ConcurrentHashMap<>();
 
@@ -38,7 +38,6 @@ public  class CustomAnnChecker extends AbstractBaseSupportCacheChecker<Object, L
         this.resultLevel = resultLevel;
         initMethods();
     }
-
 
 
     protected void initMethods() {

@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 public class MultiCheckerExecutor {
 
 
-    private final ExecMode.Main mainExecType;
+    private final ExecMode.Main mainExecMode;
     private ExecInfo execInfo = ExecInfo.success;
     private final ResultLevel resultLevel;
     private Exception e;
@@ -27,8 +27,8 @@ public class MultiCheckerExecutor {
     private final List<Supplier<CheckResult<?>>> ruleResultSupplierList = new ArrayList<>();
 
 
-    public MultiCheckerExecutor(ExecMode.Main mainExecType, ResultLevel resultLevel) {
-        this.mainExecType = mainExecType;
+    public MultiCheckerExecutor(ExecMode.Main mainExecMode, ResultLevel resultLevel) {
+        this.mainExecMode = mainExecMode;
         this.resultLevel = resultLevel;
 
     }
@@ -78,21 +78,21 @@ public class MultiCheckerExecutor {
                 return;
             }
             if (checkResult.isFailed()) {
-                if (mainExecType == ExecMode.Main.all_success) {
+                if (mainExecMode == ExecMode.Main.all_success) {
                     // 有错误 而要求必须要全部成功，才算成功
                     execInfo = ExecInfo.failed;
                     return;
-                } else if (mainExecType == ExecMode.Main.all_success_but_must_check_all) {
+                } else if (mainExecMode == ExecMode.Main.all_success_but_must_check_all) {
                     // 有错误 而要求必须要全部成功，但是必须检查完
                     execInfo = ExecInfo.failed;
 //                    result = execInfo;
                 }
             } else {
-                if (mainExecType == ExecMode.Main.at_least_one) {
+                if (mainExecMode == ExecMode.Main.at_least_one) {
                     // 没有错误 而且只要一个成功就够了
                     execInfo = ExecInfo.success;
                     return;
-                } else if (mainExecType == ExecMode.Main.at_least_one_but_must_check_all) {
+                } else if (mainExecMode == ExecMode.Main.at_least_one_but_must_check_all) {
                     // 没有错误  但是必须检查完
                     execInfo = ExecInfo.success;
 //                    result = execInfo;
@@ -109,12 +109,7 @@ public class MultiCheckerExecutor {
 
     public MultiCheckResult<CheckResult<?>> toMultiCheckResult(String log) {
         execIfNotExec(ruleResultSupplierList);
-        return multiCheckResult(log);
-    }
 
-
-
-    private MultiCheckResult<CheckResult<?>> multiCheckResult(String log) {
 
         LogicCheckResult<Object> mainResult = null;
         if (execInfo.equals(ExecInfo.success)) {

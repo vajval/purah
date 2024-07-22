@@ -11,8 +11,8 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
-import org.purah.springboot.aop.exception.MethodArgCheckException;
-import org.purah.springboot.aop.ann.MethodCheck;
+import org.purah.springboot.aop.exception.MethodArgCheckExceptionBase;
+import org.purah.springboot.aop.ann.MethodCheckConfig;
 import org.purah.springboot.aop.result.MethodCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -34,6 +34,9 @@ public class CheckItAspect {
     PurahContext purahContext;
     private final Map<Method, MethodHandlerChecker> methodCheckerMap = new ConcurrentHashMap<>();
 
+    /**
+     * 切面点
+     */
 
     @Pointcut("execution(* *(.., @org.purah.springboot.aop.ann.CheckIt (*), ..))")
     public void pointcut() {
@@ -58,11 +61,11 @@ public class CheckItAspect {
 
 
     public boolean enableCache(Method method) {
-        MethodCheck methodCheck = method.getDeclaredAnnotation(MethodCheck.class);
-        if (methodCheck == null) {
+        MethodCheckConfig methodCheckConfig = method.getDeclaredAnnotation(MethodCheckConfig.class);
+        if (methodCheckConfig == null) {
             return purahContext.config().isCache();
         }
-        return methodCheck.enableCache();
+        return methodCheckConfig.enableCache();
     }
 
     public Object pointcut(ProceedingJoinPoint joinPoint) {
@@ -79,7 +82,7 @@ public class CheckItAspect {
 
         if (methodCheckResult.isError()) {
             methodCheckResult.exception().printStackTrace();
-            throw new MethodArgCheckException(methodCheckResult);
+            throw new MethodArgCheckExceptionBase(methodCheckResult);
         }
 
 
@@ -91,7 +94,7 @@ public class CheckItAspect {
         }
         if (!methodHandlerChecker.isFillToMethodResult()) {
             if (methodCheckResult.isFailed()) {
-                throw new MethodArgCheckException(methodCheckResult);
+                throw new MethodArgCheckExceptionBase(methodCheckResult);
             }
             return invokeObject;
         } else {

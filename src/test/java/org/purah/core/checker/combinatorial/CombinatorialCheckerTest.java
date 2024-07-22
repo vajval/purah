@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.ComboBuilderChecker;
-import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.LambdaChecker;
 import org.purah.core.checker.factory.LambdaCheckerFactory;
 import org.purah.core.checker.result.CheckResult;
@@ -53,7 +52,7 @@ class CombinatorialCheckerTest {
                 .match(new GeneralFieldMatcher("initiator.name"), "name is alice")//√
                 .resultLevel(ResultLevel.all);
 
-        purahContext.combo().resultLevel(ResultLevel.all).match(new FixedMatcher("id"), "id is 1").match(new FixedMatcher("name"), "name is alice").reg("user_test");
+        purahContext.combo().resultLevel(ResultLevel.all).match(new FixedMatcher("id"), "id is 1").match(new FixedMatcher("name"), "name is alice").regSelf("user_test");
 
 
     }

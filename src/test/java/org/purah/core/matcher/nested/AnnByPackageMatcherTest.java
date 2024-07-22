@@ -16,10 +16,10 @@ class AnnByPackageMatcherTest {
 
     @Test
     void annByPackageMatcher() {
-
+        //todo    list nested
         AnnByPackageMatcher annByPackageMatcher = new AnnByPackageMatcher("org*") {
             @Override
-            protected boolean needBeCollectedToChecker(Field field) {
+            protected boolean needBeCollected(Field field) {
                 TestAnn testAnn = field.getDeclaredAnnotation(TestAnn.class);
                 return testAnn != null && StringUtils.hasText(testAnn.value());
             }
@@ -34,7 +34,6 @@ class AnnByPackageMatcherTest {
             System.out.println(matchFieldObjectMap.keySet());
         }
     }
-
 
 
 }

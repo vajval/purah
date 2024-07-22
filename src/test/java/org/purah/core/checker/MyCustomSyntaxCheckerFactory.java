@@ -1,4 +1,4 @@
-package org.purah.util.custom;
+package org.purah.core.checker;
 
 import com.google.common.base.Splitter;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 
 @Component
-public class CustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFactory {
+public class MyCustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFactory {
 
 
     @Autowired

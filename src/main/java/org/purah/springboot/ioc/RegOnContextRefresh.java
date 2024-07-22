@@ -20,6 +20,11 @@ import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.*;
 
+
+/**
+ * 刷新 容器时调用
+ */
+
 @Configuration
 public class RegOnContextRefresh implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -36,7 +41,6 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
             return;
         }
 
-
         PurahIocRegS purahIocRegS = new PurahIocRegS(purahContext);
 
 
@@ -45,6 +49,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
         this.initMatcherManager(purahIocRegS, applicationContext);
 
         this.initCheckerManager(purahIocRegS, applicationContext);
+
 
 
     }

@@ -4,7 +4,6 @@ import org.purah.core.checker.Checker;
 import org.purah.core.checker.combinatorial.CombinatorialChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
 import org.purah.core.exception.init.InitCheckFactoryException;
-import org.purah.core.exception.init.InitCheckerException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

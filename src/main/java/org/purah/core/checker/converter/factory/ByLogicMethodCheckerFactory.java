@@ -8,7 +8,6 @@ import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.init.InitCheckFactoryException;
-import org.purah.core.exception.init.InitCheckerException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;

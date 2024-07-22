@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class PurahContextConfig {
 
-    boolean cache;
+    boolean cache = false;
 
     ResultLevel defaultResultLevel = ResultLevel.only_failed_only_base_logic;
 

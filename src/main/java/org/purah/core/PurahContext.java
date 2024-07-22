@@ -1,17 +1,19 @@
 package org.purah.core;
 
 
-import org.purah.core.checker.Checker;
 import org.purah.core.checker.CheckerManager;
 import org.purah.core.checker.ComboBuilderChecker;
-import org.purah.core.checker.combinatorial.CombinatorialChecker;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.converter.DefaultMethodConverter;
 import org.purah.core.checker.converter.MethodConverter;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.resolver.ArgResolver;
 import org.purah.core.resolver.DefaultArgResolver;
+
+/**
+ * 核心上下文
+ * not use this
+ * plz use Purahs purahContext.purahs() or new Purahs(purahContext) 效
+ */
 
 public class PurahContext {
 
@@ -91,15 +93,8 @@ public class PurahContext {
 
     }
 
-    public CombinatorialChecker createByProperties(CombinatorialCheckerConfigProperties builder) {
-        CombinatorialCheckerConfig config = builder.buildToConfig(this);
-        return new CombinatorialChecker(config);
-
-    }
-
-    public Checker<?, ?> createAndRegByProperties(CombinatorialCheckerConfigProperties properties) {
-        Checker<?, ?> newCombinatorialChecker = createByProperties(properties);
-        return checkManager.reg(newCombinatorialChecker);
+    public Purahs purahs() {
+        return new Purahs(this);
     }
 
 

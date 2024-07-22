@@ -7,34 +7,15 @@ import java.lang.annotation.*;
 
 
 /*
- * 使用方法 1
- * <p>
- * public void voidCheck(@CheckIt("所有字段自定义注解检测") CustomUser customUser) {
- * <p>
- * <p>
- * 使用方法 2
- *
- * @CheckIt("所有字段自定义注解检测") public class CustomUser {
- * A a;
- * B b;
- * }
- * public void voidCheck(@CheckIt CustomUser customUser) {
- * <p>
- * <p>
- * <p>
- * 两者的效果一样
- * <p>
- * 注意 如果
- * @CheckIt("AAA") public class CustomUser {
- * public void voidCheck(@CheckIt("BBBB") CustomUser customUser) {
- * 那么生效的只有BBBB
- * <p>
- * <p>
- * <p>
- * 只用参数注解checkIt注解内容为空时例如
- * @CheckIt("AAA") public class CustomUser {
- * public void voidCheck(@CheckIt CustomUser customUser) {
- * AAA 才会生效
+  @CheckIt("user")
+  class CustomUser{
+  }
+  class CustomPeople{
+  }
+ * public void voidCheck(@CheckIt("test") CustomUser customUser) {         //enable test
+ * public void voidCheck(@CheckIt CustomUser customUser) {                 //enable user
+ * public void voidCheck(@CheckIt("test") CustomPeople CustomPeople) {     //enable test
+ * public void voidCheck(@CheckIt CustomPeople CustomPeople) {             //enable nothing
  */
 
 
@@ -49,10 +30,9 @@ public @interface CheckIt {
     String[] value() default {};
 
     ExecMode.Main mainMode() default ExecMode.Main.all_success;
+
     //todo
     ResultLevel resultLevel() default ResultLevel.all;
-
-
 
 
 }

@@ -15,6 +15,9 @@ import java.util.function.Function;
 
 
 /**
+ *
+ * 缓存FieldMatcher执行之后最终结果的数据,缓存之后下次获取不需要执行FieldMatcher中的逻辑,直接获取结果
+ * 前提是FieldMatcher及class支持缓存
  * result {a.b.c=arg("a.b.c",value,[@Ann1("v1"),@Ann2("2v")],field_info)}
  * cache  (inputArg)-> new arg("a.b.c",invokeGet(inputArg,"a.b.c"),[@Ann1("v1"),@Ann2("2v")],field_info)
  * invoke cache to build result
@@ -71,6 +74,10 @@ public class FieldMatcherResultReflectInvokeCache {
 
         return result;
     }
+
+    /**
+     * 前缀树优化
+     */
 
     static class ReflectTrieCache {
 

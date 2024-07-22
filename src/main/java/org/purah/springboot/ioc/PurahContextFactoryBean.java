@@ -27,7 +27,6 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
     @Override
     public Object getObject() {
         PurahContextConfig purahContextConfig = new PurahContextConfig();
-
         purahContextConfig.setCache(enablePurah.enableCache());
         purahContextConfig.setDefaultResultLevel(enablePurah.defaultResultLevel());
         purahContextConfig.setSingleStringConstructorFieldMatcherClassSet(singleStringConstructorFieldMatcherClassSet);

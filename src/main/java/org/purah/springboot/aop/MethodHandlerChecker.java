@@ -9,7 +9,7 @@ import org.purah.core.checker.MultiCheckerExecutor;
 import org.purah.core.checker.result.*;
 import org.purah.springboot.aop.ann.CheckIt;
 import org.purah.springboot.aop.ann.FillToMethodResult;
-import org.purah.springboot.aop.ann.MethodCheck;
+import org.purah.springboot.aop.ann.MethodCheckConfig;
 import org.purah.springboot.aop.result.ArgCheckResult;
 import org.purah.springboot.aop.result.MethodCheckResult;
 import org.springframework.util.StringUtils;
@@ -25,7 +25,6 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
 
 
     protected final PurahContext purahContext;
-
 
     protected final Object bean;
 
@@ -57,10 +56,10 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
         FillToMethodResult ann = method.getDeclaredAnnotation(FillToMethodResult.class);
         fillToMethodResult = (ann != null);
 
-        MethodCheck methodCheck = method.getDeclaredAnnotation(MethodCheck.class);
-        if (methodCheck != null) {
-            execMode = methodCheck.mainMode();
-            resultLevel = methodCheck.resultLevel();
+        MethodCheckConfig methodCheckConfig = method.getDeclaredAnnotation(MethodCheckConfig.class);
+        if (methodCheckConfig != null) {
+            execMode = methodCheckConfig.mainMode();
+            resultLevel = methodCheckConfig.resultLevel();
         }
 
         if (!StringUtils.hasText(this.name)) {
@@ -71,12 +70,6 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
             Parameter parameter = parameters[index];
             CheckIt checkIt = parameter.getDeclaredAnnotation(CheckIt.class);
             if (checkIt == null) continue;
-
-            /*
-             * 找到有注解的参数
-             * 如果指定了校验规则就按照指定的
-             */
-            //如果没有指定就看class上面的
 
             List<String> checkerNameList = Stream.of(checkIt.value()).collect(Collectors.toList());
 
@@ -139,14 +132,14 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
 
 
         return new MethodCheckResult(
-                multiCheckResult.mainCheckResult(),
+                multiCheckResult.mainResult(),
                 resultValueList, bean, method
         );
     }
 
 
     @Override
-    public MethodCheckResult check(InputToCheckerArg inputToCheckerArg) {
+    public MethodCheckResult check(InputToCheckerArg<Object[]> inputToCheckerArg) {
         return (MethodCheckResult) super.check(inputToCheckerArg);
     }
 
@@ -158,7 +151,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
             return methodCheckResult;
         } else if (this.isBaseLogicResultType()) {
             //获取基础结果
-            return methodCheckResult.main();
+            return methodCheckResult.mainResult();
         }else if (this.isBooleanResultType()) {
             //获取boolean结果
             return methodCheckResult.isSuccess();

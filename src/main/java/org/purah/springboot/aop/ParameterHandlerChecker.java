@@ -43,7 +43,10 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
     public Class<?> argClazz() {
         return argClazz;
     }
-
+    @Override
+    public boolean enableCache() {
+        return true;
+    }
     @Override
     public ArgCheckResult check(Object o) {
         return (ArgCheckResult) super.check(o);
@@ -73,7 +76,7 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
         MultiCheckResult<CheckResult<?>> multiCheckResult = executor.toMultiCheckResult(log);
 
 
-        return ArgCheckResult.create(multiCheckResult.mainCheckResult(), checkerNameList,
+        return ArgCheckResult.create(multiCheckResult.mainResult(), checkerNameList,
                 multiCheckResult.data(),
                 checkIt, checkArg, checkIt.mainMode());
 

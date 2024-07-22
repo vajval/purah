@@ -1,4 +1,4 @@
-package org.purah.example.customAnn.ann;
+package org.purah.core.checker.ann;
 
 import java.lang.annotation.*;
 

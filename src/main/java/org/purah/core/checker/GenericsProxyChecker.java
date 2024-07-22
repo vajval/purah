@@ -16,7 +16,8 @@ import java.util.function.BiFunction;
 /**
  public static Checker<Long, Object> longChecker = LambdaChecker.of(Long.class).build("id1", i -> i == 1L);
  public static Checker<Integer, Object> intChecker = LambdaChecker.of(Integer.class).build("id1", i -> i == 1);
- genericsProxyChecker.addNewChecker(longChecker); genericsProxyChecker.addNewChecker(intChecker);
+ genericsProxyChecker.addNewChecker(longChecker);
+ genericsProxyChecker.addNewChecker(intChecker);
  genericsProxyChecker.check(1)//use intChecker
  genericsProxyChecker.check(1L)//use longChecker
  */

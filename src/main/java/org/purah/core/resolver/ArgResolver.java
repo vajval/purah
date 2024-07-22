@@ -7,7 +7,10 @@ import org.purah.core.matcher.FieldMatcher;
 import java.util.Map;
 
 
-
+/**
+ * 参数解析器
+ * 输入对象与FieldMatcher 返回匹配到的字段的值及注解和Field信息
+ */
 
 public interface ArgResolver {
     /**

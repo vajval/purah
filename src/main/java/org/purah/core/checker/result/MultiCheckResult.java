@@ -96,7 +96,7 @@ public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<L
         return this.mainResult.checkLogicFrom();
     }
 
-    public LogicCheckResult mainCheckResult() {
+    public LogicCheckResult<?> mainResult() {
         return mainResult;
     }
 

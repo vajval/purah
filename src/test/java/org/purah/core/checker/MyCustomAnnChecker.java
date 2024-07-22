@@ -1,15 +1,15 @@
 package org.purah.core.checker;
 
 
+import org.purah.core.checker.ann.CNPhoneNum;
+import org.purah.core.checker.ann.NotEmptyTest;
+import org.purah.core.checker.ann.NotNull;
+import org.purah.core.checker.ann.Range;
 import org.purah.core.name.Name;
 import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.core.checker.result.ResultLevel;
-import org.purah.example.customAnn.ann.CNPhoneNum;
-import org.purah.example.customAnn.ann.NotEmptyTest;
-import org.purah.example.customAnn.ann.NotNull;
-import org.purah.example.customAnn.ann.Range;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 

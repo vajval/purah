@@ -11,6 +11,19 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/*
+
+ *  @FillToMethodResult
+    public MethodCheckResult checkThreeUser(
+    @CheckIt("all_field_custom_ann_check") User user0,                  //argCheckResult =methodCheckResult.argResultOf(0)
+    User user1,                                                         //argCheckResult =methodCheckResult.argResultOf(1)
+    @CheckIt("all_field_custom_ann_check") User user2) {                //argCheckResult =methodCheckResult.argResultOf(2)
+       return null;
+    }
+
+ */
+
+
 public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
 
     CheckIt checkItAnn;
