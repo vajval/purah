@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.checker.ComboBuilderChecker;
 import org.purah.core.checker.LambdaChecker;
 import org.purah.core.checker.factory.LambdaCheckerFactory;
@@ -21,6 +22,8 @@ import java.util.Objects;
 class CombinatorialCheckerTest {
 
 
+    Purahs purahs;
+
     PurahContext purahContext;
     ComboBuilderChecker comboBuilderChecker;
 
@@ -32,7 +35,8 @@ class CombinatorialCheckerTest {
 
     @BeforeEach
     public void beforeEach() {
-        purahContext = new PurahContext();
+        purahContext=new PurahContext();
+        purahs = new Purahs(purahContext);
 
         LambdaCheckerFactory<Number> idCheck = LambdaCheckerFactory.of(Number.class).build("id is *", (a, inputArg) -> {
             String id = a.replace("id is ", "");
@@ -44,22 +48,22 @@ class CombinatorialCheckerTest {
             return Objects.equals(name, b);
         });
         LambdaChecker<String> abcCheck = LambdaChecker.of(String.class).build("no abc", i -> !i.contains("abc"));
-        purahContext.checkManager().reg(abcCheck);
-        purahContext.checkManager().addCheckerFactory(idCheck);
-        purahContext.checkManager().addCheckerFactory(nameCheck);
-        comboBuilderChecker = purahContext.combo().match(new GeneralFieldMatcher("initiator.id"), "id is 1")        //√
+        purahs.reg(abcCheck);
+        purahs.reg(idCheck);
+        purahs.reg(nameCheck);
+        comboBuilderChecker = purahs.combo().match(new GeneralFieldMatcher("initiator.id"), "id is 1")        //√
                 .match(new AnnTypeFieldMatcher("shortText"), "no abc")            //x
                 .match(new GeneralFieldMatcher("initiator.name"), "name is alice")//√
                 .resultLevel(ResultLevel.all);
 
-        purahContext.combo().resultLevel(ResultLevel.all).match(new FixedMatcher("id"), "id is 1").match(new FixedMatcher("name"), "name is alice").regSelf("user_test");
+        purahs.combo().resultLevel(ResultLevel.all).match(new FixedMatcher("id"), "id is 1").match(new FixedMatcher("name"), "name is alice").regSelf("user_test");
 
 
     }
 
     @Test
     public void test() {
-        CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(purahContext);
+        CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(purahs);
         config.addMatcherCheckerName(new FixedMatcher("initiator"), Lists.newArrayList("user_test"));
         config.addMatcherCheckerName(new FixedMatcher("recipients"), Lists.newArrayList("user_test"));
         config.setMainExecType(ExecMode.Main.all_success_but_must_check_all);

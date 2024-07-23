@@ -108,7 +108,7 @@ public class CheckItAspect {
     public MethodHandlerChecker checkerOf(Object bean, Method method) {
 
         MethodHandlerChecker methodHandlerChecker = methodCheckerMap.computeIfAbsent(method, i -> new MethodHandlerChecker(bean, method, purahContext));
-        purahContext.checkManager().reg(methodHandlerChecker);
+        purahContext.purahs().reg(methodHandlerChecker);
         return methodHandlerChecker;
     }
 

@@ -11,6 +11,7 @@ import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.factory.BaseMatcherFactory;
 import org.purah.core.matcher.factory.MatcherFactory;
+import org.purah.core.resolver.ArgResolver;
 
 public class Purahs {
     PurahContext purahContext;
@@ -20,17 +21,17 @@ public class Purahs {
     }
 
     public ComboBuilderChecker combo(String... checkerNames) {
-        return new ComboBuilderChecker(purahContext, checkerNames);
+        return new ComboBuilderChecker(this, checkerNames);
 
     }
 
-    public GenericsProxyChecker checkerOf(String name) {
+    public Checker<Object, Object> checkerOf(String name) {
         return purahContext.checkManager().of(name);
 
     }
 
-    public CombinatorialChecker checkerOf(CombinatorialCheckerConfigProperties builder) {
-        CombinatorialCheckerConfig config = builder.buildToConfig(purahContext);
+    public CombinatorialChecker checkerOf(CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties) {
+        CombinatorialCheckerConfig config = combinatorialCheckerConfigProperties.buildToConfig(this);
         return new CombinatorialChecker(config);
     }
 
@@ -66,6 +67,10 @@ public class Purahs {
 
     public BaseMatcherFactory reg(Class<? extends FieldMatcher> clazz) {
         return purahContext.matcherManager().regBaseStrMatcher(clazz);
+    }
+
+    public ArgResolver argResolver() {
+        return purahContext.argResolver();
     }
 
 

@@ -3,6 +3,7 @@ package org.purah.core.matcher.nested;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.checker.ComboBuilderChecker;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.LambdaChecker;
@@ -40,9 +41,9 @@ class FixedMatcherTest {
         Assertions.assertNull(map.get("noExistField").argValue());
         Assertions.assertEquals(map.size(), 5);
 
-        PurahContext purahContext = new PurahContext();
-        purahContext.checkManager().reg(LambdaChecker.of(Object.class).build("notNull", Objects::nonNull));
-        ComboBuilderChecker checker = purahContext.combo().match(fixedMatcher, "notNull");
+        Purahs purahs=new Purahs(new PurahContext());
+        purahs.reg(LambdaChecker.of(Object.class).build("notNull", Objects::nonNull));
+        ComboBuilderChecker checker = purahs.combo().match(fixedMatcher, "notNull");
         //noExistField child#5.child#0.id is null
         Assertions.assertFalse(checker.check(People.elder));
 

@@ -70,7 +70,7 @@ public class PurahContext {
         return config;
     }
 
-    public CheckerManager checkManager() {
+    protected CheckerManager checkManager() {
         return checkManager;
 
     }
@@ -83,15 +83,12 @@ public class PurahContext {
         return argResolver;
     }
 
-    public MatcherManager matcherManager() {
+    protected MatcherManager matcherManager() {
         return matcherManager;
     }
 
 
-    public ComboBuilderChecker combo(String... checkerNames) {
-        return new ComboBuilderChecker(this, checkerNames);
 
-    }
 
     public Purahs purahs() {
         return new Purahs(this);

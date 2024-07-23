@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.InputToCheckerArg;
@@ -31,25 +32,25 @@ public class ByLogicMethodCheckerTest {
         return StringUtils.hasText(people.getName());
     }
 
-    PurahContext purahContext;
+    Purahs purahs;
 
     @BeforeEach
     public void beforeEach() throws NoSuchMethodException {
-        purahContext = new PurahContext();
+        purahs = new Purahs(new PurahContext());
         Method method = ByLogicMethodCheckerTest.class.getMethod("nameNotEmpty", String.class);
         ByLogicMethodChecker methodChecker = new ByLogicMethodChecker(null, method, "nameNotEmpty");
-        purahContext.checkManager().reg(methodChecker);
+        purahs.reg(methodChecker);
 
         method = ByLogicMethodCheckerTest.class.getMethod("nameNotEmpty", People.class);
         methodChecker = new ByLogicMethodChecker(null, method, "nameNotEmpty");
-        purahContext.checkManager().reg(methodChecker);
+        purahs.reg(methodChecker);
 
     }
 
 
     @Test
     void doCheck() {
-        GenericsProxyChecker checker = purahContext.checkManager().of("nameNotEmpty");
+        Checker<Object, Object> checker = purahs.checkerOf("nameNotEmpty");
 
         Assertions.assertTrue(checker.check("123"));
         Assertions.assertTrue(checker.check(People.elder));
@@ -58,7 +59,7 @@ public class ByLogicMethodCheckerTest {
         Assertions.assertFalse(checker.check(new People()));
 
 
-        ComboBuilderChecker comboBuilderChecker = purahContext.combo("nameNotEmpty").match(new GeneralFieldMatcher("child#0.name"), "nameNotEmpty");
+        ComboBuilderChecker comboBuilderChecker = purahs.combo("nameNotEmpty").match(new GeneralFieldMatcher("child#0.name"), "nameNotEmpty");
 
         Assertions.assertTrue(comboBuilderChecker.check(People.elder));
 
@@ -72,7 +73,7 @@ public class ByLogicMethodCheckerTest {
 
     @Test
     public void nullTest() {
-        GenericsProxyChecker checker = purahContext.checkManager().of("nameNotEmpty");
+        Checker<Object, Object> checker = purahs.checkerOf("nameNotEmpty");
         CheckResult<?> result = checker.check(InputToCheckerArg.of(null, String.class));
         Assertions.assertTrue(result.log().contains("java.lang.String"));
         result = checker.check(InputToCheckerArg.of(null, People.class));

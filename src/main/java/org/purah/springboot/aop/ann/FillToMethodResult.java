@@ -16,7 +16,7 @@ import java.lang.annotation.*;
     public boolean customSyntax(@CheckIt("example:1[][*:custom_ann_check;*.*:custom_ann_check]") User user) {
         return null;
     }
-    methodCheckResult.isSuccess() to result  [CheckResult<?>]
+    methodCheckResult.isSuccess() to result  [boolean]
  *
  */
 

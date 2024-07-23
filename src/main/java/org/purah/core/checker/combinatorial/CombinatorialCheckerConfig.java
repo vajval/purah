@@ -2,6 +2,7 @@ package org.purah.core.checker.combinatorial;
 
 
 import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.matcher.FieldMatcher;
 
@@ -14,7 +15,7 @@ import java.util.List;
  */
 public class CombinatorialCheckerConfig {
 
-    final PurahContext purahContext;
+    final Purahs purahs;
 
     ExecMode.Main mainExecType = ExecMode.Main.all_success;
 
@@ -29,13 +30,13 @@ public class CombinatorialCheckerConfig {
     public final List<FieldMatcherCheckerConfig> fieldMatcherCheckerConfigList = new ArrayList<>();
 
 
-    private CombinatorialCheckerConfig(PurahContext purahContext) {
-        this.purahContext = purahContext;
+    private CombinatorialCheckerConfig(Purahs purahs) {
+        this.purahs = purahs;
     }
 
 
-    public static CombinatorialCheckerConfig create(PurahContext purahContext) {
-        return new CombinatorialCheckerConfig(purahContext);
+    public static CombinatorialCheckerConfig create(Purahs purahs) {
+        return new CombinatorialCheckerConfig(purahs);
     }
 
     public String getLogicFrom() {
@@ -80,7 +81,6 @@ public class CombinatorialCheckerConfig {
     @Override
     public String toString() {
         return "CombinatorialCheckerConfig{" +
-                "purahContext=" + purahContext +
                 ", mainExecType=" + mainExecType +
                 ", name='" + name + '\'' +
                 ", logicFrom='" + logicFrom + '\'' +

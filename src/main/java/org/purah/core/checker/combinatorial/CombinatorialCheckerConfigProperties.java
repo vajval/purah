@@ -3,6 +3,7 @@ package org.purah.core.checker.combinatorial;
 import com.google.common.base.Splitter;
 import com.google.gson.Gson;
 import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.factory.MatcherFactory;
@@ -25,11 +26,11 @@ public class CombinatorialCheckerConfigProperties {
     private final LinkedHashMap<String, Map<String, List<String>>> matcherFieldCheckerMapping = new LinkedHashMap<>();
 
 
-    public CombinatorialCheckerConfig buildToConfig(PurahContext purahContext) {
+    public CombinatorialCheckerConfig buildToConfig(Purahs purahs) {
 
-        CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(purahContext);
+        CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(purahs);
 
-        MatcherManager matcherManager = purahContext.matcherManager();
+//        Purahs purahs = purahContext.purahs();
 
 
         config.setMainExecType(this.getMainMode());
@@ -40,7 +41,7 @@ public class CombinatorialCheckerConfigProperties {
 
         for (Map.Entry<String, Map<String, List<String>>> entry : this.getMatcherFieldCheckerMapping().entrySet()) {
             String matcherFactoryName = entry.getKey();
-            MatcherFactory matcherFactory = matcherManager.factoryOf(matcherFactoryName);
+            MatcherFactory matcherFactory = purahs.matcherOf(matcherFactoryName);
             for (Map.Entry<String, List<String>> matcherStrChecker : entry.getValue().entrySet()) {
                 String matcherStr = matcherStrChecker.getKey();
                 FieldMatcher fieldMatcher = matcherFactory.create(matcherStr);

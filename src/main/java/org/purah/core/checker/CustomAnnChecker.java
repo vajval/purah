@@ -1,9 +1,12 @@
 package org.purah.core.checker;
 
 
+import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.converter.checker.ByAnnMethodChecker;
 import org.purah.core.checker.result.*;
+import org.purah.springboot.aop.ann.CheckIt;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -60,6 +63,21 @@ public abstract class CustomAnnChecker extends AbstractBaseSupportCacheChecker<O
         }
 
     }
+
+
+    /*
+     * 取消注释实现对每个字段的 嵌套CheckIt 检查
+
+     */
+//    public abstract Purahs purahs();
+//    public MultiCheckResult<CheckResult<?>> checkItAnn(CheckIt checkIt, InputToCheckerArg<Object> inputToCheckerArg) {
+//        Purahs purahs = purahs();
+//        String[] checkerNames = checkIt.value();
+//        ExecMode.Main checkItMainMode = checkIt.mainMode();
+//        ResultLevel checkItResultLevel = checkIt.resultLevel();
+//        ComboBuilderChecker checker = purahs.combo(checkerNames).resultLevel(checkItResultLevel).mainMode(checkItMainMode);
+//        return checker.check(inputToCheckerArg);
+//    }
 
 
     @Override

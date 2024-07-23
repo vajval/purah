@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.name.Name;
 import org.purah.core.checker.ComboBuilderChecker;
 import org.purah.core.checker.result.CheckResult;
@@ -28,14 +29,14 @@ public class ByAnnMethodCheckerTest {
     }
 
 
-    PurahContext purahContext;
+    Purahs purahs; ;
 
     @BeforeEach
     public void beforeEach() throws NoSuchMethodException {
-        purahContext = new PurahContext();
+        purahs = new Purahs(new PurahContext());
         Method method = ByAnnMethodCheckerTest.class.getMethod("testByName", TestAnn.class, String.class);
         ByAnnMethodChecker byAnnMethodChecker = new ByAnnMethodChecker(null, method, "test");
-        purahContext.checkManager().reg(byAnnMethodChecker);
+        purahs.reg(byAnnMethodChecker);
 
     }
 
@@ -43,27 +44,27 @@ public class ByAnnMethodCheckerTest {
     @Test
     void test() {
 
-        ComboBuilderChecker checker = purahContext.combo().match(new GeneralFieldMatcher("name"), "test");
+        ComboBuilderChecker checker = purahs.combo().match(new GeneralFieldMatcher("name"), "test");
 
         CheckResult<?> result = checker.check(People.elder);
         Assertions.assertTrue(result);
 
-        checker = purahContext.combo("test");
+        checker = purahs.combo("test");
         result = checker.check("123");
         Assertions.assertFalse(result);//no ann
 
-        checker = purahContext.combo().match(new GeneralFieldMatcher("child#0.name"), "test");
+        checker = purahs.combo().match(new GeneralFieldMatcher("child#0.name"), "test");
 
 
         result = checker.check(People.elder);
         Assertions.assertTrue(result);
 
 
-        checker = purahContext.combo().match(new GeneralFieldMatcher("child#0.id"), "test");
+        checker = purahs.combo().match(new GeneralFieldMatcher("child#0.id"), "test");
         result = checker.check(People.elder);
         Assertions.assertFalse(result);  //no ann
 
-        checker = purahContext.combo().match(new GeneralFieldMatcher("child#0.child#0.child#0.id"), "test");
+        checker = purahs.combo().match(new GeneralFieldMatcher("child#0.child#0.child#0.id"), "test");
         result = checker.check(People.elder);
         Assertions.assertFalse(result);  //no child
 

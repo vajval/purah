@@ -1,6 +1,7 @@
 package org.purah.core.checker.combinatorial;
 
 
+import org.purah.core.Purahs;
 import org.purah.core.checker.result.MultiCheckResult;
 import org.purah.core.name.IName;
 import org.purah.core.checker.*;
@@ -65,11 +66,12 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
 
     public void init() {
         if (this.init) return;
-        CheckerManager checkerManager = config.purahContext.checkManager();
-        this.rootInputArgCheckers = this.config.forRootInputArgCheckerNames.stream().map(checkerManager::of).collect(Collectors.toList());
+        Purahs purahs = config.purahs;
+//        CheckerManager checkerManager = config.purahContext.checkManager();
+        this.rootInputArgCheckers = this.config.forRootInputArgCheckerNames.stream().map(purahs::checkerOf).collect(Collectors.toList());
         this.fieldMatcherCheckerConfigList = config.fieldMatcherCheckerConfigList;
         for (FieldMatcherCheckerConfig fieldMatcherCheckerConfig : this.fieldMatcherCheckerConfigList) {
-            fieldMatcherCheckerConfig.buildCheckers(checkerManager);
+            fieldMatcherCheckerConfig.buildCheckers(purahs);
         }
         this.init = true;
     }
@@ -129,7 +131,7 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
         }
 
         protected List<Supplier<CheckResult<?>>> checkResultSupplierList(InputToCheckerArg<Object> inputToCheckerArg) {
-            ArgResolver argResolver = config.purahContext.argResolver();
+            ArgResolver argResolver = config.purahs.argResolver();
             Map<String, InputToCheckerArg<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(inputToCheckerArg, fieldMatcherCheckerConfig.fieldMatcher);
             ExecMode.Matcher execType = fieldMatcherCheckerConfig.execType;
             List<Supplier<CheckResult<?>>> result = new ArrayList<>(checkerList.size() * matchFieldObjectMap.size());

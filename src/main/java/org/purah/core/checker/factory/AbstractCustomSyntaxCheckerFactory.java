@@ -2,7 +2,9 @@ package org.purah.core.checker.factory;
 
 
 import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.checker.Checker;
+import org.purah.core.checker.ProxyChecker;
 import org.purah.core.checker.combinatorial.CombinatorialChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
@@ -16,27 +18,31 @@ import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties
  */
 public abstract class AbstractCustomSyntaxCheckerFactory implements CheckerFactory {
 
-    public abstract PurahContext purahContext();
+    public abstract Purahs purahs();
 
 
     @Override
     public abstract boolean match(String needMatchCheckerName);
 
+    public abstract Checker<?, ?> doCreateChecker(String needMatchCheckerName);
 
-    public abstract CombinatorialCheckerConfigProperties combinatorialCheckerConfigProperties(String needMatchCheckerName);
+
+    public boolean cache(String needMatchCheckerName, Checker<?, ?> checker) {
+        return true;
+    }
+
 
     @Override
-    public Checker<?,?> createChecker(String needMatchCheckerName) {
-        CombinatorialCheckerConfigProperties properties = combinatorialCheckerConfigProperties(needMatchCheckerName);
-        String logicFrom = properties.getLogicFrom();
-        if (logicFrom == null) {
-            properties.setLogicFrom(this.getClass().getName());
+    public Checker<?, ?> createChecker(String needMatchCheckerName) {
+        Checker<?, ?> checker = doCreateChecker(needMatchCheckerName);
+        ProxyChecker result = new ProxyChecker(checker,needMatchCheckerName, this.getClass().getName());
+        boolean cache = cache(needMatchCheckerName, checker);
+        if (cache) {
+            purahs().reg(result);
         }
-        CombinatorialCheckerConfig config = properties.buildToConfig(purahContext());
-        return new CombinatorialChecker(config);
-
-
+        return result;
 
 
     }
+
 }

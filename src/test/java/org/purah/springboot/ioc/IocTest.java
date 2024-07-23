@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.ExampleApplication;
 import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.springboot.ioc.test_bean.checker.IocIgnoreChecker;
 import org.purah.springboot.ioc.test_bean.checker.IocMethodRegTestBean;
@@ -20,7 +21,7 @@ import java.util.Set;
 @SpringBootTest(classes = ExampleApplication.class)
 public class IocTest {
     @Autowired
-    PurahContext purahContext;
+    Purahs purahs;
 
 
     @Test
@@ -42,11 +43,11 @@ public class IocTest {
 
     @Test
     public void test() {
-        FieldMatcher fieldMatcher = purahContext.matcherManager().factoryOf(ReverseStringMatcher.NAME).create("123|abc");
+        FieldMatcher fieldMatcher = purahs.matcherOf(ReverseStringMatcher.NAME).create("123|abc");
         Set<String> strings = fieldMatcher.matchFields(Sets.newHashSet("123", "321", "abc", "cba"), null);
         Assertions.assertEquals(strings, Sets.newHashSet("321", "cba"));
 
-        fieldMatcher = purahContext.matcherManager().factoryOf(ReverseStringMatcher.NAME).create("123|abc");
+        fieldMatcher = purahs.matcherOf(ReverseStringMatcher.NAME).create("123|abc");
         strings = fieldMatcher.matchFields(Sets.newHashSet("123", "321", "abc", "cba"), null);
         Assertions.assertEquals(strings, Sets.newHashSet("321", "cba"));
     }
@@ -55,8 +56,7 @@ public class IocTest {
     public boolean containsMatcherFactory(String factory) {
 
         try {
-            purahContext.matcherManager().factoryOf(factory);
-            return true;
+            return   purahs.matcherOf(factory)!=null;
         } catch (Exception e) {
             return false;
         }
@@ -65,8 +65,7 @@ public class IocTest {
 
     public boolean containsChecker(String name) {
         try {
-            purahContext.checkManager().of(name);
-            return true;
+            return  purahs.checkerOf(name)!=null;
         } catch (Exception e) {
             return false;
         }
