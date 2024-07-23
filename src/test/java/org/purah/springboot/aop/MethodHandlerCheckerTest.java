@@ -9,12 +9,11 @@ import org.purah.core.PurahContext;
 import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.LogicCheckResult;
-import org.purah.core.name.Name;
 import org.purah.springboot.aop.ann.CheckIt;
 import org.purah.springboot.aop.ann.FillToMethodResult;
 import org.purah.springboot.aop.ann.MethodCheckConfig;
 import org.purah.springboot.aop.result.ArgCheckResult;
-import org.purah.springboot.aop.result.MethodCheckResult;
+import org.purah.springboot.aop.result.MethodHandlerCheckResult;
 import org.purah.springboot.ioc.PurahIocRegS;
 import org.purah.springboot.ioc.ann.ToChecker;
 
@@ -32,14 +31,13 @@ public class MethodHandlerCheckerTest {
     private static final Logger log = LogManager.getLogger(MethodHandlerCheckerTest.class);
     PurahContext purahContext;
 
-    @Name("not null")
-    @ToChecker
+
+    @ToChecker("not null")
     public static boolean notNull(People parent) {
         return parent != null;
     }
 
-    @Name("have_child")
-    @ToChecker
+    @ToChecker("have_child")
     public static CheckResult<String> haveChild(People people) {
 
         if (CollectionUtils.isEmpty(people.getChild())) {
@@ -104,17 +102,17 @@ public class MethodHandlerCheckerTest {
 
 
         MethodHandlerChecker methodHandlerChecker = checkerByMethodName("test2");
-        MethodCheckResult methodCheckResult = methodHandlerChecker.check(new People[]{People.elder});
-        Object haveChild = methodCheckResult.argResultOf(0).resultOf("have_child").data();
+        MethodHandlerCheckResult methodHandlerCheckResult = methodHandlerChecker.check(new People[]{People.elder});
+        Object haveChild = methodHandlerCheckResult.argResultOf(0).resultOf("have_child").data();
         Assertions.assertEquals(haveChild, "success");
 
-        methodCheckResult = methodHandlerChecker.check(new People[]{People.granddaughterForDaughter});
-        haveChild = methodCheckResult.argResultOf(0).resultOf("have_child").data();
+        methodHandlerCheckResult = methodHandlerChecker.check(new People[]{People.granddaughterForDaughter});
+        haveChild = methodHandlerCheckResult.argResultOf(0).resultOf("have_child").data();
         Assertions.assertEquals(haveChild, "no child");
         log.info("----------------");
-        log.info(methodCheckResult.log());
-        log.info(methodCheckResult.argResultOf(0).log());
-        log.info(methodCheckResult.argResultOf(0).resultOf("have_child").data());
+        log.info(methodHandlerCheckResult.log());
+        log.info(methodHandlerCheckResult.argResultOf(0).log());
+        log.info(methodHandlerCheckResult.argResultOf(0).resultOf("have_child").data());
 
 
     }
@@ -122,29 +120,29 @@ public class MethodHandlerCheckerTest {
     @Test
     public void method3() {
         MethodHandlerChecker methodHandlerChecker = checkerByMethodName("test3");
-        MethodCheckResult methodCheckResult = methodHandlerChecker.check(new People[]{People.elder, People.granddaughterForDaughter, People.elder, People.elder, People.elder, People.elder, People.elder, People.elder});
-        List<ArgCheckResult> resultList = methodCheckResult.data();
+        MethodHandlerCheckResult methodHandlerCheckResult = methodHandlerChecker.check(new People[]{People.elder, People.granddaughterForDaughter, People.elder, People.elder, People.elder, People.elder, People.elder, People.elder});
+        List<ArgCheckResult> resultList = methodHandlerCheckResult.data();
         Assertions.assertTrue(resultList.get(0));
         Assertions.assertFalse(resultList.get(1));
         for (int index = 2; index < resultList.size(); index++) {
-            log.info(methodCheckResult.argResultOf(index));
-            Assertions.assertTrue(methodCheckResult.argResultOf(index).isIgnore());
+            log.info(methodHandlerCheckResult.argResultOf(index));
+            Assertions.assertTrue(methodHandlerCheckResult.argResultOf(index).isIgnore());
         }
     }
     @Test
     public void method4() {
         MethodHandlerChecker methodHandlerChecker = checkerByMethodName("test4");
-        MethodCheckResult methodCheckResult = methodHandlerChecker.check(new People[]{People.elder, People.granddaughterForDaughter, People.elder, People.elder, People.elder, People.elder, People.elder, People.elder});
-        List<ArgCheckResult> resultList = methodCheckResult.data();
+        MethodHandlerCheckResult methodHandlerCheckResult = methodHandlerChecker.check(new People[]{People.elder, People.granddaughterForDaughter, People.elder, People.elder, People.elder, People.elder, People.elder, People.elder});
+        List<ArgCheckResult> resultList = methodHandlerCheckResult.data();
         Assertions.assertTrue(resultList.get(0));
         Assertions.assertFalse(resultList.get(1));
         for (int index =2; index < resultList.size(); index++) {
             ParameterHandlerChecker parameterHandlerChecker = methodHandlerChecker.parameterHandlerCheckerMap.get(index);
-            log.info(methodCheckResult.argResultOf(index));
+            log.info(methodHandlerCheckResult.argResultOf(index));
             if(parameterHandlerChecker==null){
-                Assertions.assertTrue(methodCheckResult.argResultOf(index).isIgnore());
+                Assertions.assertTrue(methodHandlerCheckResult.argResultOf(index).isIgnore());
             }else{
-                Assertions.assertTrue(methodCheckResult.argResultOf(index));
+                Assertions.assertTrue(methodHandlerCheckResult.argResultOf(index));
             }
         }
 

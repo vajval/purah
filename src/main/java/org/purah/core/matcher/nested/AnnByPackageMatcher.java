@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /*
- * 获取所有符合 needBeCollected ()的field,及其值
+ * 获取所有符合 needBeCollected ()的field的值
  * 输入 needNestedPackagePatch , 如果Field的package 符合needNestedPackagePatch
  * 就对这个Field 进行嵌套匹配
  *
@@ -44,7 +44,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *  then the value of this field will undergo the same matching process.
  *
  */
-//todo    list nested
+//todo  list nested
+//todo  circular dependency error
 
 public abstract class AnnByPackageMatcher extends BaseStringMatcher implements MultilevelFieldMatcher, ListIndexMatcher {
 
@@ -122,8 +123,6 @@ public abstract class AnnByPackageMatcher extends BaseStringMatcher implements M
     class FieldInfoCache {
         Class<?> checkClazz;
         Field field;
-        boolean match = false;
-
         boolean needNest = false;
 
         boolean needBeCollected = false;
@@ -146,7 +145,6 @@ public abstract class AnnByPackageMatcher extends BaseStringMatcher implements M
                 this.needNest = fieldNeedNestedMatcher.match(this.checkClazz.getPackage().getName());
             }
             this.needBeCollected = needBeCollected(field);
-            this.match = this.needNest || this.needBeCollected;
             this.field = field;
         }
     }

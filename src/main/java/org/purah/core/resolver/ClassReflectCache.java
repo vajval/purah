@@ -73,6 +73,9 @@ public class ClassReflectCache {
         }
     }
 
+    /**
+     * null值专用缓存
+     */
 
     public static final ClassReflectCache nullOrEmptyValueReflectCache = new ClassReflectCache() {
         @Override
@@ -89,6 +92,13 @@ public class ClassReflectCache {
         public void tryRegNewInvokeCache(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher, Map<String, InputToCheckerArg<?>> result) {
         }
     };
+
+    /*
+     * 当前第一级字段的值,不支持嵌套
+     * child.id -> child
+     * id->id
+     * child#1->child
+     */
 
 
     public Map<String, InputToCheckerArg<?>> thisLevelMatchFieldValueMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
@@ -113,6 +123,11 @@ public class ClassReflectCache {
         }
         return result;
     }
+
+    /*
+     * 直接通过反射缓存获取值
+     * 不用 执行FieldMatcher中的逻辑
+     */
 
 
     public Map<String, InputToCheckerArg<?>> fullResultByInvokeCache(Object inputArg, FieldMatcher fieldMatcher) {
@@ -150,6 +165,12 @@ public class ClassReflectCache {
     public boolean cached(FieldMatcher fieldMatcher) {
         return fieldMatcherResultByCacheInvokeMap.containsKey(fieldMatcher);
     }
+
+    /*
+     * 搜集返回结果的字段,直接从输入对象中生成结果
+     * 生成的结果和返回的结果一样就是可以缓存的
+     *
+     */
 
 
     protected static boolean enableNestedGetValue(InputToCheckerArg<?> inputToCheckerArg, Map<String, InputToCheckerArg<?>> result) {

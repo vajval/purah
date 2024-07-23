@@ -1,13 +1,9 @@
 package org.purah.core.checker.factory;
 
 
-import org.purah.core.PurahContext;
 import org.purah.core.Purahs;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.ProxyChecker;
-import org.purah.core.checker.combinatorial.CombinatorialChecker;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 
 
 /**

@@ -7,14 +7,12 @@ import org.purah.core.Purahs;
 import org.purah.core.checker.Checker;
 import org.purah.core.checker.CheckerManager;
 import org.purah.core.checker.GenericsProxyChecker;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.converter.MethodConverter;
 import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.factory.MatcherFactory;
-import org.purah.core.name.NameUtil;
 import org.purah.core.resolver.ArgResolver;
 import org.purah.springboot.config.PurahConfigProperties;
 import org.purah.springboot.ioc.ann.ToChecker;
@@ -23,7 +21,6 @@ import org.purah.springboot.ioc.ann.ToCheckerFactory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -131,8 +128,8 @@ public class PurahIocRegS {
         List<String> checkerNameList = new ArrayList<>(checkMethods.size());
         List<Checker<?, ?>> checkerList = new ArrayList<>();
         for (Method checkMethod : checkMethods) {
-            String name = NameUtil.nameByAnnOnMethod(checkMethod);
-            Checker<?, ?> checker = enableMethodConverter.toChecker(enableBean, checkMethod, name);
+            ToChecker toChecker = checkMethod.getDeclaredAnnotation(ToChecker.class);
+            Checker<?, ?> checker = enableMethodConverter.toChecker(enableBean, checkMethod, toChecker.value());
             if (checker != null) {
                 checkerList.add(checker);
                 checkerNameList.add(checker.name());

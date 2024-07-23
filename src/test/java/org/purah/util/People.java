@@ -1,6 +1,7 @@
 package org.purah.util;
 
 import com.google.gson.Gson;
+import org.purah.core.matcher.singlelevel.FieldType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.UUID;
 public class People {
 
     String id;
+    @FieldType("shortText")
     @TestAnn("不超过3个字")
     String name;
     @TestAnn("南方城市")
@@ -94,8 +96,7 @@ public class People {
 
     public static Map<String, Object> mapOf(String name) {
         Gson gson = new Gson();
-        Map<String, Object> people = gson.fromJson(str, Map.class);
-        return people;
+        return gson.fromJson(str, Map.class);
     }
 
 

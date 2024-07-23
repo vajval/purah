@@ -10,7 +10,6 @@ import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.core.checker.result.MultiCheckResult;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.matcher.nested.GeneralFieldMatcher;
-import org.purah.springboot.aop.result.MethodCheckResult;
 import org.purah.util.Checkers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,7 +59,6 @@ public class CheckItAspectTest {
     @Test
     public void customSyntax() {
 
-        MethodCheckResult methodCheckResult = aspectTestService.customSyntax(BAD_USER);
 
         assertTrue(aspectTestService.customSyntax(GOOD_USER_GOOD_CHILD));
         assertTrue(aspectTestService.customSyntax(GOOD_USER));

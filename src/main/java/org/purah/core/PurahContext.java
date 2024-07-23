@@ -2,7 +2,6 @@ package org.purah.core;
 
 
 import org.purah.core.checker.CheckerManager;
-import org.purah.core.checker.ComboBuilderChecker;
 import org.purah.core.checker.converter.DefaultMethodConverter;
 import org.purah.core.checker.converter.MethodConverter;
 import org.purah.core.matcher.MatcherManager;

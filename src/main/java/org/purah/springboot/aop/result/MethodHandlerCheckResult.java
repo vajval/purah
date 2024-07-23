@@ -8,11 +8,11 @@ import java.util.List;
 
 
 
-public class MethodCheckResult extends MultiCheckResult<ArgCheckResult> {
+public class MethodHandlerCheckResult extends MultiCheckResult<ArgCheckResult> {
     final Object belongBean;
     final Method method;
 
-    public MethodCheckResult(LogicCheckResult<?> mainCheckResult, List<ArgCheckResult> valueList, Object belongBean, Method method) {
+    public MethodHandlerCheckResult(LogicCheckResult<?> mainCheckResult, List<ArgCheckResult> valueList, Object belongBean, Method method) {
         super(mainCheckResult, valueList);
         this.belongBean = belongBean;
         this.method = method;

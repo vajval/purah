@@ -7,10 +7,10 @@ import org.purah.core.exception.CheckException;
 import org.purah.util.User;
 
 public class GenericsProxyCheckerTest {
-    public static Checker<User, Object> userChecker = LambdaChecker.of(User.class).build("id1", i -> i.getId().equals(1L));
+    public static final Checker<User, Object> userChecker = LambdaChecker.of(User.class).build("id1", i -> i.getId().equals(1L));
 
 
-    public static Checker<Long, Object> longChecker = LambdaChecker.of(Long.class).build("id1", i -> i == 1L);
+    public static final Checker<Long, Object> longChecker = LambdaChecker.of(Long.class).build("id1", i -> i == 1L);
     public static Checker<Integer, Object> intChecker = LambdaChecker.of(Integer.class).build("id1", i -> i == 1);
 
 

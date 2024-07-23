@@ -1,7 +1,5 @@
 package org.purah.springboot.ioc.test_bean.checker;
 
-import org.purah.core.name.Name;
-
 import org.purah.springboot.ioc.ann.PurahMethodsRegBean;
 import org.purah.springboot.ioc.ann.ToChecker;
 import org.purah.springboot.ioc.ann.ToCheckerFactory;
@@ -15,8 +13,7 @@ public class IocMethodRegTestBean {
 
 
     private static final String RANGE_MATCH = "value in [*-*]";
-    @ToChecker
-    @Name(NOT_NULL_CHECKER_NAME)
+    @ToChecker(NOT_NULL_CHECKER_NAME)
     public boolean IocTestNotNull(Integer o) {
         return o != null;
     }

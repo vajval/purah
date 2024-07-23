@@ -3,7 +3,6 @@ package org.purah.core.checker.combinatorial;
 
 import org.purah.core.Purahs;
 import org.purah.core.checker.Checker;
-import org.purah.core.checker.CheckerManager;
 import org.purah.core.matcher.FieldMatcher;
 
 import java.util.List;
@@ -28,9 +27,9 @@ public class FieldMatcherCheckerConfig {
         checkers = this.checkerNames.stream().map(purahs::checkerOf).collect(Collectors.toList());
     }
 
-    public FieldMatcherCheckerConfig(FieldMatcher fieldMatcher, List<String> ruleNames) {
+    public FieldMatcherCheckerConfig(FieldMatcher fieldMatcher, List<String> checkerNames) {
         this.fieldMatcher = fieldMatcher;
-        this.checkerNames = ruleNames;
+        this.checkerNames = checkerNames;
     }
 
     @Override

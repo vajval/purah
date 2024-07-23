@@ -2,10 +2,8 @@ package org.purah.core.checker.combinatorial;
 
 import com.google.common.base.Splitter;
 import com.google.gson.Gson;
-import org.purah.core.PurahContext;
 import org.purah.core.Purahs;
 import org.purah.core.checker.result.ResultLevel;
-import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.factory.MatcherFactory;
 import org.purah.core.matcher.FieldMatcher;
 

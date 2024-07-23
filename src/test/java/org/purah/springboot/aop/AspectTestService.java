@@ -1,6 +1,6 @@
 package org.purah.springboot.aop;
 
-import org.purah.springboot.aop.result.MethodCheckResult;
+import org.purah.springboot.aop.result.MethodHandlerCheckResult;
 import org.purah.util.Checkers;
 import org.purah.util.User;
 import org.purah.springboot.aop.ann.CheckIt;
@@ -15,14 +15,14 @@ public class AspectTestService {
 
 
     @FillToMethodResult
-    public MethodCheckResult checkThreeUser(@CheckIt("all_field_custom_ann_check") User user0,
-                                            User user1,
-                                            @CheckIt("all_field_custom_ann_check") User user2) {
+    public MethodHandlerCheckResult checkThreeUser(@CheckIt("all_field_custom_ann_check") User user0,
+                                                   User user1,
+                                                   @CheckIt("all_field_custom_ann_check") User user2) {
         return null;
     }
 
     @FillToMethodResult
-    public MethodCheckResult customSyntax(@CheckIt(customSyntax) User user) {
+    public MethodHandlerCheckResult customSyntax(@CheckIt(customSyntax) User user) {
         return null;
     }
 

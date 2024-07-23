@@ -15,8 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 反射解析器
- * 泛型为 Object 即支持所有类型
- * 会对字段配置进行
  */
 
 public class ReflectArgResolver implements ArgResolver {
@@ -68,11 +66,11 @@ public class ReflectArgResolver implements ArgResolver {
     }
 
 
-    /**
-     * 1 people.elder  ->  fixMatcher("child.name")
+    /*
+     * 1 input     people.elder    fixMatcher("child.name")
      * 2 thisLevelMap={child:son}
      * 3 fixMatcher("child.name").nestedFieldMatcher("child")->  fixMatcher("name")
-     * 4 son ->  fixMatcher("name")
+     * 4 input     son              fixMatcher("name")
      * 5 thisLevelMap={child.name:child_name}
      * 6 fixMatcher("name").nestedFieldMatcher("name")-> null
      * 7 result.putAll(thisLevelMap)
@@ -161,11 +159,12 @@ public class ReflectArgResolver implements ArgResolver {
 
 
         Class<?> inputArgClass = inputToCheckerArg.argClass();
-
-        ClassReflectCache result = classClassConfigCacheMap.get(inputArgClass);
         if (inputToCheckerArg.isNull()) {
             return ClassReflectCache.nullOrEmptyValueReflectCache;
         }
+
+        ClassReflectCache result = classClassConfigCacheMap.get(inputArgClass);
+
 
         if (result != null) {
             return result;

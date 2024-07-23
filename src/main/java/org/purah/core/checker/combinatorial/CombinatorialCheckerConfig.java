@@ -1,7 +1,6 @@
 package org.purah.core.checker.combinatorial;
 
 
-import org.purah.core.PurahContext;
 import org.purah.core.Purahs;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.matcher.FieldMatcher;

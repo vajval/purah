@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.ExampleApplication;
-import org.purah.core.PurahContext;
 import org.purah.core.Purahs;
 import org.purah.core.matcher.FieldMatcher;
 import org.purah.springboot.ioc.test_bean.checker.IocIgnoreChecker;

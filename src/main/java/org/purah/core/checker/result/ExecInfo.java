@@ -2,8 +2,6 @@ package org.purah.core.checker.result;
 
 import org.purah.core.checker.combinatorial.ExecMode;
 
-import java.util.*;
-
 
 public enum ExecInfo {
     /**

@@ -11,7 +11,7 @@ import org.purah.springboot.aop.ann.CheckIt;
 import org.purah.springboot.aop.ann.FillToMethodResult;
 import org.purah.springboot.aop.ann.MethodCheckConfig;
 import org.purah.springboot.aop.result.ArgCheckResult;
-import org.purah.springboot.aop.result.MethodCheckResult;
+import org.purah.springboot.aop.result.MethodHandlerCheckResult;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
@@ -50,6 +50,18 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
     }
 
 
+    /*
+      @CheckIt("user")
+      class CustomUser{
+      }
+      class CustomPeople{
+      }
+     * public void voidCheck(@CheckIt("test") CustomUser customUser) {         //enable test
+     * public void voidCheck(@CheckIt CustomUser customUser) {                 //enable user
+     * public void voidCheck(@CheckIt("test") CustomPeople CustomPeople) {     //enable test
+     * public void voidCheck(@CheckIt CustomPeople CustomPeople) {             //enable nothing
+
+    */
     protected void init() {
 
         //都没有就是不检测
@@ -87,12 +99,12 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
     }
 
     @Override
-    public MethodCheckResult check(Object[] inputArg) {
+    public MethodHandlerCheckResult check(Object[] inputArg) {
         return check(InputToCheckerArg.of(inputArg, inputArgClass()));
     }
 
     @Override
-    public MethodCheckResult doCheck(InputToCheckerArg<Object[]> inputToCheckerArg) {
+    public MethodHandlerCheckResult doCheck(InputToCheckerArg<Object[]> inputToCheckerArg) {
         Object[] args = inputToCheckerArg.argValue();
 
 
@@ -117,8 +129,6 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
         List<ArgCheckResult> resultValueList = new ArrayList<>();
         for (int index = 0; index < args.length; index++) {
             ParameterHandlerChecker checker = parameterHandlerCheckerMap.get(index);
-
-
             if (checker == null) {
                 resultValueList.add(ArgCheckResult.noAnnIgnore());//no ann
             } else {
@@ -131,30 +141,27 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
         }
 
 
-        return new MethodCheckResult(
-                multiCheckResult.mainResult(),
-                resultValueList, bean, method
-        );
+        return new MethodHandlerCheckResult(multiCheckResult.mainResult(), resultValueList, bean, method);
     }
 
 
     @Override
-    public MethodCheckResult check(InputToCheckerArg<Object[]> inputToCheckerArg) {
-        return (MethodCheckResult) super.check(inputToCheckerArg);
+    public MethodHandlerCheckResult check(InputToCheckerArg<Object[]> inputToCheckerArg) {
+        return (MethodHandlerCheckResult) super.check(inputToCheckerArg);
     }
 
 
-    public Object fillObject(MethodCheckResult methodCheckResult) {
+    public Object fillObject(MethodHandlerCheckResult methodHandlerCheckResult) {
 
         if (this.isMethodCheckResultType()) {
             //获取函数检测结果
-            return methodCheckResult;
+            return methodHandlerCheckResult;
         } else if (this.isBaseLogicResultType()) {
             //获取基础结果
-            return methodCheckResult.mainResult();
-        }else if (this.isBooleanResultType()) {
+            return methodHandlerCheckResult.mainResult();
+        } else if (this.isBooleanResultType()) {
             //获取boolean结果
-            return methodCheckResult.isSuccess();
+            return methodHandlerCheckResult.isSuccess();
         } else {
             throw new UnexpectedException("fillObject");
         }
@@ -163,7 +170,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
 
     @Override
     public String logicFrom() {
-        return this.method.getName();
+        return this.method.toGenericString();
     }
 
     @Override
@@ -175,18 +182,13 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
     public Class<?> resultDataClass() {
         if (this.returnType instanceof Class) {
             return (Class<?>) this.returnType;
-
         }
         return super.resultDataClass();
     }
 
-    private boolean isArgCheckResultType() {
-        return ArgCheckResult.class.equals(returnType);
-    }
-
 
     private boolean isMethodCheckResultType() {
-        return MethodCheckResult.class.equals(returnType) || CheckResult.class.equals(returnType)|| MultiCheckResult.class.equals(returnType);
+        return MethodHandlerCheckResult.class.equals(returnType) || CheckResult.class.equals(returnType) || MultiCheckResult.class.equals(returnType);
     }
 
     private boolean isBaseLogicResultType() {

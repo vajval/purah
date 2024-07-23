@@ -16,11 +16,23 @@ import java.lang.annotation.*;
  * public void voidCheck(@CheckIt CustomUser customUser) {                 //enable user
  * public void voidCheck(@CheckIt("test") CustomPeople CustomPeople) {     //enable test
  * public void voidCheck(@CheckIt CustomPeople CustomPeople) {             //enable nothing
+
+
+
+
+-----------------------------------
+  class CustomPeople{
+   @CheckIt("test")  //not enable
+   String  name ;
+  }
+
+ * 可以通过继承 CustomAnnChecker ,实现注释掉的函数来支持,field上的注解检测
+
  */
 
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PARAMETER, ElementType.TYPE})
+@Target({ElementType.PARAMETER, ElementType.TYPE, ElementType.FIELD})
 @Documented
 public @interface CheckIt {
     /**

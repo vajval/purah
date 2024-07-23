@@ -1,7 +1,6 @@
 package org.purah.core.checker;
 
 import com.google.common.collect.Lists;
-import org.purah.core.PurahContext;
 import org.purah.core.Purahs;
 import org.purah.core.checker.combinatorial.CombinatorialChecker;
 import org.purah.core.checker.combinatorial.CombinatorialCheckerConfig;

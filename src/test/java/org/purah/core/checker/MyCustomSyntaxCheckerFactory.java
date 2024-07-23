@@ -2,9 +2,7 @@ package org.purah.core.checker;
 
 import com.google.common.base.Splitter;
 
-import org.purah.core.PurahContext;
 import org.purah.core.Purahs;
-import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties;
 import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.ResultLevel;
@@ -14,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -1,12 +1,9 @@
 package org.purah.core.checker;
 
 
-import org.purah.core.PurahContext;
-import org.purah.core.Purahs;
 import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.converter.checker.ByAnnMethodChecker;
 import org.purah.core.checker.result.*;
-import org.purah.springboot.aop.ann.CheckIt;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -20,7 +17,9 @@ import java.util.stream.Collectors;
 /*
 
    See unit test    MyCustomAnnChecker
+
    add method to make it work
+   like
 
  * rangeLong (@Range range ,Long num)
  * or
@@ -67,9 +66,9 @@ public abstract class CustomAnnChecker extends AbstractBaseSupportCacheChecker<O
 
     /*
      * 取消注释实现对每个字段的 嵌套CheckIt 检查
-
      */
 //    public abstract Purahs purahs();
+
 //    public MultiCheckResult<CheckResult<?>> checkItAnn(CheckIt checkIt, InputToCheckerArg<Object> inputToCheckerArg) {
 //        Purahs purahs = purahs();
 //        String[] checkerNames = checkIt.value();
@@ -83,7 +82,9 @@ public abstract class CustomAnnChecker extends AbstractBaseSupportCacheChecker<O
     @Override
     public MultiCheckResult<CheckResult<?>> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
 
-        List<Annotation> enableAnnotations = inputToCheckerArg.annListOnField().stream().filter(i -> annCheckerMapping.containsKey(i.annotationType())).collect(Collectors.toList());
+        List<Annotation> enableAnnotations = inputToCheckerArg.annListOnField().stream()
+                .filter(i -> annCheckerMapping.containsKey(i.annotationType()))
+                .collect(Collectors.toList());
 
 
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel);

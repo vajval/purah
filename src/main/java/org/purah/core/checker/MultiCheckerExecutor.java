@@ -24,7 +24,7 @@ public class MultiCheckerExecutor {
     private final List<CheckResult<?>> finalExecResult = new ArrayList<>();
 
 
-    private final List<Supplier<CheckResult<?>>> ruleResultSupplierList = new ArrayList<>();
+    private final List<Supplier<CheckResult<?>>> checkSupplierExecList = new ArrayList<>();
 
 
     public MultiCheckerExecutor(ExecMode.Main mainExecMode, ResultLevel resultLevel) {
@@ -38,7 +38,7 @@ public class MultiCheckerExecutor {
         if (exec) {
             throw new RuntimeException("can only execute once");
         }
-        ruleResultSupplierList.add(supplier);
+        checkSupplierExecList.add(supplier);
 
     }
 
@@ -53,13 +53,13 @@ public class MultiCheckerExecutor {
     }
 
 
-    private void execIfNotExec(List<Supplier<CheckResult<?>>> ruleResultSupplierList) {
+    private void execIfNotExec(List<Supplier<CheckResult<?>>> supplierList) {
         if (exec) return;
         exec = true;
 //        ExecInfo result = ExecInfo.success;
 
 
-        for (Supplier<? extends CheckResult<?>> supplier : ruleResultSupplierList) {
+        for (Supplier<? extends CheckResult<?>> supplier : supplierList) {
             CheckResult<?> checkResult = supplier.get();
 
 
@@ -103,12 +103,10 @@ public class MultiCheckerExecutor {
 
     }
 
-    /**
-     *
-     */
+
 
     public MultiCheckResult<CheckResult<?>> toMultiCheckResult(String log) {
-        execIfNotExec(ruleResultSupplierList);
+        execIfNotExec(checkSupplierExecList);
 
 
         LogicCheckResult<Object> mainResult = null;

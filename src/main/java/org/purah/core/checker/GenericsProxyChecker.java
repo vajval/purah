@@ -219,7 +219,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
         private InputArgClass(Class<?> clazz) {
             if (clazz == null) {
-                throw new UnexpectedException("InputArgClass class cannnot null");
+                throw new UnexpectedException("InputArgClass class can not null");
             }
             this.clazz = clazz;
         }

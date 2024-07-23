@@ -5,6 +5,8 @@ import org.purah.core.checker.AbstractBaseSupportCacheChecker;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.PurahWrapMethod;
 import org.purah.core.checker.result.CheckResult;
+import org.purah.core.exception.init.InitCheckerException;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 
@@ -22,17 +24,19 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
     protected Method method;
 
     public AbstractWrapMethodToChecker(Object methodsToCheckersBean, Method method, String name) {
-        String errorMsg = errorMsgAbstractMethodToChecker(methodsToCheckersBean, method);
+        String errorMsg = errorMsgAbstractMethodToChecker(methodsToCheckersBean, method, name);
         if (errorMsg != null) {
-            throw new RuntimeException(errorMsg);
+            throw new InitCheckerException(errorMsg);
         }
         this.name = name;
         this.method = method;
     }
 
 
-    public static String errorMsgAbstractMethodToChecker(Object methodsToCheckersBean, Method method) {
-
+    public static String errorMsgAbstractMethodToChecker(Object methodsToCheckersBean, Method method, String name) {
+        if (!StringUtils.hasText(name)) {
+            return "Hmph, name  must has text!";
+        }
 
         if (method == null) {
             return "Hmph, the method must not be null!";

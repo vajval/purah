@@ -1,10 +1,8 @@
 package org.purah.core.checker;
 
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.purah.core.PurahContext;
 import org.purah.core.checker.factory.LambdaCheckerFactory;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.exception.CheckException;
@@ -45,9 +43,8 @@ public class CheckerManagerTest {
 
 
         Assertions.assertThrows(CheckException.class, () -> genericsProxyChecker.check("2"));//no String
-        LambdaCheckerFactory<String> stringCheckerFactory = LambdaCheckerFactory.of(String.class).build("id*", (a, b) -> {
-            return Objects.equals(a.replace("id", ""), b);
-        });
+        LambdaCheckerFactory<String> stringCheckerFactory = LambdaCheckerFactory.of(String.class).build("id*",
+                (a, b) -> Objects.equals(a.replace("id", ""), b));
         checkerManager.addCheckerFactory(stringCheckerFactory);
         Assertions.assertTrue(checkerManager.of("id1").check("1"));   //have string
 

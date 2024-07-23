@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.purah.core.PurahContext;
 import org.purah.core.Purahs;
 import org.purah.core.checker.Checker;
-import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.name.Name;

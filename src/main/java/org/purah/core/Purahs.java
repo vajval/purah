@@ -14,7 +14,7 @@ import org.purah.core.matcher.factory.MatcherFactory;
 import org.purah.core.resolver.ArgResolver;
 
 public class Purahs {
-    PurahContext purahContext;
+    final PurahContext purahContext;
 
     public Purahs(PurahContext purahContext) {
         this.purahContext = purahContext;
@@ -49,16 +49,14 @@ public class Purahs {
         return purahContext.checkManager().reg(checker);
     }
 
-    public MatcherFactory reg(MatcherFactory matcherFactory) {
+    public void reg(MatcherFactory matcherFactory) {
         purahContext.matcherManager().reg(matcherFactory);
-        return matcherFactory;
 
 
     }
 
-    public CheckerFactory reg(CheckerFactory checkerFactory) {
+    public void reg(CheckerFactory checkerFactory) {
         purahContext.checkManager().addCheckerFactory(checkerFactory);
-        return checkerFactory;
     }
 
     public MethodConverter methodConverter() {

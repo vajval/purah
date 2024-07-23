@@ -11,9 +11,9 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.purah.core.PurahContext;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
-import org.purah.springboot.aop.exception.MethodArgCheckExceptionBase;
+import org.purah.springboot.aop.exception.MethodArgCheckException;
 import org.purah.springboot.aop.ann.MethodCheckConfig;
-import org.purah.springboot.aop.result.MethodCheckResult;
+import org.purah.springboot.aop.result.MethodHandlerCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -77,12 +77,12 @@ public class CheckItAspect {
         MethodHandlerChecker methodHandlerChecker = this.checkerOf(joinPoint.getThis(), method);
         InputToCheckerArg<Object[]> inputToCheckerArg = InputToCheckerArg.of(joinPoint.getArgs(), Object[].class);
 
-        MethodCheckResult methodCheckResult = methodHandlerChecker.check(inputToCheckerArg);
+        MethodHandlerCheckResult methodHandlerCheckResult = methodHandlerChecker.check(inputToCheckerArg);
 
 
-        if (methodCheckResult.isError()) {
-            methodCheckResult.exception().printStackTrace();
-            throw new MethodArgCheckExceptionBase(methodCheckResult);
+        if (methodHandlerCheckResult.isError()) {
+            log.error(methodHandlerCheckResult.exception());
+            throw new MethodArgCheckException(methodHandlerCheckResult);
         }
 
 
@@ -93,13 +93,12 @@ public class CheckItAspect {
             throw new RuntimeException(e);
         }
         if (!methodHandlerChecker.isFillToMethodResult()) {
-            if (methodCheckResult.isFailed()) {
-                throw new MethodArgCheckExceptionBase(methodCheckResult);
+            if (methodHandlerCheckResult.isFailed()) {
+                throw new MethodArgCheckException(methodHandlerCheckResult);
             }
             return invokeObject;
         } else {
-
-            return methodHandlerChecker.fillObject(methodCheckResult);
+            return methodHandlerChecker.fillObject(methodHandlerCheckResult);
         }
 
 

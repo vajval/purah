@@ -30,7 +30,7 @@ public class DefaultMethodConverter implements MethodConverter {
     @Override
     public Checker<?, ?> toChecker(Object methodsToCheckersBean, Method method, String name) {
 
-        String errorMsg = AbstractWrapMethodToChecker.errorMsgAbstractMethodToChecker(methodsToCheckersBean, method);
+        String errorMsg = AbstractWrapMethodToChecker.errorMsgAbstractMethodToChecker(methodsToCheckersBean, method,name);
 
 
         if (errorMsg != null) {
