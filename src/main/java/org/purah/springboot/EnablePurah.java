@@ -28,6 +28,8 @@ import java.lang.annotation.*;
 @Import(ImportPurahRegistrar.class)
 public @interface EnablePurah {
 
+    boolean checkItAspect() default true;
+
     boolean enableCache() default true;
 
     ResultLevel defaultResultLevel() default ResultLevel.only_failed_only_base_logic;

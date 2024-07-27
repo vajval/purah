@@ -23,10 +23,10 @@ public class ReflectArgResolver implements ArgResolver {
     protected final ConcurrentHashMap<Class<?>, ClassReflectCache> classClassConfigCacheMap = new ConcurrentHashMap<>();
 
 
-    protected boolean enableCache = false;
+    protected boolean enableCache = true;
 
-    public void enableCache() {
-        enableCache = true;
+    public void configCache(boolean enable) {
+        enableCache = enable;
     }
 
     @Override

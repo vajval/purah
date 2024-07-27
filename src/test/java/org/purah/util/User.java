@@ -8,7 +8,7 @@ import org.purah.core.checker.ann.Range;
 import org.purah.springboot.aop.ann.CheckIt;
 
 @CheckIt("所有字段自定义注解检测")
-public class User {
+public final class User {
 
     public static final User BAD_USER = new User(50L, null, "123", null);
     public static final User GOOD_USER = new User(1L, "vajva", "15509931234", 15);

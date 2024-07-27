@@ -36,11 +36,8 @@ class ReflectArgResolverTest {
     void getMatchFieldObjectMap() {
         GeneralFieldMatcher fieldMatcher = new GeneralFieldMatcher("*|child.name");
         Map<String, InputToCheckerArg<?>> matchFieldObjectMap = reflectArgResolver.getMatchFieldObjectMap(InputToCheckerArg.of(testUser), fieldMatcher);
-        System.out.println(matchFieldObjectMap);
         matchFieldObjectMap = reflectArgResolver.getMatchFieldObjectMap(InputToCheckerArg.of(testUser), fieldMatcher);
-        System.out.println(matchFieldObjectMap);
         matchFieldObjectMap = reflectArgResolver.getMatchFieldObjectMap(InputToCheckerArg.of(testUser), fieldMatcher);
-        System.out.println(matchFieldObjectMap);
     }
 
 
@@ -50,10 +47,8 @@ class ReflectArgResolverTest {
         ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
         FixedMatcher fixedMatcher = new FixedMatcher("child.child.name");
         Map<String, InputToCheckerArg<?>> map = reflectArgResolver.getMatchFieldObjectMap(InputToCheckerArg.of(testUser), fixedMatcher);
-        System.out.println(map);
-        System.out.println();
+
         map = reflectArgResolver.getMatchFieldObjectMap(InputToCheckerArg.of(testUser), fixedMatcher);
-        System.out.println(map);
     }
 
 }

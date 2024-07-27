@@ -176,9 +176,8 @@ public class ClassReflectCache {
     protected static boolean enableNestedGetValue(InputToCheckerArg<?> inputToCheckerArg, Map<String, InputToCheckerArg<?>> result) {
         Object argValue = inputToCheckerArg.argValue();
         Class<?> inputArgClass = inputToCheckerArg.argClass();
-        Set<String> nestedFields = result.keySet().stream().filter(i -> i.contains(".")).map(i -> i.substring(0, i.lastIndexOf("."))).collect(Collectors.toSet());
 
-        if (!ReflectUtils.noExtendEnabledFields(inputArgClass, nestedFields, Sets.newHashSet(inputArgClass))) {
+        if (!ReflectUtils.noExtendEnabledFields(inputArgClass, result.keySet())) {
             return false;
         }
         //Directly retrieving values from nested fields yields the same results as the actual return values.

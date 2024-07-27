@@ -1,15 +1,20 @@
 package org.purah.core.resolver;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.Sets;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.core.ResolvableType;
 import org.springframework.util.StringUtils;
 
 import java.beans.FeatureDescriptor;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,6 +22,7 @@ import java.util.stream.Stream;
 
 public class ReflectUtils {
     protected static final Logger logger = LogManager.getLogger(ReflectUtils.class);
+    private static PropertyDescriptor propertyDescriptor;
 
     public static String firstPath(String path) {
         if (path.contains(".")) {
@@ -41,6 +47,11 @@ public class ReflectUtils {
 
     }
 
+    public static boolean noExtendEnabledFields(Class<?> clazz, Set<String> fields) {
+        Set<String> nestedFields = fields.stream().filter(i -> i.contains(".")).map(i -> i.substring(0, i.lastIndexOf("."))).collect(Collectors.toSet());
+        return noExtendEnabledFields(clazz, nestedFields, Sets.newHashSet(clazz));
+    }
+
 
     /**
      * 只有对象匹配到的所有的非叶子字段的class都是final
@@ -63,20 +74,34 @@ public class ReflectUtils {
      */
 
 
-    public static boolean noExtendEnabledFields(Class<?> clazz, Set<String> fields, Set<Class<?>> clazzSet) {
+    private static boolean noExtendEnabledFields(Class<?> clazz, Set<String> fields, Set<Class<?>> clazzSet) {
         Map<String, PropertyDescriptor> collect = Stream.of(PropertyUtils.getPropertyDescriptors(clazz)).collect(Collectors.toMap(FeatureDescriptor::getName, i -> i));
         Map<String, Set<String>> fieldMap = fields.stream().collect(Collectors.groupingBy(field -> {
             if (field.contains(".")) {
-                return field.substring(0, field.indexOf("."));
+                field = field.substring(0, field.indexOf("."));
             }
+            if (field.contains("#")) {
+                field = field.substring(0, field.indexOf("#"));
+            }
+
             return field;
         }, Collectors.toSet()));
         for (Map.Entry<String, Set<String>> entry : fieldMap.entrySet()) {
             PropertyDescriptor propertyDescriptor = collect.get(entry.getKey());
+
             if (propertyDescriptor == null) {
                 continue;
             }
             Class<?> propertyType = propertyDescriptor.getPropertyType();
+
+            if (Collection.class.isAssignableFrom(propertyType)) {
+                propertyType = ResolvableType.forMethodReturnType(propertyDescriptor.getReadMethod()).as(Collection.class).getGenerics()[0].resolve();
+
+                if (propertyType == null) {
+                    propertyType = Object.class;
+                }
+            }
+
 
             int modifiers = propertyType.getModifiers();
             if (!Modifier.isFinal(modifiers)) {

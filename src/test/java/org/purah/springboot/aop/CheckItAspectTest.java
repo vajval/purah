@@ -10,6 +10,7 @@ import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.core.checker.result.MultiCheckResult;
 import org.purah.core.checker.result.ResultLevel;
 import org.purah.core.matcher.nested.GeneralFieldMatcher;
+import org.purah.springboot.aop.result.MethodHandlerCheckResult;
 import org.purah.util.Checkers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,6 +44,8 @@ public class CheckItAspectTest {
 
     @Test
     public void aop() {
+        MethodHandlerCheckResult methodHandlerCheckResult = aspectTestService.checkThreeUser(GOOD_USER, GOOD_USER, GOOD_USER);
+        System.out.println(methodHandlerCheckResult);
         assertTrue(aspectTestService.checkThreeUser(GOOD_USER, GOOD_USER, GOOD_USER));
         assertFalse(aspectTestService.checkThreeUser(GOOD_USER, GOOD_USER, BAD_USER));
         assertTrue(aspectTestService.checkThreeUser(GOOD_USER, BAD_USER, GOOD_USER));
@@ -53,7 +56,6 @@ public class CheckItAspectTest {
         assertFalse(aspectTestService.checkThreeUser(BAD_USER, BAD_USER, GOOD_USER));
 
     }
-
 
 
     @Test

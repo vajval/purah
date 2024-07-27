@@ -21,6 +21,7 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
@@ -47,9 +48,11 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry, BeanNameGenerator importBeanNameGenerator) {
 
-
+        boolean checkItAspect = metadata.getAnnotations().get(EnablePurah.class).getBoolean("checkItAspect");
+        if (checkItAspect) {
+            registry.registerBeanDefinition(CheckItAspect.class.getName(), genericBeanDefinition(CheckItAspect.class));
+        }
         registry.registerBeanDefinition(PurahContext.class.getName(), purahContextBeanDefinition(metadata));
-        registry.registerBeanDefinition(CheckItAspect.class.getName(), genericBeanDefinition(CheckItAspect.class));
         registry.registerBeanDefinition(PurahConfigProperties.class.getName(), genericBeanDefinition(PurahConfigProperties.class));
         registry.registerBeanDefinition(PurahConfiguration.class.getName(), genericBeanDefinition(PurahConfiguration.class));
     }
@@ -63,7 +66,6 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
         genericBeanDefinition.setAutowireCandidate(true);
         return genericBeanDefinition;
     }
-
 
 
     public AbstractBeanDefinition purahContextBeanDefinition(AnnotationMetadata metadata) {

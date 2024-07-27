@@ -15,7 +15,6 @@ import java.util.function.Function;
 
 
 /**
- *
  * 缓存FieldMatcher执行之后最终结果的数据,缓存之后下次获取不需要执行FieldMatcher中的逻辑,直接获取结果
  * 前提是FieldMatcher及class支持缓存
  * result {a.b.c=arg("a.b.c",value,[@Ann1("v1"),@Ann2("2v")],field_info)}
@@ -88,11 +87,9 @@ public class FieldMatcherResultReflectInvokeCache {
 
         final String fieldName;
 
-        Field cacheField;
-        List<Annotation> cacheAnnotationList;
-
-        String cacheFieldStr;
         String fullPath;
+
+        Function<Object, InputToCheckerArg<?>> resultInvoke;
 
 
         public ReflectTrieCache(String fieldName) {
@@ -104,10 +101,14 @@ public class FieldMatcherResultReflectInvokeCache {
 
             if (firstPath.equals(path)) {
                 ReflectTrieCache node = reflectNodeMap.computeIfAbsent(path, i -> new ReflectTrieCache(path));
+                if (arg.isNull()) {
+                    node.resultInvoke = object -> InputToCheckerArg.createNullChildWithFieldConfig(
+                            arg.fieldPath(), arg.field(), arg.annListOnField(), arg.nullType());
+                } else {
+                    node.resultInvoke = object -> InputToCheckerArg.createChildWithFieldConfig(object,
+                            arg.fieldPath(), arg.field(), arg.annListOnField());
+                }
                 node.fullPath = fullPath;
-                node.cacheFieldStr = arg.fieldPath();
-                node.cacheAnnotationList = arg.annListOnField();
-                node.cacheField = arg.field();
 
             } else {
                 String childPath = path.substring(firstPath.length() + 1);
@@ -121,7 +122,7 @@ public class FieldMatcherResultReflectInvokeCache {
 
 
             if (this.fullPath != null) {
-                resultMap.put(fullPath, InputToCheckerArg.createChildWithFieldConfig(arg, cacheFieldStr, cacheField, cacheAnnotationList));
+                resultMap.put(fullPath, resultInvoke.apply(arg));
             }
             for (Map.Entry<String, ReflectTrieCache> entry : reflectNodeMap.entrySet()) {
                 String key = entry.getKey();
