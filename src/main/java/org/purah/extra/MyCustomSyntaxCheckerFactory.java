@@ -1,8 +1,10 @@
-package org.purah.core.checker;
+package org.purah.extra;
 
 import com.google.common.base.Splitter;
 
 import org.purah.core.Purahs;
+import org.purah.core.checker.Checker;
+import org.purah.core.checker.ComboBuilderChecker;
 import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.CheckResult;
 import org.purah.core.checker.result.ResultLevel;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * @see org.purah.springboot.aop.AspectTestService
+ * see org.purah.springboot.aop.AspectTestService
  */
 
 @Component

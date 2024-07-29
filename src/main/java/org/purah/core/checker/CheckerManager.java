@@ -134,6 +134,12 @@ public class CheckerManager {
         return result;
     }
 
+    public void clear() {
+        enableCheckerCacheMap.clear();
+        checkerFactoryList.clear();
+        checkerFactoryMapping.clear();
+    }
+
     protected String getSearchKey(String name) {
         return name;
     }

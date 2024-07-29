@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.purah.ExampleApplication;
 import org.purah.core.Purahs;
 import org.purah.core.matcher.FieldMatcher;
+import org.purah.springboot.ioc.test_bean.TestCallBack;
 import org.purah.springboot.ioc.test_bean.checker.IocIgnoreChecker;
 import org.purah.springboot.ioc.test_bean.checker.IocMethodRegTestBean;
 import org.purah.springboot.ioc.test_bean.checker.IocTestChecker;
@@ -36,6 +37,7 @@ public class IocTest {
         Assertions.assertTrue(containsMatcherFactory(ReverseStringMatcher.NAME));
         Assertions.assertTrue(containsMatcherFactory(ReverseStringMatcherFactory.NAME));
         Assertions.assertFalse(containsMatcherFactory(IocIgnoreMatcher.NAME));
+        Assertions.assertEquals(TestCallBack.value, 1);
 
 
     }
@@ -55,7 +57,7 @@ public class IocTest {
     public boolean containsMatcherFactory(String factory) {
 
         try {
-            return   purahs.matcherOf(factory)!=null;
+            return purahs.matcherOf(factory) != null;
         } catch (Exception e) {
             return false;
         }
@@ -64,7 +66,7 @@ public class IocTest {
 
     public boolean containsChecker(String name) {
         try {
-            return  purahs.checkerOf(name)!=null;
+            return purahs.checkerOf(name) != null;
         } catch (Exception e) {
             return false;
         }

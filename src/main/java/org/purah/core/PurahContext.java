@@ -7,6 +7,7 @@ import org.purah.core.checker.converter.MethodConverter;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.resolver.ArgResolver;
 import org.purah.core.resolver.DefaultArgResolver;
+import org.purah.core.resolver.ReflectArgResolver;
 
 /**
  * 核心上下文
@@ -87,11 +88,17 @@ public class PurahContext {
     }
 
 
-
-
     public Purahs purahs() {
         return new Purahs(this);
     }
 
+    public void clearAll() {
+        matcherManager.clear();
+        checkManager.clear();
+        if (argResolver.getClass().equals(ReflectArgResolver.class)) {
+            ((ReflectArgResolver) argResolver).clearCache();
+
+        }
+    }
 
 }

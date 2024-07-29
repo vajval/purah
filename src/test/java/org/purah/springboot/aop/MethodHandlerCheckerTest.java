@@ -81,7 +81,7 @@ public class MethodHandlerCheckerTest {
 
     protected MethodHandlerChecker checkerByMethodName(String methodName) {
         Method method = Stream.of(MethodHandlerCheckerTest.class.getMethods()).filter(i -> i.getName().equals(methodName)).collect(Collectors.toList()).get(0);
-        return new MethodHandlerChecker(bean, method, purahContext);
+        return new MethodHandlerChecker(bean, method, purahContext.purahs());
     }
 
     @Test

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 /*
  * purah:
- *  test_combo_checker:
+ *  combo_checker:
  *    - name: user_reg
  *      mapping:
  *         wild_card:

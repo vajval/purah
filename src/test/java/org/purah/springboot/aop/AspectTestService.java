@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class AspectTestService {
     //"example:1[][*:custom_ann_check;*.*:custom_ann_check]"
-
-    public static final String customSyntax = "example:1[][*:" + Checkers.Name.CUSTOM_ANN_CHECK + ";*.*:" +  Checkers.Name.CUSTOM_ANN_CHECK + "]";
+    static int value = 0;
+    public static final String customSyntax = "example:1[][*:" + Checkers.Name.CUSTOM_ANN_CHECK + ";*.*:" + Checkers.Name.CUSTOM_ANN_CHECK + "]";
 
 
     @FillToMethodResult
@@ -19,6 +19,16 @@ public class AspectTestService {
                                                    User user1,
                                                    @CheckIt("all_field_custom_ann_check") User user2) {
         return null;
+    }
+
+    public int checkOneUserThrow(@CheckIt("all_field_custom_ann_check") User user0) {
+        value++;
+        return value;
+    }
+
+    public void checkThreeUserThrow(@CheckIt("all_field_custom_ann_check") User user0,
+                                    @CheckIt("all_field_custom_ann_check") User user1,
+                                    @CheckIt("all_field_custom_ann_check") User user2) {
     }
 
     @FillToMethodResult

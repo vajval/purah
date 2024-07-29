@@ -101,13 +101,9 @@ public class FieldMatcherResultReflectInvokeCache {
 
             if (firstPath.equals(path)) {
                 ReflectTrieCache node = reflectNodeMap.computeIfAbsent(path, i -> new ReflectTrieCache(path));
-                if (arg.isNull()) {
-                    node.resultInvoke = object -> InputToCheckerArg.createNullChildWithFieldConfig(
-                            arg.fieldPath(), arg.field(), arg.annListOnField(), arg.nullType());
-                } else {
-                    node.resultInvoke = object -> InputToCheckerArg.createChildWithFieldConfig(object,
-                            arg.fieldPath(), arg.field(), arg.annListOnField());
-                }
+
+                node.resultInvoke = object -> InputToCheckerArg.createChildWithFieldConfig(object, arg.fieldPath(), arg.field(), arg.annListOnField());
+
                 node.fullPath = fullPath;
 
             } else {

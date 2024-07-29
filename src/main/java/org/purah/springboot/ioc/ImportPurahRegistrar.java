@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 /**
  * @author vajva
  */
-@Configuration
 public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
 
     private static final Logger log = LogManager.getLogger(ImportPurahRegistrar.class);
@@ -55,10 +54,14 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
         registry.registerBeanDefinition(PurahContext.class.getName(), purahContextBeanDefinition(metadata));
         registry.registerBeanDefinition(PurahConfigProperties.class.getName(), genericBeanDefinition(PurahConfigProperties.class));
         registry.registerBeanDefinition(PurahConfiguration.class.getName(), genericBeanDefinition(PurahConfiguration.class));
+        GenericBeanDefinition genericBeanDefinition = genericBeanDefinition(RegOnContextRefresh.class);
+        genericBeanDefinition.setLazyInit(false);
+
+        registry.registerBeanDefinition(RegOnContextRefresh.class.getName(),genericBeanDefinition);
     }
 
 
-    public BeanDefinition genericBeanDefinition(Class<?> clazz) {
+    public GenericBeanDefinition genericBeanDefinition(Class<?> clazz) {
         GenericBeanDefinition genericBeanDefinition = new GenericBeanDefinition();
         genericBeanDefinition.setBeanClass(clazz);
         genericBeanDefinition.setLazyInit(true);

@@ -8,6 +8,7 @@ import org.purah.core.checker.factory.CheckerFactory;
 import org.purah.core.matcher.MatcherManager;
 import org.purah.core.matcher.factory.MatcherFactory;
 import org.purah.core.resolver.ArgResolver;
+import org.purah.core.resolver.ReflectArgResolver;
 import org.purah.springboot.IgnoreBeanOnPurahContext;
 import org.purah.springboot.ioc.ann.PurahMethodsRegBean;
 import org.purah.springboot.config.PurahConfigProperties;
@@ -15,7 +16,6 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import java.util.*;
  * 刷新 容器时调用
  */
 
-@Configuration
+
 public class RegOnContextRefresh implements ApplicationListener<ContextRefreshedEvent> {
 
 
@@ -40,7 +40,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
         } catch (Exception e) {
             return;
         }
-
+        purahContext.clearAll();
         PurahIocRegS purahIocRegS = new PurahIocRegS(purahContext);
 
 
@@ -49,7 +49,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
         this.initMatcherManager(purahIocRegS, applicationContext);
 
         this.initCheckerManager(purahIocRegS, applicationContext);
-
+        this.callBack(purahIocRegS, applicationContext);
 
 
     }
@@ -76,7 +76,12 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
             methodConverter = applicationContext.getBean(MethodConverter.class);
         } catch (NoSuchBeanDefinitionException ignored) {
         }
+
         purahIocRegS.initMainBean(methodConverter, checkerManager, matcherManager, resolver);
+        if (resolver instanceof ReflectArgResolver) {
+            boolean argResolverFastInvokeCache = purahIocRegS.purahContext.config().isArgResolverFastInvokeCache();
+            ((ReflectArgResolver) resolver).configCache(argResolverFastInvokeCache);
+        }
     }
 
 
@@ -123,6 +128,12 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
 
     }
 
+    public void callBack(PurahIocRegS purahIocRegS, ApplicationContext applicationContext) {
+        Set<PurahRefreshCallBack> callBackSet = filterEnableBean(applicationContext.getBeansOfType(PurahRefreshCallBack.class).values());
+        for (PurahRefreshCallBack purahRefreshCallBack : callBackSet) {
+            purahRefreshCallBack.exec(purahIocRegS.purahs);
+        }
+    }
 
     protected static <T> Set<T> filterEnableBean(Collection<T> beans) {
         Set<T> result = new HashSet<>();

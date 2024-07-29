@@ -9,9 +9,13 @@ import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.core.checker.result.MultiCheckResult;
 import org.purah.core.checker.result.ResultLevel;
+import org.purah.core.matcher.BaseStringMatcher;
 import org.purah.core.matcher.nested.GeneralFieldMatcher;
+import org.purah.springboot.aop.exception.MethodArgCheckException;
+import org.purah.springboot.aop.result.ArgCheckResult;
 import org.purah.springboot.aop.result.MethodHandlerCheckResult;
 import org.purah.util.Checkers;
+import org.purah.util.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -24,6 +28,7 @@ import static org.purah.util.User.*;
 
 @SpringBootTest(classes = ExampleApplication.class)
 public class CheckItAspectTest {
+
     @Autowired
     AspectTestService aspectTestService;
     @Autowired
@@ -42,10 +47,33 @@ public class CheckItAspectTest {
 
     }
 
+    public void aop3(User user) {
+        try {
+            aspectTestService.checkOneUserThrow(user);
+        } catch (MethodArgCheckException methodArgCheckException) {
+            MethodHandlerCheckResult methodHandlerCheckResult = methodArgCheckException.checkResult();
+            Assertions.assertFalse(methodHandlerCheckResult.argResultOf(0));
+            for (ArgCheckResult argCheckResult : methodHandlerCheckResult.argCheckResultList()) {
+                System.out.println(argCheckResult.failedLogicList());
+            }
+
+        }
+    }
+
+    @Test
+    public void aop2() {
+        aop3(BAD_USER);
+        Assertions.assertEquals(AspectTestService.value, 0);
+
+        aop3(GOOD_USER);
+        Assertions.assertEquals(AspectTestService.value, 1);
+        aop3(BAD_USER);
+        Assertions.assertEquals(AspectTestService.value, 1);
+
+    }
+
     @Test
     public void aop() {
-        MethodHandlerCheckResult methodHandlerCheckResult = aspectTestService.checkThreeUser(GOOD_USER, GOOD_USER, GOOD_USER);
-        System.out.println(methodHandlerCheckResult);
         assertTrue(aspectTestService.checkThreeUser(GOOD_USER, GOOD_USER, GOOD_USER));
         assertFalse(aspectTestService.checkThreeUser(GOOD_USER, GOOD_USER, BAD_USER));
         assertTrue(aspectTestService.checkThreeUser(GOOD_USER, BAD_USER, GOOD_USER));

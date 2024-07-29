@@ -6,8 +6,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 
-
-
 public class MethodHandlerCheckResult extends MultiCheckResult<ArgCheckResult> {
     final Object belongBean;
     final Method method;
@@ -18,17 +16,21 @@ public class MethodHandlerCheckResult extends MultiCheckResult<ArgCheckResult> {
         this.method = method;
     }
 
+    public List<ArgCheckResult> argCheckResultList() {
+        return valueList;
+    }
+
     public ArgCheckResult argResultOf(int index) {
         return valueList.get(index);
     }
 
-    public List<LogicCheckResult<?>> logicResultList(ResultLevel resultLevel) {
+    public List<LogicCheckResult<?>> childList(ResultLevel resultLevel) {
 
         return resultChildList(resultLevel);
     }
 
-    public List<LogicCheckResult<?>> logicResultList() {
-        return logicResultList(ResultLevel.only_failed_only_base_logic);
+    public List<LogicCheckResult<?>> failedLogicList() {
+        return childList(ResultLevel.only_failed_only_base_logic);
     }
 
 

@@ -1,6 +1,7 @@
 package org.purah.springboot.aop;
 
 import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.checker.*;
 import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.CheckResult;
@@ -18,18 +19,18 @@ import java.util.stream.Collectors;
 
 public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Object, List<CheckResult<?>>> {
     final CheckIt checkIt;
-    final PurahContext purahContext;
+    final Purahs purahs;
     final List<String> checkerNameList;
     final Class<?> argClazz;
     final Method method;
     final int index;
     final Parameter parameter;
 
-    public ParameterHandlerChecker(PurahContext purahContext, Parameter parameter, Method method, List<String> checkerNameList, int index) {
+    public ParameterHandlerChecker(Purahs purahs, Parameter parameter, Method method, List<String> checkerNameList, int index) {
         this.parameter = parameter;
         this.method = method;
         this.index = index;
-        this.purahContext = purahContext;
+        this.purahs = purahs;
         this.checkIt = parameter.getAnnotation(CheckIt.class);
         this.checkerNameList = checkerNameList;
         this.argClazz = parameter.getType();
@@ -64,7 +65,7 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
         MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.mainMode(), checkIt.resultLevel());
 
 
-        List<Checker<Object,Object>> checkerList = checkerNameList.stream().map(i -> purahContext.purahs().checkerOf(i)).collect(Collectors.toList());
+        List<Checker<Object,Object>> checkerList = checkerNameList.stream().map(purahs::checkerOf).collect(Collectors.toList());
 
         for (Checker<?, ?> checker : checkerList) {
             executor.add(checkArg, checker);

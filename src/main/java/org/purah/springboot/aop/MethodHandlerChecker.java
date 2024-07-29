@@ -1,6 +1,7 @@
 package org.purah.springboot.aop;
 
 import org.purah.core.PurahContext;
+import org.purah.core.Purahs;
 import org.purah.core.exception.UnexpectedException;
 import org.purah.core.checker.AbstractBaseSupportCacheChecker;
 import org.purah.core.checker.InputToCheckerArg;
@@ -24,7 +25,7 @@ import java.util.stream.Stream;
 public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object[], List<ArgCheckResult>> {
 
 
-    protected final PurahContext purahContext;
+
 
     protected final Object bean;
 
@@ -40,12 +41,11 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
     protected ResultLevel resultLevel = ResultLevel.all;
     protected final Map<Integer, ParameterHandlerChecker> parameterHandlerCheckerMap = new HashMap<>();
 
-    public MethodHandlerChecker(Object bean, Method method, PurahContext purahContext) {
-        this.purahContext = purahContext;
+    public MethodHandlerChecker(Object bean, Method method, Purahs purahs) {
         this.bean = bean;
         this.method = method;
         this.returnType = method.getReturnType();
-        this.init();
+        this.init(purahs);
 
     }
 
@@ -62,7 +62,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
      * public void voidCheck(@CheckIt CustomPeople CustomPeople) {             //enable nothing
 
     */
-    protected void init() {
+    protected void init(Purahs purahs) {
 
         //都没有就是不检测
         FillToMethodResult ann = method.getDeclaredAnnotation(FillToMethodResult.class);
@@ -91,7 +91,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
                     checkerNameList = Stream.of(argClazzCheckIt.value()).collect(Collectors.toList());
                 }
             }
-            ParameterHandlerChecker parameterHandlerChecker = new ParameterHandlerChecker(purahContext, parameter, method, checkerNameList, index);
+            ParameterHandlerChecker parameterHandlerChecker = new ParameterHandlerChecker(purahs, parameter, method, checkerNameList, index);
             parameterHandlerCheckerMap.put(index, parameterHandlerChecker);
         }
 

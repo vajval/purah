@@ -30,7 +30,9 @@ public @interface EnablePurah {
 
     boolean checkItAspect() default true;
 
-    boolean enableCache() default true;
+    boolean enableCache() default false;
+
+    boolean argResolverFastInvokeCache() default false;
 
     ResultLevel defaultResultLevel() default ResultLevel.only_failed_only_base_logic;
 

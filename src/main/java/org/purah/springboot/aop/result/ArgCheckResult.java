@@ -47,7 +47,7 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
     }
 
     public static ArgCheckResult noAnnIgnore() {
-        ArgCheckResult argCheckResult = new ArgCheckResult(LogicCheckResult.ignore("no ann on Parameter"), Collections.emptyList());
+        ArgCheckResult argCheckResult = new ArgCheckResult(LogicCheckResult.ignore("ignore because no ann on Parameter"), Collections.emptyList());
         argCheckResult.checkResultMap = new LinkedHashMap<>();
         return argCheckResult;
     }
@@ -101,7 +101,7 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
     }
 
 
-    public void ignoreError() {
+    private void ignoreError() {
         throw new UnexpectedException("this arg not check,no ann or be skip");
 
 //        if (execMode == ExecMode.Main.at_least_one) {
@@ -111,6 +111,10 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
 //        } else {
 //            throw new UnexpectedException(execMode.name());
 //        }
+    }
+
+    public List<LogicCheckResult<?>> failedLogicList() {
+        return resultChildList(ResultLevel.only_failed_only_base_logic);
     }
 
     public static LogicCheckResult<?> fill(CheckIt checkIt) {

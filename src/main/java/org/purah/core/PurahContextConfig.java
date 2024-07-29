@@ -14,6 +14,7 @@ import java.util.Set;
 public class PurahContextConfig {
 
     boolean cache = false;
+    boolean argResolverFastInvokeCache = false;
 
     ResultLevel defaultResultLevel = ResultLevel.only_failed_only_base_logic;
 
@@ -47,6 +48,14 @@ public class PurahContextConfig {
 
     public ResultLevel getDefaultResultLevel() {
         return defaultResultLevel;
+    }
+
+    public boolean isArgResolverFastInvokeCache() {
+        return argResolverFastInvokeCache;
+    }
+
+    public void setArgResolverFastInvokeCache(boolean argResolverFastInvokeCache) {
+        this.argResolverFastInvokeCache = argResolverFastInvokeCache;
     }
 
     public Set<Class<? extends FieldMatcher>> purahDefaultFieldMatcherClass() {

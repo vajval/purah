@@ -30,6 +30,7 @@ public class PurahContextFactoryBean implements FactoryBean<Object> {
         purahContextConfig.setCache(enablePurah.enableCache());
         purahContextConfig.setDefaultResultLevel(enablePurah.defaultResultLevel());
         purahContextConfig.setSingleStringConstructorFieldMatcherClassSet(singleStringConstructorFieldMatcherClassSet);
+        purahContextConfig.setArgResolverFastInvokeCache(enablePurah.argResolverFastInvokeCache());
         return new PurahContext(purahContextConfig);
     }
 

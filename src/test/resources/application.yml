@@ -1,9 +1,13 @@
 logging:
   level:
-    root: {info}
-#log4j:
-#  logger: ERROR
-#    org:
-#      apache:
-#        commons:
-#          beanutils: ERROR
+    root: { info }
+purah:
+  combo_checker:
+    - name: user_reg
+      mapping:
+        wild_card:
+          "[{address,parent_address}]": national_check
+          "[*name*]": name_validity_check
+          "[age]": age_check
+        class_name:
+          "java.lang.String": sensitive_word_check

@@ -9,8 +9,12 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.purah.core.PurahContext;
+import org.purah.core.PurahContextConfig;
+import org.purah.core.Purahs;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.checker.cache.PurahCheckInstanceCacheContext;
+import org.purah.core.exception.BasePurahException;
+import org.purah.springboot.aop.ann.CheckIt;
 import org.purah.springboot.aop.exception.MethodArgCheckException;
 import org.purah.springboot.aop.ann.MethodCheckConfig;
 import org.purah.springboot.aop.result.MethodHandlerCheckResult;
@@ -23,13 +27,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Lazy(value = false)
-@Component
 @Aspect
 public class CheckItAspect {
 
 
     private static final Logger log = LogManager.getLogger(CheckItAspect.class);
 
+    @Autowired
+    Purahs purahs;
     @Autowired
     PurahContext purahContext;
     private final Map<Method, MethodHandlerChecker> methodCheckerMap = new ConcurrentHashMap<>();
@@ -45,9 +50,9 @@ public class CheckItAspect {
     }
 
 
+
     @Around("pointcut()")
     public Object aroundAdvice(ProceedingJoinPoint joinPoint) {
-
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 
         boolean enableCache = enableCache(method);
@@ -72,9 +77,8 @@ public class CheckItAspect {
 
 
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        MethodHandlerChecker methodHandlerChecker   =  methodCheckerMap.computeIfAbsent(method, i -> new MethodHandlerChecker(joinPoint.getThis(), method, purahs));
 
-
-        MethodHandlerChecker methodHandlerChecker = this.checkerOf(joinPoint.getThis(), method);
         InputToCheckerArg<Object[]> inputToCheckerArg = InputToCheckerArg.of(joinPoint.getArgs(), Object[].class);
 
         MethodHandlerCheckResult methodHandlerCheckResult = methodHandlerChecker.check(inputToCheckerArg);
@@ -84,32 +88,28 @@ public class CheckItAspect {
             log.error(methodHandlerCheckResult.exception());
             throw new MethodArgCheckException(methodHandlerCheckResult);
         }
-
+        boolean fillToMethodResult = methodHandlerChecker.isFillToMethodResult();
+        if (methodHandlerCheckResult.isFailed()) {
+            if (!fillToMethodResult) {
+                throw new MethodArgCheckException(methodHandlerCheckResult);
+            }
+        }
 
         Object invokeObject;
         try {
             invokeObject = joinPoint.proceed();
-        } catch (Throwable e) {
+        }  catch (Throwable e) {
             throw new RuntimeException(e);
         }
-        if (!methodHandlerChecker.isFillToMethodResult()) {
-            if (methodHandlerCheckResult.isFailed()) {
-                throw new MethodArgCheckException(methodHandlerCheckResult);
-            }
-            return invokeObject;
-        } else {
+        if (fillToMethodResult) {
             return methodHandlerChecker.fillObject(methodHandlerCheckResult);
+        } else {
+            return invokeObject;
         }
 
 
     }
 
-    public MethodHandlerChecker checkerOf(Object bean, Method method) {
-
-        MethodHandlerChecker methodHandlerChecker = methodCheckerMap.computeIfAbsent(method, i -> new MethodHandlerChecker(bean, method, purahContext));
-        purahContext.purahs().reg(methodHandlerChecker);
-        return methodHandlerChecker;
-    }
 
 
 }

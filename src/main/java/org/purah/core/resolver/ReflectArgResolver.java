@@ -25,6 +25,10 @@ public class ReflectArgResolver implements ArgResolver {
 
     protected boolean enableCache = true;
 
+    public void clearCache() {
+        classClassConfigCacheMap.clear();
+    }
+
     public void configCache(boolean enable) {
         enableCache = enable;
     }
@@ -34,9 +38,14 @@ public class ReflectArgResolver implements ArgResolver {
         if (fieldMatcher == null) {
             throw new RuntimeException("fieldMatcher can not be null");
         }
+        if (Map.class.isAssignableFrom(inputToCheckerArg.argClass())) {
+            Map<String, InputToCheckerArg<?>> result = new HashMap<>();
+            putMatchFieldObjectMapToResult(inputToCheckerArg, fieldMatcher, result);
+            return result;
+        }
+
         ClassReflectCache classReflectCache = classConfigCacheOf(inputToCheckerArg);
         Object argValue = inputToCheckerArg.argValue();
-
 
         if (classReflectCache.cached(fieldMatcher)) {
             return classReflectCache.fullResultByInvokeCache(argValue, fieldMatcher);

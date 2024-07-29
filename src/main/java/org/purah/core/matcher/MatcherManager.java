@@ -36,6 +36,9 @@ public class MatcherManager {
         }
         return factoryMap.get(factoryTypeName);
     }
+    public void clear(){
+        factoryMap.clear();
+    }
 
 
 }

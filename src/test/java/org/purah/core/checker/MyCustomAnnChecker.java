@@ -39,16 +39,11 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
     public CheckResult<?> cnPhoneNum(CNPhoneNum cnPhoneNum, InputToCheckerArg<String> str) {
         String strValue = str.argValue();
         cnPhoneNumCount++;
-
         //gpt小姐 说的
         if (strValue.matches("^1[3456789]\\d{9}$")) {
-
-
             return LogicCheckResult.successBuildLog(str, "正确的");
         }
         return LogicCheckResult.failed(str.argValue(), str.fieldPath() + ":" + cnPhoneNum.errorMsg());
-
-
     }
 
 
@@ -71,8 +66,6 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
             return LogicCheckResult.failed(num.argValue(), (num.fieldPath() + ":" + range.errorMsg()));
         }
         return LogicCheckResult.successBuildLog(num, "参数合规");
-
-
     }
 
 

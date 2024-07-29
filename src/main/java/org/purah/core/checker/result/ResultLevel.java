@@ -10,8 +10,8 @@ public enum ResultLevel {
     //所有的结果,不论成功与否,只要校验逻辑直接返回的结果
     //All results, whether successful or not, as long as they are directly returned by the validation logic.
     all_only_base_logic(2),
-    //只要失败的结果,只要校验逻辑直接返回的结果
-    //Only the results of failures, as long as they are directly returned by the validation logic.
+    //只要失败的结果
+    //Only the results of failures, .
     only_failed(3),
     //只要失败的结果,只要校验逻辑直接返回的结果
     //"Only the results of failures, as long as they are directly returned by the validation logic."
@@ -63,7 +63,9 @@ public enum ResultLevel {
 
     public boolean allowAddToFinalResult(CheckResult<?> checkResult) {
 
-
+        if (checkResult.isIgnore()) {
+            return false;
+        }
         if (this == ResultLevel.all) {
             return true;
         } else if (this == ResultLevel.all_only_base_logic) {

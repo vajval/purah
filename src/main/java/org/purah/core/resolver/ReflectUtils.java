@@ -95,14 +95,24 @@ public class ReflectUtils {
             Class<?> propertyType = propertyDescriptor.getPropertyType();
 
             if (Collection.class.isAssignableFrom(propertyType)) {
-                propertyType = ResolvableType.forMethodReturnType(propertyDescriptor.getReadMethod()).as(Collection.class).getGenerics()[0].resolve();
-
-                if (propertyType == null) {
+                ResolvableType[] generics = ResolvableType.forMethodReturnType(propertyDescriptor.getReadMethod()).as(Collection.class).getGenerics();
+                if (generics.length > 0) {
+                    propertyType = generics[0].resolve();
+                } else {
+                    propertyType = Object.class;
+                }
+            } else if (Map.class.isAssignableFrom(propertyType)) {
+                ResolvableType[] generics = ResolvableType.forMethodReturnType(propertyDescriptor.getReadMethod()).as(Map.class).getGenerics();
+                if (generics.length > 1) {
+                    propertyType = generics[1].resolve();
+                } else {
                     propertyType = Object.class;
                 }
             }
 
-
+            if (propertyType == null) {
+                propertyType = Object.class;
+            }
             int modifiers = propertyType.getModifiers();
             if (!Modifier.isFinal(modifiers)) {
                 return false;

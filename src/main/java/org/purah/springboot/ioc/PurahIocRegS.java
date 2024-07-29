@@ -162,6 +162,7 @@ public class PurahIocRegS {
     }
 
     public void regCheckerByProperties(PurahConfigProperties purahConfigProperties) {
+        System.out.println();
         for (CombinatorialCheckerConfigProperties properties : purahConfigProperties.toCombinatorialCheckerConfigPropertiesList()) {
             try {
 
@@ -172,6 +173,7 @@ public class PurahIocRegS {
             }
         }
     }
+
 
 
 }
