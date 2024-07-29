@@ -1,7 +1,7 @@
 package notEnable;
 
 import org.junit.jupiter.api.Test;
-import org.purah.util.User;
+import io.github.vajval.purah.util.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

@@ -1,8 +1,8 @@
 package notEnable;
 
-import org.purah.util.User;
-import org.purah.springboot.aop.ann.CheckIt;
-import org.purah.springboot.aop.ann.FillToMethodResult;
+import io.github.vajval.purah.util.User;
+import io.github.vajval.purah.spring.aop.ann.CheckIt;
+import io.github.vajval.purah.spring.aop.ann.FillToMethodResult;
 import org.springframework.stereotype.Service;
 
 @Service
