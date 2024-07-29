@@ -2,7 +2,6 @@ package org.purah.core.resolver;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -177,6 +176,11 @@ public class ClassReflectCache {
         Object argValue = inputToCheckerArg.argValue();
         Class<?> inputArgClass = inputToCheckerArg.argClass();
 
+        for (String s : result.keySet()) {
+            if (s.contains("#")) {
+                return false;
+            }
+        }
         if (!ReflectUtils.noExtendEnabledFields(inputArgClass, result.keySet())) {
             return false;
         }

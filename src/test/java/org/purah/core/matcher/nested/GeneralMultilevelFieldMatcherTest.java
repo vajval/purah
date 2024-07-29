@@ -3,7 +3,6 @@ package org.purah.core.matcher.nested;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.purah.util.TestUser;
 import org.purah.util.People;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.resolver.DefaultArgResolver;

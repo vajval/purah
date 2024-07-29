@@ -8,8 +8,6 @@ import org.purah.core.checker.ann.NotEmptyTest;
 import org.purah.core.checker.ann.NotNull;
 import org.purah.core.checker.ann.Range;
 import org.purah.core.matcher.nested.FixedMatcher;
-import org.purah.core.matcher.nested.GeneralFieldMatcher;
-import org.purah.util.People;
 import org.purah.util.User;
 
 import java.util.Map;

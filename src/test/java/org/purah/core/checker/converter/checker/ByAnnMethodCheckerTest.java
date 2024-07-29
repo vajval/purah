@@ -29,7 +29,7 @@ public class ByAnnMethodCheckerTest {
     }
 
 
-    Purahs purahs; ;
+    Purahs purahs;
 
     @BeforeEach
     public void beforeEach() throws NoSuchMethodException {

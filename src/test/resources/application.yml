@@ -4,9 +4,10 @@ logging:
 purah:
   combo_checker:
     - name: user_reg
+      checkers: "abc"
       mapping:
         wild_card:
-          "[{address,parent_address}]": national_check
+          "[address|parent_address]": national_check
           "[*name*]": name_validity_check
           "[age]": age_check
         class_name:

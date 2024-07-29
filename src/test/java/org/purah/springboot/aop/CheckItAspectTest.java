@@ -9,7 +9,6 @@ import org.purah.core.checker.GenericsProxyChecker;
 import org.purah.core.checker.result.LogicCheckResult;
 import org.purah.core.checker.result.MultiCheckResult;
 import org.purah.core.checker.result.ResultLevel;
-import org.purah.core.matcher.BaseStringMatcher;
 import org.purah.core.matcher.nested.GeneralFieldMatcher;
 import org.purah.springboot.aop.exception.MethodArgCheckException;
 import org.purah.springboot.aop.result.ArgCheckResult;

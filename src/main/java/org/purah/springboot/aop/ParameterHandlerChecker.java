@@ -1,6 +1,5 @@
 package org.purah.springboot.aop;
 
-import org.purah.core.PurahContext;
 import org.purah.core.Purahs;
 import org.purah.core.checker.*;
 import org.purah.core.checker.combinatorial.ExecMode;

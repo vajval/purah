@@ -1,7 +1,5 @@
 package org.purah.core.resolver;
 
-import com.google.common.collect.Sets;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.purah.util.People;
 import org.purah.util.TestUser;

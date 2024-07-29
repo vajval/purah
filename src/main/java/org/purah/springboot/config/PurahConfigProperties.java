@@ -5,7 +5,6 @@ import org.purah.core.checker.combinatorial.CombinatorialCheckerConfigProperties
 import org.purah.core.checker.combinatorial.ExecMode;
 import org.purah.core.checker.result.ResultLevel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
@@ -44,10 +43,10 @@ public class PurahConfigProperties {
 
         protected String name;
 
-        protected int  resultLevel = ResultLevel.only_failed_only_base_logic.value();
+        protected int resultLevel = ResultLevel.only_failed_only_base_logic.value();
 
         protected int execType = ExecMode.Main.all_success.value();
-        protected String useCheckers = "";
+        protected String checkers;
 
 
         protected LinkedHashMap<String, LinkedHashMap<String, String>> mapping = new LinkedHashMap<>(0);
@@ -56,7 +55,9 @@ public class PurahConfigProperties {
         public CombinatorialCheckerConfigProperties toCombinatorialCheckerConfigProperties() {
             CombinatorialCheckerConfigProperties result = new CombinatorialCheckerConfigProperties(name);
             result.setLogicFrom("PurahConfigProperties.CombinatorialCheckerProperties{" + this + "}");
-            result.setUseCheckerNames(split(useCheckers));
+            if(StringUtils.hasText(checkers)){
+                result.setUseCheckerNames(split(checkers));
+            }
             for (Map.Entry<String, LinkedHashMap<String, String>> entry : mapping.entrySet()) {
                 LinkedHashMap<String, List<String>> valueMap = new LinkedHashMap<>();
                 for (Map.Entry<String, String> listEntry : entry.getValue().entrySet()) {
@@ -77,13 +78,13 @@ public class PurahConfigProperties {
             this.name = name;
         }
 
-        public String getUseCheckers() {
-            return useCheckers;
+        public String getCheckers() {
+            return checkers;
         }
 
-        public void setUseCheckers(String useCheckers) {
-            if (useCheckers != null) {
-                this.useCheckers = useCheckers;
+        public void setCheckers(String checkers) {
+            if (checkers != null) {
+                this.checkers = checkers;
             }
 
         }
@@ -118,7 +119,7 @@ public class PurahConfigProperties {
         public String toString() {
             return "CombinatorialCheckerProperties{" +
                     "name='" + name + '\'' +
-                    ", useCheckers='" + useCheckers + '\'' +
+                    ", useCheckers='" + checkers + '\'' +
                     ", execType=" + execType +
                     ", mapping=" + mapping +
                     '}';

@@ -5,15 +5,19 @@ import com.google.common.collect.Sets;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.purah.core.checker.InputToCheckerArg;
 import org.purah.core.matcher.BaseStringMatcher;
+import org.purah.core.matcher.FieldMatcher;
 import org.purah.core.matcher.singlelevel.WildCardMatcher;
 import org.purah.core.matcher.inft.ListIndexMatcher;
 import org.purah.core.matcher.inft.MultilevelFieldMatcher;
 import org.springframework.core.ResolvableType;
+import org.springframework.util.CollectionUtils;
 
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 
 /*
@@ -47,17 +51,37 @@ import java.util.concurrent.ConcurrentHashMap;
 //todo  list nested
 //todo  circular dependency error
 
-public abstract class AnnByPackageMatcher extends BaseStringMatcher implements MultilevelFieldMatcher, ListIndexMatcher {
+public class AnnByPackageMatcher extends BaseStringMatcher implements MultilevelFieldMatcher, ListIndexMatcher {
 
-    protected final WildCardMatcher fieldNeedNestedMatcher;
+    protected WildCardMatcher fieldNeedNestedMatcher;
 
-    protected final Map<Class<?>, Map<String, FieldInfoCache>> fieldCache = new ConcurrentHashMap<>();
+    protected Map<Class<?>, Map<String, FieldInfoCache>> fieldCache = new ConcurrentHashMap<>();
 
-    public final FieldInfoCache NULL = new FieldInfoCache();
+    protected FieldInfoCache NULL = new FieldInfoCache();
+
+    protected int maxDepth;
+
+    protected Set<Class<? extends Annotation>> annClazz;
+
 
     public AnnByPackageMatcher(String needNestedPackagePatch) {
+        this(needNestedPackagePatch, 8);
+    }
+
+
+    @SafeVarargs
+    public AnnByPackageMatcher(String needNestedPackagePatch, int maxDepth, Class<? extends Annotation>... annClazz) {
         super(needNestedPackagePatch);
         this.fieldNeedNestedMatcher = new WildCardMatcher(needNestedPackagePatch);
+        this.maxDepth = maxDepth;
+
+        for (Class<? extends Annotation> clazz : annClazz) {
+            if (!Annotation.class.isAssignableFrom(clazz)) {
+                throw new RuntimeException("clazz must be ann Clazz");
+            }
+
+        }
+        this.annClazz = Sets.newHashSet(annClazz);
     }
 
 
@@ -67,7 +91,7 @@ public abstract class AnnByPackageMatcher extends BaseStringMatcher implements M
         Set<String> result = Sets.newHashSet();
         for (String field : fields) {
             FieldInfoCache fieldInfoCache = fieldInfoCacheMap.get(field);
-            if (fieldInfoCache.needBeCollected) {
+            if (fieldInfoCache.needBeCollected || fieldInfoCache.needNest) {
                 result.add(field);
             }
         }
@@ -86,16 +110,19 @@ public abstract class AnnByPackageMatcher extends BaseStringMatcher implements M
             needBeCollected = false;
         }
 
+        if (this.maxDepth == 0) {
+            needNest = false;
+        }
 
         if (needBeCollected) {
             if (needNest) {
-                return NestedMatchInfo.needCollectedAndMatchNested(this);
+                return NestedMatchInfo.needCollectedAndMatchNested(childFieldMatcher());
             } else {
                 return NestedMatchInfo.needCollected();
             }
         } else {
             if (needNest) {
-                return NestedMatchInfo.justNested(this);
+                return NestedMatchInfo.justNested(childFieldMatcher());
             } else {
                 return NestedMatchInfo.ignore();
             }
@@ -105,6 +132,7 @@ public abstract class AnnByPackageMatcher extends BaseStringMatcher implements M
 
     @Override
     public Map<String, Object> listMatch(List<?> objectList) {
+        if (CollectionUtils.isEmpty(objectList)) return new HashMap<>();
         Map<String, Object> result = Maps.newHashMapWithExpectedSize(objectList.size());
         for (int index = 0; index < objectList.size(); index++) {
             Object o = objectList.get(index);
@@ -117,10 +145,47 @@ public abstract class AnnByPackageMatcher extends BaseStringMatcher implements M
     }
 
 
-    protected abstract boolean needBeCollected(Field field);
+    protected boolean needBeCollected(Field field) {
+        for (Class<? extends Annotation> clazz : annClazz) {
+            if (field.getDeclaredAnnotation(clazz) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected FieldMatcher childFieldMatcher() {
+        Predicate<Field> predicate = this::needBeCollected;
+        return new AnnByPackageMatcher(this.matchStr, this.maxDepth - 1) {
+            @Override
+            protected boolean needBeCollected(Field field) {
+                return predicate.test(field);
+            }
+        };
+    }
 
 
-    class FieldInfoCache {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AnnByPackageMatcher that = (AnnByPackageMatcher) o;
+        return maxDepth == that.maxDepth;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), maxDepth);
+    }
+
+    @Override
+    public boolean supportCache() {
+        return !matchStr.contains("#");
+
+    }
+
+    private class FieldInfoCache {
         Class<?> checkClazz;
         Field field;
         boolean needNest = false;
@@ -149,13 +214,13 @@ public abstract class AnnByPackageMatcher extends BaseStringMatcher implements M
         }
     }
 
-    protected Map<String, FieldInfoCache> fieldInfoCacheMap(Class<?> instanceClazz) {
+    private Map<String, FieldInfoCache> fieldInfoCacheMap(Class<?> instanceClazz) {
 
         return fieldCache.computeIfAbsent(instanceClazz, i -> buildFieldInfoCacheMap(instanceClazz));
 
     }
 
-    protected FieldInfoCache fieldInfoCache(String field, Class<?> instanceClazz) {
+    private FieldInfoCache fieldInfoCache(String field, Class<?> instanceClazz) {
         Map<String, FieldInfoCache> map = fieldInfoCacheMap(instanceClazz);
         FieldInfoCache fieldInfoCache = map.get(field);
         if (fieldInfoCache != null) {
@@ -164,8 +229,7 @@ public abstract class AnnByPackageMatcher extends BaseStringMatcher implements M
         return NULL;
     }
 
-    protected Map<String, FieldInfoCache> buildFieldInfoCacheMap(Class<?> instanceClazz) {
-
+    private Map<String, FieldInfoCache> buildFieldInfoCacheMap(Class<?> instanceClazz) {
 
         PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(instanceClazz);
         HashMap<String, FieldInfoCache> result = Maps.newHashMapWithExpectedSize(propertyDescriptors.length);

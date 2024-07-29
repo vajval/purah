@@ -4,7 +4,6 @@ import org.purah.core.PurahContext;
 import org.purah.core.PurahContextConfig;
 import org.purah.core.Purahs;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 
 public class PurahConfiguration {
