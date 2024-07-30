@@ -90,7 +90,7 @@ public class CheckerManager {
             List<CheckerFactory> enableFactoryList = searchEnableFactoryList(name, 0, size);
 
             if (enableFactoryList.size() == 0) {
-                throw new InitCheckerException("checker no reg and cannot be matched :[  " + name + "  ]");
+                return null;
             }
             GenericsProxyChecker genericsProxyChecker = GenericsProxyChecker.createAndSupportUpdateByCheckerFactory(name, size, this::updateGenericsCheckerContext);
 

@@ -2,11 +2,13 @@ package io.github.vajval.purah.core.checker.converter.checker;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import io.github.vajval.purah.core.Purahs;
 import io.github.vajval.purah.core.checker.PurahWrapMethod;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.exception.init.InitCheckerException;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.core.matcher.nested.FixedMatcher;
+import io.github.vajval.purah.core.name.NameUtil;
 import io.github.vajval.purah.core.resolver.ArgResolver;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
 import io.github.vajval.purah.core.matcher.nested.GeneralFieldMatcher;
@@ -33,29 +35,51 @@ import java.util.concurrent.ConcurrentHashMap;
 * }
  */
 
-public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodToChecker {
-    protected final Map<Integer, FieldParameter> fieldParameterMap = new ConcurrentHashMap<>();
+public class FValMethodChecker extends AbstractWrapMethodToChecker {
+    private final Map<Integer, FieldParameter> fieldParameterMap = new ConcurrentHashMap<>();
+    private static final ArgResolver defaultResolver = new ReflectArgResolver();
 
-    FieldMatcher fieldMatcher;
 
-    private static final ArgResolver resolver = new ReflectArgResolver();
+    private FieldMatcher fieldMatcher;
+    private ArgResolver resolver = defaultResolver;
+
+    private Purahs purahs;
 
     static class FieldParameter {
         final int index;
         final FVal FVal;
         final Class<?> clazz;
-        final GeneralFieldMatcher generalFieldMatcher;
+        final FieldMatcher fieldMatcher;
 
-        public FieldParameter(int index, FVal FVal, Class<?> clazz, GeneralFieldMatcher generalFieldMatcher) {
+        public FieldParameter(int index, FVal FVal, Class<?> clazz, FieldMatcher fieldMatcher) {
             this.index = index;
             this.FVal = FVal;
             this.clazz = clazz;
-            this.generalFieldMatcher = generalFieldMatcher;
+            this.fieldMatcher = fieldMatcher;
         }
     }
 
+    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name, Purahs purahs) {
+        super(methodsToCheckersBean, method, name);
+        this.resolver = purahs.argResolver();
+        this.purahs = purahs;
+    }
 
-    public FValCheckerByDefaultReflectArgResolver(Object methodsToCheckersBean, Method method, String name) {
+    protected FieldMatcher generalFieldMatcher(String value) {
+        if (purahs != null) {
+            return purahs.matcherOf(NameUtil.nameByAnnOnClass(GeneralFieldMatcher.class)).create(value);
+        }
+        return new GeneralFieldMatcher(value);
+    }
+
+    protected FieldMatcher fixedMatcher(String value) {
+        if (purahs != null) {
+            return purahs.matcherOf(NameUtil.nameByAnnOnClass(FixedMatcher.class)).create(value);
+        }
+        return new FixedMatcher(value);
+    }
+
+    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name) {
         super(methodsToCheckersBean, method, name);
         String errorMsg = errorMsgAutoMethodCheckerByDefaultReflectArgResolver(methodsToCheckersBean, method);
 
@@ -78,16 +102,13 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
                     }
                     fieldParameterMap.put(index, new FieldParameter(index, fVal, parameter.getType(), null));
                 } else {
-                    fieldParameterMap.put(index, new FieldParameter(index, fVal, parameter.getType(), new GeneralFieldMatcher(fVal.value())));
+                    fieldParameterMap.put(index, new FieldParameter(index, fVal, parameter.getType(), this.generalFieldMatcher(fVal.value())));
                 }
             }
         }
         String matchStr = String.join("|", matchStirs);
-        fieldMatcher = new FixedMatcher(matchStr);
-//        fieldMatcher = new GeneralFieldMatcher(matchStr);
+        fieldMatcher = this.fixedMatcher(matchStr);
         purahEnableMethod = new PurahWrapMethod(methodsToCheckersBean, method, rootIndex);
-
-
     }
 
     public static String errorMsgAutoMethodCheckerByDefaultReflectArgResolver(Object methodsToCheckersBean, Method method) {
@@ -117,7 +138,7 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
                     objects[index] = inputToCheckerArg;
                     continue;
                 }
-                if (fieldParameter.generalFieldMatcher == null) {
+                if (fieldParameter.fieldMatcher == null) {
                     InputToCheckerArg<?> childArg = matchFieldObjectMap.get(fieldParameter.FVal.value());
                     if (childArg == null || childArg.isNull()) {
                         objects[index] = null;
@@ -132,12 +153,12 @@ public class FValCheckerByDefaultReflectArgResolver extends AbstractWrapMethodTo
                     }
                     objects[index] = childArg.argValue();
                 } else if (fieldParameter.clazz.equals(Map.class)) {
-                    Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(inputToCheckerArg, fieldParameter.generalFieldMatcher);
+                    Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(inputToCheckerArg, fieldParameter.fieldMatcher);
                     Map<String, Object> objectMap = Maps.newHashMapWithExpectedSize(map.size());
                     map.forEach((a, b) -> objectMap.put(a, b.argValue()));
                     objects[index] = objectMap;
                 } else if (fieldParameter.clazz.equals(Set.class)) {
-                    Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(inputToCheckerArg, fieldParameter.generalFieldMatcher);
+                    Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(inputToCheckerArg, fieldParameter.fieldMatcher);
                     Set<Object> set = Sets.newHashSetWithExpectedSize(map.size());
                     map.values().forEach(w -> set.add(w.argValue()));
                     objects[index] = set;

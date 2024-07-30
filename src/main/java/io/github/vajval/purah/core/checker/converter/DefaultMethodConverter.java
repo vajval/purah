@@ -4,7 +4,7 @@ import io.github.vajval.purah.core.checker.Checker;
 import io.github.vajval.purah.core.checker.converter.checker.AbstractWrapMethodToChecker;
 import io.github.vajval.purah.core.checker.converter.checker.ByAnnMethodChecker;
 import io.github.vajval.purah.core.checker.converter.checker.ByLogicMethodChecker;
-import io.github.vajval.purah.core.checker.converter.checker.FValCheckerByDefaultReflectArgResolver;
+import io.github.vajval.purah.core.checker.converter.checker.FValMethodChecker;
 import io.github.vajval.purah.core.checker.converter.factory.AbstractByMethodCheckerFactory;
 import io.github.vajval.purah.core.checker.converter.factory.ByCheckerMethodCheckerFactory;
 import io.github.vajval.purah.core.checker.converter.factory.ByLogicMethodCheckerFactory;
@@ -55,11 +55,11 @@ public class DefaultMethodConverter implements MethodConverter {
             logger.info("{}  {}", method, ByAnnMethodChecker.class);
             return new ByAnnMethodChecker(methodsToCheckersBean, method, name);
         }
-        errorMsg = FValCheckerByDefaultReflectArgResolver.errorMsgAutoMethodCheckerByDefaultReflectArgResolver
+        errorMsg = FValMethodChecker.errorMsgAutoMethodCheckerByDefaultReflectArgResolver
                 (methodsToCheckersBean, method);
         if (errorMsg == null) {
-            logger.info("{}  {}", method, FValCheckerByDefaultReflectArgResolver.class);
-            return new FValCheckerByDefaultReflectArgResolver(methodsToCheckersBean, method, name);
+            logger.info("{}  {}", method, FValMethodChecker.class);
+            return new FValMethodChecker(methodsToCheckersBean, method, name);
 
         }
         logger.warn("convert  failed not enable converter,{}", method.toGenericString());

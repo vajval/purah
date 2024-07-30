@@ -30,10 +30,6 @@ public class MatcherManager {
     }
 
     public MatcherFactory factoryOf(String factoryTypeName) {
-        if (!factoryMap.containsKey(factoryTypeName)) {
-            logger.error("no reg MatcherFactory: {}", factoryTypeName);
-            throw new RuntimeException("no reg MatcherFactory: " + factoryTypeName);
-        }
         return factoryMap.get(factoryTypeName);
     }
     public void clear(){

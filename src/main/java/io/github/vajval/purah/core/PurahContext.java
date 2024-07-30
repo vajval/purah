@@ -32,7 +32,7 @@ public class PurahContext {
 
     public PurahContext(PurahContextConfig config) {
         this.config = config;
-        this.regBaseStringMatcher();
+        config().purahDefaultFieldMatcherClass().forEach(matcherManager::regBaseStrMatcher);
     }
 
     public PurahContext() {
@@ -40,17 +40,10 @@ public class PurahContext {
     }
 
 
-    private void regBaseStringMatcher() {
-
-
-        config().purahDefaultFieldMatcherClass().forEach(matcherManager::regBaseStrMatcher);
-
-    }
 
     public void override(CheckerManager checkManager, ArgResolver argResolver, MatcherManager matcherManager, MethodConverter enableMethodConverter) {
         if (checkManager != null) {
             this.checkManager = checkManager;
-
         }
         if (argResolver != null) {
             this.argResolver = argResolver;
@@ -58,7 +51,6 @@ public class PurahContext {
         }
         if (matcherManager != null) {
             this.matcherManager = matcherManager;
-            this.regBaseStringMatcher();
         }
         if (enableMethodConverter != null) {
             this.enableMethodConverter = enableMethodConverter;
@@ -70,7 +62,7 @@ public class PurahContext {
         return config;
     }
 
-    protected CheckerManager checkManager() {
+    public CheckerManager checkManager() {
         return checkManager;
 
     }
@@ -83,7 +75,7 @@ public class PurahContext {
         return argResolver;
     }
 
-    protected MatcherManager matcherManager() {
+    public MatcherManager matcherManager() {
         return matcherManager;
     }
 

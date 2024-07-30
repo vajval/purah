@@ -1,5 +1,6 @@
 package io.github.vajval.purah.spring.ioc;
 
+import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.core.matcher.MatcherManager;
 import io.github.vajval.purah.core.PurahContext;
 import io.github.vajval.purah.core.checker.Checker;
@@ -12,6 +13,8 @@ import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 import io.github.vajval.purah.spring.IgnoreBeanOnPurahContext;
 import io.github.vajval.purah.spring.ioc.ann.PurahMethodsRegBean;
 import io.github.vajval.purah.spring.config.PurahConfigProperties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -28,6 +31,7 @@ import java.util.*;
 
 public class RegOnContextRefresh implements ApplicationListener<ContextRefreshedEvent> {
 
+    private static final Logger logger = LogManager.getLogger(RegOnContextRefresh.class);
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -45,11 +49,12 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
 
 
         this.initMain(purahIocRegS, applicationContext);
-
         this.initMatcherManager(purahIocRegS, applicationContext);
-
         this.initCheckerManager(purahIocRegS, applicationContext);
         this.callBack(purahIocRegS, applicationContext);
+
+        logger.info("purahContext refresh finish");
+        logger.info("Ciallo～(∠・ω< )⌒★");
 
 
     }
@@ -91,6 +96,7 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
         for (MatcherFactory matcherFactory : enableMatcherFactories) {
             purahIocRegS.regBaseStringMatcher(matcherFactory);
         }
+        purahIocRegS.initFieldMatcherByScanClassSet();
     }
 
 
@@ -130,8 +136,9 @@ public class RegOnContextRefresh implements ApplicationListener<ContextRefreshed
         }
 
 
-
     }
+
+
 
     public void callBack(PurahIocRegS purahIocRegS, ApplicationContext applicationContext) {
         Set<PurahRefreshCallBack> callBackSet = filterEnableBean(applicationContext.getBeansOfType(PurahRefreshCallBack.class).values());

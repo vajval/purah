@@ -7,6 +7,7 @@ import io.github.vajval.purah.core.checker.combinatorial.CombinatorialCheckerCon
 import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.core.matcher.MatcherManager;
 import io.github.vajval.purah.core.matcher.factory.MatcherFactory;
+import io.github.vajval.purah.core.name.NameUtil;
 import io.github.vajval.purah.core.resolver.ArgResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +22,7 @@ import io.github.vajval.purah.spring.ioc.ann.ToCheckerFactory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -63,20 +65,29 @@ public class PurahIocRegS {
             logger.info("enable methodConverter:{} ", methodConverter.getClass());
         }
         purahContext.override(checkerManager, argResolver, matcherManager, methodConverter);
-        for (Class<? extends FieldMatcher> defaultClazz : purahContext.config().purahDefaultFieldMatcherClass()) {
-            this.regBaseStringMatcher(defaultClazz);
-        }
-
-        for (Class<? extends FieldMatcher> baseStringMatcherClass : purahContext.config().getSingleStringConstructorFieldMatcherClassSet()) {
-            this.regBaseStringMatcher(baseStringMatcherClass);
-        }
 
 
-        logger.info("init purahContext base finish");
-        logger.info("Ciallo～(∠・ω< )⌒★");
+
 
     }
 
+    public void initFieldMatcherByScanClassSet() {
+        for (Class<? extends FieldMatcher> baseStringMatcherClass : purahContext.config().getSingleStringConstructorFieldMatcherClassSet()) {
+            this.regBaseStringMatcher(baseStringMatcherClass);
+        }
+        Set<Class<? extends FieldMatcher>> purahDefaultFieldMatcherClassSet = purahContext.config().purahDefaultFieldMatcherClass();
+
+        for (Class<? extends FieldMatcher> purahDefaultFieldMatcherClass : purahDefaultFieldMatcherClassSet) {
+            String name = NameUtil.nameByAnnOnClass(purahDefaultFieldMatcherClass);
+            if (name != null) {
+                MatcherFactory matcherFactory = purahContext.matcherManager().factoryOf(name);
+                if (matcherFactory == null) {
+                    this.regBaseStringMatcher(purahDefaultFieldMatcherClass);
+                }
+            }
+        }
+
+    }
 
     public void regBaseStringMatcher(Class<? extends FieldMatcher> clazz) {
         try {
@@ -173,7 +184,6 @@ public class PurahIocRegS {
             }
         }
     }
-
 
 
 }

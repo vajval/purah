@@ -1,9 +1,12 @@
 package io.github.vajval.purah.core.checker.converter.checker;
 
+import io.github.vajval.purah.core.matcher.FieldMatcher;
+import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 import io.github.vajval.purah.util.People;
 import io.github.vajval.purah.util.TestAnn;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import io.github.vajval.purah.core.name.Name;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
@@ -20,7 +23,8 @@ import java.util.stream.Stream;
 
 public class FValCheckerByDefaultReflectArgResolverTest {
 
-    public static boolean childNameCheck(@FVal("$root$") InputToCheckerArg<People> peopleArg,
+
+    public static boolean childNameCheck(@FVal(FieldMatcher.rootField) InputToCheckerArg<People> peopleArg,
                                          @FVal("name") String name,
                                          @FVal("name") TestAnn testAnnOnNameField,
                                          @FVal("name") Name noExistAnn,
@@ -31,8 +35,8 @@ public class FValCheckerByDefaultReflectArgResolverTest {
                                          @FVal("child#0.child#0.name") String childChildName,
                                          @FVal("child#0.child#0.child") List<People> superChildList) {
         People root = People.elder;
-        People people = peopleArg.argValue();
-        if (!root.equals(people)) {
+        People beCheckPeople = peopleArg.argValue();
+        if (!root.equals(beCheckPeople)) {
             return false;
         }
         if (noExistAnn != null) {
@@ -68,7 +72,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
     void check() {
 
         Method method = Stream.of(FValCheckerByDefaultReflectArgResolverTest.class.getDeclaredMethods()).filter(i -> i.getName().equals("childNameCheck")).collect(Collectors.toList()).get(0);
-        FValCheckerByDefaultReflectArgResolver checker = new FValCheckerByDefaultReflectArgResolver(null, method, "test");
+        FValMethodChecker checker = new FValMethodChecker(null, method, "test");
 
         for (int i = 0; i < 3; i++) {
             Assertions.assertTrue(checker.check(People.elder));
@@ -76,39 +80,75 @@ public class FValCheckerByDefaultReflectArgResolverTest {
 
     }
 
+    static TestUser testUser;
 
-    public static boolean childNameCheck2(
-            @FVal("id") Long w,
-            @FVal("name") Name e,
-            @FVal("a.name") String r,
-            @FVal("child.id") Long testAnnOnNameField,
-            @FVal("child.name") Name noExistAnn,
-            @FVal("child.address") String address,
-            @FVal("child") TestUser testUser2,
-            @FVal("child.child.id") Long testAnnOnNameField2,
-            @FVal("child.child.name") Name noExistAnn2,
-            @FVal("child.child.address") String address2,
-            @FVal("child.child") TestUser testUse2r
-
-
-    ) {
-        return address2 != null;
-
+    @BeforeEach
+    public void asda() {
+        testUser = new TestUser(1L, "name", "address");
+        testUser.child = new TestUser(2L, "child_name", "child_address");
+        testUser.child.child = new TestUser(4L, "child_child_name", "child_child_address");
     }
 
+
+    public static boolean childNameCheck2(
+            @FVal("id") Long id,
+            @FVal("name") TestAnn name,
+            @FVal("a.name") String aName,
+            @FVal("child.id") Long childId,
+            @FVal("child.child.id") Long childChildId,
+
+            @FVal("child.name") TestAnn childName,
+            @FVal("child.address") String childAddress,
+            @FVal("child") TestUser child,
+            @FVal("child.child.name") Name childChildName,
+            @FVal("child.child.address") String childChildAddress,
+            @FVal("child.child") TestUser childChild
+
+    ) {
+        if (id != null) {
+            return false;
+        }
+        if (aName != null) {
+            return false;
+        }
+        if (!name.value().equals("name")) {
+            return false;
+        }
+        if (childId != null) {
+            return false;
+        }
+        if (childChildId != null) {
+            return false;
+        }
+        if (!childName.value().equals("name")) {
+            return false;
+        }
+        if (childChildName != null){
+            return false;
+        }
+        if (!childAddress.equals(testUser.getChild().address)) {
+            return false;
+        }
+        if (!child.equals(testUser.getChild())) {
+            return false;
+        }
+        if (!childChildAddress.equals(testUser.getChild().getChild().getAddress())) {
+            return false;
+        }
+        if (!childChild.equals(testUser.getChild().getChild())) {
+            return false;
+        }
+        return true;
+    }
 
 
     @Test
     void check2() {
         Method method = Stream.of(FValCheckerByDefaultReflectArgResolverTest.class.getDeclaredMethods()).filter(i -> i.getName().equals("childNameCheck2")).collect(Collectors.toList()).get(0);
 
-        FValCheckerByDefaultReflectArgResolver checker = new
-                FValCheckerByDefaultReflectArgResolver(
+        FValMethodChecker checker = new
+                FValMethodChecker(
                 null, method, "test");
-
-        TestUser testUser = new TestUser(1L, "name", "address");
-        testUser.child = new TestUser(2L, "child_name", "child_address");
-        testUser.child.child = new TestUser(4L, "child_child_name", "child_child_address");
 
 
         for (int i = 0; i < 300; i++) {
@@ -120,8 +160,8 @@ public class FValCheckerByDefaultReflectArgResolverTest {
     void check3() {
         Method method = Stream.of(FValCheckerByDefaultReflectArgResolverTest.class.getDeclaredMethods()).filter(i -> i.getName().equals("childNameCheck")).collect(Collectors.toList()).get(0);
 
-        FValCheckerByDefaultReflectArgResolver checker = new
-                FValCheckerByDefaultReflectArgResolver(
+        FValMethodChecker checker = new
+                FValMethodChecker(
                 null, method, "test");
 
         for (int i = 0; i < 10000; i++) {

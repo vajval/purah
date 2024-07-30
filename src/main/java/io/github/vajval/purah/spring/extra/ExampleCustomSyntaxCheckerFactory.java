@@ -18,12 +18,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-/**
+/*
+ * 自定义语法解析器
  * see org.purah.springboot.aop.AspectTestService
  */
 
 @Component
-public class MyCustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFactory {
+public class ExampleCustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFactory {
 
 
     @Autowired
@@ -47,7 +48,7 @@ public class MyCustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFac
         return needMatchCheckerName.startsWith("example:");
     }
 
-    /**
+    /*
      * example: [a:b,c;e:d,e]
      */
     @Override
