@@ -161,7 +161,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>purah</publishingServerId>
-                    <tokenAuth>true</tokenAuth>
+<!--                    <tokenAuth>true</tokenAuth>-->
                 </configuration>
             </plugin>
             <plugin>

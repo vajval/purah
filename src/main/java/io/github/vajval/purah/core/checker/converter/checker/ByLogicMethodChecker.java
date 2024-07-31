@@ -52,6 +52,11 @@ public class ByLogicMethodChecker extends AbstractWrapMethodToChecker {
         if (method.getParameters().length != 1) {
             return "Only one parameter be check["+method.toGenericString()+"]";
         }
+        Class<?> returnType = method.getReturnType();
+        if (!(CheckResult.class.isAssignableFrom(returnType)) && !(boolean.class.isAssignableFrom(returnType))) {
+            return "Only supports return types of CheckResult or boolean. [" + method + "]";
+
+        }
         return null;
     }
 

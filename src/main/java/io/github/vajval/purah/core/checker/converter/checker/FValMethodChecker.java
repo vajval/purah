@@ -116,6 +116,11 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
         if (method.getParameters().length < 1) {
             return "Come on, you need at least one parameter, okay? [" + method + "]";
         }
+        Class<?> returnType = method.getReturnType();
+        if (!(CheckResult.class.isAssignableFrom(returnType)) && !(boolean.class.isAssignableFrom(returnType))) {
+            return "Only supports return types of CheckResult or boolean. [" + method + "]";
+
+        }
         return null;
     }
 

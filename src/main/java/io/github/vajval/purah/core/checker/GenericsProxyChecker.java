@@ -60,7 +60,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
 
 
-    protected GenericsProxyChecker addNewChecker(Checker<?, ?> checker) {
+    public GenericsProxyChecker addNewChecker(Checker<?, ?> checker) {
         if (checker == null) {
             throw new InitCheckerException("checker cannot be null");
         }

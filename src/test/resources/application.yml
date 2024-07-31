@@ -7,8 +7,8 @@ purah:
       checkers: "abc"
       mapping:
         wild_card:
+          age: age_check
           "[address|parent_address]": national_check
           "[*name*]": name_validity_check
-          "[age]": age_check
         class_name:
-          "java.lang.String": sensitive_word_check
+          java.lang.String: sensitive_word_check

@@ -6,6 +6,7 @@ import io.github.vajval.purah.core.checker.ann.NotEmptyTest;
 import io.github.vajval.purah.core.checker.ann.NotNull;
 import io.github.vajval.purah.core.checker.ann.Range;
 import io.github.vajval.purah.core.checker.combinatorial.ExecMode;
+import io.github.vajval.purah.core.checker.custom.CustomAnnChecker;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import io.github.vajval.purah.core.checker.result.ResultLevel;

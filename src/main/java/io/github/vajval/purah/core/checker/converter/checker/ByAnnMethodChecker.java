@@ -65,6 +65,11 @@ public class ByAnnMethodChecker extends AbstractWrapMethodToChecker {
         if (!(parameterizedType.isAnnotation())) {
             return "Um, the first parameter has to be an annotation, and it'll be filled with the annotation value from the field [" + method + "]";
         }
+        Class<?> returnType = method.getReturnType();
+        if (!(CheckResult.class.isAssignableFrom(returnType)) && !(boolean.class.isAssignableFrom(returnType))) {
+            return "Only supports return types of CheckResult or boolean. [" + method + "]";
+
+        }
         return null;
 
 

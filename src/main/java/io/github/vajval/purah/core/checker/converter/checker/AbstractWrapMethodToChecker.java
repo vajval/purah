@@ -59,11 +59,7 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
             }
         }
 
-        Class<?> returnType = method.getReturnType();
-        if (!(CheckResult.class.isAssignableFrom(returnType)) && !(boolean.class.isAssignableFrom(returnType))) {
-            return "Only supports return types of CheckResult or boolean. [" + method + "]";
 
-        }
         return null;
 
 

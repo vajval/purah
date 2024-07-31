@@ -1,10 +1,7 @@
 package io.github.vajval.purah.core.checker.converter;
 
 import io.github.vajval.purah.core.checker.Checker;
-import io.github.vajval.purah.core.checker.converter.checker.AbstractWrapMethodToChecker;
-import io.github.vajval.purah.core.checker.converter.checker.ByAnnMethodChecker;
-import io.github.vajval.purah.core.checker.converter.checker.ByLogicMethodChecker;
-import io.github.vajval.purah.core.checker.converter.checker.FValMethodChecker;
+import io.github.vajval.purah.core.checker.converter.checker.*;
 import io.github.vajval.purah.core.checker.converter.factory.AbstractByMethodCheckerFactory;
 import io.github.vajval.purah.core.checker.converter.factory.ByCheckerMethodCheckerFactory;
 import io.github.vajval.purah.core.checker.converter.factory.ByLogicMethodCheckerFactory;
@@ -60,6 +57,14 @@ public class DefaultMethodConverter implements MethodConverter {
         if (errorMsg == null) {
             logger.info("{}  {}", method, FValMethodChecker.class);
             return new FValMethodChecker(methodsToCheckersBean, method, name);
+
+        }
+
+
+        errorMsg = ByBaseMethodChecker.errorMsgCheckerByBaseMethod(methodsToCheckersBean, method);
+        if (errorMsg == null) {
+            logger.info("{}  {}", method, ByBaseMethodChecker.class);
+            return new ByBaseMethodChecker(methodsToCheckersBean, method, name);
 
         }
         logger.warn("convert  failed not enable converter,{}", method.toGenericString());
