@@ -21,7 +21,7 @@ Maven dependency
 <dependency>
     <groupId>io.github.vajval.purah</groupId>
     <artifactId>purah</artifactId>
-    <version>1.0.2-beta</version>
+    <version>1.0.3-beta</version>
 </dependency>
 ```
 
@@ -81,6 +81,31 @@ Purahs purahs;
 public void test(String name) {  
    CheckResult checkResult = purahs.checkerOf("Chinese name check").check(name); // Manually check without using aspects
 }
+```
+`@ToChecker` comes with an automatic null check
+
+```java
+public @interface ToChecker {
+
+    String value();
+
+    AutoNull autoNull() default AutoNull.notEnable;
+
+}
+```
+
+It can automatically succeed or fail when the parameter is null. The default is `notEnable`, which means no automatic handling of null values.
+
+```java
+    @ToChecker(value = "auto_null_success", autoNull = AutoNull.success) // When name is null, automatically returns success
+    public boolean auto_null_success(String name) {
+        return false;
+    }
+
+    @ToChecker(value = "auto_null_failed", autoNull = AutoNull.failed) // When name is null, automatically returns failure
+    public boolean auto_null_failed(String name) {
+        return true;
+    }
 ```
 
 ### 2 Multi-field Joint Validation
@@ -194,7 +219,8 @@ For multiple rule execution methods (ExecMode.Main), different types can be sele
 
 ```java
 public class ExecMode {
-    public enum Main {  
+    // Checks that are ignored are neither considered successful nor failed; they are treated as not checked and do not participate in composite judgments.
+    public enum Main {
         // All must be successful, stop on error = Fast Fail
         all_success(0), // Default value
         // All must be successful, but check all even if there are errors
@@ -357,7 +383,32 @@ If both `id`​ and `name`​ are checked with `check1`​ and `check2`​, it w
   ]
 }
 ```
+For `@ToChecker`, there is also an `ignore` option. The checkResult that is ignored is **not** considered successful nor **considered** a failure.
 
+It is considered **non-existent**, equivalent to not being checked, and does not affect the final composite result.
+```java
+    @ToChecker(value = "auto_null_ignore", autoNull = AutoNull.ignore)
+    public boolean auto_null_ignore(String name) {
+        return false;
+    }
+
+    @ToChecker(value = "auto_null_failed", autoNull = AutoNull.failed)
+    public boolean auto_null_failed(String name) {
+        return true;
+    }
+
+    @ToChecker(value = "auto_null_ignore_combo")//
+    public Checker<?, ?> auto_null_ignore_combo() {
+        return purahs.combo("auto_null_success", "auto_null_ignore").mainMode(ExecMode.Main.all_success);
+    }
+    @ToChecker(value = "auto_null_ignore_combo_failed")
+    public Checker<?, ?> auto_null_ignore_combo_failed() {
+        return purahs.combo("auto_null_failed", "auto_null_ignore").mainMode(ExecMode.Main.at_least_one);
+    }
+
+    Assertions.assertFalse(purahs.checkerOf("auto_null_ignore_combo_failed").check(null)); // Result is false
+    Assertions.assertTrue(purahs.checkerOf("auto_null_ignore_combo").check(null)); // Result is true
+```
 ### 4 Type Auto-Matching
 
 We need to check if a user is at least 18 years old during registration, where the input might be a `User`​ object or just the `age`​ itself.
@@ -1120,9 +1171,7 @@ public enum ResultLevel {
     // Only failed results
     only_failed(3),
     // Only failed results, only direct validation logic results
-    only_failed_only_base_logic(4),
-    // Only results with exceptions
-    only_error(0);
+    only_failed_only_base_logic(4);
 }
 ```
 

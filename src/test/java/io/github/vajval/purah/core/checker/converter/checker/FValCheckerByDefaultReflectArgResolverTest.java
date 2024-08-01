@@ -72,7 +72,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
     void check() {
 
         Method method = Stream.of(FValCheckerByDefaultReflectArgResolverTest.class.getDeclaredMethods()).filter(i -> i.getName().equals("childNameCheck")).collect(Collectors.toList()).get(0);
-        FValMethodChecker checker = new FValMethodChecker(null, method, "test");
+        FValMethodChecker checker = new FValMethodChecker(null, method, "test",AutoNull.notEnable);
 
         for (int i = 0; i < 3; i++) {
             Assertions.assertTrue(checker.check(People.elder));
@@ -148,7 +148,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
 
         FValMethodChecker checker = new
                 FValMethodChecker(
-                null, method, "test");
+                null, method, "test",AutoNull.notEnable);
 
 
         for (int i = 0; i < 300; i++) {
@@ -162,7 +162,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
 
         FValMethodChecker checker = new
                 FValMethodChecker(
-                null, method, "test");
+                null, method, "test",AutoNull.notEnable);
 
         for (int i = 0; i < 10000; i++) {
             Assertions.assertTrue(checker.check(People.elder).isSuccess());

@@ -32,8 +32,6 @@ public class MethodArgCheckException extends BasePurahException {
         return checkResult.childList(ResultLevel.only_failed);
     }
 
-    public List<LogicCheckResult<?>> errorList() {
-        return checkResult.childList(ResultLevel.only_error);
-    }
+
 }
 

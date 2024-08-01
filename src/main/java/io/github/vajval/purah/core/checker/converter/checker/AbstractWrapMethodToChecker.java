@@ -3,6 +3,8 @@ package io.github.vajval.purah.core.checker.converter.checker;
 
 import io.github.vajval.purah.core.checker.AbstractBaseSupportCacheChecker;
 import io.github.vajval.purah.core.checker.result.CheckResult;
+import io.github.vajval.purah.core.checker.result.LogicCheckResult;
+import io.github.vajval.purah.core.exception.UnexpectedException;
 import io.github.vajval.purah.core.exception.init.InitCheckerException;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
 import io.github.vajval.purah.core.checker.PurahWrapMethod;
@@ -23,13 +25,16 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
 
     protected Method method;
 
-    public AbstractWrapMethodToChecker(Object methodsToCheckersBean, Method method, String name) {
+    protected AutoNull autoNull;
+
+    public AbstractWrapMethodToChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull) {
         String errorMsg = errorMsgAbstractMethodToChecker(methodsToCheckersBean, method, name);
         if (errorMsg != null) {
             throw new InitCheckerException(errorMsg);
         }
         this.name = name;
         this.method = method;
+        this.autoNull = autoNull;
     }
 
 
@@ -66,8 +71,21 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
     }
 
 
+
     @Override
-    public abstract CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg);
+    public CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
+        if (inputToCheckerArg.isNull() && autoNull != AutoNull.notEnable) {
+            if (autoNull == AutoNull.ignore) return LogicCheckResult.ignore();
+            if (autoNull == AutoNull.failed) return LogicCheckResult.failed(null);
+            if (autoNull == AutoNull.success) return LogicCheckResult.success();
+            throw new UnexpectedException();
+        }
+        return methodDoCheck(inputToCheckerArg);
+
+    }
+
+
+    public abstract CheckResult<Object> methodDoCheck(InputToCheckerArg<Object> inputToCheckerArg);
 
     @Override
     public String name() {

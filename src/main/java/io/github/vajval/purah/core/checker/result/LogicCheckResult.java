@@ -99,12 +99,12 @@ public class LogicCheckResult<T> implements CheckResult<T> {
 
     }
 
-    public static <T> LogicCheckResult<T> error(Exception e, String log) {
-        LogicCheckResult<T> result = new LogicCheckResult<>(ExecInfo.error, e);
-        result.log = log;
-        return result;
-
-    }
+//    public static <T> LogicCheckResult<T> error(Exception e, String log) {
+//        LogicCheckResult<T> result = new LogicCheckResult<>(ExecInfo.error, e);
+//        result.log = log;
+//        return result;
+//
+//    }
 
 
     protected static <A> String logStr(InputToCheckerArg<A> inputToCheckerArg, String pre) {
@@ -126,10 +126,10 @@ public class LogicCheckResult<T> implements CheckResult<T> {
         return LogicCheckResult.failed(result, log);
     }
 
-    public static <A, R> LogicCheckResult<R> errorBuildLog(InputToCheckerArg<A> inputToCheckerArg, Exception e) {
-        String log = logStr(inputToCheckerArg, DEFAULT_ERROR_INFO);
-        return LogicCheckResult.error(e, log);
-    }
+//    public static <A, R> LogicCheckResult<R> errorBuildLog(InputToCheckerArg<A> inputToCheckerArg, Exception e) {
+//        String log = logStr(inputToCheckerArg, DEFAULT_ERROR_INFO);
+//        return LogicCheckResult.error(e, log);
+//    }
 
     @Override
     public T data() {

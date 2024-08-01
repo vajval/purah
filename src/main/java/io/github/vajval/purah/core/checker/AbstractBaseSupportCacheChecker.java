@@ -8,7 +8,7 @@ import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
+/*
  * checker的基础类,实现了缓存功能,需要缓存的话需要 enableCache()返回true,name()要唯一
  * Base class for checker, implements caching functionality. To enable caching, enableCache() should return true, and name() must be unique
  */
@@ -114,10 +114,10 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
         return LogicCheckResult.failedBuildLog(inputToCheckerArg, result);
     }
 
-    protected LogicCheckResult<RESULT> error(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, Exception e) {
-
-        return LogicCheckResult.errorBuildLog(inputToCheckerArg, e);
-
-    }
+//    protected LogicCheckResult<RESULT> error(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, Exception e) {
+//
+//        return LogicCheckResult.errorBuildLog(inputToCheckerArg, e);
+//
+//    }
 
 }

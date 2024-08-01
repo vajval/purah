@@ -23,8 +23,8 @@ public class ByLogicMethodChecker extends AbstractWrapMethodToChecker {
 
 
 
-    public ByLogicMethodChecker(Object methodsToCheckersBean, Method method, String name) {
-        super(methodsToCheckersBean, method, name);
+    public ByLogicMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull) {
+        super(methodsToCheckersBean, method, name,autoNull);
         String errorMsg = errorMsgCheckerByLogicMethod(methodsToCheckersBean, method);
         if (errorMsg != null) {
             throw new InitCheckerException(errorMsg);
@@ -35,13 +35,9 @@ public class ByLogicMethodChecker extends AbstractWrapMethodToChecker {
     }
 
 
-    public ByLogicMethodChecker(Object methodsToCheckersBean, Method method) {
-        this(methodsToCheckersBean, method, NameUtil.nameByAnnOnMethod(method));
-    }
-
 
     @Override
-    public CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
+    public CheckResult<Object> methodDoCheck(InputToCheckerArg<Object> inputToCheckerArg) {
         Object[] args = new Object[1];
         args[0] = inputToCheckerArg;
         return purahEnableMethod.invokeResult(inputToCheckerArg, args);

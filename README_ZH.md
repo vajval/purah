@@ -18,7 +18,7 @@ maven 依赖
  <dependency>
       <groupId>io.github.vajval.purah</groupId>
       <artifactId>purah</artifactId>
-      <version>1.0.2-beta</version>
+      <version>1.0.3-beta</version>
  </dependency>
 ```
 
@@ -84,6 +84,30 @@ public class ExampleApplication {
     }
 ```
 
+`@ToChecker`自带一个自动null校验
+
+```java
+public @interface ToChecker {
+
+    String value();
+
+    AutoNull autoNull() default AutoNull.notEnable;
+
+}
+```
+可以实现在入参为null时自动成功或失败,默认notEnable 即不对null进行自动处理
+
+```java
+    @ToChecker(value = "auto_null_success", autoNull = AutoNull.success)// name为null,自动返回成功
+    public boolean auto_null_success(String name) {
+        return false;
+    }
+
+    @ToChecker(value = "auto_null_failed", autoNull = AutoNull.failed)// name为null,自动返回失败
+    public boolean auto_null_failed(String name) {
+        return true;
+    }
+```
 ### 2 多字段联合校验
 
 如果想对拥有 多个字段的进检测行
@@ -197,6 +221,7 @@ purah支持对将**任意多**种规则组合为新规则,也支持对特定符�
 
 ```java
 public class ExecMode {
+    // 对于被ignore的check,不被视为成功也不被视为失败,被视为没有检查,不参与组合判断
     public enum Main {  
         // 全成功才行,有错不继续 = 快速失败
         all_success(0),//默认值
@@ -361,18 +386,44 @@ MultiCheckResult{base={"execInfo":"SUCCESS","log":"SUCCESS ([]: null)"}, valueLi
 }
 ```
 
+对于`@ToChecker` 其实还有 ignore选项,被ignore的checkResult **不**被视为成功也**不**被视为失
+
+被视作**不存在,** ,相当于没有检查,不会对最终的组合结果产生影响
+
+```java
+    @ToChecker(value = "auto_null_ignore", autoNull = AutoNull.ignore)
+    public boolean auto_null_ignore(String name) {
+        return false;
+    }
+
+    @ToChecker(value = "auto_null_failed", autoNull = AutoNull.failed)
+    public boolean auto_null_failed(String name) {
+        return true;
+    }
+    @ToChecker(value = "auto_null_ignore_combo")//
+    public Checker<?, ?> auto_null_ignore_combo() {
+        return purahs.combo("auto_null_success", "auto_null_ignore").mainMode(ExecMode.Main.all_success);
+    }
+    @ToChecker(value = "auto_null_ignore_combo_failed")
+    public Checker<?, ?> auto_null_ignore_combo_failed() {
+        return purahs.combo("auto_null_failed", "auto_null_ignore").mainMode(ExecMode.Main.at_least_one);
+    }
+
+    Assertions.assertFalse(purahs.checkerOf("auto_null_ignore_combo_failed").check(null));//结果为false
+    Assertions.assertTrue(purahs.checkerOf("auto_null_ignore_combo").check(null));//结果为true
+```
 ### 4 类型自动匹配
 
 我们需要在用户注册时检查是否年满18岁,其中入参可能为`User`​ 或者`age`​本身
 
 ```java
     class User{
-       String phone;
-       String address
-       String name;
-       int age;
-    }
- 
+    String phone;
+    String address;
+    String name;
+    int age;
+}
+
 ```
 
 ###### 定义
@@ -380,25 +431,25 @@ MultiCheckResult{base={"execInfo":"SUCCESS","log":"SUCCESS ([]: null)"}, valueLi
 ```java
     @PurahMethodsRegBean
     public class checkBean {
-        @ToChecker("年龄合法检查")
-        public boolean ageCheckByUser(User user) {
-            return user.age >= 18;
-        }
-        @ToChecker("年龄合法检查")
-        public boolean ageCheckByInt(int age) {
-            return age >= 18;
-        }
+    @ToChecker("年龄合法检查")
+    public boolean ageCheckByUser(User user) {
+        return user.age >= 18;
     }
+    @ToChecker("年龄合法检查")
+    public boolean ageCheckByInt(int age) {
+        return age >= 18;
+    }
+}
 ```
 
 可以直接使用
 
 ```java
     public void userReg(@CheckIt("年龄合法检查")User user){ //执行ageCheckByUser
-    }
-    public void userReg(@CheckIt("example:1[][age:年龄合法检查]")User user)// 对user的age字段执行ageCheckByInt
-    public void userReg(@CheckIt("年龄合法检查")int age){ //执行ageCheckByInt
-    }
+        }
+public void userReg(@CheckIt("example:1[][age:年龄合法检查]")User user)// 对user的age字段执行ageCheckByInt
+public void userReg(@CheckIt("年龄合法检查")int age){ //执行ageCheckByInt
+        }
 
 ```
 
@@ -406,31 +457,31 @@ MultiCheckResult{base={"execInfo":"SUCCESS","log":"SUCCESS ([]: null)"}, valueLi
 
 ```java
  class User{
-       String phone;
-       String id
- }
- class People{
-       String address
-       String name;
-
- }
-
-@ToChecker("test") 
-public boolean testUser(
-                @FVal("phone")String phone,//phone value
-                @FVal("id")String id//address value 
-){
-            //......
-            return true;
+    String phone;
+    String id;
 }
-@ToChecker("test") 
-public boolean testPeople(
-                @FVal("address")String address,//phone value
-                @FVal("name")String name //address value 
-){
-            //......
-            return true;
+class People{
+    String address;
+    String name;
+
 }
+
+    @ToChecker("test")
+    public boolean testUser(
+            @FVal("phone")String phone,//phone value
+            @FVal("id")String id//address value 
+    ){
+        //......
+        return true;
+    }
+    @ToChecker("test")
+    public boolean testPeople(
+            @FVal("address")String address,//phone value
+            @FVal("name")String name //address value 
+    ){
+        //......
+        return true;
+    }
 
 ```
 
@@ -444,25 +495,25 @@ public void testCheck(@CheckIt("test")People people)//testUser or testPeople
 想要区分的话,需要在函数上显式增加填充root对象的参数
 
 ```java
-@ToChecker("test") 
+@ToChecker("test")
 public boolean testUser(
-               //加上这个参数可以在填充根对象值的同时限定类型 ,不加默认支持所有类型,即Object
-                @FVal(FieldMatcher.rootField) User user
-                @FVal("phone")String phone,//phone value
-                @FVal("id")String id//address value 
-){
-            //......
-            return true;
-}
-@ToChecker("test") 
+//加上这个参数可以在填充根对象值的同时限定类型 ,不加默认支持所有类型,即Object
+@FVal(FieldMatcher.rootField) User user
+@FVal("phone")String phone,//phone value
+@FVal("id")String id//address value 
+        ){
+        //......
+        return true;
+        }
+@ToChecker("test")
 public boolean testPeople(
-                @FVal(FieldMatcher.rootField) People people
-                @FVal("address")String address,//phone value
-                @FVal("name")String name //address value 
-){
-            //......
-            return true;
-}
+@FVal(FieldMatcher.rootField) People people
+@FVal("address")String address,//phone value
+@FVal("name")String name //address value 
+        ){
+        //......
+        return true;
+        }
 public void testCheck(@CheckIt("test")User user);//执行  testUser
 public void testCheck(@CheckIt("test")People people)//执行   testPeople
 ```
@@ -479,7 +530,7 @@ public void testCheck(@CheckIt("test")People people)//执行   testPeople
 
 ```java
 public void userReg(@CheckIt("example:1[用户注册检查][age:年龄合法检查]")User user){
-}
+        }
 ```
 
 如果我们想在每个用到user的函数都校验,我们可以在每个函数的入参上都加注解, 但是会变得麻烦
@@ -490,13 +541,13 @@ public void userReg(@CheckIt("example:1[用户注册检查][age:年龄合法检�
 
 @CheckIt("example:1[用户注册检查][age:年龄合法检查]")
 class User {
-  //....
+    //....
 }
-//加到类上之后以下两种写法效果一样
-public void userReg(@CheckIt User user){
-public void userReg(@CheckIt("example:1[用户注册检查][age:年龄合法检查]")User user)
+    //加到类上之后以下两种写法效果一样
+    public void userReg(@CheckIt User user){
+        public void userReg(@CheckIt("example:1[用户注册检查][age:年龄合法检查]")User user)
 //请注意 只有@CheckIt 中没写值的时候类上的才生效,这个只有 `用户注册检查` 会生效
-public void userReg(@CheckIt("用户注册检查")User user)
+        public void userReg(@CheckIt("用户注册检查")User user)
 ```
 
 也许你想对所有字段都这样,但是默认不支持,可以通过第8点开启(往下看)
@@ -543,9 +594,9 @@ class User {
 
 **指定格式**
 
-  第一个参数为自定义的注解,第二个为要检查的参数,参数可以被InputToCheckerArg包裹,InputToCheckerArg包含注解及Field信息
+第一个参数为自定义的注解,第二个为要检查的参数,参数可以被InputToCheckerArg包裹,InputToCheckerArg包含注解及Field信息
 
-  格式规定来源于继承的`CustomAnnChecker`​的规定,如果觉得不够好,也可以新写一个.点开`CustomAnnChecker`​就会发现并不需要多少逻辑
+格式规定来源于继承的`CustomAnnChecker`​的规定,如果觉得不够好,也可以新写一个.点开`CustomAnnChecker`​就会发现并不需要多少逻辑
 
 ```java
 @Name("自定义注解检测")
@@ -588,15 +639,15 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
 
 ```java
     //如果对id字段进行自定义注解检测,如aId  ,bId , 只用把`*` 改成 `*Id` 即可
-    public void userReg(@CheckIt("example:1[][*:自定义注解检测]")User user){  
+public void userReg(@CheckIt("example:1[][*:自定义注解检测]")User user){
 
-    }
-    //或者
-    public void reg(User user) {
+        }
+//或者
+public void reg(User user) {
         MultiCheckResult<CheckResult<?>> checkResult = purahs.combo()
-                .match(new GeneralFieldMatcher("*"), "自定义注解检测")
-                .check(user);
-    }
+        .match(new GeneralFieldMatcher("*"), "自定义注解检测")
+        .check(user);
+        }
 
 ```
 
@@ -604,9 +655,9 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
 
 ```java
     @CNPhoneNum(errorMsg = "phone num wrong")
-    public String phone
-    @CNPhoneNum(errorMsg = "phone num wrong")
-    public Long phone
+public String phone
+@CNPhoneNum(errorMsg = "phone num wrong")
+public Long phone
 ```
 
 那么得编写下面两个函数,会进行类型自动匹配,只用写上去就行了,别的不用管
@@ -614,16 +665,16 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
 ```java
     public boolean cnPhoneNum(CNPhoneNum cnPhoneNum, Long value) {
         return cnPhoneNum(cnPhoneNum,value.toString()).isSuccess();
-    } 
-    public CheckResult<?> cnPhoneNum(CNPhoneNum cnPhoneNum, String strValue) {
+        }
+public CheckResult<?> cnPhoneNum(CNPhoneNum cnPhoneNum, String strValue) {
         //gpt小姐 说的
         if (strValue.matches("^1[3456789]\\d{9}$")) {
-            return LogicCheckResult.successBuildLog(str, "正确的");
+        return LogicCheckResult.successBuildLog(str, "正确的");
         }
         return LogicCheckResult.failed(str.argValue(), str.fieldPath() + ":" + cnPhoneNum.errorMsg());
-    }
+        }
 
- 
+
 ```
 
 ### 7 复杂嵌套结构自定义注解检测
@@ -665,51 +716,51 @@ purah 自带了 一个AnnByPackageMatcher,允许输入要嵌套查询的 Class�
 
 ```java
  public void reg(User user) {
-         //对package 符合org.MyCompany.*和org.MyCompany2.*的Field进行嵌套检查
+        //对package 符合org.MyCompany.*和org.MyCompany2.*的Field进行嵌套检查
         AnnByPackageMatcher annByPackageMatcher = new AnnByPackageMatcher("org.MyCompany.*|org.MyCompany2.*") {
-            @Override
-            protected boolean needBeCollected(Field field) {
-               //如果Field上有需要检测的注解,就把值搜集起来
-                Set<Class<? extends Annotation>> annotationSet= Sets.newHashSet(Range.class,CNPhoneNum.class,NotEmptyTest.class);
-                for (Class<? extends Annotation> aClass : annotationSet) {
-                    if(field.getDeclaredAnnotationsByType(aClass)!=null){
-                        return true;
-                    }
-                }
-                return false;
-            }
+@Override
+protected boolean needBeCollected(Field field) {
+        //如果Field上有需要检测的注解,就把值搜集起来
+        Set<Class<? extends Annotation>> annotationSet= Sets.newHashSet(Range.class,CNPhoneNum.class,NotEmptyTest.class);
+        for (Class<? extends Annotation> aClass : annotationSet) {
+        if(field.getDeclaredAnnotationsByType(aClass)!=null){
+        return true;
+        }
+        }
+        return false;
+        }
         };
         //会搜集字段 id people.phone  people.name 进行检测,注意people字段没注解所以不会被搜集
         //执行
         MultiCheckResult<CheckResult<?>> checkResult = purahs.combo()
-                .match(annByPackageMatcher, "自定义注解检测")
-                .check(user);
-  }
+        .match(annByPackageMatcher, "自定义注解检测")
+        .check(user);
+        }
 ```
 
 如果层级只有两层的话,就简单了,直接写  `*|*.*`​ 就行,三层就是`*|*.*|*.*.*`​ ,知道匹配结果的话也可以直接写死
 
 ```java
     //以下4种写法和上面的效果一样
-     public void userReg(
-                @CheckIt("example:1[][*|*.*:自定义注解检测]")User user){
-      }
-     public void userReg(
-                @CheckIt("example:1[][id|people.phone|people.name:自定义注解检测]")User user){
-     }
-  
-     public void reg(User user) {
-            MultiCheckResult<CheckResult<?>> checkResult = purahs.combo()
-                    .match(new GeneralFieldMatcher("*|*.*"), "自定义注解检测")
-                    .check(user);
-     }
+public void userReg(
+@CheckIt("example:1[][*|*.*:自定义注解检测]")User user){
+        }
+public void userReg(
+@CheckIt("example:1[][id|people.phone|people.name:自定义注解检测]")User user){
+        }
+
+public void reg(User user) {
+        MultiCheckResult<CheckResult<?>> checkResult = purahs.combo()
+        .match(new GeneralFieldMatcher("*|*.*"), "自定义注解检测")
+        .check(user);
+        }
 
 
 
-    @CheckIt("example:1[][id|people.phone|people.name:自定义注解检测]")
-    class User {
-     //....
-    }
+@CheckIt("example:1[][id|people.phone|people.name:自定义注解检测]")
+class User {
+    //....
+}
     public void userReg(@CheckIt User user){
     }
 ```
@@ -816,7 +867,7 @@ CustomAnnChecker 里有写好的部分已经被注释掉了,粘贴到MyCustomAnn
 public class MyCustomAnnChecker extends CustomAnnChecker {
     @Autowired
     Purahs purahs;
- 
+
     //实现对自定义注解CheckIt 的检测
     public MultiCheckResult<CheckResult<?>> checkItAnn(CheckIt checkIt, InputToCheckerArg<Object> inputToCheckerArg) {
         Purahs purahs = purahs();
@@ -825,7 +876,7 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
         ResultLevel checkItResultLevel = checkIt.resultLevel();
         ComboBuilderChecker checker = purahs.combo(checkerNames).resultLevel(checkItResultLevel).mainMode(checkItMainMode);
         return checker.check(inputToCheckerArg);
-   }
+    }
 
     public Purahs purahs(){
         return purahs;
@@ -862,7 +913,7 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
 ```java
 //使用
 public void userReg(@CheckIt("example:1[][id|people.phone|people.name|people:自定义注解检测]")User user){
-}
+        }
 ```
 
 也许你想让checkIt支持 spel或者其他语法
@@ -955,7 +1006,7 @@ public class TestChecker  extends AllFieldCheckItSpelChecker{
 ```java
 public void userReg(@CheckIt("example:1[对所有字段CheckIt注解进行填充并且检测][id|people.phone|people.name|people:自定义注解检测]")
                User user){
-}
+                       }
 ```
 
 ‍
@@ -967,33 +1018,33 @@ public void userReg(@CheckIt("example:1[对所有字段CheckIt注解进行填充
 如下所示,为了安全会被检测两次
 
 ```java
- 
-   public class TestController {
-        @Autowired
-        TestService testService;
-        public void reg(User user) {
-            testService.reg(user);
-            //........
-        }
 
-   }
+public class TestController {
+    @Autowired
+    TestService testService;
+    public void reg(User user) {
+        testService.reg(user);
+        //........
+    }
 
-   public class TestService {
-        @Autowired
-        HHHHService hhhhService;
-        public void reg(User user) {
-            //先从db检测参数是否合规
-            hhhhService.reg(user);
-            //........
-        }
-   }
+}
 
-   public class HHHHService {
-        public void reg(User user) {
-              //为了防止没有检测,先从db检测参数是否合规
-              //........
-        }
-   }
+public class TestService {
+    @Autowired
+    HHHHService hhhhService;
+    public void reg(User user) {
+        //先从db检测参数是否合规
+        hhhhService.reg(user);
+        //........
+    }
+}
+
+public class HHHHService {
+    public void reg(User user) {
+        //为了防止没有检测,先从db检测参数是否合规
+        //........
+    }
+}
 }
 ```
 
@@ -1001,34 +1052,34 @@ DDD 优化后的写法
 
 ```java
     class SafeUser {
-        User user ;
+    User user ;
+}
+public class TestController {
+    @Autowired
+    TestService testService;
+    public void reg(User user) {
+        boolean success= check(user);
+        if(success){
+            SafeUser safeUser  =new SafeUser(user)
+            testService.reg(safeUser);
+        }
     }
-    public class TestController {
-        @Autowired
-        TestService testService;
-        public void reg(User user) {
-            boolean success= check(user); 
-            if(success){
-               SafeUser safeUser  =new SafeUser(user)
-               testService.reg(safeUser);
-             } 
-        }
-   }
-   public class TestService {
-        @Autowired
-        HHHHService hhhhService;
-        public void reg(SafeUser safeUser) {
-            User user=safeUser.user;
-            hhhhService.reg(user);
-            //........
-        }
-   }
-   public class HHHHService {
-        public void reg(SafeUser safeUser) {
-              User user=safeUser.user;
-              //........
-        }
-   }
+}
+public class TestService {
+    @Autowired
+    HHHHService hhhhService;
+    public void reg(SafeUser safeUser) {
+        User user=safeUser.user;
+        hhhhService.reg(user);
+        //........
+    }
+}
+public class HHHHService {
+    public void reg(SafeUser safeUser) {
+        User user=safeUser.user;
+        //........
+    }
+}
 ```
 
 purah的写法,在开启基于threadlocal的上下文缓存的情况下,用户检测只会被调用一次
@@ -1042,54 +1093,54 @@ public class ExampleApplication {
         SpringApplication.run(ExampleApplication.class, args);
     }
 }
-//或者
-@MethodCheckConfig(enableCache = true)
-public void reg(@CheckIt("用户检测")User user) {
-                testService.reg(user);   
-}
+    //或者
+    @MethodCheckConfig(enableCache = true)
+    public void reg(@CheckIt("用户检测")User user) {
+        testService.reg(user);
+    }
 
 ```
 
 在全局开启的情况下,可以这么写,但是不推荐,@checkIt 基于切面,不是bean中调用不生效,容易写bug
 
 ```java
-  
-   public class TestController {
-        @Autowired
-        TestService testService;
-        public void reg(@CheckIt("用户检测")User user) {
-                testService.reg(user);   
-        }
 
+public class TestController {
+    @Autowired
+    TestService testService;
+    public void reg(@CheckIt("用户检测")User user) {
+        testService.reg(user);
     }
 
-    public class TestService {
-        @Autowired
-        HHHHService hhhhService;
-        public void reg(@CheckIt("用户检测") User user) {
-            hhhhService.reg(user);
-        }
-    }
+}
 
-    public class HHHHService {
-        public void reg(@CheckIt("用户检测")User user) {
+public class TestService {
+    @Autowired
+    HHHHService hhhhService;
+    public void reg(@CheckIt("用户检测") User user) {
+        hhhhService.reg(user);
+    }
+}
 
-        }
+public class HHHHService {
+    public void reg(@CheckIt("用户检测")User user) {
+
     }
-    public class ShowService {
-        public void reg(@CheckIt("用户检测")User user) {
-            testController.reg(user);
-            testService.reg(user);
-            hhhhService.reg(user);
-        }
+}
+public class ShowService {
+    public void reg(@CheckIt("用户检测")User user) {
+        testController.reg(user);
+        testService.reg(user);
+        hhhhService.reg(user);
     }
+}
     public static void main(String[] args) {
-       //共检测 4次
+        //共检测 4次
         testController.reg(user);//只检测一次
         testService.reg(user);//只检测一次
         hhhhService.reg(user);//只检测一次
         showService.reg(user);//只检测一次
-     }
+    }
 ```
 
 //todo 待完成
@@ -1120,23 +1171,23 @@ public class MethodArgCheckException extends BasePurahException {
 
     }
 }
-public void checkThreeUserThrow(@CheckIt({"test","test2"}) User user0,
-                                @CheckIt("test") User user1,
-                                @CheckIt("test") User user2) {
-}
+    public void checkThreeUserThrow(@CheckIt({"test","test2"}) User user0,
+                                    @CheckIt("test") User user1,
+                                    @CheckIt("test") User user2) {
+    }
 }
 
 public void main() {
-      MethodHandlerCheckResult 以ArgCheckResult的方式 储存了每个参数的校验结果,通过 argResultOf(int index)获取
-      ArgCheckResult 储存了每个规则的结果
+        MethodHandlerCheckResult 以ArgCheckResult的方式 储存了每个参数的校验结果,通过 argResultOf(int index)获取
+        ArgCheckResult 储存了每个规则的结果
 
-      methodHandlerCheckResult.argResultOf(0).resultOf("test")
-      methodHandlerCheckResult.argResultOf(0).resultOf("test2")
-      methodHandlerCheckResult.argResultOf(1).resultOf("test")
-      //输入 ResultLevel,获取所有的失败的直接逻辑校验部分结果
-      List<LogicCheckResult<?>> failedList= methodHandlerCheckResult.childList(ResultLevel.only_failed_only_base_logic);
-   
-}
+        methodHandlerCheckResult.argResultOf(0).resultOf("test")
+        methodHandlerCheckResult.argResultOf(0).resultOf("test2")
+        methodHandlerCheckResult.argResultOf(1).resultOf("test")
+        //输入 ResultLevel,获取所有的失败的直接逻辑校验部分结果
+        List<LogicCheckResult<?>> failedList= methodHandlerCheckResult.childList(ResultLevel.only_failed_only_base_logic);
+
+        }
 //ResultLevel 等级
 public enum ResultLevel {
     //所有的结果,不论成功与否,是不是校验逻辑直接返回的结果
@@ -1146,9 +1197,7 @@ public enum ResultLevel {
     //只要失败的结果
     only_failed(3),
     //只要失败的结果,只要校验逻辑直接返回的结果
-    only_failed_only_base_logic(4),
-    //只要有异常的结果
-    only_error(0);
+    only_failed_only_base_logic(4);
 }
 ```
 

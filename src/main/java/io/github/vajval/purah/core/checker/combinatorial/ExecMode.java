@@ -6,7 +6,8 @@ import io.github.vajval.purah.core.exception.UnexpectedException;
 public class ExecMode {
     public enum Main {
 
-        // 全成功才行,有错不继续
+        // 对于被ignore的check,不被视为成功也不被视为失败,被视为不存在,没有这个判断,不参与组合判断的结果
+        // Checks that are ignored are neither considered successful nor failed; they are treated as not checked and do not participate in composite judgments.
         // Require all checkers to pass for success; if a  failed is found, stop further checks, Fill with "ignore" for fields that are not checked.
         all_success(0),
         // 全成功才行,有错也要检查完

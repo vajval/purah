@@ -140,7 +140,7 @@ public class PurahIocRegS {
         List<Checker<?, ?>> checkerList = new ArrayList<>();
         for (Method checkMethod : checkMethods) {
             ToChecker toChecker = checkMethod.getDeclaredAnnotation(ToChecker.class);
-            Checker<?, ?> checker = enableMethodConverter.toChecker(enableBean, checkMethod, toChecker.value());
+            Checker<?, ?> checker = enableMethodConverter.toChecker(enableBean, checkMethod, toChecker.value(),toChecker.autoNull());
             if (checker != null) {
                 checkerList.add(checker);
                 checkerNameList.add(checker.name());

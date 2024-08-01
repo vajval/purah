@@ -3,6 +3,7 @@ package io.github.vajval.purah.core.checker.custom;
 
 import io.github.vajval.purah.core.checker.*;
 import io.github.vajval.purah.core.checker.combinatorial.ExecMode;
+import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
 import io.github.vajval.purah.core.checker.converter.checker.ByAnnMethodChecker;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.checker.result.MultiCheckResult;
@@ -52,7 +53,7 @@ public abstract class CustomAnnChecker extends AbstractBaseSupportCacheChecker<O
             String errorMsg = ByAnnMethodChecker.errorMsgCheckerByAnnMethod(this, method);
 
             if (errorMsg == null) {
-                ByAnnMethodChecker byAnnMethodChecker = new ByAnnMethodChecker(this, method, UUID.randomUUID().toString());
+                ByAnnMethodChecker byAnnMethodChecker = new ByAnnMethodChecker(this, method, UUID.randomUUID().toString(), AutoNull.notEnable);
                 String name = this.name() + "[" + byAnnMethodChecker.annClazz() + "]" + "[" + byAnnMethodChecker.inputArgClass() + "]";
                 String logicFrom = this.getClass() + "  convert method " + method.getName();
                 Class<? extends Annotation> annClazz = byAnnMethodChecker.annClazz();

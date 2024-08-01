@@ -35,7 +35,7 @@ public class ByAnnMethodCheckerTest {
     public void beforeEach() throws NoSuchMethodException {
         purahs = new Purahs(new PurahContext());
         Method method = ByAnnMethodCheckerTest.class.getMethod("testByName", TestAnn.class, String.class);
-        ByAnnMethodChecker byAnnMethodChecker = new ByAnnMethodChecker(null, method, "test");
+        ByAnnMethodChecker byAnnMethodChecker = new ByAnnMethodChecker(null, method, "test",AutoNull.notEnable);
         purahs.reg(byAnnMethodChecker);
 
     }

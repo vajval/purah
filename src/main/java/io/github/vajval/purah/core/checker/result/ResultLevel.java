@@ -18,7 +18,8 @@ public enum ResultLevel {
     only_failed_only_base_logic(4),
     //只要有异常的结果
     //Only results that have exceptions.
-    only_error(0);
+//    only_error(0)
+    ;
 
     final int value;
 
@@ -39,14 +40,17 @@ public enum ResultLevel {
             return only_failed;
         } else if (value == 4) {
             return only_failed_only_base_logic;
-        } else if (value == 0) {
-            return only_error;
         }
+//        else if (value == 0) {
+//            return only_error;
+//        }
         throw new UnexpectedException("ResultLevel value :" + value);
     }
 
     public boolean needBeCollected(CheckResult<?> checkResult) {
-
+        if (checkResult.isIgnore()) {
+            return false;
+        }
         if (this == ResultLevel.all) {
             return true;
         } else if (this == ResultLevel.all_only_base_logic) {
@@ -55,9 +59,10 @@ public enum ResultLevel {
             return !checkResult.isSuccess();
         } else if (this == ResultLevel.only_failed_only_base_logic) {
             return (!checkResult.isSuccess());
-        } else if (this == ResultLevel.only_error) {
-            return checkResult.isError();
         }
+//        else if (this == ResultLevel.only_error) {
+//            return checkResult.isError();
+//        }
         return false;
     }
 
@@ -74,9 +79,10 @@ public enum ResultLevel {
             return !checkResult.isSuccess();
         } else if (this == ResultLevel.only_failed_only_base_logic) {
             return (!checkResult.isSuccess()) && (checkResult instanceof LogicCheckResult);
-        } else if (this == ResultLevel.only_error) {
-            return checkResult.isError();
         }
+//        else if (this == ResultLevel.only_error) {
+//            return checkResult.isError();
+//        }
         return false;
     }
 }

@@ -9,8 +9,8 @@ public enum ExecInfo {
      */
     ignore("IGNORE"),
     success("SUCCESS"),
-    failed("FAILED"),
-    error("ERROR");
+    failed("FAILED");
+//    error("ERROR");
 
     private final String value;
 

@@ -59,8 +59,8 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
         }
     }
 
-    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name, Purahs purahs) {
-        super(methodsToCheckersBean, method, name);
+    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull,Purahs purahs) {
+        super(methodsToCheckersBean, method, name,autoNull);
         this.resolver = purahs.argResolver();
         this.purahs = purahs;
     }
@@ -79,8 +79,8 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
         return new FixedMatcher(value);
     }
 
-    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name) {
-        super(methodsToCheckersBean, method, name);
+    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull) {
+        super(methodsToCheckersBean, method, name,autoNull);
         String errorMsg = errorMsgAutoMethodCheckerByDefaultReflectArgResolver(methodsToCheckersBean, method);
 
         if (errorMsg != null) {
@@ -126,7 +126,7 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
 
 
     @Override
-    public CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
+    public CheckResult<Object> methodDoCheck(InputToCheckerArg<Object> inputToCheckerArg) {
 
 
         int length = method.getParameters().length;

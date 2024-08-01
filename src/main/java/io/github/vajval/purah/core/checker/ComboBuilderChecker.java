@@ -102,9 +102,11 @@ public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>
             return new MultiCheckResult<>(LogicCheckResult.success(), Lists.newArrayList(childResult));
         } else if (childResult.isFailed()) {
             return new MultiCheckResult<>(LogicCheckResult.failed(singleCheckerName + " failed"), Lists.newArrayList(childResult));
-        } else if (childResult.isError()) {
-            return new MultiCheckResult<>(LogicCheckResult.error(childResult.exception(), singleCheckerName + " error"), Lists.newArrayList(childResult));
         }
+//        else if (childResult.isError()) {
+//            return new MultiCheckResult<>(LogicCheckResult.error(childResult.exception(), singleCheckerName + " error"), Lists.newArrayList(childResult));
+//        }
+
         throw new UnexpectedException();
     }
 }

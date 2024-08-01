@@ -83,10 +83,10 @@ public class CheckItAspect {
         MethodHandlerCheckResult methodHandlerCheckResult = methodHandlerChecker.check(inputToCheckerArg);
 
 
-        if (methodHandlerCheckResult.isError()) {
-            log.error(methodHandlerCheckResult.exception());
-            throw new MethodArgCheckException(methodHandlerCheckResult);
-        }
+//        if (methodHandlerCheckResult.isError()) {
+//            log.error(methodHandlerCheckResult.exception());
+//            throw new MethodArgCheckException(methodHandlerCheckResult);
+//        }
         boolean fillToMethodResult = methodHandlerChecker.isFillToMethodResult();
         if (methodHandlerCheckResult.isFailed()) {
             if (!fillToMethodResult) {

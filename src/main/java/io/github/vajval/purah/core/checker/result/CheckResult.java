@@ -1,5 +1,7 @@
 package io.github.vajval.purah.core.checker.result;
 
+import io.github.vajval.purah.core.exception.CheckException;
+
 import java.util.function.BooleanSupplier;
 
 
@@ -9,6 +11,9 @@ public interface CheckResult<T> extends BooleanSupplier {
     T data();
 
     default boolean isSuccess() {
+        if (isIgnore()) {
+            throw new RuntimeException("This check has been ignored,It is not certain whether it will succeed or fail. ");
+        }
         return execInfo() == ExecInfo.success;
     }
 
@@ -24,12 +29,15 @@ public interface CheckResult<T> extends BooleanSupplier {
 //    }
 
     default boolean isFailed() {
+        if (isIgnore()) {
+            throw new RuntimeException("This check has been ignored,It is not certain whether it will succeed or fail. ");
+        }
         return execInfo() == ExecInfo.failed;
     }
 
-    default boolean isError() {
-        return execInfo() == ExecInfo.error;
-    }
+//    default boolean isError() {
+//        return execInfo() == ExecInfo.error;
+//    }
 
     default boolean isIgnore() {
         return execInfo() == ExecInfo.ignore;

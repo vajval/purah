@@ -30,8 +30,8 @@ public class ByAnnMethodChecker extends AbstractWrapMethodToChecker {
     Class<? extends Annotation> annClazz;
 
 
-    public ByAnnMethodChecker(Object methodsToCheckersBean, Method method, String name) {
-        super(methodsToCheckersBean, method, name);
+    public ByAnnMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull) {
+        super(methodsToCheckersBean, method, name,autoNull);
 
         String errorMsg = errorMsgCheckerByAnnMethod(methodsToCheckersBean, method);
 
@@ -49,7 +49,7 @@ public class ByAnnMethodChecker extends AbstractWrapMethodToChecker {
     }
 
     @Override
-    public CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
+    public CheckResult<Object> methodDoCheck(InputToCheckerArg<Object> inputToCheckerArg) {
         Annotation annotation = inputToCheckerArg.annOnField(annClazz);
         Object[] args = new Object[]{annotation, inputToCheckerArg};
         return purahEnableMethod.invokeResult(inputToCheckerArg, args);

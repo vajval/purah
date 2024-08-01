@@ -37,11 +37,11 @@ public class ByLogicMethodCheckerTest {
     public void beforeEach() throws NoSuchMethodException {
         purahs = new Purahs(new PurahContext());
         Method method = ByLogicMethodCheckerTest.class.getMethod("nameNotEmpty", String.class);
-        ByLogicMethodChecker methodChecker = new ByLogicMethodChecker(null, method, "nameNotEmpty");
+        ByLogicMethodChecker methodChecker = new ByLogicMethodChecker(null, method, "nameNotEmpty",AutoNull.notEnable);
         purahs.reg(methodChecker);
 
         method = ByLogicMethodCheckerTest.class.getMethod("nameNotEmpty", People.class);
-        methodChecker = new ByLogicMethodChecker(null, method, "nameNotEmpty");
+        methodChecker = new ByLogicMethodChecker(null, method, "nameNotEmpty",AutoNull.notEnable);
         purahs.reg(methodChecker);
 
     }

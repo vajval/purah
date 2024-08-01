@@ -94,14 +94,14 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
         }
         return super.isFailed();
     }
-
-    @Override
-    public boolean isError() {
-        if (isIgnore()) {
-            ignoreError();
-        }
-        return super.isError();
-    }
+//
+//    @Override
+//    public boolean isError() {
+//        if (isIgnore()) {
+//            ignoreError();
+//        }
+//        return super.isError();
+//    }
 
 
     private void ignoreError() {

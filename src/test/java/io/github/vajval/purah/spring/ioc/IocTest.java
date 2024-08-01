@@ -1,8 +1,11 @@
 package io.github.vajval.purah.spring.ioc;
 
 import com.google.common.collect.Sets;
+import io.github.vajval.purah.core.checker.Checker;
+import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
+import io.github.vajval.purah.spring.ioc.ann.ToChecker;
 import io.github.vajval.purah.spring.ioc.test_bean.PurahConfigPropertiesBean;
 import io.github.vajval.purah.spring.ioc.test_bean.TestCallBack;
 import io.github.vajval.purah.spring.ioc.test_bean.checker.IocIgnoreChecker;
@@ -18,6 +21,7 @@ import io.github.vajval.purah.spring.ioc.test_bean.checker.IocTestChecker;
 import io.github.vajval.purah.spring.ioc.test_bean.matcher.ReverseStringMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.StringUtils;
 
 import java.util.Set;
 
@@ -51,10 +55,28 @@ public class IocTest {
     }
 
     @Test
+    public void toChecker() {
+
+        Assertions.assertFalse(purahs.checkerOf("auto_null_failed").check(null));
+        Assertions.assertTrue(purahs.checkerOf("auto_null_success").check(null));
+
+        Assertions.assertTrue(purahs.checkerOf("auto_null_ignore").check(null).isIgnore());
+
+        Assertions.assertThrows(Exception.class, () -> purahs.checkerOf("auto_null_ignore").check(null).isSuccess());
+        Assertions.assertThrows(Exception.class, () -> purahs.checkerOf("auto_null_ignore").check(null).isFailed());
+        Assertions.assertFalse(purahs.checkerOf("auto_null_notEnable").check(null));
+        Assertions.assertTrue(purahs.checkerOf("auto_null_notEnable").check("123"));
+        Assertions.assertTrue(purahs.checkerOf("auto_null_ignore_combo").check(null));
+        Assertions.assertFalse(purahs.checkerOf("auto_null_ignore_combo_failed").check(null));
+
+
+    }
+
+    @Test
     public void test() {
         FieldMatcher fieldMatcher = purahs.matcherOf(ReverseStringMatcher.NAME).create("abc");
         Set<String> strings = fieldMatcher.matchFields(Sets.newHashSet("123", "321", "abc", "cba"), null);
-        Assertions.assertEquals(strings, Sets.newHashSet( "cba"));
+        Assertions.assertEquals(strings, Sets.newHashSet("cba"));
 
         fieldMatcher = purahs.matcherOf(ReverseStringMatcher.NAME).create("123");
         strings = fieldMatcher.matchFields(Sets.newHashSet("123", "321"), null);

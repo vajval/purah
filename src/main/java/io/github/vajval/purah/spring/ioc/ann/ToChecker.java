@@ -1,6 +1,8 @@
 package io.github.vajval.purah.spring.ioc.ann;
 
 
+import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
+
 import java.lang.annotation.*;
 
 /**
@@ -14,8 +16,6 @@ public @interface ToChecker {
 
     String value();
 
-    // todo
-    // not null auto check
-    // String notNullCheck() default "not null"
+    AutoNull autoNull() default AutoNull.notEnable;
 
 }

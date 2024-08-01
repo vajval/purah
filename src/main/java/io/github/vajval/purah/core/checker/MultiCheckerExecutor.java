@@ -56,8 +56,11 @@ public class MultiCheckerExecutor {
     private void execIfNotExec(List<Supplier<CheckResult<?>>> supplierList) {
         if (exec) return;
         exec = true;
-
-
+        if (mainExecMode == ExecMode.Main.all_success || mainExecMode == ExecMode.Main.all_success_but_must_check_all) {
+            execInfo = ExecInfo.success;
+        } else if (mainExecMode == ExecMode.Main.at_least_one || mainExecMode == ExecMode.Main.at_least_one_but_must_check_all) {
+            execInfo = ExecInfo.failed;
+        }
         for (Supplier<? extends CheckResult<?>> supplier : supplierList) {
             CheckResult<?> checkResult = supplier.get();
 
@@ -68,11 +71,11 @@ public class MultiCheckerExecutor {
             if (checkResult.isIgnore()) {
                 continue;
             }
-            if (checkResult.isError()) {//有异常直接返回
-                execInfo = ExecInfo.error;
-                e = checkResult.exception();
-                return;
-            }
+//            if (checkResult.isError()) {//有异常直接返回
+//                execInfo = ExecInfo.error;
+//                e = checkResult.exception();
+//                return;
+//            }
             if (checkResult.isFailed()) {
                 if (mainExecMode == ExecMode.Main.all_success) {   // 有错误 而要求必须要全部成功，才算成功
                     execInfo = ExecInfo.failed;
@@ -103,9 +106,10 @@ public class MultiCheckerExecutor {
             mainResult = LogicCheckResult.success(null, execInfo.value() + " (" + log + ")");
         } else if (execInfo.equals(ExecInfo.failed)) {
             mainResult = LogicCheckResult.failed(null, execInfo.value() + " (" + log + ")");
-        } else if (execInfo.equals(ExecInfo.error)) {
-            mainResult = LogicCheckResult.error(e, execInfo.value() + " (" + log + ")");
         }
+//        else if (execInfo.equals(ExecInfo.error)) {
+//            mainResult = LogicCheckResult.error(e, execInfo.value() + " (" + log + ")");
+//        }
         return new MultiCheckResult<>(mainResult, finalExecResult);
 
 
