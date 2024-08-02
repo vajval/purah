@@ -512,45 +512,78 @@ public void testCheck(@CheckIt("test") User user); // Executes testUser
 public void testCheck(@CheckIt("test") People people); // Executes testPeople
 ```
 
-### 5 @CheckIt Annotation Rules
+### 5 Purah Basic Rules and JSR303
 
-We need to perform `[User Registration Check]`​ and `Age Validity Check`​ on age during user registration
+1. If you want to use Purah but are worried about aspect conflicts with existing code, you can disable the aspect with `@EnablePurah(checkItAspect = false)`. This will turn off the aspect. Apart from this, only `io.github.vajval.purah.spring.ioc.RegOnContextRefresh` will reload the `PurahContext bean` during the `ContextRefreshedEvent`. Unless you manually register non-compliant checkers or FieldMatchers in the `PurahContext` during container refresh, leading to exceptions, disabling the aspect should not impact your project. **If it does cause any issues, it will be considered a bug and will be fixed.**
 
-Just write it directly
+2. We need to perform `User Registration Check` and `Age Legality Check` during user registration.
 
-```java
-public void userReg(@CheckIt("example:1[User Registration Check][age:Age Validity Check]") User user) {
-}
-```
+   Directly implement it as follows:
 
-If we want to validate in every function that uses user, we can add annotations on each function's parameters, but it will become cumbersome.
+    ```java
+    public void userReg(@CheckIt("example:1[User Registration Check][age:Age Legality Check]") User user) {
+    }
+    ```
 
-So, we can add it directly to the class
+   If we want to validate the user object in every function that uses it, we can add annotations to each function parameter. However, this can become cumbersome.
 
-```java
-@CheckIt("example:1[User Registration Check][age:Age Validity Check]")
-class User {
-  //....
-}
-// After adding it to the class, the following two ways of writing have the same effect
-public void userReg(@CheckIt User user) {
-public void userReg(@CheckIt("example:1[User Registration Check][age:Age Validity Check]") User user) {
-}
-// Note that the class-level annotation only takes effect when the value is not written in @CheckIt; only `User Registration Check` will take effect
-public void userReg(@CheckIt("User Registration Check") User user) {
-```
+   **So, we can directly add it to the class**:
 
-Maybe you want this for all fields, but it is not supported by default. It can be enabled by point 8 (see below)
+    ```java
+    @CheckIt("example:1[User Registration Check][age:Age Legality Check]")
+    class User {
+      //...
+    }
+    // After adding to the class, the following two methods have the same effect
+    public void userReg(@CheckIt User user) {
+    public void userReg(@CheckIt("example:1[User Registration Check][age:Age Legality Check]") User user)
+    // Note: The class-level annotation only takes effect when the @CheckIt annotation on the parameter does not have a value. This will only apply the `User Registration Check`.
+    public void userReg(@CheckIt("User Registration Check") User user)
+    ```
 
-```java
-class User {
-    @CheckIt("ID Check")    // Not effective
-    Long id;
-    @CheckIt("Name Check")   // Not effective
-    String name;
-    @CheckIt("${id}")   // Not effective
-    String address;
-```
+3. About **JSR303**
+
+   If you want to use JSR303 validation within Purah:
+
+   Note that **Purah does not have any dependencies related to JSR303. Users need to choose the desired version of dependencies and implement code similar to the following**:
+
+    ```java
+    @Name("jsr303")
+    @Component
+    public class JSR303Checker<INPUT_ARG, RESULT> implements Checker<INPUT_ARG, RESULT> {
+        @Override
+        public CheckResult<RESULT> check(InputToCheckerArg<INPUT_ARG> inputToCheckerArg) {
+            Validator validator = Validation.byProvider(HibernateValidator.class).configure().failFast(false)
+                    .buildValidatorFactory().getValidator();
+            if(inputToCheckerArg.isNull()){
+                //.......
+            }
+            INPUT_ARG inputArg = inputToCheckerArg.argValue();
+            Set<ConstraintViolation<INPUT_ARG>> constraintViolations = validator.validate(inputArg);
+            // Convert to CheckResult as needed
+        }
+    }
+    ```
+
+   This can then be used as follows:
+
+    ```java
+    public void userReg(@CheckIt("jsr303") User user) {
+    }
+    ```
+
+4. You might expect `@CheckIt` to handle all fields in a nested manner like JSR303, but this is not supported by default due to its granularity. You can enable this through **point 8: Nested Structure Multi-level Field CheckIt Detection** (see below).
+
+    ```java
+    class User {
+        @CheckIt("ID Check")    // Not effective
+        Long id;
+        @CheckIt("Name Check")  // Not effective
+        String name;
+        @CheckIt("${id}")       // Not effective
+        String address;
+    ```
+
 
 ### 6 Custom Annotation Validation
 

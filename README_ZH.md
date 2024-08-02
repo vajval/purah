@@ -518,52 +518,76 @@ public void testCheck(@CheckIt("test")User user);//执行  testUser
 public void testCheck(@CheckIt("test")People people)//执行   testPeople
 ```
 
-‍
+### 5 purah 基本规则及jsr303
 
-### 5 checkIt注解规则
 
-我们需要在用户注册时时进行 `[用户注册检查`​ 和对age进行`年龄合法检查`​
+1. 如果你想使用purah又担心切面与现有代码冲突,`@EnablePurah( checkItAspect = false)`,可以将切面关闭.除此之外就只有` io.github.vajval.purah.spring.ioc.RegOnContextRefresh` 会在 `ContextRefreshedEvent`事件时重新装载`PurahContext bean`.除非你在刷新容器时手动向`PurahContext `中注册了不合规的checker或者FieldMatcher 导致异常,否则在切面关闭的情况下应该不会对项目造成影响,**如果造成了影响算作bug,会修复**
+2. 我们需要在用户注册时时进行 `[用户注册检查` 和对age进行`年龄合法检查`
 
-‍
+   直接编写即可
 
-直接编写即可
+    ```java
+    public void userReg(@CheckIt("example:1[用户注册检查][age:年龄合法检查]")User user){
+    }
+    ```
 
-```java
-public void userReg(@CheckIt("example:1[用户注册检查][age:年龄合法检查]")User user){
-        }
-```
+   如果我们想在每个用到user的函数都校验,我们可以在每个函数的入参上都加注解, 但是会变得麻烦
 
-如果我们想在每个用到user的函数都校验,我们可以在每个函数的入参上都加注解, 但是会变得麻烦
+   **所以可以直接加到类上**
 
-所以可以直接加到类上
+    ```java
 
-```java
-
-@CheckIt("example:1[用户注册检查][age:年龄合法检查]")
-class User {
-    //....
-}
+    @CheckIt("example:1[用户注册检查][age:年龄合法检查]")
+    class User {
+      //....
+    }
     //加到类上之后以下两种写法效果一样
     public void userReg(@CheckIt User user){
-        public void userReg(@CheckIt("example:1[用户注册检查][age:年龄合法检查]")User user)
-//请注意 只有@CheckIt 中没写值的时候类上的才生效,这个只有 `用户注册检查` 会生效
-        public void userReg(@CheckIt("用户注册检查")User user)
-```
+    public void userReg(@CheckIt("example:1[用户注册检查][age:年龄合法检查]")User user)
+    //请注意 只有@CheckIt 中没写值的时候类上的才生效,这个只有 `用户注册检查` 会生效
+    public void userReg(@CheckIt("用户注册检查")User user)
+    ```
+3. 关于**jsr303**
 
-也许你想对所有字段都这样,但是默认不支持,可以通过第8点开启(往下看)
+   如果你想在purah中使用jsr303检测
 
-```java
+   注意 **purah没有任何关于jsr303的依赖,使用者需要自行选择期望的依赖的版本,并编写类似下方逻辑的代码**
 
-class User {
-    @CheckIt("id检测")    //不生效
-    Long id;
-    @CheckIt("姓名检测")   //不生效
-    String name;
-    @CheckIt("${id}")   //不生效
-    String address;
-```
+    ```java
+    @Name("jsr303")
+    @Component
+    public class JSR303Checker<INPUT_ARG, RESULT> implements Checker<INPUT_ARG, RESULT> {
+        @Override
+        public CheckResult<RESULT> check(InputToCheckerArg<INPUT_ARG> inputToCheckerArg) {
+            Validator validator = Validation.byProvider(HibernateValidator.class).configure().failFast(false)
+                    .buildValidatorFactory().getValidator();
+            if(inputToCheckerArg.isNull()){
+                //.......
+            }
+            INPUT_ARG inputArg = inputToCheckerArg.argValue();
+            Set<ConstraintViolation<INPUT_ARG>> constraintViolations = validator.validate(inputArg);
+            //自行转换为 CheckResult
+        }
+    }
+    ```
 
-‍
+   就可以用了
+
+    ```java
+    public void userReg(@CheckIt("jsr303")User user)
+    ```
+4. 也许你期望@CheckIt 能够像jsr303一样对所有Field 都嵌套处理,但是默认不支持(颗粒度太大),可以通过**第8点嵌套结构多级Field Checkit检测**开启(往下看)
+
+    ```java
+
+    class User {
+        @CheckIt("id检测")    //不生效
+        Long id;
+        @CheckIt("姓名检测")   //不生效
+        String name;
+        @CheckIt("${id}")   //不生效
+        String address;
+    ```
 
 ### 6 自定义注解检测
 
