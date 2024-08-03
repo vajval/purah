@@ -30,6 +30,8 @@ public @interface EnablePurah {
 
     boolean checkItAspect() default true;
 
+//    boolean refreshWithContext();
+
     boolean enableCache() default false;
 
     boolean argResolverFastInvokeCache() default false;

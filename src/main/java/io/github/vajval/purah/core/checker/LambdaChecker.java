@@ -57,6 +57,9 @@ public class LambdaChecker<INPUT_ARG> implements Checker<INPUT_ARG, Object> {
 
     @Override
     public CheckResult<Object> check(InputToCheckerArg<INPUT_ARG> inputToCheckerArg) {
+        if (inputToCheckerArg == null) {
+            inputToCheckerArg = InputToCheckerArg.of(null, clazz);
+        }
         INPUT_ARG inputArg = inputToCheckerArg.argValue();
         if (predicate.test(inputArg)) {
             return LogicCheckResult.successBuildLog(inputToCheckerArg, inputArg);

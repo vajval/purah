@@ -34,8 +34,8 @@ public class PurahIocRegS {
 
     private static final Logger logger = LogManager.getLogger(PurahIocRegS.class);
 
-    protected final PurahContext purahContext;
-    protected final Purahs purahs;
+    public final PurahContext purahContext;
+    public final Purahs purahs;
 
     public PurahIocRegS(PurahContext purahContext) {
         this.purahContext = purahContext;
@@ -173,10 +173,8 @@ public class PurahIocRegS {
     }
 
     public void regCheckerByProperties(PurahConfigProperties purahConfigProperties) {
-        System.out.println();
         for (CombinatorialCheckerConfigProperties properties : purahConfigProperties.toCombinatorialCheckerConfigPropertiesList()) {
             try {
-
                 GenericsProxyChecker checker = purahs.reg(properties);
                 logger.info("reg checker {} by properties {}", checker.name(), properties);
             } catch (Exception e) {

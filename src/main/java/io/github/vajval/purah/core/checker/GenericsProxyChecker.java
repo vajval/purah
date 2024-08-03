@@ -10,6 +10,7 @@ import io.github.vajval.purah.core.exception.init.InitCheckerException;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
@@ -55,9 +56,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
     public static GenericsProxyChecker createAndSupportUpdateByCheckerFactory(String name, int checkerFactoryCount, BiFunction<GenericsProxyChecker, Integer, Integer> tryUpdateContext) {
         return new GenericsProxyChecker(name, checkerFactoryCount, tryUpdateContext);
-
     }
-
 
 
     public GenericsProxyChecker addNewChecker(Checker<?, ?> checker) {
@@ -76,9 +75,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
                 defaultChecker = checker;
             }
         }
-
         this.cacheGenericsCheckerMapping.put(checkerSupportInputArgClass, checker);
-
         return this;
     }
 
@@ -87,28 +84,28 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
         return name;
     }
 
+    private static final InputToCheckerArg<Object> NULL_ARG = InputToCheckerArg.of(null);
+
     @Override
     public CheckResult<Object> check(InputToCheckerArg<Object> inputToCheckerArg) {
-
+        if (inputToCheckerArg == null) {
+            inputToCheckerArg = NULL_ARG;
+        }
         Checker<?, ?> checker = getChecker(inputToCheckerArg);
-
         if (checker == null) {
-
             InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputToCheckerArg);
-
-            throw new CheckException(this, "checker [" + this.name + "] not support class " + inputCheckInstanceArgClass.clazz);
+            String errorLog = "checker [" + this.name + "] not support class " + inputCheckInstanceArgClass.clazz;
+            throw new CheckException(this, errorLog);
         }
         return ((Checker) checker).check(inputToCheckerArg);
     }
 
 
     protected Checker<?, ?> getChecker(InputToCheckerArg<Object> inputToCheckerArg) {
-
-        if (inputToCheckerArg == null) {
-            return defaultChecker;
-        }
         if (inputToCheckerArg.isNull() && (inputToCheckerArg.argClass() == null || inputToCheckerArg.argClass().equals(Object.class))) {
-            return defaultChecker;
+            if (!wrapperClassMap.containsKey(defaultInputArgClass.clazz)) {//not base type like int
+                return defaultChecker;
+            }
         }
         InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputToCheckerArg);
 
@@ -129,16 +126,19 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
         }
 
 
-        InputArgClass convertClass = convert(inputToCheckerArg);
-        if (convertClass == null) {
-            return null;
+        //map containsKey int.class no  Integer.class
+        //but input arg is Integer
+        //if arg not null,find help from int.class
+        Class<?> clazz = inputCheckInstanceArgClass.clazz;
+        if (wrapperClassMap.containsValue(clazz)) { // Integer.class
+            if (inputToCheckerArg.isNull()) {   //int can not help
+                return null;
+            }
+            Class<?> wrapClazz = wrapperClassMap.inverse().get(clazz);//int.class
+            return cacheGenericsCheckerMapping.get(new InputArgClass(wrapClazz));
         }
-        Checker<?, ?> checkerByConvertWrapperClass = getCheckerBySupportClass(convertClass);
-        if (checkerByConvertWrapperClass == null) {
-            return null;
-        }
-        cacheGenericsCheckerMapping.put(inputCheckInstanceArgClass, checkerByConvertWrapperClass);
-        return checkerByConvertWrapperClass;
+
+        return null;
 
 
     }
@@ -148,7 +148,6 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
     private static BiMap<Class<?>, Class<?>> buildWrapperClassMap() {
 
         BiMap<Class<?>, Class<?>> wrapperClassMap = HashBiMap.create();
-
         wrapperClassMap.put(byte.class, Byte.class);
         wrapperClassMap.put(short.class, Short.class);
         wrapperClassMap.put(int.class, Integer.class);
@@ -160,25 +159,10 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
         return wrapperClassMap;
     }
 
-    private static InputArgClass convert(InputToCheckerArg<Object> inputToCheckerArg) {
-        Class<?> clazz = inputToCheckerArg.argClass();
 
-        if (inputToCheckerArg.argValue() == null) {
-            if (wrapperClassMap.containsValue(clazz)) {
-                return null;
-            }
-        }
-        Class<?> resultClass = wrapperClassMap.get(clazz);
-        if (resultClass == null) {
-            resultClass = wrapperClassMap.inverse().get(clazz);
-        }
-        if (resultClass == null) {
-            return null;
-        }
-        return new InputArgClass(resultClass);
-
-
-    }
+    //  {HashMap.class:HashMapChecker}  input arg is  Map.class
+    //  think HashMapChecker support Map
+    //  final {HashMap.class:HashMapChecker,Map.class:HashMapChecker}
 
 
     protected Checker<?, ?> getCheckerBySupportClass(InputArgClass inputCheckInstanceArgClass) {

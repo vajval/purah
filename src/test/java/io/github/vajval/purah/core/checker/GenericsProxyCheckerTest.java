@@ -11,7 +11,16 @@ public class GenericsProxyCheckerTest {
 
 
     public static final Checker<Long, Object> longChecker = LambdaChecker.of(Long.class).build("id1", i -> i == 1L);
-    public static Checker<Integer, Object> intChecker = LambdaChecker.of(Integer.class).build("id1", i -> i == 1);
+    public static final Checker<Integer, Object> intChecker = LambdaChecker.of(int.class).build("id1", i -> i == 1);
+
+
+    @Test
+    void get3() {
+        GenericsProxyChecker genericsProxyChecker = GenericsProxyChecker.createByChecker(intChecker);
+        Assertions.assertTrue(genericsProxyChecker.check(1));
+        Assertions.assertFalse(genericsProxyChecker.check(2));
+        Assertions.assertThrows(CheckException.class,()-> genericsProxyChecker.check(null));
+    }
 
 
     @Test

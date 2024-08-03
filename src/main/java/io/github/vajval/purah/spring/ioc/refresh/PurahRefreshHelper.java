@@ -1,52 +1,44 @@
-package io.github.vajval.purah.spring.ioc;
+package io.github.vajval.purah.spring.ioc.refresh;
 
-import io.github.vajval.purah.core.matcher.FieldMatcher;
-import io.github.vajval.purah.core.matcher.MatcherManager;
 import io.github.vajval.purah.core.PurahContext;
 import io.github.vajval.purah.core.checker.Checker;
 import io.github.vajval.purah.core.checker.CheckerManager;
 import io.github.vajval.purah.core.checker.converter.MethodConverter;
 import io.github.vajval.purah.core.checker.factory.CheckerFactory;
+import io.github.vajval.purah.core.matcher.MatcherManager;
 import io.github.vajval.purah.core.matcher.factory.MatcherFactory;
 import io.github.vajval.purah.core.resolver.ArgResolver;
 import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 import io.github.vajval.purah.spring.IgnoreBeanOnPurahContext;
-import io.github.vajval.purah.spring.ioc.ann.PurahMethodsRegBean;
 import io.github.vajval.purah.spring.config.PurahConfigProperties;
+import io.github.vajval.purah.spring.ioc.PurahIocRegS;
+import io.github.vajval.purah.spring.ioc.ann.PurahMethodsRegBean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+public class PurahRefreshHelper {
+
+    private static final Logger logger = LogManager.getLogger(PurahRefreshHelper.class);
 
 
-/**
- * 刷新 容器时调用
- */
+    PurahContext purahContext;
+    ApplicationContext applicationContext;
+    public PurahRefreshHelper(PurahContext purahContext,ApplicationContext applicationContext) {
+        this.purahContext=purahContext;
+        this.applicationContext=applicationContext;
+    }
 
 
-public class RegOnContextRefresh implements ApplicationListener<ContextRefreshedEvent> {
-
-    private static final Logger logger = LogManager.getLogger(RegOnContextRefresh.class);
-
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-
-        ApplicationContext applicationContext = event.getApplicationContext();
-        PurahContext purahContext;
-        try {
-            purahContext = applicationContext.getBean(PurahContext.class);
-
-        } catch (Exception e) {
-            return;
-        }
+    public void refresh() {
         purahContext.clearAll();
         PurahIocRegS purahIocRegS = new PurahIocRegS(purahContext);
-
 
         this.initMain(purahIocRegS, applicationContext);
         this.initMatcherManager(purahIocRegS, applicationContext);

@@ -1,4 +1,4 @@
-package io.github.vajval.purah.spring.ioc;
+package io.github.vajval.purah.spring.ioc.refresh;
 
 import io.github.vajval.purah.core.Purahs;
 

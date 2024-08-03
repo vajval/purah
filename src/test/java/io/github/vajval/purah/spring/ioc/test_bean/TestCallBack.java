@@ -1,6 +1,6 @@
 package io.github.vajval.purah.spring.ioc.test_bean;
 
-import io.github.vajval.purah.spring.ioc.PurahRefreshCallBack;
+import io.github.vajval.purah.spring.ioc.refresh.PurahRefreshCallBack;
 import io.github.vajval.purah.core.Purahs;
 import org.springframework.stereotype.Component;
 

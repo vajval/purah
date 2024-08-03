@@ -2,6 +2,7 @@ package io.github.vajval.purah.spring.ioc;
 
 
 import io.github.vajval.purah.core.matcher.FieldMatcher;
+import io.github.vajval.purah.spring.ioc.refresh.PurahContextRefreshEventHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.github.vajval.purah.core.PurahContext;
@@ -10,7 +11,6 @@ import io.github.vajval.purah.core.matcher.factory.BaseMatcherFactory;
 import io.github.vajval.purah.spring.IgnoreBeanOnPurahContext;
 import io.github.vajval.purah.spring.EnablePurah;
 import io.github.vajval.purah.spring.aop.CheckItAspect;
-import io.github.vajval.purah.spring.config.PurahConfigProperties;
 import io.github.vajval.purah.spring.config.PurahConfiguration;
 import io.github.vajval.purah.spring.ioc.ann.ToBaseMatcherFactory;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
@@ -51,10 +51,10 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
         }
         registry.registerBeanDefinition(PurahContext.class.getName(), purahContextBeanDefinition(metadata));
         registry.registerBeanDefinition(PurahConfiguration.class.getName(), genericBeanDefinition(PurahConfiguration.class));
-        GenericBeanDefinition genericBeanDefinition = genericBeanDefinition(RegOnContextRefresh.class);
+        GenericBeanDefinition genericBeanDefinition = genericBeanDefinition(PurahContextRefreshEventHandler.class);
         genericBeanDefinition.setLazyInit(false);
 
-        registry.registerBeanDefinition(RegOnContextRefresh.class.getName(),genericBeanDefinition);
+        registry.registerBeanDefinition(PurahContextRefreshEventHandler.class.getName(),genericBeanDefinition);
     }
 
 
