@@ -107,6 +107,8 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
                 return defaultChecker;
             }
         }
+
+
         InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputToCheckerArg);
 
 
@@ -115,16 +117,6 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
         if (result != null) {
             return result;
         }
-        tryUpdateContext();
-        if (oldCount != this.checkerFactoryCount) {
-            result = getCheckerBySupportClass(inputCheckInstanceArgClass);
-        }
-
-
-        if (result != null) {
-            return result;
-        }
-
 
         //map containsKey int.class no  Integer.class
         //but input arg is Integer
@@ -135,10 +127,17 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
                 return null;
             }
             Class<?> wrapClazz = wrapperClassMap.inverse().get(clazz);//int.class
-            return cacheGenericsCheckerMapping.get(new InputArgClass(wrapClazz));
+            result = cacheGenericsCheckerMapping.get(new InputArgClass(wrapClazz));
         }
 
-        return null;
+        if (result != null) {
+            return result;
+        }
+        tryUpdateContext();
+        if (oldCount != this.checkerFactoryCount) {
+            result = getCheckerBySupportClass(inputCheckInstanceArgClass);
+        }
+        return result;
 
 
     }
