@@ -7,9 +7,12 @@ import io.github.vajval.purah.core.checker.converter.checker.FVal;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
+import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.core.matcher.nested.GeneralFieldMatcher;
 import io.github.vajval.purah.spring.ioc.ann.PurahMethodsRegBean;
 import io.github.vajval.purah.spring.ioc.ann.ToChecker;
+import io.github.vajval.purah.spring.ioc.test_bean.matcher.PurahUtils;
+import io.github.vajval.purah.spring.ioc.test_bean.matcher.ReverseStringMatcher;
 import io.github.vajval.purah.util.TestAnn;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,6 +33,10 @@ public class CheckBean {
     }
     @ToChecker("中文名字检测")// 将函数转换为规则并且注册
     public CheckResult<?> nameCheck(String name) {
+        //两种获取方法效果一样
+        FieldMatcher reverseTest = purahs.matcherOf(PurahUtils.Match.reverse).create("reverse_test");
+        ReverseStringMatcher reverseStringMatcher = new ReverseStringMatcher("reverse_test");
+
         //......
         return LogicCheckResult.success(null,"中文名字非常正确");
     }

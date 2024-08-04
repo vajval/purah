@@ -397,8 +397,12 @@ MultiCheckResult{base={"execInfo":"SUCCESS","log":"SUCCESS ([]: null)"}, valueLi
     public boolean auto_null_ignore(String name) {
         return false;
     }
+    @ToChecker(value = "auto_null_success", autoNull = AutoNull.success)//  null 返回true
+    public boolean auto_null_success(String name) {
+        return false;
+    }
 
-    @ToChecker(value = "auto_null_failed", autoNull = AutoNull.failed)
+    @ToChecker(value = "auto_null_failed", autoNull = AutoNull.failed) //null false
     public boolean auto_null_failed(String name) {
         return true;
     }
@@ -419,7 +423,7 @@ MultiCheckResult{base={"execInfo":"SUCCESS","log":"SUCCESS ([]: null)"}, valueLi
 我们需要在用户注册时检查是否年满18岁,其中入参可能为`User`​ 或者`age`​本身
 
 ```java
-    class User{
+class User{
     String phone;
     String address;
     String name;
@@ -433,25 +437,26 @@ MultiCheckResult{base={"execInfo":"SUCCESS","log":"SUCCESS ([]: null)"}, valueLi
 ```java
     @PurahMethodsRegBean
     public class checkBean {
-    @ToChecker("年龄合法检查")
-    public boolean ageCheckByUser(User user) {
-        return user.age >= 18;
+       @ToChecker("年龄合法检查")
+       public boolean ageCheckByUser(User user) {
+           return user.age >= 18;
+       }
+       @ToChecker("年龄合法检查")
+       public boolean ageCheckByInt(int age) {
+           return age >= 18;
+       }
     }
-    @ToChecker("年龄合法检查")
-    public boolean ageCheckByInt(int age) {
-        return age >= 18;
-    }
-}
 ```
 
 可以直接使用
 
 ```java
-    public void userReg(@CheckIt("年龄合法检查")User user){ //执行ageCheckByUser
-        }
-    public void userReg(@CheckIt("example:1[][age:年龄合法检查]")User user)// 对user的age字段执行ageCheckByInt
-    public void userReg(@CheckIt("年龄合法检查")int age){ //执行ageCheckByInt
-        }
+    //执行ageCheckByUser
+    public void userReg(@CheckIt("年龄合法检查")User user)
+    // 对user的age字段执行ageCheckByInt
+    public void userReg(@CheckIt("example:1[][age:年龄合法检查]")User user)
+    //执行ageCheckByInt
+    public void userReg(@CheckIt("年龄合法检查")int age){ 
 
 ```
 
@@ -588,6 +593,7 @@ public void testCheck(@CheckIt("test")People people)//testUser or testPeople
         String name;
         @CheckIt("${id}")   //不生效
         String address;
+   }
     ```
 
 ### 6 自定义注解检测
@@ -611,7 +617,7 @@ class User {
 
 想对所有字段进行检测的步骤
 
-举个例子,不受限于下面的方法
+举个例子,**不受限**于下面的方法
 
 1. 编写能处理注解和值的函数
 2. 写一个checker类继承自CustomAnnChecker,给这个类上加`@Name("自定义注解检测")`​ 注解
@@ -621,8 +627,8 @@ class User {
 
 第一个参数为自定义的注解,第二个为要检查的参数,参数可以被InputToCheckerArg包裹,InputToCheckerArg包含注解及Field信息
 
-格式规定来源于继承的`CustomAnnChecker`​的规定,如果觉得不够好,也可以新写一个.点开`CustomAnnChecker`​就会发现并不需要多少逻辑
-
+格式规定来源于继承的`CustomAnnChecker`​的规定,如果觉得不够好,**也可以新写一个**.点开`CustomAnnChecker`​就会发现并不需要多少逻辑
+CustomAnnChecker 用反射写的所以增加逻辑会很便捷,但是绝对没有if快
 ```java
 @Name("自定义注解检测")
 @Component
@@ -755,8 +761,8 @@ purah 自带了 一个AnnByPackageMatcher,允许输入要嵌套查询的 Class�
               return false;
         }
   }      
-        //会搜集字段 id people.phone  people.name 进行检测,注意people字段没注解所以不会被搜集
-        //执行
+   //会搜集字段 id people.phone  people.name 进行检测,注意people字段没注解所以不会被搜集
+   //执行
    MultiCheckResult<CheckResult<?>> checkResult = purahs.combo()
         .match(annByPackageMatcher, "自定义注解检测")
         .check(user);
@@ -848,10 +854,15 @@ public class ReverseStringMatcher extends BaseStringMatcher {
     }
 }
 public class PurahUtils {
+    @Autowired
+    Purahs purahs;
     public static class Match {
         public static String reverse=ReverseStringMatcher.NAME;
     }
     public static void main(String[] args) {
+        //两种获取方法效果一样
+        FieldMatcher reverseTest = purahs.matcherOf(PurahUtils.Match.reverse).create("reverse_test");
+        ReverseStringMatcher reverseStringMatcher = new ReverseStringMatcher("reverse_test");
         String reverseMatcherName = PurahUtils.Match.reverse;//这么用容易定位
     }
 }
@@ -937,8 +948,8 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
 
 ```java
 //使用
-     public void userReg(@CheckIt("example:1[][id|people.phone|people.name|people:自定义注解检测]")User user){
-     }
+public void userReg(@CheckIt("example:1[][id|people.phone|people.name|people:自定义注解检测]")User user){
+}
 ```
 
 也许你想让checkIt支持 spel或者其他语法
@@ -1194,12 +1205,13 @@ public class MethodArgCheckException extends BasePurahException {
         this.checkResult = checkResult;
 
     }
+
 }
-    public void checkThreeUserThrow(@CheckIt({"test","test2"}) User user0,
+public void checkThreeUserThrow(@CheckIt({"test","test2"}) User user0,
                                     @CheckIt("test") User user1,
                                     @CheckIt("test") User user2) {
-    }
 }
+
 
 public void main() {
         MethodHandlerCheckResult 以ArgCheckResult的方式 储存了每个参数的校验结果,通过 argResultOf(int index)获取
