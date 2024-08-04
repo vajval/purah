@@ -305,12 +305,12 @@ public class PurahConfigPropertiesBean extends PurahConfigProperties {
 随便写的123:
   combo_checker:
     - name: user_reg
-      checkers: abc
-      mapping:
+      checkers: abc,b,c #对入参进行的检测多个用都好隔开
+      mapping:   #对 入参符合要求的字段进行检测
         general: #field_matcher的类型名字 除了general外还有很多,有特殊字符要用中括号括起来
-          "[address|parent_address]": national_check
-          "[*name*]": name_validity_check
-          "age": age_check
+          "[address|parent_address]": 国籍检测
+          "[*name*]": 姓名检测
+          "age": 年龄检测
         class_name:
           "java.lang.String": sensitive_word_check
     - name: user_reg_and_phone_and_child
@@ -328,7 +328,7 @@ public class PurahConfigPropertiesBean extends PurahConfigProperties {
    }
 ```
 
-puarh 有一个回调函数,会在容器刷新时(即收到`ContextRefreshedEvent`​事件时调用),实现此接口并将其注册到spring中以实现热更新
+purah 有一个回调函数,会在容器刷新时(即收到`ContextRefreshedEvent`​事件时调用),实现此接口并将其注册到spring中以实现热更新
 
 也可以直接用脚本语言搞,怎么搞就随意了
 
@@ -474,16 +474,16 @@ class User{
     
     @ToChecker("test")
     public boolean testUser(
-            @FVal("phone")String phone,//phone value
-            @FVal("id")String id//address value 
+            @FVal("phone")String phone,
+            @FVal("id")String id
     ){
         //......
         return true;
     }
     @ToChecker("test")
     public boolean testPeople(
-            @FVal("address")String address,//phone value
-            @FVal("name")String name //address value 
+            @FVal("address")String address,
+            @FVal("name")String name 
     ){
         //......
         return true;
@@ -505,8 +505,8 @@ public void testCheck(@CheckIt("test")People people)//testUser or testPeople
      public boolean testUser(
 
              @FVal(FieldMatcher.rootField) User user //加上这个参数可以在填充根对象值的同时限定类型 ,不加默认支持所有类型,即Object
-             @FVal("phone")String phone,//phone value
-             @FVal("id")String id//address value 
+             @FVal("phone")String phone,
+             @FVal("id")String id
      ){
         //......
         return true;
@@ -514,8 +514,8 @@ public void testCheck(@CheckIt("test")People people)//testUser or testPeople
      @ToChecker("test")
      public boolean testPeople(
          @FVal(FieldMatcher.rootField) People people
-         @FVal("address")String address,//phone value
-         @FVal("name")String name //address value 
+         @FVal("address")String address,
+         @FVal("name")String name 
      ){
         //......
         return true;
@@ -527,7 +527,7 @@ public void testCheck(@CheckIt("test")People people)//testUser or testPeople
 ### 5 purah 基本规则及jsr303
 
 
-1. 如果你想使用purah又担心切面与现有代码冲突,`@EnablePurah( checkItAspect = false)`,可以将切面关闭.除此之外就只有` io.github.vajval.purah.spring.ioc.RegOnContextRefresh` 会在 `ContextRefreshedEvent`事件时重新装载`PurahContext bean`.除非你在**刷新容器**时手动向`PurahContext `中注册了**不合规的checker或者FieldMatcher** 导致异常,否则在切面关闭的情况下应该不会对项目造成影响,**如果造成了影响算作bug,会修复**
+1. 如果你想使用purah又担心切面与现有代码冲突,`@EnablePurah( checkItAspect = false)`,可以将切面关闭.除此之外就只有` io.github.vajval.purah.spring.ioc.RegOnContextRefresh` 会在 `ContextRefreshedEvent`事件时重新装载`PurahContext bean`.除非你在**刷新容器**时手动向`PurahContext `中注册了**不合规的checker或者FieldMatcher** 导致异常,否则在切面关闭的情况下应该不会对项目造成影响
 2. 我们需要在用户注册时时进行 `用户注册检查` 和对age进行`年龄合法检查`
 
    直接编写即可
@@ -616,8 +616,9 @@ class User {
 ```
 
 想对所有字段进行检测的步骤
+如果你想通过继承默认的`CustomAnnChecker`来实现自定义注解检测
 
-举个例子,**不受限**于下面的方法
+可以这么写,**不受限**于下面的方法
 
 1. 编写能处理注解和值的函数
 2. 写一个checker类继承自CustomAnnChecker,给这个类上加`@Name("自定义注解检测")`​ 注解
@@ -628,7 +629,8 @@ class User {
 第一个参数为自定义的注解,第二个为要检查的参数,参数可以被InputToCheckerArg包裹,InputToCheckerArg包含注解及Field信息
 
 格式规定来源于继承的`CustomAnnChecker`​的规定,如果觉得不够好,**也可以新写一个**.点开`CustomAnnChecker`​就会发现并不需要多少逻辑
-CustomAnnChecker 用反射写的所以增加逻辑会很便捷,但是绝对没有if快
+
+CustomAnnChecker 用**反射**实现的的所以增加逻辑会很便捷,但是**绝对没有if快**
 ```java
 @Name("自定义注解检测")
 @Component
@@ -672,7 +674,7 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
     //如果对id字段进行自定义注解检测,如aId  ,bId , 只用把`*` 改成 `*Id` 即可
     public void userReg(@CheckIt("example:1[][*:自定义注解检测]")User user){
 
-        }
+    }
     //或者
     public void reg(User user) {
         MultiCheckResult<CheckResult<?>> checkResult = purahs.combo()
@@ -712,7 +714,7 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
 
 ‍
 
-项目通常有要求,对于嵌套结构的对象,要对嵌套的所有有注解的字段进行搜集并且check检测
+项目通常有要求,对于嵌套结构的对象,要对**嵌套的所有有注解的字段**进行搜集并且check检测
 
 虽然嵌套可以有非常多层,但是往往只对**项目开发者自己编写的类**进行嵌套寻找有注解的字段
 
@@ -754,7 +756,7 @@ purah 自带了 一个AnnByPackageMatcher,允许输入要嵌套查询的 Class�
              //如果Field上有需要检测的注解,就把值搜集起来
              Set<Class<? extends Annotation>> annotationSet= Sets.newHashSet(Range.class,CNPhoneNum.class,NotEmptyTest.class);
              for (Class<? extends Annotation> aClass : annotationSet) {
-                 if(field.getDeclaredAnnotationsByType(aClass)!=null){
+                 if( field.getDeclaredAnnotation(aClass)!=null){
                       return true;
                  }
              }
@@ -769,10 +771,10 @@ purah 自带了 一个AnnByPackageMatcher,允许输入要嵌套查询的 Class�
 }
 ```
 
-如果层级只有两层的话,就简单了,直接写  `*|*.*`​ 就行,三层就是`*|*.*|*.*.*`​ ,知道匹配结果的话也可以直接写死
+如果层级只有两层的话,就简单了,直接写 用GeneralFieldMatcher  `*|*.*`​ 就行,三层就是`*|*.*|*.*.*`​ ,知道匹配结果的话也可以直接写死
 
 ```java
-      //以下4种写法和上面的效果一样
+   //以下4种写法和上面的效果一样
     public void userReg(
              @CheckIt("example:1[][*|*.*:自定义注解检测]")User user){
     }
@@ -830,7 +832,7 @@ purah 自带了 一个AnnByPackageMatcher,允许输入要嵌套查询的 Class�
     //FixedMatcher("id|child.id")不支持缓存
     //FixedMatcher("id|superChild.id") 支持缓存
     //因为为null时无法获取class,所以无法确定class是子类中的哪一个.
-    //反之如果Field的class有final,那么这个Field的class无法被继承,所以可以确定null值的所有字段也就可以缓存
+    //反之如果Field的class有final,那么这个Field的class无法被继承,所以可以确定null值的class的所有字段也就可以缓存
     //todo 待优化,争取不final也支持
     ```
 3. list 获取不支持缓存, 如 `FixedMatcher("childList#100.id")`​,不支持缓存,因为list长度不固定
