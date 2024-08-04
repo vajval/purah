@@ -30,15 +30,16 @@ class FixedMatcherTest {
 
 
         FixedMatcher fixedMatcher = new FixedMatcher("name|address|noExistField|child#0.id|child#5.child#0.id");
+//        FixedMatcher fixedMatcher = new FixedMatcher("child#5.child#0.id");
 
         Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(People.elder, fixedMatcher);
-        System.out.println(map);
         Assertions.assertNull(map.get("child#5.child#0.id").argValue());
 
         Assertions.assertEquals(map.get("name").argValue(), People.elder.getName());
         Assertions.assertEquals(map.get("address").argValue(), People.elder.getAddress());
         Assertions.assertEquals(map.get("child#0.id").argValue(), People.elder.getChild().get(0).getId());
         Assertions.assertNull(map.get("noExistField").argValue());
+        System.out.println(map.keySet());
         Assertions.assertEquals(map.size(), 5);
 
         Purahs purahs=new Purahs(new PurahContext());

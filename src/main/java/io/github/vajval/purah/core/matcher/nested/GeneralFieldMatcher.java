@@ -123,7 +123,7 @@ public class GeneralFieldMatcher extends AbstractMultilevelFieldMatcher<Multilev
             return multilevelMatchInfoByWrapChild(inputArg, matchedField, childArg);
         }
         if (childStr == null) {
-            return NestedMatchInfo.needCollected();
+            return NestedMatchInfo.justCollected;
         }
         if (isFixed) {
             return NestedMatchInfo.justNested(new FixedMatcher(childStr));

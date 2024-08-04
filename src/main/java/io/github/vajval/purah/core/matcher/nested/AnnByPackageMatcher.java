@@ -118,13 +118,13 @@ public class AnnByPackageMatcher extends BaseStringMatcher implements Multilevel
             if (needNest) {
                 return NestedMatchInfo.needCollectedAndMatchNested(childFieldMatcher());
             } else {
-                return NestedMatchInfo.needCollected();
+                return NestedMatchInfo.justCollected;
             }
         } else {
             if (needNest) {
                 return NestedMatchInfo.justNested(childFieldMatcher());
             } else {
-                return NestedMatchInfo.ignore();
+                return NestedMatchInfo.ignore;
             }
         }
 

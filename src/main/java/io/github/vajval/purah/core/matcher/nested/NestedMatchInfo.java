@@ -10,36 +10,37 @@ public class NestedMatchInfo {
     protected final List<FieldMatcher> childFieldMatcher;
     protected final boolean needCollected;
 
-    private NestedMatchInfo(List<FieldMatcher> childFieldMatcher, boolean needCollected) {
+    private NestedMatchInfo(boolean needCollected, List<FieldMatcher> childFieldMatcher) {
         this.childFieldMatcher = childFieldMatcher;
         this.needCollected = needCollected;
     }
 
+    public static final NestedMatchInfo justCollected = new NestedMatchInfo(true, null);
+    public static NestedMatchInfo ignore = new NestedMatchInfo(false, null);
+
+
+    public static NestedMatchInfo create(boolean needCollected, List<FieldMatcher> childFieldMatcher) {
+        return new NestedMatchInfo(needCollected, childFieldMatcher);
+
+    }
+
     public static NestedMatchInfo needCollectedAndMatchNested(FieldMatcher childFieldMatcher) {
-        return new NestedMatchInfo(Collections.singletonList(childFieldMatcher), true);
+        return new NestedMatchInfo(true, Collections.singletonList(childFieldMatcher));
 
     }
 
     public static NestedMatchInfo needCollectedAndMatchNested(List<FieldMatcher> childFieldMatcher) {
-        return new NestedMatchInfo(childFieldMatcher, true);
+        return new NestedMatchInfo(true, childFieldMatcher);
 
     }
 
-    public static NestedMatchInfo needCollected() {
-        return new NestedMatchInfo(null, true);
-
-    }
 
     public static NestedMatchInfo justNested(FieldMatcher childFieldMatcher) {
-        return new NestedMatchInfo(Collections.singletonList(childFieldMatcher), false);
+        return new NestedMatchInfo(false, Collections.singletonList(childFieldMatcher));
     }
 
     public static NestedMatchInfo justNested(List<FieldMatcher> childFieldMatcher) {
-        return new NestedMatchInfo(childFieldMatcher, false);
-    }
-
-    public static NestedMatchInfo ignore() {
-        return new NestedMatchInfo(null, false);
+        return new NestedMatchInfo(false, childFieldMatcher);
     }
 
 

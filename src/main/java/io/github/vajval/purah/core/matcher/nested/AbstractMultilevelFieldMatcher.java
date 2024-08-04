@@ -108,7 +108,7 @@ public abstract class AbstractMultilevelFieldMatcher<T extends MultilevelFieldMa
             return multilevelMatchInfoByWrapChild(inputArg, matchedField, childArg);
         }
         if (childStr == null) {
-            return NestedMatchInfo.needCollected();
+            return NestedMatchInfo.justCollected;
         }
         return NestedMatchInfo.justNested(wrapChildMatcher(childStr));
     }

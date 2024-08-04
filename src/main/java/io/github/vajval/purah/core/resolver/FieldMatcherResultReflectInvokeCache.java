@@ -23,7 +23,7 @@ import java.util.function.Function;
 
 public class FieldMatcherResultReflectInvokeCache {
 
-    protected static final Logger logger = LogManager.getLogger(ClassReflectCache.class);
+    protected static final Logger logger = LogManager.getLogger(FieldMatcherResultReflectInvokeCache.class);
 
     protected final Class<?> inputArgClass;
     protected final FieldMatcher cachedFieldMatcher;
