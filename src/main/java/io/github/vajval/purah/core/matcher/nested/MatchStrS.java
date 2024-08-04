@@ -6,9 +6,17 @@ public class MatchStrS {
     String firstLevelStr;
     String childStr;
     String fullMatchStr;
+
+    /*
+     * child#6.child#2.name ->
+     * fullMatchStr = child#6.child#2.name
+     * firstLevelStr = child
+     * childStr = #6.child#2.name
+     */
     public MatchStrS(String matchStr) {
         fullMatchStr = matchStr;
         int index = matchStr.indexOf(".");
+        boolean contains = matchStr.contains(".");
         firstLevelStr = matchStr;
         childStr = "";
         if (index != -1) {
@@ -17,7 +25,11 @@ public class MatchStrS {
         }
         index = firstLevelStr.indexOf("#");
         if (index != -1 && index != 0) {
-            childStr = firstLevelStr.substring(index) + "." + childStr;
+            if (contains) {
+                childStr = firstLevelStr.substring(index) + "." + childStr;
+            } else {
+                childStr = firstLevelStr.substring(index);
+            }
             firstLevelStr = matchStr.substring(0, index);
         }
         if (!StringUtils.hasText(childStr)) {
@@ -25,6 +37,13 @@ public class MatchStrS {
         }
         this.initListIndex();
     }
+
+
+    /*
+     * child#6 -> listIndex=6
+     * child#* -> listIndex=-2
+     * child ->   listIndex=-1
+     */
     protected void initListIndex() {
         int index = firstLevelStr.indexOf("#");
         if (index == -1) {

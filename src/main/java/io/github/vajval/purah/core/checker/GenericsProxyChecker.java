@@ -8,9 +8,9 @@ import io.github.vajval.purah.core.exception.CheckException;
 import io.github.vajval.purah.core.exception.UnexpectedException;
 import io.github.vajval.purah.core.exception.init.InitCheckerException;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
@@ -103,7 +103,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
     protected Checker<?, ?> getChecker(InputToCheckerArg<Object> inputToCheckerArg) {
         if (inputToCheckerArg.isNull() && (inputToCheckerArg.argClass() == null || inputToCheckerArg.argClass().equals(Object.class))) {
-            if (!wrapperClassMap.containsKey(defaultInputArgClass.clazz)) {//not base type like int
+            if (!wrapperClassMap.containsValue(defaultInputArgClass.clazz)) {//not base type like int
                 return defaultChecker;
             }
         }
@@ -122,11 +122,11 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
         //but input arg is Integer
         //if arg not null,find help from int.class
         Class<?> clazz = inputCheckInstanceArgClass.clazz;
-        if (wrapperClassMap.containsValue(clazz)) { // Integer.class
+        if (wrapperClassMap.containsKey(clazz)) { // Integer.class
             if (inputToCheckerArg.isNull()) {   //int can not help
                 return null;
             }
-            Class<?> wrapClazz = wrapperClassMap.inverse().get(clazz);//int.class
+            Class<?> wrapClazz = wrapperClassMap.get(clazz);//int.class
             result = cacheGenericsCheckerMapping.get(new InputArgClass(wrapClazz));
         }
 
@@ -142,19 +142,20 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
     }
 
-    private static final BiMap<Class<?>, Class<?>> wrapperClassMap = buildWrapperClassMap();
+    private static final HashMap<Class<?>, Class<?>> wrapperClassMap = buildWrapperClassMap();
 
-    private static BiMap<Class<?>, Class<?>> buildWrapperClassMap() {
+    private static HashMap<Class<?>, Class<?>> buildWrapperClassMap() {
 
-        BiMap<Class<?>, Class<?>> wrapperClassMap = HashBiMap.create();
-        wrapperClassMap.put(byte.class, Byte.class);
-        wrapperClassMap.put(short.class, Short.class);
-        wrapperClassMap.put(int.class, Integer.class);
-        wrapperClassMap.put(long.class, Long.class);
-        wrapperClassMap.put(char.class, Character.class);
-        wrapperClassMap.put(boolean.class, Boolean.class);
-        wrapperClassMap.put(double.class, Double.class);
-        wrapperClassMap.put(float.class, Float.class);
+        HashMap<Class<?>, Class<?>> wrapperClassMap = new HashMap<>();
+        wrapperClassMap.put( Byte.class, byte.class);
+        wrapperClassMap.put( Short.class, short.class);
+        wrapperClassMap.put( Integer.class, int.class);
+        wrapperClassMap.put( Long.class, long.class);
+        wrapperClassMap.put(Character.class, char.class);
+        wrapperClassMap.put(Boolean.class, boolean.class);
+        wrapperClassMap.put(Double.class, double.class);
+        wrapperClassMap.put(Float.class, float.class);
+
         return wrapperClassMap;
     }
 

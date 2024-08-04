@@ -1,6 +1,7 @@
 package io.github.vajval.purah.core.checker.converter.checker;
 
 import io.github.vajval.purah.core.matcher.FieldMatcher;
+import io.github.vajval.purah.core.matcher.nested.FixedMatcher;
 import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 import io.github.vajval.purah.util.People;
 import io.github.vajval.purah.util.TestAnn;
@@ -74,6 +75,8 @@ public class FValCheckerByDefaultReflectArgResolverTest {
         Method method = Stream.of(FValCheckerByDefaultReflectArgResolverTest.class.getDeclaredMethods()).filter(i -> i.getName().equals("childNameCheck")).collect(Collectors.toList()).get(0);
         FValMethodChecker checker = new FValMethodChecker(null, method, "test",AutoNull.notEnable);
 
+        FixedMatcher fixedMatcher = new FixedMatcher("child#0.child#0.name|child#0|child#0.child|child#100|name|child#0.child#0.child|child");
+        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
         for (int i = 0; i < 3; i++) {
             Assertions.assertTrue(checker.check(People.elder));
         }
@@ -83,7 +86,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
     static TestUser testUser;
 
     @BeforeEach
-    public void asda() {
+    public void a() {
         testUser = new TestUser(1L, "name", "address");
         testUser.child = new TestUser(2L, "child_name", "child_address");
         testUser.child.child = new TestUser(4L, "child_child_name", "child_child_address");
@@ -151,7 +154,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
                 null, method, "test",AutoNull.notEnable);
 
 
-        for (int i = 0; i < 30000; i++) {
+        for (int i = 0; i < 3*1000; i++) {//no cache 3*1000*1000=13s cache 9.5s
             Assertions.assertTrue(checker.check(testUser));
         }
     }

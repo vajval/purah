@@ -30,7 +30,6 @@ class FixedMatcherTest {
 
 
         FixedMatcher fixedMatcher = new FixedMatcher("name|address|noExistField|child#0.id|child#5.child#0.id");
-//        FixedMatcher fixedMatcher = new FixedMatcher("child#5.child#0.id");
 
         Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(People.elder, fixedMatcher);
         Assertions.assertNull(map.get("child#5.child#0.id").argValue());

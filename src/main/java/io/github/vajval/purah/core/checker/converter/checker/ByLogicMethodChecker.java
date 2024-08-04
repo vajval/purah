@@ -2,7 +2,6 @@ package io.github.vajval.purah.core.checker.converter.checker;
 
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.exception.init.InitCheckerException;
-import io.github.vajval.purah.core.name.NameUtil;
 import io.github.vajval.purah.core.checker.PurahWrapMethod;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
 

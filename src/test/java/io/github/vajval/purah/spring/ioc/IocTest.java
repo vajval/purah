@@ -1,11 +1,8 @@
 package io.github.vajval.purah.spring.ioc;
 
 import com.google.common.collect.Sets;
-import io.github.vajval.purah.core.checker.Checker;
-import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
-import io.github.vajval.purah.spring.ioc.ann.ToChecker;
 import io.github.vajval.purah.spring.ioc.test_bean.PurahConfigPropertiesBean;
 import io.github.vajval.purah.spring.ioc.test_bean.TestCallBack;
 import io.github.vajval.purah.spring.ioc.test_bean.checker.IocIgnoreChecker;
@@ -21,7 +18,6 @@ import io.github.vajval.purah.spring.ioc.test_bean.checker.IocTestChecker;
 import io.github.vajval.purah.spring.ioc.test_bean.matcher.ReverseStringMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.StringUtils;
 
 import java.util.Set;
 

@@ -1,7 +1,5 @@
 package io.github.vajval.purah.core.checker.result;
 
-import io.github.vajval.purah.core.exception.CheckException;
-
 import java.util.function.BooleanSupplier;
 
 

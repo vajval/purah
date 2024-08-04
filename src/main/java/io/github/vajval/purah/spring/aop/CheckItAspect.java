@@ -1,7 +1,6 @@
 package io.github.vajval.purah.spring.aop;
 
 
-import io.github.vajval.purah.spring.aop.ann.CheckIt;
 import io.github.vajval.purah.spring.aop.exception.MethodArgCheckException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

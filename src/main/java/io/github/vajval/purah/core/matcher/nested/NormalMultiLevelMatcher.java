@@ -1,12 +1,14 @@
 package io.github.vajval.purah.core.matcher.nested;
 
-import io.github.vajval.purah.core.matcher.singlelevel.EqualMatcher;
+import com.google.common.collect.Maps;
+
+import io.github.vajval.purah.core.matcher.FieldMatcher;
+import io.github.vajval.purah.core.matcher.inft.ListIndexMatcher;
+import io.github.vajval.purah.core.matcher.inft.MultilevelFieldMatcher;
 import io.github.vajval.purah.core.name.Name;
-import io.github.vajval.purah.core.matcher.inft.IDefaultFieldMatcher;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 /*
@@ -20,68 +22,61 @@ import java.util.stream.Collectors;
  * checker not check "noExistField" "child#5.child#0.id" because not exist
  */
 @Name("normal")
-public class NormalMultiLevelMatcher extends AbstractMultilevelFieldMatcher<NormalMultiLevelMatcher> {
+public class NormalMultiLevelMatcher extends BaseNestMatcher implements ListIndexMatcher, MultilevelFieldMatcher {
 
-
-    // child.id|child.name|name->{child,name}
-    final Set<String> firstLevelStrSet;
 
     public NormalMultiLevelMatcher(String matchStr) {
         super(matchStr);
-        if (wrapChildList != null) {
-            firstLevelStrSet = wrapChildList.stream().map(i -> i.firstLevelStr).collect(Collectors.toSet());
-        } else {
-            firstLevelStrSet = Collections.singleton(firstLevelStr);
-        }
-
-
     }
 
-
+    @Override
+    protected FieldMatcher wrapChild(String str) {
+        return new NormalMultiLevelMatcher(str);
+    }
 
     @Override
+    public boolean supportCache() {
+        return !matchStr.contains("#") && !matchStr.contains(".");
+    }
+
+    @Override
+
     public Set<String> matchFields(Set<String> fields, Object belongInstance) {
-        Set<String> result = new HashSet<>();
-        for (String s : firstLevelStrSet) {
+        if (matchStrS != null) {
+            if (fields.contains(matchStrS.fullMatchStr)) {
+                return Collections.singleton(matchStrS.fullMatchStr);
+            }
+            if (fields.contains(matchStrS.firstLevelStr)) {
+                return Collections.singleton(matchStrS.firstLevelStr);
+            }
+            return Collections.emptySet();
+        }
+        Set<String> result = new HashSet<>(resultExpectedSize);
+        for (String s : allMap.keySet()) {
             if (fields.contains(s)) {
                 result.add(s);
             }
         }
+        resultExpectedSize = result.size();
         return result;
     }
 
     @Override
-    protected NormalMultiLevelMatcher wrapChildMatcher(String matchStr) {
-        return new NormalMultiLevelMatcher(matchStr);
-    }
-
-    @Override
-    protected IDefaultFieldMatcher initFirstLevelFieldMatcher(String str) {
-        return new EqualMatcher(firstLevelStr);
-    }
-
-
-    @Override
     public Map<String, Object> listMatch(List<?> objectList) {
-        if (CollectionUtils.isEmpty(objectList)) {
-            return Collections.emptyMap();
+        if (CollectionUtils.isEmpty(objectList) || listMatchIndexSet.size() == 0) {
+            return new HashMap<>(0);
         }
-        if (listIndex == NO_LIST_INDEX) {
-            return Collections.emptyMap();
+        Map<String, Object> result = Maps.newHashMapWithExpectedSize(listMatchIndexSet.size());
+        for (Integer listIndex : listMatchIndexSet) {
+            int getIndex = listIndex;
+            if (listIndex < 0) {
+                getIndex = objectList.size() + listIndex;
+            }
+            if (listIndex < objectList.size()) {
+                result.put("#" + listIndex, objectList.get(getIndex));
+            }
         }
-        int getIndex = listIndex;
-        if (listIndex < 0) {
-            getIndex = objectList.size() + listIndex;
-        }
-        if (listIndex < objectList.size()) {
-            return Collections.singletonMap("#" + listIndex, objectList.get(getIndex));
-        }
-        return Collections.emptyMap();
-    }
-
-    @Override
-    protected boolean matchStrCanCache(String matchSer) {
-        return !matchSer.contains("#") && !matchSer.contains(".");
+        return result;
     }
 
 

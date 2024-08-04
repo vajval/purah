@@ -4,7 +4,6 @@ package io.github.vajval.purah.core.checker;
 import io.github.vajval.purah.core.checker.combinatorial.CombinatorialChecker;
 import io.github.vajval.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
 import io.github.vajval.purah.core.exception.RegException;
-import io.github.vajval.purah.core.exception.init.InitCheckerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.github.vajval.purah.core.checker.factory.CheckerFactory;

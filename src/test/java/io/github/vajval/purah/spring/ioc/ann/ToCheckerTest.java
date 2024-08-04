@@ -2,11 +2,8 @@ package io.github.vajval.purah.spring.ioc.ann;
 
 import io.github.vajval.purah.core.Purahs;
 import io.github.vajval.purah.core.checker.Checker;
-import io.github.vajval.purah.core.checker.ComboBuilderChecker;
 import io.github.vajval.purah.core.checker.combinatorial.ExecMode;
 import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
-import io.github.vajval.purah.core.checker.result.CheckResult;
-import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 

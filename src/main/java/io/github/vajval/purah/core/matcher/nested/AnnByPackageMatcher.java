@@ -16,7 +16,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 
@@ -55,9 +54,8 @@ public class AnnByPackageMatcher extends BaseStringMatcher implements Multilevel
 
     protected WildCardMatcher fieldNeedNestedMatcher;
 
-    protected Map<Class<?>, Map<String, FieldInfoCache>> fieldCache = new ConcurrentHashMap<>();
 
-    protected FieldInfoCache NULL = new FieldInfoCache();
+    protected FieldInfo NULL = new FieldInfo();
 
     protected int maxDepth;
 
@@ -87,11 +85,11 @@ public class AnnByPackageMatcher extends BaseStringMatcher implements Multilevel
 
     @Override
     public Set<String> matchFields(Set<String> fields, Object belongInstance) {
-        Map<String, FieldInfoCache> fieldInfoCacheMap = fieldInfoCacheMap(belongInstance.getClass());
+        Map<String, FieldInfo> fieldInfoCacheMap = fieldInfoCacheMap(belongInstance.getClass());
         Set<String> result = Sets.newHashSet();
         for (String field : fields) {
-            FieldInfoCache fieldInfoCache = fieldInfoCacheMap.get(field);
-            if (fieldInfoCache.needBeCollected || fieldInfoCache.needNest) {
+            FieldInfo fieldInfo = fieldInfoCacheMap.get(field);
+            if (fieldInfo.needBeCollected || fieldInfo.needNest) {
                 result.add(field);
             }
         }
@@ -101,11 +99,12 @@ public class AnnByPackageMatcher extends BaseStringMatcher implements Multilevel
 
     @Override
     public NestedMatchInfo nestedFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
-        FieldInfoCache fieldInfoCache = fieldInfoCache(matchedField, inputArg.argClass());
-        boolean needNest = fieldInfoCache.needNest;
-        boolean needBeCollected = fieldInfoCache.needBeCollected;
+        FieldInfo fieldInfo = fieldInfoCache(matchedField, inputArg.argClass());
 
-        if (fieldInfoCache == NULL) {
+        boolean needNest = fieldInfo.needNest;
+        boolean needBeCollected = fieldInfo.needBeCollected;
+
+        if (fieldInfo == NULL) {
             needNest = fieldNeedNestedMatcher.match(childArg.argClass().getPackage().getName());
             needBeCollected = false;
         }
@@ -181,21 +180,21 @@ public class AnnByPackageMatcher extends BaseStringMatcher implements Multilevel
 
     @Override
     public boolean supportCache() {
-        return !matchStr.contains("#");
 
+        return true;
     }
 
-    private class FieldInfoCache {
+    private class FieldInfo {
         Class<?> checkClazz;
         Field field;
         boolean needNest = false;
 
         boolean needBeCollected = false;
 
-        public FieldInfoCache() {
+        public FieldInfo() {
         }
 
-        public FieldInfoCache(Field field) {
+        public FieldInfo(Field field) {
             this.checkClazz = field.getType();
             if (Collection.class.isAssignableFrom(this.checkClazz)) {
                 ResolvableType resolvableType = ResolvableType.forField(field).as(Collection.class);
@@ -214,36 +213,30 @@ public class AnnByPackageMatcher extends BaseStringMatcher implements Multilevel
         }
     }
 
-    private Map<String, FieldInfoCache> fieldInfoCacheMap(Class<?> instanceClazz) {
-
-        return fieldCache.computeIfAbsent(instanceClazz, i -> buildFieldInfoCacheMap(instanceClazz));
-
-    }
-
-    private FieldInfoCache fieldInfoCache(String field, Class<?> instanceClazz) {
-        Map<String, FieldInfoCache> map = fieldInfoCacheMap(instanceClazz);
-        FieldInfoCache fieldInfoCache = map.get(field);
-        if (fieldInfoCache != null) {
-            return fieldInfoCache;
-        }
-        return NULL;
-    }
-
-    private Map<String, FieldInfoCache> buildFieldInfoCacheMap(Class<?> instanceClazz) {
-
+    private Map<String, FieldInfo> fieldInfoCacheMap(Class<?> instanceClazz) {
         PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(instanceClazz);
-        HashMap<String, FieldInfoCache> result = Maps.newHashMapWithExpectedSize(propertyDescriptors.length);
+        HashMap<String, FieldInfo> result = Maps.newHashMapWithExpectedSize(propertyDescriptors.length);
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String fieldName = propertyDescriptor.getName();
             Field declaredField;
             try {
                 declaredField = instanceClazz.getDeclaredField(fieldName);
-                result.put(fieldName, new FieldInfoCache(declaredField));
+                result.put(fieldName, new FieldInfo(declaredField));
             } catch (NoSuchFieldException ignored) {
             }
 
         }
         return result;
+
+    }
+
+    private FieldInfo fieldInfoCache(String field, Class<?> instanceClazz) {
+        Map<String, FieldInfo> map = fieldInfoCacheMap(instanceClazz);
+        FieldInfo fieldInfo = map.get(field);
+        if (fieldInfo != null) {
+            return fieldInfo;
+        }
+        return NULL;
     }
 
 

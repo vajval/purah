@@ -1,18 +1,14 @@
 package io.github.vajval.purah.core.matcher.nested;
 
-import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import io.github.vajval.purah.core.matcher.BaseStringMatcher;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.core.matcher.inft.ListIndexMatcher;
 import io.github.vajval.purah.core.matcher.inft.MultilevelFieldMatcher;
 import io.github.vajval.purah.core.name.Name;
-import io.github.vajval.purah.core.checker.InputToCheckerArg;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-
-import static java.util.stream.Collectors.*;
 
 
 /*
@@ -27,51 +23,25 @@ import static java.util.stream.Collectors.*;
  */
 
 @Name("fixed")
-public class FixedMatcher extends BaseStringMatcher implements ListIndexMatcher, MultilevelFieldMatcher {
-
-    protected Map<String, Set<MatchStrS>> allMap;
-    protected Map<String, NestedMatchInfo> nestedMatchInfoMap;
-    protected int resultExpectedSize = 1;
-
-    protected MatchStrS matchStrS;
-    protected NestedMatchInfo nestedMatchInfo;
-
+public class FixedMatcher extends BaseNestMatcher implements ListIndexMatcher, MultilevelFieldMatcher {
 
 
     public FixedMatcher(String matchStr) {
         super(matchStr);
-        if (matchStr.contains("|")) {
-            List<String> strings = Splitter.on("|").splitToList(matchStr);
-            Set<MatchStrS> matchStrSSet = strings.stream().map(MatchStrS::new).collect(toSet());
-            allMap = matchStrSSet.stream().collect(groupingBy(i -> i.firstLevelStr, mapping(i -> i, toSet())));
-            resultExpectedSize = allMap.size();
-            nestedMatchInfoMap = new HashMap<>();
-            for (Map.Entry<String, Set<MatchStrS>> entry : allMap.entrySet()) {
-                String matchedField = entry.getKey();
-                List<FieldMatcher> childFieldMatchers = entry.getValue().stream()
-                        .filter(i -> i.childStr != null)
-                        .map(i -> new FixedMatcher(i.childStr))
-                        .collect(toList());
-                boolean needCollected = entry.getValue().stream()
-                        .filter(i -> i.childStr == null)
-                        .map(i -> i.firstLevelStr)
-                        .collect(toSet())
-                        .contains(matchedField);
-                nestedMatchInfoMap.put(matchedField, NestedMatchInfo.create(needCollected, childFieldMatchers));
-            }
-        } else {
-            matchStrS = new MatchStrS(matchStr);
-            if (matchStrS.childStr == null) {
-                nestedMatchInfo = NestedMatchInfo.justCollected;
-            } else {
-                nestedMatchInfo = NestedMatchInfo.justNested(new FixedMatcher(matchStrS.childStr));
-            }
-        }
+    }
+
+    @Override
+    protected FieldMatcher wrapChild(String str) {
+        return new FixedMatcher(str);
+    }
+
+    @Override
+    public boolean supportCache() {
+        return !matchStr.contains("#");
     }
 
 
     @Override
-
     public Set<String> matchFields(Set<String> fields, Object belongInstance) {
         if (matchStrS != null) {
             if (fields.contains(matchStrS.fullMatchStr)) {
@@ -82,7 +52,6 @@ public class FixedMatcher extends BaseStringMatcher implements ListIndexMatcher,
             }
             return Collections.singleton(matchStrS.fullMatchStr);
         }
-
         Set<String> result = Sets.newHashSetWithExpectedSize(resultExpectedSize);
         for (Map.Entry<String, Set<MatchStrS>> entry : allMap.entrySet()) {
             if (fields.contains(entry.getKey())) {
@@ -98,47 +67,28 @@ public class FixedMatcher extends BaseStringMatcher implements ListIndexMatcher,
     }
 
     @Override
-
-    public NestedMatchInfo nestedFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
-        if (Objects.equals(matchedField, matchStr)) {
-            return NestedMatchInfo.justCollected;
-        }
-        if (nestedMatchInfo != null) {
-            return nestedMatchInfo;
-        }
-        NestedMatchInfo result = nestedMatchInfoMap.get(matchedField);
-        if (result != null) {
-            return result;
-        }
-        return NestedMatchInfo.ignore;
-
-    }
-
-    @Override
-    public boolean match(String field, Object belongInstance) {
-        if (matchStrS != null) {
-            return Objects.equals(field, matchStrS.firstLevelStr);
-        }
-        return allMap.containsKey(field);
-    }
-
-    @Override
     public Map<String, Object> listMatch(List<?> objectList) {
-        Integer listIndex = matchStrS.listIndex;
-        if (CollectionUtils.isEmpty(objectList)) {
-            return Collections.singletonMap("#" + listIndex, null);
+        if (listMatchIndexSet.size() == 0) {
+            return new HashMap<>(0);
         }
-        if (listIndex == MatchStrS.NO_LIST_INDEX) {
-            return Collections.emptyMap();
+
+        Map<String, Object> result = Maps.newHashMapWithExpectedSize(listMatchIndexSet.size());
+        for (Integer listIndex : listMatchIndexSet) {
+            String key = "#" + listIndex;
+            Object value = null;
+            if (!CollectionUtils.isEmpty(objectList)) {
+                int getIndex = listIndex;
+                if (listIndex < 0) {
+                    getIndex = objectList.size() + listIndex;
+                }
+                if (listIndex < objectList.size()) {
+                    value = objectList.get(getIndex);
+                }
+            }
+
+            result.put(key, value);
         }
-        int getIndex = listIndex;
-        if (listIndex < 0) {
-            getIndex = objectList.size() + listIndex;
-        }
-        if (listIndex < objectList.size()) {
-            return Collections.singletonMap("#" + listIndex, objectList.get(getIndex));
-        }
-        return Collections.singletonMap("#" + listIndex, null);
+        return result;
     }
 
 
