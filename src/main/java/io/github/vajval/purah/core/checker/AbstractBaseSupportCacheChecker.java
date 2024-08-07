@@ -15,27 +15,54 @@ import org.apache.logging.log4j.Logger;
 
 public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> implements Checker<INPUT_ARG, RESULT> {
     private static final Logger logger = LogManager.getLogger(AbstractBaseSupportCacheChecker.class);
+    Info<INPUT_ARG> info;
 
+    static class Info<INPUT_ARG> {
+
+        protected String logicFrom;
+        InputToCheckerArg<INPUT_ARG> NULL;
+        Class<?> inputArgClass;
+        Class<?> resultDataClass;
+    }
+
+    protected Info<INPUT_ARG> info() {
+        if (info == null) {
+            info = new Info<>();
+            info.logicFrom = logicFrom();
+            info.NULL = InputToCheckerArg.of(null, inputArgClass());
+            info.inputArgClass = Checker.super.inputArgClass();
+            info.resultDataClass =Checker.super.resultDataClass();
+
+        }
+        return info;
+    }
 
     @Override
     public CheckResult<RESULT> check(InputToCheckerArg<INPUT_ARG> inputToCheckerArg) {
+
         if (inputToCheckerArg == null) {
-            inputToCheckerArg = InputToCheckerArg.of(null, inputArgClass());
+            inputToCheckerArg = info().NULL;
         }
-        CheckResult<RESULT> resultCheckResult = this.readCacheIfNeed(inputToCheckerArg);
+        boolean enableCache = enableCache();
+        if (!enableCache) {
+            CheckResult<RESULT> resultCheckResult = this.doCheck(inputToCheckerArg);
+            if (resultCheckResult == null) {
+                throw new RuntimeException("checker result  cannot be Null  " + this.logicFrom());
+            }
+            setLogicFrom(resultCheckResult);
+            return resultCheckResult;
+        }
+        CheckResult<RESULT> resultCheckResult = this.readCache(inputToCheckerArg);
         if (resultCheckResult != null) {
             return resultCheckResult;
         }
-
         resultCheckResult = this.doCheck(inputToCheckerArg);
-
         if (resultCheckResult == null) {
             logger.error("checker result is NUll logicForm " + this.logicFrom());
             throw new RuntimeException("result cannot be Null " + this.logicFrom());
         }
         setLogicFrom(resultCheckResult);
-
-        putCacheIfNeed(inputToCheckerArg, resultCheckResult);
+        putCache(inputToCheckerArg, resultCheckResult);
         return resultCheckResult;
     }
 
@@ -44,10 +71,7 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
         return true;
     }
 
-    private void putCacheIfNeed(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, CheckResult<RESULT> checkResult) {
-        if (!enableCache()) {
-            return;
-        }
+    private void putCache(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, CheckResult<RESULT> checkResult) {
         try {
             boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableCacheContext();
             if (!enableOnThisContext) {
@@ -61,10 +85,7 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
         }
     }
 
-    private CheckResult<RESULT> readCacheIfNeed(InputToCheckerArg<INPUT_ARG> inputToCheckerArg) {
-        if (!enableCache()) {
-            return null;
-        }
+    private CheckResult<RESULT> readCache(InputToCheckerArg<INPUT_ARG> inputToCheckerArg) {
         try {
             boolean enableOnThisContext = PurahCheckInstanceCacheContext.isEnableCacheContext();
             if (enableOnThisContext) {
@@ -78,31 +99,23 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
         }
     }
 
-    Class<?> inputArgClass;
-    Class<?> resultDataClass;
 
     @Override
     public Class<?> inputArgClass() {
-        if (inputArgClass != null) return inputArgClass;
-        inputArgClass = Checker.super.inputArgClass();
-
-        return inputArgClass;
+       return info().inputArgClass;
     }
 
     @Override
     public Class<?> resultDataClass() {
-        if (resultDataClass != null) return resultDataClass;
-        resultDataClass = Checker.super.resultDataClass();
-        return resultDataClass;
+        return info().resultDataClass;
     }
 
     public void setLogicFrom(CheckResult<?> checkResult) {
-        checkResult.setCheckLogicFrom(logicFrom());
+        checkResult.setCheckLogicFrom(info().logicFrom);
     }
 
 
     protected abstract CheckResult<RESULT> doCheck(InputToCheckerArg<INPUT_ARG> inputToCheckerArg);
-
 
 
     protected LogicCheckResult<RESULT> success(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
@@ -110,14 +123,7 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
     }
 
     protected LogicCheckResult<RESULT> failed(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
-
         return LogicCheckResult.failedBuildLog(inputToCheckerArg, result);
     }
-
-//    protected LogicCheckResult<RESULT> error(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, Exception e) {
-//
-//        return LogicCheckResult.errorBuildLog(inputToCheckerArg, e);
-//
-//    }
 
 }

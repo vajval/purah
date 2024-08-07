@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@EnablePurah
+@EnablePurah(argResolverFastInvokeCache = true)
 public class ExampleApplication {
 
     public static void main(String[] args) {

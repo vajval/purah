@@ -51,21 +51,21 @@ public class ByLogicMethodCheckerTest {
     void doCheck() {
         Checker<Object, Object> checker = purahs.checkerOf("nameNotEmpty");
 
-        Assertions.assertTrue(checker.check("123"));
-        Assertions.assertTrue(checker.check(People.elder));
+        Assertions.assertTrue(checker.oCheck("123"));
+        Assertions.assertTrue(checker.oCheck(People.elder));
 
-        Assertions.assertFalse(checker.check(""));
-        Assertions.assertFalse(checker.check(new People()));
+        Assertions.assertFalse(checker.oCheck(""));
+        Assertions.assertFalse(checker.oCheck(new People()));
 
 
         ComboBuilderChecker comboBuilderChecker = purahs.combo("nameNotEmpty").match(new GeneralFieldMatcher("child#0.name"), "nameNotEmpty");
 
-        Assertions.assertTrue(comboBuilderChecker.check(People.elder));
+        Assertions.assertTrue(comboBuilderChecker.oCheck(People.elder));
 
 
-        Assertions.assertFalse(comboBuilderChecker.check(new People()));// no name
-        Assertions.assertTrue(comboBuilderChecker.check(People.elder));//String
-        Assertions.assertFalse(comboBuilderChecker.check(People.grandson));// no child
+        Assertions.assertFalse(comboBuilderChecker.oCheck(new People()));// no name
+        Assertions.assertTrue(comboBuilderChecker.oCheck(People.elder));//String
+        Assertions.assertFalse(comboBuilderChecker.oCheck(People.grandson));// no child
 
 
     }

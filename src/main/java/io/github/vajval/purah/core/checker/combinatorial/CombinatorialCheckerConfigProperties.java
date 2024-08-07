@@ -28,9 +28,6 @@ public class CombinatorialCheckerConfigProperties {
 
         CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(purahs);
 
-//        Purahs purahs = purahContext.purahs();
-
-
         config.setMainExecType(this.getMainMode());
         config.setForRootInputArgCheckerNames(this.getUseCheckerNames());
         config.setName(this.getCheckerName());

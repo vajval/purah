@@ -26,15 +26,15 @@ class BaseSupportCacheCheckerTest {
 
     @Test
     void check() {
-        checker.check(1);
+        checker.oCheck(1);
         Assertions.assertEquals(count, 1);
-        checker.check(1);
+        checker.oCheck(1);
         Assertions.assertEquals(count, 2);
     }
 
     @Test
     void cache() {
-        checker.check(1);
+        checker.oCheck(1);
         Assertions.assertEquals(count, 1);
 
         PurahCheckInstanceCacheContext.execOnCacheContext(
@@ -45,11 +45,11 @@ class BaseSupportCacheCheckerTest {
     }
 
     public void check5() {
-        checker.check(1);
-        checker.check(1);
-        checker.check(1);
-        checker.check(1);
-        checker.check(1);
+        checker.oCheck(1);
+        checker.oCheck(1);
+        checker.oCheck(1);
+        checker.oCheck(1);
+        checker.oCheck(1);
 
     }
 }

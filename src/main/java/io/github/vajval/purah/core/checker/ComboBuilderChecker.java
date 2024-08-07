@@ -73,7 +73,7 @@ public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>
 
 
     @Override
-    public MultiCheckResult<CheckResult<?>> check(Object o) {
+    public MultiCheckResult<CheckResult<?>> oCheck(Object o) {
         return check(InputToCheckerArg.of(o));
     }
 

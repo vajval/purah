@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 public class AspectTestService {
     //"example:1[][*:custom_ann_check;*.*:custom_ann_check]"
     static int value = 0;
-    public static final String customSyntax = "example:1[][*:" + Checkers.Name.CUSTOM_ANN_CHECK + ";*.*:" + Checkers.Name.CUSTOM_ANN_CHECK + "]";
+
+    public static final String customSyntax = "example:1[][*|*.*:" + Checkers.Name.CUSTOM_ANN_CHECK + "]";
 
 
     @FillToMethodResult

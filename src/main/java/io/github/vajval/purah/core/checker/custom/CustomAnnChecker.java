@@ -32,12 +32,11 @@ import java.util.stream.Collectors;
  */
 
 public abstract class CustomAnnChecker extends AbstractBaseSupportCacheChecker<Object, List<CheckResult<?>>> {
+    protected final Map<Class<? extends Annotation>, GenericsProxyChecker> annCheckerMapping = new ConcurrentHashMap<>();
 
-    final Map<Class<? extends Annotation>, GenericsProxyChecker> annCheckerMapping = new ConcurrentHashMap<>();
+    protected final ExecMode.Main mainExecType;
 
-    final ExecMode.Main mainExecType;
-
-    final ResultLevel resultLevel;
+    protected final ResultLevel resultLevel;
 
     public CustomAnnChecker(ExecMode.Main mainExecType, ResultLevel resultLevel) {
         this.mainExecType = mainExecType;
@@ -78,7 +77,8 @@ public abstract class CustomAnnChecker extends AbstractBaseSupportCacheChecker<O
         MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel);
 
         for (Annotation enableAnnotation : enableAnnotations) {
-            multiCheckerExecutor.add(() -> annCheckerMapping.get(enableAnnotation.annotationType()).check(inputToCheckerArg));
+            GenericsProxyChecker genericsProxyChecker = annCheckerMapping.get(enableAnnotation.annotationType());
+            multiCheckerExecutor.add(genericsProxyChecker,inputToCheckerArg);
         }
         String annListLogStr = enableAnnotations.stream().map(i -> i.annotationType().getSimpleName()).collect(Collectors.joining(",", "[", "]"));
         String log = inputToCheckerArg.fieldPath() + "  @Ann:" + annListLogStr + " : " + this.name();

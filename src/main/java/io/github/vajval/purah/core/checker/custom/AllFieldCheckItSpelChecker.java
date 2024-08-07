@@ -47,7 +47,7 @@ public abstract class AllFieldCheckItSpelChecker extends AbstractBaseSupportCach
             CheckIt checkIt = value.annOnField(CheckIt.class);
             String[] array = (String[]) Arrays.stream(checkIt.value()).map(i -> spel(i, map,inputToCheckerArg)).toArray();
             ComboBuilderChecker combo = purahs.combo(array).mainMode(checkIt.mainMode()).resultLevel(checkIt.resultLevel());
-            multiCheckerExecutor.add(() -> combo.check(value));
+            multiCheckerExecutor.add(combo,value);
         }
         String log = inputToCheckerArg.fieldPath() + "  " + this.name();
         return multiCheckerExecutor.toMultiCheckResult(log);

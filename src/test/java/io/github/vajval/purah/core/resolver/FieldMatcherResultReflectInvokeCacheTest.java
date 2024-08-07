@@ -37,8 +37,6 @@ class FieldMatcherResultReflectInvokeCacheTest {
                 User.class, fixedMatcher, map
         );
         Map<String, InputToCheckerArg<?>> invokeMap = fieldMatcherResultReflectInvokeCache.invokeResultByCache(User.GOOD_USER_BAD_CHILD);
-        System.out.println(map);
-        System.out.println(invokeMap);
         for (Map.Entry<String, InputToCheckerArg<?>> argEntry : map.entrySet()) {
             Assertions.assertEquals(invokeMap.get(argEntry.getKey()), argEntry.getValue());
         }

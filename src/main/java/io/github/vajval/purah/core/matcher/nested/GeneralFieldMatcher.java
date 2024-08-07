@@ -217,9 +217,7 @@ public class GeneralFieldMatcher extends WrapListFieldMatcher<MultilevelFieldMat
     public String toString() {
         return "GeneralFieldMatcher{" +
                 "firstLevelFieldMatcher=" + firstLevelFieldMatcher +
-                ", firstLevelStr='" +  matchStrS.firstLevelStr + '\'' +
-                ", childStr='" +  matchStrS.childStr + '\'' +
-                '}';
+                ", machStr='" +  matchStr+"'}";
     }
 
 

@@ -46,26 +46,26 @@ public class ByAnnMethodCheckerTest {
 
         ComboBuilderChecker checker = purahs.combo().match(new GeneralFieldMatcher("name"), "test");
 
-        CheckResult<?> result = checker.check(People.elder);
+        CheckResult<?> result = checker.oCheck(People.elder);
         Assertions.assertTrue(result);
 
         checker = purahs.combo("test");
-        result = checker.check("123");
+        result = checker.oCheck("123");
         Assertions.assertFalse(result);//no ann
 
         checker = purahs.combo().match(new GeneralFieldMatcher("child#0.name"), "test");
 
 
-        result = checker.check(People.elder);
+        result = checker.oCheck(People.elder);
         Assertions.assertTrue(result);
 
 
         checker = purahs.combo().match(new GeneralFieldMatcher("child#0.id"), "test");
-        result = checker.check(People.elder);
+        result = checker.oCheck(People.elder);
         Assertions.assertFalse(result);  //no ann
 
         checker = purahs.combo().match(new GeneralFieldMatcher("child#0.child#0.child#0.id"), "test");
-        result = checker.check(People.elder);
+        result = checker.oCheck(People.elder);
         Assertions.assertFalse(result);  //no child
 
     }

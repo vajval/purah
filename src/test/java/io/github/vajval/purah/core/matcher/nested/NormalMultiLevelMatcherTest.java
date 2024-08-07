@@ -31,7 +31,7 @@ class NormalMultiLevelMatcherTest {
         purahs.reg(LambdaChecker.of(Object.class).build("notNull", Objects::nonNull));
         ComboBuilderChecker checker = purahs.combo().match(normalMatcher, "notNull");
         //noExistField child#5.child#0.id not exist
-        Assertions.assertTrue(checker.check(People.elder));
+        Assertions.assertTrue(checker.oCheck(People.elder));
 
     }
 

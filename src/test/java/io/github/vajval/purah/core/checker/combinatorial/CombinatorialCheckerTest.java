@@ -70,12 +70,18 @@ class CombinatorialCheckerTest {
         config.setResultLevel(ResultLevel.all);
         CombinatorialChecker combinatorialChecker = new CombinatorialChecker(config);
 
-        MultiCheckResult<CheckResult<?>> multiCheckResult = combinatorialChecker.check(trade);
+        MultiCheckResult<CheckResult<?>> multiCheckResult = combinatorialChecker.oCheck(trade);
         Assertions.assertEquals(2, multiCheckResult.data().size());
 
 
-        CheckResult<?> checkResult = multiCheckResult.data().get(0);
+
+        MultiCheckResult<?> matchListResult = ( MultiCheckResult<?>)multiCheckResult.data().get(0);
+
+        CheckResult<?> checkResult = matchListResult.data().get(0);//initiator:user_test
+
         Assertions.assertTrue(checkResult instanceof MultiCheckResult);
+        System.out.println(checkResult);
+
         MultiCheckResult<?> childResult = (MultiCheckResult) checkResult;
         Assertions.assertEquals(2, childResult.data().size());
         Assertions.assertTrue(childResult.data().get(0));
@@ -93,7 +99,7 @@ class CombinatorialCheckerTest {
     @Test
     public void all() {
         ComboBuilderChecker checker = comboBuilderChecker.mainMode(ExecMode.Main.all_success);
-        MultiCheckResult<CheckResult<?>> result = checker.check(trade);//
+        MultiCheckResult<CheckResult<?>> result = checker.oCheck(trade);//
         Assertions.assertFalse(result);
         Assertions.assertEquals(result.data().size(), 2);
     }
@@ -101,7 +107,7 @@ class CombinatorialCheckerTest {
     @Test
     public void all_success_but_must_check_all() {
         ComboBuilderChecker checker = comboBuilderChecker.mainMode(ExecMode.Main.all_success_but_must_check_all);
-        MultiCheckResult<CheckResult<?>> result = checker.check(trade);//xx√
+        MultiCheckResult<CheckResult<?>> result = checker.oCheck(trade);//xx√
         Assertions.assertFalse(result);
         Assertions.assertEquals(result.data().size(), 3);
     }
@@ -109,7 +115,7 @@ class CombinatorialCheckerTest {
     @Test
     public void at_least_one() {
         ComboBuilderChecker checker = comboBuilderChecker.mainMode(ExecMode.Main.at_least_one);
-        MultiCheckResult<CheckResult<?>> result = checker.check(trade);//xx√
+        MultiCheckResult<CheckResult<?>> result = checker.oCheck(trade);//xx√
         Assertions.assertTrue(result);
         Assertions.assertEquals(result.data().size(), 1);
     }
@@ -117,7 +123,7 @@ class CombinatorialCheckerTest {
     @Test
     public void at_least_one_but_must_check_all() {
         ComboBuilderChecker checker = comboBuilderChecker.mainMode(ExecMode.Main.at_least_one_but_must_check_all);
-        MultiCheckResult<CheckResult<?>> result = checker.check(trade);//xx√
+        MultiCheckResult<CheckResult<?>> result = checker.oCheck(trade);//xx√
         Assertions.assertTrue(result);
         Assertions.assertEquals(result.data().size(), 3);
     }

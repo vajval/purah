@@ -102,6 +102,9 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
 
     protected Checker<?, ?> getChecker(InputToCheckerArg<Object> inputToCheckerArg) {
+        if(defaultInputArgClass.clazz.equals(inputToCheckerArg.argClass())){
+            return defaultChecker;
+        }
         if (inputToCheckerArg.isNull() && (inputToCheckerArg.argClass() == null || inputToCheckerArg.argClass().equals(Object.class))) {
             if (!wrapperClassMap.containsValue(defaultInputArgClass.clazz)) {//not base type like int
                 return defaultChecker;

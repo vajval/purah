@@ -78,7 +78,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
         FixedMatcher fixedMatcher = new FixedMatcher("child#0.child#0.name|child#0|child#0.child|child#100|name|child#0.child#0.child|child");
         ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
         for (int i = 0; i < 3; i++) {
-            Assertions.assertTrue(checker.check(People.elder));
+            Assertions.assertTrue(checker.oCheck(People.elder));
         }
 
     }
@@ -155,7 +155,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
 
 
         for (int i = 0; i < 3*1000; i++) {//no cache 3*1000*1000=13s cache 9.5s
-            Assertions.assertTrue(checker.check(testUser));
+            Assertions.assertTrue(checker.oCheck(testUser));
         }
     }
 
@@ -168,7 +168,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
                 null, method, "test",AutoNull.notEnable);
 
         for (int i = 0; i < 10000; i++) {
-            Assertions.assertTrue(checker.check(People.elder).isSuccess());
+            Assertions.assertTrue(checker.oCheck(People.elder).isSuccess());
         }
     }
 

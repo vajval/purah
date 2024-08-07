@@ -13,6 +13,7 @@ import io.github.vajval.purah.core.resolver.ArgResolver;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
 import io.github.vajval.purah.core.matcher.nested.GeneralFieldMatcher;
 import io.github.vajval.purah.core.resolver.ReflectArgResolver;
+import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -59,8 +60,8 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
         }
     }
 
-    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull,Purahs purahs) {
-        super(methodsToCheckersBean, method, name,autoNull);
+    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull, Purahs purahs) {
+        super(methodsToCheckersBean, method, name, autoNull);
         this.resolver = purahs.argResolver();
         this.purahs = purahs;
     }
@@ -79,8 +80,8 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
         return new FixedMatcher(value);
     }
 
-    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull) {
-        super(methodsToCheckersBean, method, name,autoNull);
+    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull) {
+        super(methodsToCheckersBean, method, name, autoNull);
         String errorMsg = errorMsgAutoMethodCheckerByDefaultReflectArgResolver(methodsToCheckersBean, method);
 
         if (errorMsg != null) {
@@ -154,7 +155,7 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
                         continue;
                     }
                     if (!fieldParameter.clazz.isAssignableFrom(childArg.argClass())) {
-                        throw new InitCheckerException("method cannot support arg[" + index + "] class: " + childArg.argClass() + " param class: " + fieldParameter.clazz.getName() + "method:  " + method.toGenericString());
+                        throw new InitCheckerException("method cannot support arg[" + index + "] class: " + childArg.argClass() + " param class: " + fieldParameter.clazz.getName() + "      method:  " + method.toGenericString());
                     }
                     objects[index] = childArg.argValue();
                 } else if (fieldParameter.clazz.equals(Map.class)) {
@@ -167,6 +168,19 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
                     Set<Object> set = Sets.newHashSetWithExpectedSize(map.size());
                     map.values().forEach(w -> set.add(w.argValue()));
                     objects[index] = set;
+                } else {
+                    Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(inputToCheckerArg, fieldParameter.fieldMatcher);
+                    if (CollectionUtils.isEmpty(map)) {
+                        objects[index] = null;
+                    } else if (map.size() == 1) {
+                        InputToCheckerArg<?> childArg =  map.values().iterator().next();
+                        if (!fieldParameter.clazz.isAssignableFrom(childArg.argClass())) {
+                            throw new InitCheckerException("method cannot support arg[" + index + "] class: " + childArg.argClass() + " param class: " + fieldParameter.clazz.getName() + "      method:  " + method.toGenericString());
+                        }
+                        objects[index] =childArg.argValue();
+                    } else {
+                        throw new RuntimeException();
+                    }
                 }
 
 

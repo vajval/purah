@@ -6,11 +6,25 @@
       "valueList": [
         {
           "main": "success: 'id':''check1,check2'",
-          "valueList": [{"logic": "success:'id':check1"},{"logic": "success:'id':check2"}]
+          "valueList": [
+            {
+              "logic": "success:'id':check1"
+            },
+            {
+              "logic": "success:'id':check2"
+            }
+          ]
         },
         {
           "main": "success: 'name':''check1,check2'",
-          "valueList": [{"logic": "success:'name':check1"}, {"logic": "success:'name':check2"}]
+          "valueList": [
+            {
+              "logic": "success:'name':check1"
+            },
+            {
+              "logic": "success:'name':check2"
+            }
+          ]
         }
       ]
     }

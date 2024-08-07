@@ -17,8 +17,8 @@ public class GenericsProxyCheckerTest {
     @Test
     void get3() {
         GenericsProxyChecker genericsProxyChecker = GenericsProxyChecker.createByChecker(intChecker);
-        Assertions.assertTrue(genericsProxyChecker.check(1));
-        Assertions.assertFalse(genericsProxyChecker.check(2));
+        Assertions.assertTrue(genericsProxyChecker.oCheck(1));
+        Assertions.assertFalse(genericsProxyChecker.oCheck(2));
         Assertions.assertThrows(CheckException.class,()-> genericsProxyChecker.check(null));
     }
 
@@ -28,20 +28,20 @@ public class GenericsProxyCheckerTest {
 
         GenericsProxyChecker genericsProxyChecker = GenericsProxyChecker.createByChecker(longChecker);
 
-        CheckResult<Object> result = genericsProxyChecker.check(1L);
+        CheckResult<Object> result = genericsProxyChecker.oCheck(1L);
         Assertions.assertTrue(result);
 
 
-        Assertions.assertThrows(CheckException.class, () -> genericsProxyChecker.check(User.GOOD_USER));
+        Assertions.assertThrows(CheckException.class, () -> genericsProxyChecker.oCheck(User.GOOD_USER));
 
         genericsProxyChecker.addNewChecker(userChecker);
-        result = genericsProxyChecker.check(User.GOOD_USER);
+        result = genericsProxyChecker.oCheck(User.GOOD_USER);
 
         Assertions.assertTrue(result);
 
-        Assertions.assertFalse(genericsProxyChecker.check(User.BAD_USER));
+        Assertions.assertFalse(genericsProxyChecker.oCheck(User.BAD_USER));
 
-        Assertions.assertThrows(CheckException.class, () -> genericsProxyChecker.check("123"));
+        Assertions.assertThrows(CheckException.class, () -> genericsProxyChecker.oCheck("123"));
 
 
     }

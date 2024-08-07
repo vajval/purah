@@ -45,7 +45,7 @@ public class IocTest {
         Assertions.assertEquals(TestCallBack.value, 1);
         Assertions.assertDoesNotThrow(() -> purahs.checkerOf("user_reg"));
         System.out.println(purahConfigPropertiesBean);
-        CheckResult<Object> result = purahs.checkerOf("用户注册检查").check(new User(null, null, null, null));
+        CheckResult<Object> result = purahs.checkerOf("用户注册检查").oCheck(new User(null, null, null, null));
         System.out.println(result);
 
     }
@@ -61,7 +61,7 @@ public class IocTest {
         Assertions.assertThrows(Exception.class, () -> purahs.checkerOf("auto_null_ignore").check(null).isSuccess());
         Assertions.assertThrows(Exception.class, () -> purahs.checkerOf("auto_null_ignore").check(null).isFailed());
         Assertions.assertFalse(purahs.checkerOf("auto_null_notEnable").check(null));
-        Assertions.assertTrue(purahs.checkerOf("auto_null_notEnable").check("123"));
+        Assertions.assertTrue(purahs.checkerOf("auto_null_notEnable").oCheck("123"));
         Assertions.assertTrue(purahs.checkerOf("auto_null_ignore_combo").check(null));
         Assertions.assertFalse(purahs.checkerOf("auto_null_ignore_combo_failed").check(null));
 

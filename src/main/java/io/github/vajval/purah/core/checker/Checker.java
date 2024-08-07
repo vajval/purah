@@ -8,7 +8,7 @@ import org.springframework.core.ResolvableType;
 public interface Checker<INPUT_ARG, RESULT> extends IName {
 
 
-    default CheckResult<RESULT> check(INPUT_ARG inputArg) {
+    default CheckResult<RESULT> oCheck(INPUT_ARG inputArg) {
         return check(InputToCheckerArg.of(inputArg, inputArgClass()));
     }
     /*

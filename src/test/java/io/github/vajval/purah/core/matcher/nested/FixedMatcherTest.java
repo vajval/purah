@@ -45,7 +45,7 @@ class FixedMatcherTest {
         purahs.reg(LambdaChecker.of(Object.class).build("notNull", Objects::nonNull));
         ComboBuilderChecker checker = purahs.combo().match(fixedMatcher, "notNull");
         //noExistField child#5.child#0.id is null
-        Assertions.assertFalse(checker.check(People.elder));
+        Assertions.assertFalse(checker.oCheck(People.elder));
 
 
     }

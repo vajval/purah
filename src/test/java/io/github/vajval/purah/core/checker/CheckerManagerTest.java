@@ -26,36 +26,36 @@ public class CheckerManagerTest {
         checkerManager.reg(GenericsProxyCheckerTest.userChecker);
         GenericsProxyChecker genericsProxyChecker = checkerManager.of("id1");
 
-        Assertions.assertThrows(CheckException.class, () -> checkerManager.of("id1").check(1L));//no long
+        Assertions.assertThrows(CheckException.class, () -> checkerManager.of("id1").oCheck(1L));//no long
 
 
         checkerManager.reg(GenericsProxyCheckerTest.longChecker);
-        Assertions.assertTrue(genericsProxyChecker.check(1L));//have long
+        Assertions.assertTrue(genericsProxyChecker.oCheck(1L));//have long
 
 
-        Assertions.assertThrows(CheckException.class, () -> genericsProxyChecker.check(1));//no int
+        Assertions.assertThrows(CheckException.class, () -> genericsProxyChecker.oCheck(1));//no int
         LambdaCheckerFactory<Integer> intCheckerFactory = LambdaCheckerFactory.of(Integer.class).build("id*", (a, b) -> {
             Integer name = Integer.parseInt(a.replace("id", ""));
             return Objects.equals(name, b);
         });
         checkerManager.addCheckerFactory(intCheckerFactory);
-        Assertions.assertTrue(genericsProxyChecker.check(1));                           //have int
+        Assertions.assertTrue(genericsProxyChecker.oCheck(1));                           //have int
 
 
-        Assertions.assertThrows(CheckException.class, () -> genericsProxyChecker.check("2"));//no String
+        Assertions.assertThrows(CheckException.class, () -> genericsProxyChecker.oCheck("2"));//no String
         LambdaCheckerFactory<String> stringCheckerFactory = LambdaCheckerFactory.of(String.class).build("id*",
                 (a, b) -> Objects.equals(a.replace("id", ""), b));
         checkerManager.addCheckerFactory(stringCheckerFactory);
-        Assertions.assertTrue(checkerManager.of("id1").check("1"));   //have string
+        Assertions.assertTrue(checkerManager.of("id1").oCheck("1"));   //have string
 
-        Assertions.assertThrows(CheckException.class, () -> checkerManager.of("id2").check(2L));//no long
+        Assertions.assertThrows(CheckException.class, () -> checkerManager.of("id2").oCheck(2L));//no long
 
 
-        CheckResult<Object> result = checkerManager.of("id5").check(5);
+        CheckResult<Object> result = checkerManager.of("id5").oCheck(5);
         Assertions.assertTrue(result);
-        result = checkerManager.of("id100").check("100");
+        result = checkerManager.of("id100").oCheck("100");
         Assertions.assertTrue(result);
-        result = checkerManager.of("id4396").check(2200);
+        result = checkerManager.of("id4396").oCheck(2200);
         Assertions.assertFalse(result);
     }
 

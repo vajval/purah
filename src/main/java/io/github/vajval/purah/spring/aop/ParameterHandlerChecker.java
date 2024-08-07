@@ -51,8 +51,8 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
         return true;
     }
     @Override
-    public ArgCheckResult check(Object o) {
-        return (ArgCheckResult) super.check(o);
+    public ArgCheckResult oCheck(Object o) {
+        return (ArgCheckResult) super.oCheck(o);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
         List<Checker<Object,Object>> checkerList = checkerNameList.stream().map(purahs::checkerOf).collect(Collectors.toList());
 
         for (Checker<?, ?> checker : checkerList) {
-            executor.add(checkArg, checker);
+            executor.add( checker,checkArg);
         }
 
         String log = "arg" + index + "  of method:" + method.toGenericString();

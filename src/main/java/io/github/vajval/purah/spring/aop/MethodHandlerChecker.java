@@ -101,7 +101,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
     }
 
     @Override
-    public MethodHandlerCheckResult check(Object[] inputArg) {
+    public MethodHandlerCheckResult oCheck(Object[] inputArg) {
         return check(InputToCheckerArg.of(inputArg, inputArgClass()));
     }
 
@@ -120,7 +120,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
             }
             Object arg = args[index];
             InputToCheckerArg<Object> parameterArg = InputToCheckerArg.of(arg, checker.argClazz());
-            multiCheckerExecutor.add(() -> checker.check(parameterArg));
+            multiCheckerExecutor.add( checker,parameterArg);
         }
 
 
