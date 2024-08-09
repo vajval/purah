@@ -39,12 +39,16 @@ public class GeneralFieldMatcher extends WrapListFieldMatcher<MultilevelFieldMat
     protected MatchStrS matchStrS;
     protected IDefaultFieldMatcher firstLevelFieldMatcher;
 
+    private NestedMatchInfo nestedMatchInfo;
+
     public GeneralFieldMatcher(String matchStr) {
         super(matchStr);
         if (wrapChildList == null) {
             matchStrS = new MatchStrS(matchStr);
             String childStr = matchStrS.childStr;
+
             firstLevelFieldMatcher = new WildCardMatcher(matchStrS.firstLevelStr);
+
             isFixed = !isWildCardMatcher(childStr) && !isWildCardMatcher(matchStrS.firstLevelStr);
             if (childStr == null) {
                 childIsWildCard = false;
@@ -53,9 +57,10 @@ public class GeneralFieldMatcher extends WrapListFieldMatcher<MultilevelFieldMat
                 childIsWildCard = isWildCardMatcher(childStr);
                 childIsMultiLevel = childStr.contains(".") || childStr.contains("#");
             }
+
+
         }
     }
-
 
 
     @Override
@@ -87,15 +92,10 @@ public class GeneralFieldMatcher extends WrapListFieldMatcher<MultilevelFieldMat
     }
 
 
-
-
-
-
     @Override
     public boolean matchBySelf(String field, Object belongInstance) {
         return firstLevelFieldMatcher.match(field, belongInstance);
     }
-
 
 
     @Override
@@ -108,12 +108,15 @@ public class GeneralFieldMatcher extends WrapListFieldMatcher<MultilevelFieldMat
     }
 
 
-
     @Override
     public Set<String> matchFields(Set<String> fields, Object belongInstance) {
+
         Set<String> result = new HashSet<>();
         if (wrapChildList == null) {
-            return firstLevelFieldMatcher.matchFields(fields,belongInstance);
+            if (belongInstance == null) {
+                return new HashSet<>();
+            }
+            return firstLevelFieldMatcher.matchFields(fields, belongInstance);
         }
         for (MultilevelFieldMatcher multilevelFieldMatcher : wrapChildList) {
             result.addAll(multilevelFieldMatcher.matchFields(fields, belongInstance));
@@ -143,6 +146,7 @@ public class GeneralFieldMatcher extends WrapListFieldMatcher<MultilevelFieldMat
             return NestedMatchInfo.justNested(fieldMatchers);
         }
         String childStr = matchStrS.childStr;
+
         if (childStr == null) {
             return NestedMatchInfo.justCollected;
         }
@@ -153,7 +157,7 @@ public class GeneralFieldMatcher extends WrapListFieldMatcher<MultilevelFieldMat
             if (childIsMultiLevel) {
                 return NestedMatchInfo.justNested(new GeneralFieldMatcher(childStr));
             } else {
-                return NestedMatchInfo.justNested(new WildCardMatcher(childStr));
+                return NestedMatchInfo.justNested(new GeneralFieldMatcher(childStr));
             }
         } else {
             return NestedMatchInfo.justNested(new NormalMultiLevelMatcher(childStr));
@@ -202,6 +206,7 @@ public class GeneralFieldMatcher extends WrapListFieldMatcher<MultilevelFieldMat
 
     @Override
     protected boolean matchStrCanCache(String matchSer) {
+//        return false;
         if (matchSer.contains("#")) {
             return false;
         }
@@ -217,9 +222,8 @@ public class GeneralFieldMatcher extends WrapListFieldMatcher<MultilevelFieldMat
     public String toString() {
         return "GeneralFieldMatcher{" +
                 "firstLevelFieldMatcher=" + firstLevelFieldMatcher +
-                ", machStr='" +  matchStr+"'}";
+                ", machStr='" + matchStr + "'}";
     }
-
 
 
 }

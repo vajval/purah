@@ -101,7 +101,7 @@ public class ClassReflectCache {
 
 
     public Map<String, InputToCheckerArg<?>> thisLevelMatchFieldValueMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
-        Set<String> matchFieldList = matcherThisLevelFieldsCache.computeIfAbsent(fieldMatcher, i -> fieldMatcher.matchFields(fieldInvokeFunctionMapping.keySet(), inputToCheckerArg.argValue()));
+        Set<String> matchFieldList =  fieldMatcher.matchFields(fieldInvokeFunctionMapping.keySet(), inputToCheckerArg.argValue());
         Map<String, InputToCheckerArg<?>> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
         for (String matchFieldStr : matchFieldList) {
             Function<InputToCheckerArg<?>, InputToCheckerArg<?>> function = fieldInvokeFunctionMapping.get(matchFieldStr);

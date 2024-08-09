@@ -178,6 +178,7 @@ public class PurahIocRegS {
                 GenericsProxyChecker checker = purahs.reg(properties);
                 logger.info("reg checker {} by properties {}", checker.name(), properties);
             } catch (Exception e) {
+                e.printStackTrace();
                 logger.error("reg error by properties {}", properties, e);
             }
         }

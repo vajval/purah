@@ -19,11 +19,15 @@ public class MultiCheckerExecutor {
     private ExecInfo execInfo;
     private final ResultLevel resultLevel;
 
-    private List<CheckResult<?>> finalExecResult = new ArrayList<>();
+    private List<CheckResult<?>> finalExecResult;
     private final List<CheckerExec> checkSupplierExecList = new ArrayList<>();
 
+    private LogicCheckResult<Object> successMainResult;
+    private LogicCheckResult<Object> failedMainResult;
+    private List<ExecInfo> execInfoList;
 
-    public MultiCheckerExecutor(ExecMode.Main mainExecMode, ResultLevel resultLevel) {
+
+    public MultiCheckerExecutor(ExecMode.Main mainExecMode, ResultLevel resultLevel, String log) {
         this.mainExecMode = mainExecMode;
         this.resultLevel = resultLevel;
         if (mainExecMode == ExecMode.Main.all_success || mainExecMode == ExecMode.Main.all_success_but_must_check_all) {
@@ -31,10 +35,14 @@ public class MultiCheckerExecutor {
         } else if (mainExecMode == ExecMode.Main.at_least_one || mainExecMode == ExecMode.Main.at_least_one_but_must_check_all) {
             execInfo = ExecInfo.failed;
         }
+        successMainResult = LogicCheckResult.success(null, ExecInfo.success.value() + " (" + log + ")");
+        failedMainResult = LogicCheckResult.failed(null, ExecInfo.failed.value() + " (" + log + ")");
     }
 
-
     public void add(CheckerExec checkerExec) {
+        if (finalExecResult != null) {
+            throw new RuntimeException("只能执行一次");
+        }
         checkSupplierExecList.add(checkerExec);
     }
 
@@ -43,18 +51,14 @@ public class MultiCheckerExecutor {
         add(new CheckerExec(checker, inputToCheckerArg));
     }
 
-    public List<ExecInfo> getExecInfoList() {
-        return execInfoList;
-    }
-
-    public List<ExecInfo> execInfoList = new ArrayList<>();
 
     private void exec(List<CheckerExec> supplierList) {
-        finalExecResult = new ArrayList<>(checkSupplierExecList.size());
+
+        finalExecResult = new ArrayList<>();
+        execInfoList=new ArrayList<>();
         for (CheckerExec supplier : supplierList) {
             CheckResult<?> checkResult = supplier.exec();
             execInfoList.add(checkResult.execInfo());
-
             if (resultLevel.needBeCollected(checkResult)) {
                 this.finalExecResult.add(checkResult);
             }
@@ -77,22 +81,22 @@ public class MultiCheckerExecutor {
                 }
             }
         }
-
-
     }
 
-
-    public MultiCheckResult<CheckResult<?>> toMultiCheckResult(String log) {
-        exec(checkSupplierExecList);
-        LogicCheckResult<Object> mainResult = null;
-        if (execInfo.equals(ExecInfo.success)) {
-            mainResult = LogicCheckResult.success(null, execInfo.value() + " (" + log + ")");
-        } else if (execInfo.equals(ExecInfo.failed)) {
-            mainResult = LogicCheckResult.failed(null, execInfo.value() + " (" + log + ")");
+    public List<ExecInfo> getExecInfoList() {
+        if (finalExecResult == null) {
+            throw new RuntimeException("还没执行呢");
         }
-        return new MultiCheckResult<>(mainResult, finalExecResult);
+        return execInfoList;
+    }
 
-
+    public MultiCheckResult<CheckResult<?>> execToMultiCheckResult() {
+        exec(checkSupplierExecList);
+        if (execInfo.equals(ExecInfo.failed)) {
+            return new MultiCheckResult<>(failedMainResult, finalExecResult);
+        } else {
+            return new MultiCheckResult<>(successMainResult, finalExecResult);
+        }
     }
 
 

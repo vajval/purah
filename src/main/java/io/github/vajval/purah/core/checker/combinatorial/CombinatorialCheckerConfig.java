@@ -18,13 +18,17 @@ public class CombinatorialCheckerConfig {
 
     ExecMode.Main mainExecType = ExecMode.Main.all_success;
 
-     String name;
+    String name;
 
-     String logicFrom;
+    String logicFrom;
 
-     ResultLevel resultLevel=ResultLevel.only_failed_only_base_logic;
+    ResultLevel resultLevel = ResultLevel.only_failed_only_base_logic;
 
-     List<String> forRootInputArgCheckerNames = new ArrayList<>();
+    List<String> forRootInputArgCheckerNames = new ArrayList<>();
+
+    protected  int reOrderCount=-1;
+
+
 
     public final List<FieldMatcherCheckerConfig> fieldMatcherCheckerConfigList = new ArrayList<>();
 
@@ -75,6 +79,14 @@ public class CombinatorialCheckerConfig {
 
     public List<String> getForRootInputArgCheckerNames() {
         return forRootInputArgCheckerNames;
+    }
+
+    public int getReOrderCount() {
+        return reOrderCount;
+    }
+
+    public void setReOrderCount(int reOrderCount) {
+        this.reOrderCount = reOrderCount;
     }
 
     @Override

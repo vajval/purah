@@ -46,7 +46,9 @@ public class PurahConfigProperties {
         protected int resultLevel = ResultLevel.only_failed_only_base_logic.value();
 
         protected int execType = ExecMode.Main.all_success.value();
+
         protected String checkers;
+        protected int autoReOrder = -1;
 
 
         protected LinkedHashMap<String, LinkedHashMap<String, String>> mapping = new LinkedHashMap<>(0);
@@ -55,7 +57,7 @@ public class PurahConfigProperties {
         public CombinatorialCheckerConfigProperties toCombinatorialCheckerConfigProperties() {
             CombinatorialCheckerConfigProperties result = new CombinatorialCheckerConfigProperties(name);
             result.setLogicFrom("PurahConfigProperties.CombinatorialCheckerProperties{" + this + "}");
-            if(StringUtils.hasText(checkers)){
+            if (StringUtils.hasText(checkers)) {
                 result.setUseCheckerNames(split(checkers));
             }
             for (Map.Entry<String, LinkedHashMap<String, String>> entry : mapping.entrySet()) {
@@ -67,6 +69,7 @@ public class PurahConfigProperties {
             }
             result.setResultLevel(ResultLevel.valueOf(resultLevel));
             result.setMainMode(ExecMode.Main.valueOf(execType));
+            result.setReOrderCount(autoReOrder);
             return result;
         }
 
@@ -83,10 +86,15 @@ public class PurahConfigProperties {
         }
 
         public void setCheckers(String checkers) {
-            if (checkers != null) {
-                this.checkers = checkers;
-            }
+            this.checkers = checkers;
+        }
 
+        public int getAutoReOrder() {
+            return autoReOrder;
+        }
+
+        public void setAutoReOrder(int autoReOrder) {
+            this.autoReOrder = autoReOrder;
         }
 
         public int getResultLevel() {

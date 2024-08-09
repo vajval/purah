@@ -29,7 +29,7 @@ public class WildCardMatcher extends WrapListFieldMatcher<WildCardMatcher> {
 
     @Override
     protected boolean matchStrCanCache(String matchSer) {
-        return true;
+        return false;
     }
 
 }

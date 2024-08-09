@@ -42,6 +42,9 @@ public class NormalMultiLevelMatcher extends BaseNestMatcher implements ListInde
     @Override
 
     public Set<String> matchFields(Set<String> fields, Object belongInstance) {
+        if (belongInstance == null) {
+            return new HashSet<>(0);
+        }
         if (matchStrS != null) {
             if (fields.contains(matchStrS.fullMatchStr)) {
                 return Collections.singleton(matchStrS.fullMatchStr);

@@ -44,9 +44,6 @@ public class FixedMatcher extends BaseNestMatcher implements ListIndexMatcher, M
     @Override
     public Set<String> matchFields(Set<String> fields, Object belongInstance) {
         if (matchStrS != null) {
-            if (fields.contains(matchStrS.fullMatchStr)) {
-                return Collections.singleton(matchStrS.fullMatchStr);
-            }
             if (fields.contains(matchStrS.firstLevelStr)) {
                 return Collections.singleton(matchStrS.firstLevelStr);
             }

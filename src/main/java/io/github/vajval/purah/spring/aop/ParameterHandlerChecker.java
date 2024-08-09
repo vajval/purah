@@ -62,9 +62,9 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
 
     @Override
     public ArgCheckResult doCheck(InputToCheckerArg<Object> checkArg) {
+        String log = "arg" + index + "  of method:" + method.toGenericString();
 
-
-        MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.mainMode(), checkIt.resultLevel());
+        MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.mainMode(), checkIt.resultLevel(),log);
 
 
         List<Checker<Object,Object>> checkerList = checkerNameList.stream().map(purahs::checkerOf).collect(Collectors.toList());
@@ -73,10 +73,10 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
             executor.add( checker,checkArg);
         }
 
-        String log = "arg" + index + "  of method:" + method.toGenericString();
 
 
-        MultiCheckResult<CheckResult<?>> multiCheckResult = executor.toMultiCheckResult(log);
+
+        MultiCheckResult<CheckResult<?>> multiCheckResult = executor.execToMultiCheckResult();
 
 
         return ArgCheckResult.create(multiCheckResult.mainResult(), checkerNameList,

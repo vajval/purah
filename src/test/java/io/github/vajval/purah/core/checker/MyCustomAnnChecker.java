@@ -37,6 +37,11 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
 
 //    @Override
 //    public MultiCheckResult<CheckResult<?>> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
+//        MultiCheckResult<CheckResult<?>> checkResultMultiCheckResult = super.doCheck(inputToCheckerArg);
+//        return new MultiCheckResult<>(LogicCheckResult.success(), Collections.emptyList());
+//    }
+    //    @Override
+//    public MultiCheckResult<CheckResult<?>> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
 ////        return LogicCheckResult.success();
 //        List<Annotation> enableAnnotations = inputToCheckerArg.annListOnField().stream()
 //                .filter(i -> annCheckerMapping.containsKey(i.annotationType()))

@@ -2,6 +2,7 @@ package io.github.vajval.purah.core.matcher.nested;
 
 import com.google.common.collect.Lists;
 import io.github.vajval.purah.core.resolver.DefaultArgResolver;
+import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 import io.github.vajval.purah.util.People;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,8 +11,26 @@ import io.github.vajval.purah.core.checker.InputToCheckerArg;
 
 import java.util.Map;
 
+import static io.github.vajval.purah.util.User.GOOD_USER;
+import static io.github.vajval.purah.util.User.GOOD_USER_BAD_CHILD;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 
 public class GeneralMultilevelFieldMatcherTest {
+
+
+    @Test
+    public void generalFieldMatcherqwe3() {
+        DefaultArgResolver resolver = new DefaultArgResolver();
+
+        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.getMatchFieldObjectMap(GOOD_USER_BAD_CHILD, new GeneralFieldMatcher("*|*.*"));
+
+        System.out.println(matchFieldObjectMap.keySet());
+        resolver.getMatchFieldObjectMap(GOOD_USER_BAD_CHILD, new GeneralFieldMatcher("*|*.*"));
+
+        System.out.println(matchFieldObjectMap.keySet());
+
+    }
 
     @Test
 
@@ -108,8 +127,6 @@ public class GeneralMultilevelFieldMatcherTest {
         Assertions.assertTrue(objectMap.get("child#1.child#1.name").argEquals(People.granddaughterForDaughter.getName()));
 
     }
-
-
 
 
 }

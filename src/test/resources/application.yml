@@ -4,11 +4,11 @@ logging:
 purah:
   combo_checker:
     - name: user_reg
-      checkers: "abc"
-      mapping:
-        wild_card:
-          age: age_check
-          "[address|parent_address]": national_check
-          "[*name*]": name_validity_check
-        class_name:
-          java.lang.String: sensitive_word_check
+#      checkers: "age_check"
+#      mapping:
+#        wild_card:
+#          age: age_check
+#          "[address|parent_address]": national_check
+#          "[*name*]": name_validity_check
+#        class_name:
+#          java.lang.String: sensitive_word_check

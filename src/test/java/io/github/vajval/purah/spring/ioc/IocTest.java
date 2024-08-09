@@ -43,6 +43,7 @@ public class IocTest {
         Assertions.assertTrue(containsMatcherFactory(ReverseStringMatcherFactory.NAME));
         Assertions.assertFalse(containsMatcherFactory(IocIgnoreMatcher.NAME));
         Assertions.assertEquals(TestCallBack.value, 1);
+        System.out.println(purahConfigPropertiesBean);
         Assertions.assertDoesNotThrow(() -> purahs.checkerOf("user_reg"));
         System.out.println(purahConfigPropertiesBean);
         CheckResult<Object> result = purahs.checkerOf("用户注册检查").oCheck(new User(null, null, null, null));

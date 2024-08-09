@@ -109,8 +109,8 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
     public MethodHandlerCheckResult doCheck(InputToCheckerArg<Object[]> inputToCheckerArg) {
         Object[] args = inputToCheckerArg.argValue();
 
-
-        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(execMode, resultLevel);
+        String log = bean.getClass() + ":" + method.getName();
+        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(execMode, resultLevel,log);
 
         for (int index = 0; index < args.length; index++) {
 
@@ -124,8 +124,8 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
         }
 
 
-        String log = bean.getClass() + ":" + method.getName();
-        MultiCheckResult<ArgCheckResult> multiCheckResult = (MultiCheckResult) multiCheckerExecutor.toMultiCheckResult(log);
+
+        MultiCheckResult<ArgCheckResult> multiCheckResult = (MultiCheckResult) multiCheckerExecutor.execToMultiCheckResult();
         Iterator<ArgCheckResult> iterator = multiCheckResult.data().iterator();
 
         List<ArgCheckResult> resultValueList = new ArrayList<>();

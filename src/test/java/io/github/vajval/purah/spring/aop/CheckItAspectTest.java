@@ -1,19 +1,18 @@
 package io.github.vajval.purah.spring.aop;
 
-import io.github.vajval.purah.core.checker.ComboBuilderChecker;
-import io.github.vajval.purah.core.checker.InputToCheckerArg;
-import io.github.vajval.purah.core.checker.MyCustomAnnChecker;
+import io.github.vajval.purah.core.checker.*;
 import io.github.vajval.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
+import io.github.vajval.purah.core.checker.combinatorial.ExecMode;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import io.github.vajval.purah.core.checker.result.MultiCheckResult;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
 import io.github.vajval.purah.core.resolver.ArgResolver;
+import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import io.github.vajval.purah.ExampleApplication;
 import io.github.vajval.purah.core.Purahs;
-import io.github.vajval.purah.core.checker.GenericsProxyChecker;
 import io.github.vajval.purah.core.matcher.nested.GeneralFieldMatcher;
 import io.github.vajval.purah.spring.aop.exception.MethodArgCheckException;
 import io.github.vajval.purah.spring.aop.result.ArgCheckResult;
@@ -24,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.StopWatch;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -67,18 +67,6 @@ public class CheckItAspectTest {
     }
 
     @Test
-    public void aop2() {
-        aop3(BAD_USER);
-        Assertions.assertEquals(AspectTestService.value, 0);
-
-        aop3(GOOD_USER);
-        Assertions.assertEquals(AspectTestService.value, 1);
-        aop3(BAD_USER);
-        Assertions.assertEquals(AspectTestService.value, 1);
-
-    }
-
-    @Test
     public void aop() {
         assertTrue(aspectTestService.checkThreeUser(GOOD_USER, GOOD_USER, GOOD_USER));
         assertFalse(aspectTestService.checkThreeUser(GOOD_USER, GOOD_USER, BAD_USER));
@@ -88,19 +76,35 @@ public class CheckItAspectTest {
         assertFalse(aspectTestService.checkThreeUser(BAD_USER, GOOD_USER, BAD_USER));
         assertFalse(aspectTestService.checkThreeUser(BAD_USER, BAD_USER, GOOD_USER));
         assertFalse(aspectTestService.checkThreeUser(BAD_USER, BAD_USER, GOOD_USER));
+    }
+
+    @Test
+    public void aop2() {
+        aop3(BAD_USER);
+        Assertions.assertEquals(AspectTestService.value, 0);
+        aop3(GOOD_USER);
+        Assertions.assertEquals(AspectTestService.value, 1);
+        aop3(BAD_USER);
+        Assertions.assertEquals(AspectTestService.value, 1);
 
     }
+
 
 
     @Test
     public void customSyntax() {
 
 
-        assertTrue(aspectTestService.customSyntax(GOOD_USER_GOOD_CHILD));
+
+        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = purahs.argResolver().getMatchFieldObjectMap(GOOD_USER, new GeneralFieldMatcher("*.*"));
+
         assertTrue(aspectTestService.customSyntax(GOOD_USER));
         assertFalse(aspectTestService.customSyntax(BAD_USER));
-        assertFalse(aspectTestService.customSyntax(GOOD_USER_BAD_CHILD));
 
+
+
+        assertFalse(aspectTestService.customSyntax(GOOD_USER_BAD_CHILD));
+        assertTrue(aspectTestService.customSyntax(GOOD_USER_GOOD_CHILD));
         MultiCheckResult<?> multiCheckResult = aspectTestService.customSyntax(GOOD_USER_BAD_CHILD);
         List<LogicCheckResult<?>> logicCheckResults = multiCheckResult.resultChildList(ResultLevel.only_failed_only_base_logic);
         String collect = logicCheckResults.stream().map(LogicCheckResult::log).collect(Collectors.joining(","));
@@ -114,49 +118,90 @@ public class CheckItAspectTest {
     }
 
 //    @Test
+//    public void customSynt2sax() {
+//
+//        ComboBuilderChecker customAnnCheck = purahs.combo()
+//                .match(new GeneralFieldMatcher("*"), "custom_ann_check")
+//                .match(new GeneralFieldMatcher("childUser.id"), "custom_ann_check")
+//                .match(new GeneralFieldMatcher("childUser.name"), "custom_ann_check")
+//                .match(new GeneralFieldMatcher("childUser.phone|childUser.age"), "custom_ann_check")
+//                .match(new GeneralFieldMatcher("childUser.age"), "custom_ann_check")
+//                .mainMode(ExecMode.Main.all_success);
+//        StopWatch stopWatch = new StopWatch();
+//        stopWatch.start("Generics");
+//        for (int i = 0; i < 1 * 1000 * 1000; i++) {
+//            customAnnCheck.oCheck(GOOD_USER_BAD_CHILD);
+//        }
+//        stopWatch.stop();
+//        customAnnCheck = purahs.combo()
+//                .match(new GeneralFieldMatcher("*"), "custom_ann_check")
+//                .match(new GeneralFieldMatcher("childUser.id"), "custom_ann_check")
+//                .match(new GeneralFieldMatcher("childUser.name"), "custom_ann_check")
+//                .match(new GeneralFieldMatcher("childUser.phone|childUser.age"), "custom_ann_check")
+//                .match(new GeneralFieldMatcher("childUser.age"), "custom_ann_check")
+//                .mainMode(ExecMode.Main.all_success).autoReOrder(100);
+//        stopWatch.start("zdxfv");
+//        for (int i = 0; i < 1 * 1000 * 1000; i++) {
+//            customAnnCheck.oCheck(GOOD_USER_BAD_CHILD);
+//        }
+//        stopWatch.stop();
+//        System.out.println(stopWatch.prettyPrint());
+//
+//    }
+//    @Test
 //    public void customSynt2ax() {
-//        StopWatch stopWatch=new StopWatch();
+//        StopWatch stopWatch = new StopWatch();
 //        MyCustomAnnChecker myCustomAnnChecker = new MyCustomAnnChecker();
 //
 //        ArgResolver argResolver = purahs.argResolver();
 //        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("*|childUser.id|childUser.name|childUser.phone|childUser.age");
-//        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(GOOD_USER_BAD_CHILD, generalFieldMatcher);
 //
-//        stopWatch.start("1");
-//        for (int i = 0; i < 2 * 1000 * 1000; i++) {
+//
+//        stopWatch.start("Generics");
+//        GenericsProxyChecker genericsProxyChecker = GenericsProxyChecker.createByChecker(myCustomAnnChecker);
+//        for (int i = 0; i < 1 * 1000 * 1000; i++) {
+//            Map<String, InputToCheckerArg<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(GOOD_USER_BAD_CHILD, generalFieldMatcher);
+//
 //            for (Map.Entry<String, InputToCheckerArg<?>> stringInputToCheckerArgEntry : matchFieldObjectMap.entrySet()) {
-//                myCustomAnnChecker.check((InputToCheckerArg)stringInputToCheckerArgEntry.getValue());
-//            }
-//        }
-//        stopWatch.stop();
-//        stopWatch.start("2");
-//        GenericsProxyChecker genericsProxyChecker =GenericsProxyChecker.createByChecker(myCustomAnnChecker);
-//        for (int i = 0; i < 2 * 1000 * 1000; i++) {
-//            for (Map.Entry<String, InputToCheckerArg<?>> stringInputToCheckerArgEntry : matchFieldObjectMap.entrySet()) {
-//                genericsProxyChecker.check((InputToCheckerArg)stringInputToCheckerArgEntry.getValue());
+//                genericsProxyChecker.check((InputToCheckerArg) stringInputToCheckerArgEntry.getValue());
 //            }
 //
 //        }
 //        stopWatch.stop();
-//        stopWatch.start("3");
-//        ComboBuilderChecker customAnnCheck = purahs.combo().match(generalFieldMatcher, "custom_ann_check");
-//        for (int i = 0; i < 2 * 1000 * 1000; i++) {
+//
+//        stopWatch.start("myCustomAnnChecker");
+//        for (int i = 0; i < 1 * 1000 * 1000; i++) {
+//            Map<String, InputToCheckerArg<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(GOOD_USER_BAD_CHILD, generalFieldMatcher);
+//
+//            for (Map.Entry<String, InputToCheckerArg<?>> stringInputToCheckerArgEntry : matchFieldObjectMap.entrySet()) {
+//                myCustomAnnChecker.check((InputToCheckerArg) stringInputToCheckerArgEntry.getValue());
+//            }
+//        }
+//        stopWatch.stop();
+//
+//        stopWatch.start("purah");
+//        ComboBuilderChecker customAnnCheck = purahs.combo().match(generalFieldMatcher, "custom_ann_check").mainMode(ExecMode.Main.all_success);
+//        for (int i = 0; i < 1 * 1000 * 1000; i++) {
 //            customAnnCheck.oCheck(GOOD_USER_BAD_CHILD);
 //        }
 //        stopWatch.stop();
-//        stopWatch.start("4");
-//         genericsProxyChecker =GenericsProxyChecker.createByChecker(myCustomAnnChecker);
-//        for (int i = 0; i < 2 * 1000 * 1000; i++) {
+//        stopWatch.start("genericsProxyChecker");
+//        genericsProxyChecker = GenericsProxyChecker.createByChecker(myCustomAnnChecker);
+//        for (int i = 0; i < 1 * 1000 * 1000; i++) {
+//            Map<String, InputToCheckerArg<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(GOOD_USER_BAD_CHILD, generalFieldMatcher);
 //            for (Map.Entry<String, InputToCheckerArg<?>> stringInputToCheckerArgEntry : matchFieldObjectMap.entrySet()) {
-//                genericsProxyChecker.check((InputToCheckerArg)stringInputToCheckerArgEntry.getValue());
+//                genericsProxyChecker.check((InputToCheckerArg) stringInputToCheckerArgEntry.getValue());
 //            }
 //
 //        }
 //        stopWatch.stop();
+//        stopWatch.start("purah2");
+//        for (int i = 0; i < 1 * 1000 * 1000; i++) {
+//            customAnnCheck.oCheck(GOOD_USER_BAD_CHILD);
+//        }
+//        stopWatch.stop();
 //
-//
-//        String s = stopWatch.prettyPrint();
-//        System.out.println(s);
+//        System.out.println(stopWatch.prettyPrint());
 //
 //
 //    }

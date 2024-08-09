@@ -73,16 +73,16 @@ public abstract class CustomAnnChecker extends AbstractBaseSupportCacheChecker<O
                 .filter(i -> annCheckerMapping.containsKey(i.annotationType()))
                 .collect(Collectors.toList());
 
-
-        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel);
+        String annListLogStr = enableAnnotations.stream().map(i -> i.annotationType().getSimpleName()).collect(Collectors.joining(",", "[", "]"));
+        String log = inputToCheckerArg.fieldPath() + "  @Ann:" + annListLogStr + " : " + this.name();
+        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel,log);
 
         for (Annotation enableAnnotation : enableAnnotations) {
             GenericsProxyChecker genericsProxyChecker = annCheckerMapping.get(enableAnnotation.annotationType());
             multiCheckerExecutor.add(genericsProxyChecker,inputToCheckerArg);
         }
-        String annListLogStr = enableAnnotations.stream().map(i -> i.annotationType().getSimpleName()).collect(Collectors.joining(",", "[", "]"));
-        String log = inputToCheckerArg.fieldPath() + "  @Ann:" + annListLogStr + " : " + this.name();
-        return multiCheckerExecutor.toMultiCheckResult(log);
+
+        return multiCheckerExecutor.execToMultiCheckResult();
 
 
     }

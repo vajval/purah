@@ -21,6 +21,7 @@ public class CombinatorialCheckerConfigProperties {
 
     private ExecMode.Main mainMode = ExecMode.Main.all_success;
     private List<String> useCheckerNames = new ArrayList<>();
+    protected int reOrderCount = -1;
     private final LinkedHashMap<String, Map<String, List<String>>> matcherFieldCheckerMapping = new LinkedHashMap<>();
 
 
@@ -33,7 +34,7 @@ public class CombinatorialCheckerConfigProperties {
         config.setName(this.getCheckerName());
         config.setResultLevel(this.getResultLevel());
         config.setLogicFrom(this.getLogicFrom());
-
+        config.setReOrderCount(this.getReOrderCount());
         for (Map.Entry<String, Map<String, List<String>>> entry : this.getMatcherFieldCheckerMapping().entrySet()) {
             String matcherFactoryName = entry.getKey();
             MatcherFactory matcherFactory = purahs.matcherOf(matcherFactoryName);
@@ -117,6 +118,14 @@ public class CombinatorialCheckerConfigProperties {
         matcherFieldCheckerMapping.put(matchFactoryType.trim(), valueMap);
         return this;
 
+    }
+
+    public int getReOrderCount() {
+        return reOrderCount;
+    }
+
+    public void setReOrderCount(int reOrderCount) {
+        this.reOrderCount = reOrderCount;
     }
 
     public ExecMode.Main getMainMode() {

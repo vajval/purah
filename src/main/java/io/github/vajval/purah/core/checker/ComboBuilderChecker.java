@@ -57,6 +57,12 @@ public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>
         return this;
 
     }
+    public ComboBuilderChecker autoReOrder(int count) {
+        config.setReOrderCount(count);
+        combinatorialChecker = null;
+        return this;
+
+    }
 
     public ComboBuilderChecker resultLevel(ResultLevel resultLevel) {
         config.setResultLevel(resultLevel);

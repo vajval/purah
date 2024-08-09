@@ -23,7 +23,7 @@ public class ReflectArgResolver implements ArgResolver {
     protected final ConcurrentHashMap<Class<?>, ClassReflectCache> classClassConfigCacheMap = new ConcurrentHashMap<>();
 
 
-    protected boolean enableCache = true;
+    protected boolean enableCache = false;
 
     public void clearCache() {
         classClassConfigCacheMap.clear();
@@ -86,7 +86,6 @@ public class ReflectArgResolver implements ArgResolver {
      */
     protected void putMultiLevelMapToResult(InputToCheckerArg<?> inputToCheckerArg, MultilevelFieldMatcher multilevelFieldMatcher, Map<String, InputToCheckerArg<?>> result) {
         Map<String, InputToCheckerArg<?>> fieldsObjectMap = this.getThisLevelMatcherObjectMap(inputToCheckerArg, multilevelFieldMatcher);
-
         for (Map.Entry<String, InputToCheckerArg<?>> entry : fieldsObjectMap.entrySet()) {
             String field = entry.getKey();
             InputToCheckerArg<?> childArg = entry.getValue();
@@ -167,14 +166,9 @@ public class ReflectArgResolver implements ArgResolver {
     private ClassReflectCache classConfigCacheOf(InputToCheckerArg<?> inputToCheckerArg) {
 
 
+
         Class<?> inputArgClass = inputToCheckerArg.argClass();
-        if (inputToCheckerArg.isNull()) {
-            return ClassReflectCache.nullOrEmptyValueReflectCache;
-        }
-
         ClassReflectCache result = classClassConfigCacheMap.get(inputArgClass);
-
-
         if (result != null) {
             return result;
         }

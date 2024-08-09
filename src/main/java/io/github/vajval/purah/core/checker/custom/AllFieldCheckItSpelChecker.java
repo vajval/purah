@@ -41,16 +41,17 @@ public abstract class AllFieldCheckItSpelChecker extends AbstractBaseSupportCach
         ArgResolver argResolver = purahs.argResolver();
         FieldMatcher fieldMatcher = this.fieldMatcher(inputToCheckerArg);
         Map<String, InputToCheckerArg<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(inputToCheckerArg, fieldMatcher);
+        String log = inputToCheckerArg.fieldPath() + "  " + this.name();
         Map<String, ?> map = matchFieldObjectMap.entrySet().stream().filter(i -> i.getValue().argValue() != null).collect(Collectors.toMap(Map.Entry::getKey, i -> i.getValue().argValue()));
-        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel);
+        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel,log);
         for (InputToCheckerArg<?> value : matchFieldObjectMap.values()) {
             CheckIt checkIt = value.annOnField(CheckIt.class);
             String[] array = (String[]) Arrays.stream(checkIt.value()).map(i -> spel(i, map,inputToCheckerArg)).toArray();
             ComboBuilderChecker combo = purahs.combo(array).mainMode(checkIt.mainMode()).resultLevel(checkIt.resultLevel());
             multiCheckerExecutor.add(combo,value);
         }
-        String log = inputToCheckerArg.fieldPath() + "  " + this.name();
-        return multiCheckerExecutor.toMultiCheckResult(log);
+
+        return multiCheckerExecutor.execToMultiCheckResult();
     }
 
 
