@@ -17,7 +17,7 @@ public abstract class BaseStringMatcher implements IDefaultFieldMatcher {
     protected final String matchStr;
 
     public BaseStringMatcher(String matchStr) {
-        this.matchStr = matchStr;
+        this.matchStr = matchStr.trim();
     }
 
 

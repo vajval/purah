@@ -1,6 +1,8 @@
 package io.github.vajval.purah.core.matcher.nested;
 
 import com.google.common.collect.Lists;
+import io.github.vajval.purah.core.matcher.FieldMatcher;
+import io.github.vajval.purah.core.matcher.inft.MultilevelFieldMatcher;
 import io.github.vajval.purah.core.resolver.DefaultArgResolver;
 import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 import io.github.vajval.purah.util.People;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
 
 
+import java.util.List;
 import java.util.Map;
 
 import static io.github.vajval.purah.util.User.GOOD_USER;
@@ -19,18 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class GeneralMultilevelFieldMatcherTest {
 
 
-    @Test
-    public void generalFieldMatcherqwe3() {
-        DefaultArgResolver resolver = new DefaultArgResolver();
-
-        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.getMatchFieldObjectMap(GOOD_USER_BAD_CHILD, new GeneralFieldMatcher("*|*.*"));
-
-        System.out.println(matchFieldObjectMap.keySet());
-        resolver.getMatchFieldObjectMap(GOOD_USER_BAD_CHILD, new GeneralFieldMatcher("*|*.*"));
-
-        System.out.println(matchFieldObjectMap.keySet());
-
-    }
 
     @Test
 
@@ -39,6 +30,17 @@ public class GeneralMultilevelFieldMatcherTest {
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("#0.id");
         Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.getMatchFieldObjectMap(Lists.newArrayList(People.elder), generalFieldMatcher);
         Assertions.assertTrue(matchFieldObjectMap.get("#0.id").argEquals(People.elder.getId()));
+    }
+
+    @Test
+
+    public void generalFieldMatscher2() {
+        DefaultArgResolver resolver = new DefaultArgResolver();
+        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("name");
+        generalFieldMatcher = new GeneralFieldMatcher("child#*.id");
+        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.getMatchFieldObjectMap(People.elder, generalFieldMatcher);
+        Assertions.assertTrue(matchFieldObjectMap.get("child#0.id").argEquals(People.elder.getChild().get(0).getId()));
+
     }
 
     @Test
@@ -75,7 +77,6 @@ public class GeneralMultilevelFieldMatcherTest {
 
         Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(People.elder, normalMatcher);
 
-
         Assertions.assertEquals(map.get("name").argValue(), People.elder.getName());
         Assertions.assertEquals(map.get("address").argValue(), People.elder.getAddress());
         Assertions.assertNull(map.get("noExistField").argValue());
@@ -85,12 +86,11 @@ public class GeneralMultilevelFieldMatcherTest {
 
         Assertions.assertNull(map.get("child#5.child#5.id").argValue());
 
-        Assertions.assertEquals(map.size(), 7);
+        Assertions.assertEquals(7, map.size());
     }
 
     @Test
     void match2131() {
-
 
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("child#*.name");
@@ -99,7 +99,15 @@ public class GeneralMultilevelFieldMatcherTest {
 
 
     }
+    @Test
+    void match123() {
+        DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
+        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("child#*");
+        Map<String, InputToCheckerArg<?>> objectMap = defaultArgResolver.getMatchFieldObjectMap(People.elder, generalFieldMatcher);
 
+        Assertions.assertTrue(objectMap.get("child#0").argEquals(People.son));
+
+    }
     @Test
     void match0() {
 
@@ -107,6 +115,9 @@ public class GeneralMultilevelFieldMatcherTest {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("child#*.child#*");
         Map<String, InputToCheckerArg<?>> objectMap = defaultArgResolver.getMatchFieldObjectMap(People.elder, generalFieldMatcher);
+
+
+
         Assertions.assertTrue(objectMap.get("child#0.child#0").argEquals(People.grandson));
         Assertions.assertTrue(objectMap.get("child#1.child#0").argEquals(People.grandsonForDaughter));
         Assertions.assertTrue(objectMap.get("child#0.child#1").argEquals(People.granddaughter));

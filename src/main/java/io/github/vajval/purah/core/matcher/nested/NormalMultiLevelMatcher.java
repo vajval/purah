@@ -2,6 +2,7 @@ package io.github.vajval.purah.core.matcher.nested;
 
 import com.google.common.collect.Maps;
 
+import com.google.common.collect.Sets;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.core.matcher.inft.ListIndexMatcher;
 import io.github.vajval.purah.core.matcher.inft.MultilevelFieldMatcher;
@@ -47,12 +48,12 @@ public class NormalMultiLevelMatcher extends BaseNestMatcher implements ListInde
         }
         if (matchStrS != null) {
             if (fields.contains(matchStrS.fullMatchStr)) {
-                return Collections.singleton(matchStrS.fullMatchStr);
+                return Sets.newHashSet(matchStrS.fullMatchStr);
             }
             if (fields.contains(matchStrS.firstLevelStr)) {
-                return Collections.singleton(matchStrS.firstLevelStr);
+                return Sets.newHashSet(matchStrS.firstLevelStr);
             }
-            return Collections.emptySet();
+            return Sets.newHashSet();
         }
         Set<String> result = new HashSet<>(resultExpectedSize);
         for (String s : allMap.keySet()) {

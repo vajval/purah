@@ -2,15 +2,19 @@ package io.github.vajval.purah.core.matcher.nested;
 
 import io.github.vajval.purah.core.matcher.FieldMatcher;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class NestedMatchInfo {
 
-    protected final List<FieldMatcher> childFieldMatcher;
-    protected final boolean needCollected;
+    protected  List<FieldMatcher> childFieldMatcher;
+    protected  boolean needCollected;
 
     private NestedMatchInfo(boolean needCollected, List<FieldMatcher> childFieldMatcher) {
+        if(childFieldMatcher==null){
+            childFieldMatcher=new ArrayList<>(0);
+        }
         this.childFieldMatcher = childFieldMatcher;
         this.needCollected = needCollected;
     }
@@ -52,4 +56,11 @@ public class NestedMatchInfo {
         return needCollected;
     }
 
+    @Override
+    public String toString() {
+        return "NestedMatchInfo{" +
+                "childFieldMatcher=" + childFieldMatcher +
+                ", needCollected=" + needCollected +
+                '}';
+    }
 }

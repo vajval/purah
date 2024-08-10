@@ -43,11 +43,12 @@ public class FixedMatcher extends BaseNestMatcher implements ListIndexMatcher, M
 
     @Override
     public Set<String> matchFields(Set<String> fields, Object belongInstance) {
+
         if (matchStrS != null) {
             if (fields.contains(matchStrS.firstLevelStr)) {
-                return Collections.singleton(matchStrS.firstLevelStr);
+                return Sets.newHashSet(matchStrS.firstLevelStr);
             }
-            return Collections.singleton(matchStrS.fullMatchStr);
+            return Sets.newHashSet(matchStrS.fullMatchStr);
         }
         Set<String> result = Sets.newHashSetWithExpectedSize(resultExpectedSize);
         for (Map.Entry<String, Set<MatchStrS>> entry : allMap.entrySet()) {

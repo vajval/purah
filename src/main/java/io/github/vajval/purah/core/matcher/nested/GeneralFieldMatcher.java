@@ -2,15 +2,13 @@ package io.github.vajval.purah.core.matcher.nested;
 
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
+import io.github.vajval.purah.core.matcher.BaseStringMatcher;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
-import io.github.vajval.purah.core.matcher.WrapListFieldMatcher;
 import io.github.vajval.purah.core.matcher.inft.ListIndexMatcher;
-import io.github.vajval.purah.core.matcher.singlelevel.WildCardMatcher;
 import io.github.vajval.purah.core.name.Name;
-import io.github.vajval.purah.core.matcher.inft.IDefaultFieldMatcher;
 import io.github.vajval.purah.core.matcher.inft.MultilevelFieldMatcher;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -30,56 +28,73 @@ import java.util.stream.Collectors;
  * no field match  child#*.child#4.id so ignore
  */
 @Name("general")
-public class GeneralFieldMatcher extends WrapListFieldMatcher<MultilevelFieldMatcher> implements MultilevelFieldMatcher, ListIndexMatcher {
-
-
-    protected boolean isFixed;
-    protected boolean childIsWildCard;
-    protected boolean childIsMultiLevel;
-    protected MatchStrS matchStrS;
-    protected IDefaultFieldMatcher firstLevelFieldMatcher;
-
-    private NestedMatchInfo nestedMatchInfo;
+public class GeneralFieldMatcher extends BaseStringMatcher implements MultilevelFieldMatcher, ListIndexMatcher {
+    protected NestedMatchInfo nestedMatchInfo;
+    protected FixedMatcher fixedMatcher;
+    protected final Map<String, FieldMatcher> firstLevelStrEqualMap;
+    protected final Map<String, FieldMatcher> firstLevelStrMatchMap;
+    protected final List<String> thisLevelWildCardMatchStrList;
+    protected final Set<Integer> listIndexSet;
+    protected final Set<String> otherListIndexSet;
 
     public GeneralFieldMatcher(String matchStr) {
         super(matchStr);
-        if (wrapChildList == null) {
-            matchStrS = new MatchStrS(matchStr);
-            String childStr = matchStrS.childStr;
-
-            firstLevelFieldMatcher = new WildCardMatcher(matchStrS.firstLevelStr);
-
-            isFixed = !isWildCardMatcher(childStr) && !isWildCardMatcher(matchStrS.firstLevelStr);
-            if (childStr == null) {
-                childIsWildCard = false;
-                childIsMultiLevel = false;
-            } else {
-                childIsWildCard = isWildCardMatcher(childStr);
-                childIsMultiLevel = childStr.contains(".") || childStr.contains("#");
-            }
-
-
+        String fixValue = Splitter.on("|").splitToList(matchStr).stream().filter(i -> !isWildCardMatcher(i)).collect(Collectors.joining("|"));
+        if (StringUtils.hasText(fixValue)) {
+            fixedMatcher = new FixedMatcher(fixValue);
         }
+        List<MatchStrS> wildCardMatchStrSList = Splitter.on("|").splitToList(matchStr).stream().filter(GeneralFieldMatcher::isWildCardMatcher).map(MatchStrS::new).collect(Collectors.toList());
+        listIndexSet = wildCardMatchStrSList.stream().map(i -> i.listIndex).collect(Collectors.toSet());
+        thisLevelWildCardMatchStrList = wildCardMatchStrSList.stream().filter(i -> i.childStr == null).map(i -> i.fullMatchStr).collect(Collectors.toList());
+        List<MatchStrS> haveChildMatchStrS = wildCardMatchStrSList.stream().filter(i -> i.childStr != null).collect(Collectors.toList());
+        Map<String, String> firstEqual = haveChildMatchStrS.stream().filter(i -> !isWildCardMatcher(i.firstLevelStr)).collect(Collectors.groupingBy(i -> i.firstLevelStr, Collectors.mapping(i -> i.childStr, Collectors.joining("|"))));
+        Map<String, String> firstMatch = haveChildMatchStrS.stream().filter(i -> isWildCardMatcher(i.firstLevelStr)).collect(Collectors.groupingBy(i -> i.firstLevelStr, Collectors.mapping(i -> i.childStr, Collectors.joining("|"))));
+        otherListIndexSet = new HashSet<>();
+        firstLevelStrEqualMap = new HashMap<>();
+        firstLevelStrMatchMap = new HashMap<>();
+        for (Map.Entry<String, String> entry : firstMatch.entrySet()) {
+            String matchKey = entry.getKey();
+            String childMatchStr = entry.getValue();
+            FieldMatcher fieldMatcher = wrapMatchChild(childMatchStr);
+            firstLevelStrMatchMap.put(matchKey, fieldMatcher);
+            String listIndexStr = new MatchStrS(matchKey).listIndexStr;
+            if (StringUtils.hasText(listIndexStr)) {
+                otherListIndexSet.add(listIndexStr);
+            }
+        }
+        for (Map.Entry<String, String> entry : firstEqual.entrySet()) {
+            String equalKey = entry.getKey();
+            String value = entry.getValue();
+            firstLevelStrEqualMap.put(equalKey,  wrapMatchChild(value));
+            listIndexSet.add(new MatchStrS(equalKey).listIndex);
+        }
+        if (!matchStr.contains("|")) {
+            MatchStrS matchStrS = new MatchStrS(matchStr);
+            listIndexSet.add(matchStrS.listIndex);
+            if (StringUtils.hasText(matchStrS.listIndexStr)) {
+                otherListIndexSet.add(matchStrS.listIndexStr);
+            }
+            nestedMatchInfo = initNestedMatchInfoIfSingle(matchStrS);
+        }
+        listIndexSet.remove(MatchStrS.NO_LIST_INDEX);
+        listIndexSet.remove(MatchStrS.OTHER_LIST_MATCH);
     }
 
+    protected FieldMatcher wrapMatchChild(String childMatchStr) {
+        return isWildCardMatcher(childMatchStr) ? new GeneralFieldMatcher(childMatchStr) : new NormalMultiLevelMatcher(childMatchStr);
 
-    @Override
-    protected void initWapChildList(String matchStr) {
+    }
 
-        //todo cache support
-        if (matchStr.contains(wrapSplitStr())) {
-            Map<Boolean, List<String>> map = Splitter.on(wrapSplitStr()).splitToList(matchStr).stream().collect(Collectors.groupingBy(this::matchStrCanCache));
-            List<String> cacheEnableList = map.get(true);
-            List<String> noCacheList = map.get(false);
-            if (CollectionUtils.isEmpty(cacheEnableList) || CollectionUtils.isEmpty(noCacheList)) {
-                wrapChildList = map.values().iterator().next().stream().map(this::wrapChildMatcher).collect(Collectors.toList());
-            } else {
-                String cacheEnable = String.join(wrapSplitStr(), cacheEnableList);
-                String noCache = String.join(wrapSplitStr(), noCacheList);
-                wrapChildList = new ArrayList<>();
-                wrapChildList.add(wrapChildMatcher(cacheEnable));
-                wrapChildList.add(wrapChildMatcher(noCache));
-            }
+    protected NestedMatchInfo initNestedMatchInfoIfSingle(MatchStrS matchStrS) {
+        String childStr = matchStrS.childStr;
+        if (childStr == null) {
+            return NestedMatchInfo.justCollected;
+        } else if (!isWildCardMatcher(matchStrS.fullMatchStr)) {//isFixed
+            return NestedMatchInfo.justNested(new FixedMatcher(childStr));
+        } else if (isWildCardMatcher(childStr)) {//childIsWildCard
+            return NestedMatchInfo.justNested(new GeneralFieldMatcher(childStr));
+        } else {
+            return NestedMatchInfo.justNested(new NormalMultiLevelMatcher(childStr));
         }
     }
 
@@ -93,137 +108,123 @@ public class GeneralFieldMatcher extends WrapListFieldMatcher<MultilevelFieldMat
 
 
     @Override
-    public boolean matchBySelf(String field, Object belongInstance) {
-        return firstLevelFieldMatcher.match(field, belongInstance);
-    }
-
-
-    @Override
-    protected MultilevelFieldMatcher wrapChildMatcher(String matchStr) {
-        boolean isWildCardMatcher = isWildCardMatcher(matchStr);
-        if (isWildCardMatcher) {
-            return new GeneralFieldMatcher(matchStr);
-        }
-        return new FixedMatcher(matchStr);
-    }
-
-
-    @Override
     public Set<String> matchFields(Set<String> fields, Object belongInstance) {
-
-        Set<String> result = new HashSet<>();
-        if (wrapChildList == null) {
-            if (belongInstance == null) {
-                return new HashSet<>();
-            }
-            return firstLevelFieldMatcher.matchFields(fields, belongInstance);
+        Set<String> result = (fixedMatcher != null) ? fixedMatcher.matchFields(fields, belongInstance) : new HashSet<>();
+        if (belongInstance == null) {
+            return result;
         }
-        for (MultilevelFieldMatcher multilevelFieldMatcher : wrapChildList) {
-            result.addAll(multilevelFieldMatcher.matchFields(fields, belongInstance));
+        for (String field : fields) {
+            if (includeField(field)) {
+                result.add(field);
+            }
         }
         return result;
+    }
+
+    protected boolean includeField(String field) {
+        if (firstLevelStrEqualMap.containsKey(field)) {
+            return true;
+        }
+        for (String thisLevelWildCardMatch : thisLevelWildCardMatchStrList) {
+            if (fieldByMatchKey(field, thisLevelWildCardMatch)) {
+                return true;
+            }
+        }
+        for (String matchKey : firstLevelStrMatchMap.keySet()) {
+            if (fieldByMatchKey(field, matchKey)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean fieldByMatchKey(String field, String matchKey) {
+        return FilenameUtils.wildcardMatch(field, matchKey);
     }
 
 
     @Override
     public NestedMatchInfo nestedFieldMatcher(InputToCheckerArg<?> inputArg, String matchedField, InputToCheckerArg<?> childArg) {
-
-        if (wrapChildList != null) {
-            boolean addToFinal = false;
-            List<FieldMatcher> fieldMatchers = new ArrayList<>();
-            for (MultilevelFieldMatcher optionMatcher : wrapChildList) {
-                if (optionMatcher.match(matchedField, inputArg.argValue())) {
-                    NestedMatchInfo nestedMatchInfo = optionMatcher.nestedFieldMatcher(inputArg, matchedField, childArg);
-                    addToFinal = addToFinal || nestedMatchInfo.isNeedCollected();
-                    if (nestedMatchInfo.getNestedFieldMatcherList() != null) {
-                        fieldMatchers.addAll(nestedMatchInfo.getNestedFieldMatcherList());
-                    }
+        if (nestedMatchInfo != null) {
+            return nestedMatchInfo;
+        }
+        List<FieldMatcher> childFieldMatcher = new ArrayList<>();
+        boolean needCollected = false;
+        if (fixedMatcher != null) {
+            NestedMatchInfo nestedMatchInfo = fixedMatcher.nestedFieldMatcher(inputArg, matchedField, childArg);
+            needCollected = nestedMatchInfo.isNeedCollected();
+            childFieldMatcher = nestedMatchInfo.getNestedFieldMatcherList();
+        }
+        if (!needCollected) {
+            for (String matchKey : thisLevelWildCardMatchStrList) {
+                if (fieldByMatchKey(matchedField, matchKey)) {
+                    needCollected = true;
+                    break;
                 }
             }
-            if (addToFinal) {
-                return NestedMatchInfo.needCollectedAndMatchNested(fieldMatchers);
-            }
-            return NestedMatchInfo.justNested(fieldMatchers);
         }
-        String childStr = matchStrS.childStr;
+        for (Map.Entry<String, FieldMatcher> entry : firstLevelStrMatchMap.entrySet()) {
+            String matchKey = entry.getKey();
+            if (fieldByMatchKey(matchedField, matchKey)) {
+                childFieldMatcher.add(entry.getValue());
+            }
+        }
+        FieldMatcher generalFieldMatcher = firstLevelStrEqualMap.get(matchedField);
+        if (generalFieldMatcher != null) {
+            childFieldMatcher.add(generalFieldMatcher);
+        }
+        return NestedMatchInfo.create(needCollected, childFieldMatcher);
+    }
 
-        if (childStr == null) {
-            return NestedMatchInfo.justCollected;
+
+    @Override
+    public boolean match(String field, Object belongInstance) {
+        return matchFields(Collections.singleton(field), belongInstance).contains(field);
+    }
+
+
+    @Override
+    public boolean supportCache() {
+        if (this.matchStr.contains("#")) {
+            return false;
         }
-        if (isFixed) {
-            return NestedMatchInfo.justNested(new FixedMatcher(childStr));
+        if (this.firstLevelStrMatchMap.size() > 0) {
+            return false;
         }
-        if (childIsWildCard) {
-            if (childIsMultiLevel) {
-                return NestedMatchInfo.justNested(new GeneralFieldMatcher(childStr));
-            } else {
-                return NestedMatchInfo.justNested(new GeneralFieldMatcher(childStr));
+        for (FieldMatcher value : firstLevelStrEqualMap.values()) {
+            if (!value.supportCache()) {
+                return false;
             }
-        } else {
-            return NestedMatchInfo.justNested(new NormalMultiLevelMatcher(childStr));
         }
+        return true;
+
     }
 
 
     @Override
     public Map<String, Object> listMatch(List<?> objectList) {
-        Integer listIndex = matchStrS.listIndex;
-        String listIndexStr = matchStrS.listIndexStr;
+        Map<String, Object> result = fixedMatcher != null ? fixedMatcher.listMatch(objectList) : new HashMap<>();
         if (CollectionUtils.isEmpty(objectList)) {
-            return Collections.emptyMap();
-        }
-        if (listIndex == MatchStrS.NO_LIST_INDEX) {
-            return Collections.emptyMap();
-        }
-        if (listIndex == MatchStrS.OTHER_LIST_MATCH) {
-            Map<String, Object> result = Maps.newHashMapWithExpectedSize(objectList.size());
-            if (listIndexStr.equals("*")) {
-                for (int index = 0; index < objectList.size(); index++) {
-                    String fieldStr = "#" + index;
-                    result.put(fieldStr, objectList.get(index));
-                }
-                return result;
-            } else {
-                for (int index = 0; index < objectList.size(); index++) {
-                    String fieldStr = "#" + index;
-                    if (this.match(fieldStr, objectList.get(index))) {
-                        result.put(fieldStr, objectList.get(index));
-                    }
-                }
-            }
             return result;
-
         }
-        int getIndex = listIndex;
-        if (listIndex < 0) {
-            getIndex = objectList.size() + listIndex;
+        for (Integer listIndex : listIndexSet) {
+            String key = "#" + listIndex;
+            Object value = null;
+            int getIndex = listIndex;
+            if (listIndex < 0) {
+                getIndex = objectList.size() + listIndex;
+            }
+            if (listIndex < objectList.size()) {
+                value = objectList.get(getIndex);
+            }
+            result.put(key, value);
         }
-        if (listIndex < objectList.size()) {
-            return Collections.singletonMap("#" + listIndex, objectList.get(getIndex));
+        if (otherListIndexSet.contains("*")) {
+            for (int index = 0; index < objectList.size(); index++) {
+                String fieldStr = "#" + index;
+                result.put(fieldStr, objectList.get(index));
+            }
         }
-        return Collections.emptyMap();
+        return result;
     }
-
-    @Override
-    protected boolean matchStrCanCache(String matchSer) {
-//        return false;
-        if (matchSer.contains("#")) {
-            return false;
-        }
-        int index = matchSer.indexOf(".");
-        if (index == -1) {
-            return true;
-        }
-        return !isWildCardMatcher(matchSer.substring(index + 1));
-    }
-
-
-    @Override
-    public String toString() {
-        return "GeneralFieldMatcher{" +
-                "firstLevelFieldMatcher=" + firstLevelFieldMatcher +
-                ", machStr='" + matchStr + "'}";
-    }
-
-
 }

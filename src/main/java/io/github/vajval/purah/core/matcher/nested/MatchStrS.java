@@ -14,6 +14,7 @@ public class MatchStrS {
      * childStr = #6.child#2.name
      */
     public MatchStrS(String matchStr) {
+        matchStr = matchStr.trim();
         fullMatchStr = matchStr;
         int index = matchStr.indexOf(".");
         boolean contains = matchStr.contains(".");
@@ -57,6 +58,7 @@ public class MatchStrS {
             }
         }
     }
+
     protected Integer listIndex = NO_LIST_INDEX;
     // Support for lists, set the index str . if child#5  listIndexStr=#5.   if child#*  listIndexStr=#*
     protected String listIndexStr;

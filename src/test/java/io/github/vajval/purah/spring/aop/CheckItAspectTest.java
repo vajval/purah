@@ -104,6 +104,7 @@ public class CheckItAspectTest {
 
 
         assertFalse(aspectTestService.customSyntax(GOOD_USER_BAD_CHILD));
+
         assertTrue(aspectTestService.customSyntax(GOOD_USER_GOOD_CHILD));
         MultiCheckResult<?> multiCheckResult = aspectTestService.customSyntax(GOOD_USER_BAD_CHILD);
         List<LogicCheckResult<?>> logicCheckResults = multiCheckResult.resultChildList(ResultLevel.only_failed_only_base_logic);
