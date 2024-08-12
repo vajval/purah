@@ -76,7 +76,7 @@ public class AnnByPackageMatcherTest {
                 return testAnn != null ;
             }
         };
-        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = reflectArgResolver.getMatchFieldObjectMap(a, annByPackageMatcher);
+        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = reflectArgResolver.oGetMatchFieldObjectMap(a, annByPackageMatcher);
         Assertions.assertEquals(matchFieldObjectMap.keySet(),Sets.newHashSet("b.a.name", "name", "b.id"));
     }
 
@@ -92,7 +92,7 @@ public class AnnByPackageMatcherTest {
         Set<Class<? > >annClazz=    Sets.newHashSet(TestAnn.class);
 
         AnnByPackageMatcher annByPackageMatcher = new AnnByPackageMatcher("*",2,TestAnn.class) ;
-        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = reflectArgResolver.getMatchFieldObjectMap(a, annByPackageMatcher);
+        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = reflectArgResolver.oGetMatchFieldObjectMap(a, annByPackageMatcher);
         Assertions.assertEquals(matchFieldObjectMap.keySet(),Sets.newHashSet("b.a.name", "name", "b.id"));
     }
 
@@ -113,7 +113,7 @@ public class AnnByPackageMatcherTest {
 
         for (int i = 0; i < 1; i++) {
             ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
-            Map<String, InputToCheckerArg<?>> matchFieldObjectMap = reflectArgResolver.getMatchFieldObjectMap(People.son, annByPackageMatcher);
+            Map<String, InputToCheckerArg<?>> matchFieldObjectMap = reflectArgResolver.oGetMatchFieldObjectMap(People.son, annByPackageMatcher);
             System.out.println(matchFieldObjectMap.keySet());
         }
     }

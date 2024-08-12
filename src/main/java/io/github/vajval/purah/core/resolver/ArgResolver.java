@@ -27,7 +27,7 @@ public interface ArgResolver {
      * it will prevent the retrieval of fields and annotations through reflection.
      */
 
-    default Map<String, InputToCheckerArg<?>> getMatchFieldObjectMap(Object inputArg, FieldMatcher fieldMatcher) {
+    default Map<String, InputToCheckerArg<?>> oGetMatchFieldObjectMap(Object inputArg, FieldMatcher fieldMatcher) {
         return getMatchFieldObjectMap(InputToCheckerArg.of(inputArg), fieldMatcher);
     }
 

@@ -30,7 +30,7 @@ class FieldMatcherResultReflectInvokeCacheTest {
     void invokeResultByCache() {
         DefaultArgResolver resolver = new DefaultArgResolver();
         FixedMatcher fixedMatcher = new FixedMatcher("id|name|childUser.id");
-        Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(User.GOOD_USER_BAD_CHILD, fixedMatcher);
+        Map<String, InputToCheckerArg<?>> map = resolver.oGetMatchFieldObjectMap(User.GOOD_USER_BAD_CHILD, fixedMatcher);
 
         FieldMatcherResultReflectInvokeCache fieldMatcherResultReflectInvokeCache = new FieldMatcherResultReflectInvokeCache(
 

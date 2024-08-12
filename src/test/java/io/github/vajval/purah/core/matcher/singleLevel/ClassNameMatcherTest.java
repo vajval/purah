@@ -17,7 +17,7 @@ public class ClassNameMatcherTest {
         ClassNameMatcher matcher = new ClassNameMatcher(String.class.getName());
 
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
-        Map<String, InputToCheckerArg<?>> map = defaultArgResolver.getMatchFieldObjectMap(People.elder, matcher);
+        Map<String, InputToCheckerArg<?>> map = defaultArgResolver.oGetMatchFieldObjectMap(People.elder, matcher);
         Assertions.assertEquals(map.get("address").argValue(), People.elder.getAddress());
         Assertions.assertEquals(map.get("name").argValue(), People.elder.getName());
         Assertions.assertEquals(map.get("id").argValue(), People.elder.getId());

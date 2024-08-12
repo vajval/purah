@@ -15,8 +15,8 @@ public class DefaultArgResolver implements ArgResolver {
 
 
     @Override
-    public Map<String, InputToCheckerArg<?>> getMatchFieldObjectMap(Object o, FieldMatcher fieldMatcher) {
-        return mainArgResolver.getMatchFieldObjectMap(o, fieldMatcher);
+    public Map<String, InputToCheckerArg<?>> oGetMatchFieldObjectMap(Object o, FieldMatcher fieldMatcher) {
+        return mainArgResolver.oGetMatchFieldObjectMap(o, fieldMatcher);
     }
 
 

@@ -53,22 +53,18 @@ public class ReflectArgResolver implements ArgResolver {
             return result;
         }
         Class<?> inputArgClass = inputToCheckerArg.argClass();
-        ClassReflectCache classReflectCache = classClassConfigCacheMap.computeIfAbsent(inputArgClass, i -> new ClassReflectCache(inputArgClass));
+        ClassReflectCache classReflectCache = classClassConfigCacheMap.computeIfAbsent(inputArgClass, ClassReflectCache::new);
         Object argValue = inputToCheckerArg.argValue();
-
-        if (classReflectCache.cached(fieldMatcher)) {
-            return classReflectCache.fullResultByInvokeCache(argValue, fieldMatcher);
-        }
-        Map<String, InputToCheckerArg<?>> result = new HashMap<>();
-
-        if (enableCache && fieldMatcher.supportCache()) {
-            putMatchFieldObjectMapToResult(inputToCheckerArg, fieldMatcher, result);
+        Map<String, InputToCheckerArg<?>> result = classReflectCache.fullResultByInvokeCache(argValue, fieldMatcher);
+        if (result != null) {
             return result;
         }
-
-
+        result = new HashMap<>();
         putMatchFieldObjectMapToResult(inputToCheckerArg, fieldMatcher, result);
-        classReflectCache.tryRegNewInvokeCache(inputToCheckerArg, fieldMatcher, result);
+        if (enableCache) {
+            classReflectCache.tryRegNewInvokeCache(inputToCheckerArg, fieldMatcher, result);
+            return result;
+        }
         return result;
     }
 

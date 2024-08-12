@@ -15,7 +15,7 @@ public class AnnTypeFieldMatcherTest {
     @Test
     void resolver2() {
         DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
-        Map<String, InputToCheckerArg<?>> map = defaultArgResolver.getMatchFieldObjectMap(People.elder, new AnnTypeFieldMatcher("shortText"));
+        Map<String, InputToCheckerArg<?>> map = defaultArgResolver.oGetMatchFieldObjectMap(People.elder, new AnnTypeFieldMatcher("shortText"));
         Assertions.assertEquals(map.get("name").argValue(), People.elder.getName());
 
     }

@@ -110,6 +110,10 @@ public class InputToCheckerArg<INPUT_ARG> {
     }
 
 
+    public Optional<INPUT_ARG> optional() {
+        return Optional.of(arg);
+    }
+
     public INPUT_ARG argValue() {
         return arg;
     }
@@ -158,6 +162,9 @@ public class InputToCheckerArg<INPUT_ARG> {
         this.fieldPath = fieldPath;
     }
 
+    public Class<?> getClazzInContext() {
+        return clazzInContext;
+    }
 }
 
 

@@ -46,8 +46,8 @@ public class ClassReflectCache {
     protected final Map<FieldMatcher, FieldMatcherResultReflectInvokeCache> fieldMatcherResultByCacheInvokeMap = new ConcurrentHashMap<>();
 
 
+    private ClassReflectCache() {
 
-    public ClassReflectCache() {
     }
 
     public ClassReflectCache(Class<?> inputArgClass) {
@@ -103,7 +103,7 @@ public class ClassReflectCache {
 
 
     public Map<String, InputToCheckerArg<?>> thisLevelMatchFieldValueMap(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher) {
-        Set<String> matchFieldList =  fieldMatcher.matchFields(fieldInvokeFunctionMapping.keySet(), inputToCheckerArg.argValue());
+        Set<String> matchFieldList = fieldMatcher.matchFields(fieldInvokeFunctionMapping.keySet(), inputToCheckerArg.argValue());
         Map<String, InputToCheckerArg<?>> result = Maps.newHashMapWithExpectedSize(matchFieldList.size());
         for (String matchFieldStr : matchFieldList) {
             Function<InputToCheckerArg<?>, InputToCheckerArg<?>> function = fieldInvokeFunctionMapping.get(matchFieldStr);
@@ -134,7 +134,7 @@ public class ClassReflectCache {
     public Map<String, InputToCheckerArg<?>> fullResultByInvokeCache(Object inputArg, FieldMatcher fieldMatcher) {
         FieldMatcherResultReflectInvokeCache fieldMatcherResultReflectInvokeCache = fieldMatcherResultByCacheInvokeMap.get(fieldMatcher);
         if (fieldMatcherResultReflectInvokeCache == null) {
-            throw new UnexpectedException("no cache");
+            return null;
         }
         return fieldMatcherResultReflectInvokeCache.invokeResultByCache(inputArg);
     }
@@ -150,8 +150,6 @@ public class ClassReflectCache {
         if (noSupportInovekCacheFieldMatcherSet.contains(fieldMatcher)) {
             return;
         }
-
-
         boolean enabled = enableNestedGetValue(inputToCheckerArg, result);
         if (enabled) {
             fieldMatcherResultByCacheInvokeMap.computeIfAbsent(fieldMatcher, i -> new FieldMatcherResultReflectInvokeCache(inputArgClass, fieldMatcher, result));
@@ -163,9 +161,6 @@ public class ClassReflectCache {
     }
 
 
-    public boolean cached(FieldMatcher fieldMatcher) {
-        return fieldMatcherResultByCacheInvokeMap.containsKey(fieldMatcher);
-    }
 
     /*
      * 搜集返回结果的字段,直接从输入对象中生成结果

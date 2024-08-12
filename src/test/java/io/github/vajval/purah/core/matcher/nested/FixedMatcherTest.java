@@ -21,7 +21,7 @@ class FixedMatcherTest {
     void test() {
         FixedMatcher fixedMatcher = new FixedMatcher("child#5.child#0.id");
 
-        Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(People.elder, fixedMatcher);
+        Map<String, InputToCheckerArg<?>> map = resolver.oGetMatchFieldObjectMap(People.elder, fixedMatcher);
         Assertions.assertNull(map.get("child#5.child#0.id").argValue());
     }
 
@@ -31,7 +31,7 @@ class FixedMatcherTest {
 
         FixedMatcher fixedMatcher = new FixedMatcher("name|address|noExistField|child#0.id|child#5.child#0.id");
 
-        Map<String, InputToCheckerArg<?>> map = resolver.getMatchFieldObjectMap(People.elder, fixedMatcher);
+        Map<String, InputToCheckerArg<?>> map = resolver.oGetMatchFieldObjectMap(People.elder, fixedMatcher);
         Assertions.assertNull(map.get("child#5.child#0.id").argValue());
 
         Assertions.assertEquals(map.get("name").argValue(), People.elder.getName());

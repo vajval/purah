@@ -1,13 +1,16 @@
 package io.github.vajval.purah.spring.aop;
 
+import com.google.common.collect.Sets;
 import io.github.vajval.purah.core.checker.*;
-import io.github.vajval.purah.core.checker.combinatorial.CombinatorialCheckerConfig;
-import io.github.vajval.purah.core.checker.combinatorial.ExecMode;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import io.github.vajval.purah.core.checker.result.MultiCheckResult;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
+import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.core.resolver.ArgResolver;
+import io.github.vajval.purah.core.resolver.ClassReflectCache;
+import io.github.vajval.purah.core.resolver.FieldMatcherResultReflectInvokeCache;
 import io.github.vajval.purah.core.resolver.ReflectArgResolver;
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,9 +26,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.StopWatch;
 
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -90,19 +95,12 @@ public class CheckItAspectTest {
     }
 
 
-
     @Test
     public void customSyntax() {
 
 
-
-        Map<String, InputToCheckerArg<?>> matchFieldObjectMap = purahs.argResolver().getMatchFieldObjectMap(GOOD_USER, new GeneralFieldMatcher("*.*"));
-
         assertTrue(aspectTestService.customSyntax(GOOD_USER));
         assertFalse(aspectTestService.customSyntax(BAD_USER));
-
-
-
         assertFalse(aspectTestService.customSyntax(GOOD_USER_BAD_CHILD));
 
         assertTrue(aspectTestService.customSyntax(GOOD_USER_GOOD_CHILD));
@@ -117,6 +115,88 @@ public class CheckItAspectTest {
         Assertions.assertTrue(collect.contains("FAILED (field [childUser.age] type [java.lang.Integer])"));
 
     }
+
+//    @Test
+//
+//    public void customSynt2sax() {
+//        StopWatch stopWatch = new StopWatch();
+//
+//        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("*|childUser.id|childUser.name|childUser.phone|childUser.age");
+//        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
+//        InputToCheckerArg<User> inputToCheckerArg = InputToCheckerArg.of(GOOD_USER_BAD_CHILD);
+//        ConcurrentHashMap<Class<?>, ClassReflectCache> classClassConfigCacheMap = reflectArgResolver.classClassConfigCacheMap;
+//
+//        stopWatch.start("1");
+//        int num = 1 * 1000 * 1000;
+//        for (int i = 0; i < num; i++) {
+//            Class<?> inputArgClass = inputToCheckerArg.argClass();
+//            ClassReflectCache classReflectCache2 = classClassConfigCacheMap.computeIfAbsent(inputArgClass, ClassReflectCache::new);
+//            Object argValue = inputToCheckerArg.argValue();
+//            Map<String, InputToCheckerArg<?>> result = classReflectCache2.fullResultByInvokeCache(argValue, generalFieldMatcher);
+//            if (result != null) {
+//            }
+//        }
+//        stopWatch.stop();
+//
+//        stopWatch.start("2");
+//        for (int i = 0; i < num; i++) {
+//            reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
+//        }
+//        stopWatch.stop();
+//
+//        stopWatch.start("3");
+//        W w = new W();
+//        for (int i = 0; i < num; i++) {
+//            w.customSynt2wesax(inputToCheckerArg, generalFieldMatcher, reflectArgResolver);
+//        }
+//        stopWatch.stop();
+//
+//        stopWatch.start("4");
+//        for (int i = 0; i < num; i++) {
+//            reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
+//        }
+//        stopWatch.stop();
+//
+//        stopWatch.start("5");
+//        for (int i = 0; i < num; i++) {
+//            w.customSynt2wesax(inputToCheckerArg, generalFieldMatcher, reflectArgResolver);
+//        }
+//        stopWatch.stop();
+//
+//        stopWatch.start("6");
+//        for (int i = 0; i < num; i++) {
+//            reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
+//        }
+//        stopWatch.stop();
+//        System.out.println(stopWatch.prettyPrint());
+//    }
+
+    static class W {
+        ConcurrentHashMap<Class<?>, ClassReflectCache> classClassConfigCacheMap;
+
+        public W() {
+            classClassConfigCacheMap = new ConcurrentHashMap<>();
+            HashSet<Class<?>> unSupportNestMatchClassSet = Sets.newHashSet(String.class, boolean.class, Boolean.class, int.class, Integer.class, short.class, Short.class, long.class, Long.class, byte.class, Byte.class, String.class, char.class, Character.class, Double.class, double.class, Float.class, float.class);
+            for (Class<?> clazz : unSupportNestMatchClassSet) {
+                classClassConfigCacheMap.put(clazz, ClassReflectCache.nullOrEmptyValueReflectCache);
+            }
+        }
+
+        public int customSynt2wesax(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher, ReflectArgResolver argResolver) {
+            int w = 0;
+            Class<?> inputArgClass = inputToCheckerArg.argClass();
+            ClassReflectCache classReflectCache2 = classClassConfigCacheMap.computeIfAbsent(inputArgClass, ClassReflectCache::new);
+            Object argValue = inputToCheckerArg.argValue();
+            Map<String, InputToCheckerArg<?>> result = classReflectCache2.fullResultByInvokeCache(argValue, fieldMatcher);
+            if (result != null) {
+                return 0;
+            }
+            result = argResolver.getMatchFieldObjectMap(inputToCheckerArg, fieldMatcher);
+            classReflectCache2.tryRegNewInvokeCache(inputToCheckerArg, fieldMatcher, result);
+            return w;
+        }
+    }
+
 
 //    @Test
 //    public void customSynt2sax() {

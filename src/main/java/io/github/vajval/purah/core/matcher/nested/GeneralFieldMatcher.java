@@ -36,6 +36,7 @@ public class GeneralFieldMatcher extends BaseStringMatcher implements Multilevel
     protected final List<String> thisLevelWildCardMatchStrList;
     protected final Set<Integer> listIndexSet;
     protected final Set<String> otherListIndexSet;
+    protected boolean supportCache;
 
     public GeneralFieldMatcher(String matchStr) {
         super(matchStr);
@@ -65,7 +66,7 @@ public class GeneralFieldMatcher extends BaseStringMatcher implements Multilevel
         for (Map.Entry<String, String> entry : firstEqual.entrySet()) {
             String equalKey = entry.getKey();
             String value = entry.getValue();
-            firstLevelStrEqualMap.put(equalKey,  wrapMatchChild(value));
+            firstLevelStrEqualMap.put(equalKey, wrapMatchChild(value));
             listIndexSet.add(new MatchStrS(equalKey).listIndex);
         }
         if (!matchStr.contains("|")) {
@@ -78,6 +79,9 @@ public class GeneralFieldMatcher extends BaseStringMatcher implements Multilevel
         }
         listIndexSet.remove(MatchStrS.NO_LIST_INDEX);
         listIndexSet.remove(MatchStrS.OTHER_LIST_MATCH);
+        supportCache = (!this.matchStr.contains("#")) && (this.firstLevelStrMatchMap.size() == 0) && (this.firstLevelStrEqualMap.size() == 0);
+
+
     }
 
     protected FieldMatcher wrapMatchChild(String childMatchStr) {
@@ -163,6 +167,9 @@ public class GeneralFieldMatcher extends BaseStringMatcher implements Multilevel
                 }
             }
         }
+        if (childArg.isNull()) {
+            return NestedMatchInfo.create(needCollected, childFieldMatcher);
+        }
         for (Map.Entry<String, FieldMatcher> entry : firstLevelStrMatchMap.entrySet()) {
             String matchKey = entry.getKey();
             if (fieldByMatchKey(matchedField, matchKey)) {
@@ -185,19 +192,7 @@ public class GeneralFieldMatcher extends BaseStringMatcher implements Multilevel
 
     @Override
     public boolean supportCache() {
-        if (this.matchStr.contains("#")) {
-            return false;
-        }
-        if (this.firstLevelStrMatchMap.size() > 0) {
-            return false;
-        }
-        for (FieldMatcher value : firstLevelStrEqualMap.values()) {
-            if (!value.supportCache()) {
-                return false;
-            }
-        }
-        return true;
-
+        return supportCache;
     }
 
 
