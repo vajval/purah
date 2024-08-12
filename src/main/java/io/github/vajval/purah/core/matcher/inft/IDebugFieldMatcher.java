@@ -2,6 +2,7 @@ package io.github.vajval.purah.core.matcher.inft;
 
 import io.github.vajval.purah.core.matcher.FieldMatcher;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,7 +11,7 @@ import java.util.Set;
  * 入口只有  Set<String> matchFields(Set<String> fields, Object belongInstance)
  * Default implementation
  */
-public interface IDefaultFieldMatcher extends FieldMatcher {
+public interface IDebugFieldMatcher extends FieldMatcher {
 
     /*
      * Other functions are for debugging convenience.
@@ -18,35 +19,18 @@ public interface IDefaultFieldMatcher extends FieldMatcher {
      * It is not placed in FieldMatcher to avoid confusion.
      */
 
-    default Set<String> matchFields(Set<String> fields, Object belongInstance) {
-        HashSet<String> result = new HashSet<>();
-        for (String field : fields) {
-            if (this.match(field, belongInstance)) {
-                result.add(field);
-            }
-        }
-        return result;
-    }
+    Set<String> matchFields(Set<String> fields, Object belongInstance);
 
     default boolean match(String field, Object belongInstance) {
-        return false;
+        return matchFields(Collections.singleton(field), belongInstance).contains(field);
     }
 
     default boolean match(String field) {
         return match(field, null);
     }
 
-
     default Set<String> matchFields(Set<String> fields) {
-        HashSet<String> result = new HashSet<>();
-        for (String field : fields) {
-            if (this.match(field)) {
-                result.add(field);
-            }
-        }
-        return result;
-
+        return matchFields(fields, null);
     }
-
 
 }

@@ -8,6 +8,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import java.beans.PropertyDescriptor;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /*
@@ -39,6 +40,28 @@ public class ClassNameMatcher extends BaseStringMatcher {
 
     }
 
+
+    @Override
+    public Set<String> matchFields(Set<String> fields, Object belongInstance) {
+        if (belongInstance == null) {
+            return new HashSet<>();
+        }
+        Set<String> allFields = getFieldsByClass(belongInstance.getClass());
+        Set<String> result = new HashSet<>();
+        for (String field : fields) {
+            for (String matchKey : allFields) {
+                if (Objects.equals(field, matchKey)) {
+                    result.add(field);
+                    break;
+                }
+
+            }
+        }
+        return result;
+    }
+
+
+
     @Override
     public boolean match(String field, Object belongInstance) {
         Set<String> allFields = getFieldsByClass(belongInstance.getClass());
@@ -46,9 +69,8 @@ public class ClassNameMatcher extends BaseStringMatcher {
     }
 
 
-
     public Set<String> getFieldsByClass(Class<?> clazz) {
-        Set<String> result =  new HashSet<>();
+        Set<String> result = new HashSet<>();
         PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(clazz);
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String name = propertyDescriptor.getName();

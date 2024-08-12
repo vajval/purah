@@ -31,6 +31,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -102,13 +105,10 @@ public class CheckItAspectTest {
         assertTrue(aspectTestService.customSyntax(GOOD_USER));
         assertFalse(aspectTestService.customSyntax(BAD_USER));
         assertFalse(aspectTestService.customSyntax(GOOD_USER_BAD_CHILD));
-
         assertTrue(aspectTestService.customSyntax(GOOD_USER_GOOD_CHILD));
         MultiCheckResult<?> multiCheckResult = aspectTestService.customSyntax(GOOD_USER_BAD_CHILD);
         List<LogicCheckResult<?>> logicCheckResults = multiCheckResult.resultChildList(ResultLevel.only_failed_only_base_logic);
         String collect = logicCheckResults.stream().map(LogicCheckResult::log).collect(Collectors.joining(","));
-
-
         Assertions.assertTrue(collect.contains("childUser.id:range wrong"));
         Assertions.assertTrue(collect.contains("childUser.name:this field cannot empty"));
         Assertions.assertTrue(collect.contains("childUser.phone:phone num wrong"));
@@ -116,60 +116,28 @@ public class CheckItAspectTest {
 
     }
 
-//    @Test
-//
-//    public void customSynt2sax() {
-//        StopWatch stopWatch = new StopWatch();
-//
-//        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("*|childUser.id|childUser.name|childUser.phone|childUser.age");
-//        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
-//        InputToCheckerArg<User> inputToCheckerArg = InputToCheckerArg.of(GOOD_USER_BAD_CHILD);
-//        ConcurrentHashMap<Class<?>, ClassReflectCache> classClassConfigCacheMap = reflectArgResolver.classClassConfigCacheMap;
-//
-//        stopWatch.start("1");
-//        int num = 1 * 1000 * 1000;
-//        for (int i = 0; i < num; i++) {
-//            Class<?> inputArgClass = inputToCheckerArg.argClass();
-//            ClassReflectCache classReflectCache2 = classClassConfigCacheMap.computeIfAbsent(inputArgClass, ClassReflectCache::new);
-//            Object argValue = inputToCheckerArg.argValue();
-//            Map<String, InputToCheckerArg<?>> result = classReflectCache2.fullResultByInvokeCache(argValue, generalFieldMatcher);
-//            if (result != null) {
-//            }
-//        }
-//        stopWatch.stop();
-//
-//        stopWatch.start("2");
-//        for (int i = 0; i < num; i++) {
-//            reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
-//        }
-//        stopWatch.stop();
-//
-//        stopWatch.start("3");
-//        W w = new W();
-//        for (int i = 0; i < num; i++) {
-//            w.customSynt2wesax(inputToCheckerArg, generalFieldMatcher, reflectArgResolver);
-//        }
-//        stopWatch.stop();
-//
-//        stopWatch.start("4");
-//        for (int i = 0; i < num; i++) {
-//            reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
-//        }
-//        stopWatch.stop();
-//
-//        stopWatch.start("5");
-//        for (int i = 0; i < num; i++) {
-//            w.customSynt2wesax(inputToCheckerArg, generalFieldMatcher, reflectArgResolver);
-//        }
-//        stopWatch.stop();
-//
-//        stopWatch.start("6");
-//        for (int i = 0; i < num; i++) {
-//            reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
-//        }
-//        stopWatch.stop();
-//        System.out.println(stopWatch.prettyPrint());
-//    }
+    @Test
+
+    public void customSynt2sax() {
+        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("*|childUser.id|childUser.name|childUser.phone|childUser.age");
+        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
+        InputToCheckerArg<User> inputToCheckerArg = InputToCheckerArg.of(GOOD_USER_BAD_CHILD);
+
+        for (int i = 0; i < 1_000_000; i++) {
+            reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
+        }
+
+        StopWatch stopWatch = new StopWatch("123");
+        stopWatch.start("123");
+        for (int i = 0; i < 10_000_000; i++) {
+            reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
+        }
+        stopWatch.stop();
+        System.out.println(stopWatch.prettyPrint());
+    }
+
+
+
 
     static class W {
         ConcurrentHashMap<Class<?>, ClassReflectCache> classClassConfigCacheMap;

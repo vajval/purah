@@ -2,7 +2,7 @@ package io.github.vajval.purah.core.matcher;
 
 
 import io.github.vajval.purah.core.name.NameUtil;
-import io.github.vajval.purah.core.matcher.inft.IDefaultFieldMatcher;
+import io.github.vajval.purah.core.matcher.inft.IDebugFieldMatcher;
 
 import java.util.Objects;
 
@@ -12,7 +12,7 @@ import java.util.Objects;
  * allowing it to be configured using information from a configuration file.
  */
 
-public abstract class BaseStringMatcher implements IDefaultFieldMatcher {
+public abstract class BaseStringMatcher implements IDebugFieldMatcher {
 
     protected final String matchStr;
 

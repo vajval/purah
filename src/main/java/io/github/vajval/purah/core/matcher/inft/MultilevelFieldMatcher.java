@@ -2,10 +2,11 @@ package io.github.vajval.purah.core.matcher.inft;
 
 
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
+import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.core.matcher.nested.NestedMatchInfo;
 
 
-public interface MultilevelFieldMatcher extends IDefaultFieldMatcher {
+public interface MultilevelFieldMatcher extends FieldMatcher {
 
     /**
      * 将这个匹配到的对象 添加|不添加 到最后的结果

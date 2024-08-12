@@ -1,8 +1,12 @@
 package io.github.vajval.purah.core.matcher.singlelevel;
 
+import com.google.common.base.Splitter;
+import io.github.vajval.purah.core.matcher.BaseStringMatcher;
 import org.apache.commons.io.FilenameUtils;
 import io.github.vajval.purah.core.name.Name;
-import io.github.vajval.purah.core.matcher.WrapListFieldMatcher;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * a* ->a ab abc
@@ -10,26 +14,31 @@ import io.github.vajval.purah.core.matcher.WrapListFieldMatcher;
  * not support [] {}
  */
 @Name("wild_card")
-public class WildCardMatcher extends WrapListFieldMatcher<WildCardMatcher> {
+public class WildCardMatcher extends BaseStringMatcher {
+    Set<String> matchKeyList;
 
 
     public WildCardMatcher(String matchStr) {
         super(matchStr);
+        matchKeyList = new HashSet<>(Splitter.on("|").splitToList(matchStr));
+
+
     }
 
-    @Override
-    protected WildCardMatcher wrapChildMatcher(String matchStr) {
-        return new WildCardMatcher(matchStr);
-    }
 
     @Override
-    public boolean matchBySelf(String field, Object belongInstance) {
-        return FilenameUtils.wildcardMatch(field, this.matchStr);
-    }
+    public Set<String> matchFields(Set<String> fields, Object belongInstance) {
+        Set<String> result = new HashSet<>();
+        for (String field : fields) {
+            for (String matchKey : matchKeyList) {
+                if (FilenameUtils.wildcardMatch(field, matchKey)) {
+                    result.add(field);
+                    break;
+                }
 
-    @Override
-    protected boolean matchStrCanCache(String matchSer) {
-        return false;
+            }
+        }
+        return result;
     }
 
 }

@@ -8,6 +8,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /*
@@ -31,6 +32,25 @@ public class AnnTypeFieldMatcher extends BaseStringMatcher {
 
     public AnnTypeFieldMatcher(String matchStr) {
         super(matchStr);
+    }
+
+    @Override
+    public Set<String> matchFields(Set<String> fields, Object belongInstance) {
+        if (belongInstance == null) {
+            return new HashSet<>();
+        }
+        Set<String> allFields = getFieldsByClass(belongInstance.getClass());
+        Set<String> result = new HashSet<>();
+        for (String field : fields) {
+            for (String matchKey : allFields) {
+                if (Objects.equals(field, matchKey)) {
+                    result.add(field);
+                    break;
+                }
+
+            }
+        }
+        return result;
     }
 
     @Override
