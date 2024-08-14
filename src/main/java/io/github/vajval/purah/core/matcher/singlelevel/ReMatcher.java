@@ -2,7 +2,6 @@ package io.github.vajval.purah.core.matcher.singlelevel;
 
 import io.github.vajval.purah.core.name.Name;
 import io.github.vajval.purah.core.matcher.BaseStringMatcher;
-import io.github.vajval.purah.core.matcher.FieldMatcher;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -19,9 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ReflectArgResolver implements ArgResolver {
 
-
     protected final ConcurrentHashMap<Class<?>, ClassReflectCache> classClassConfigCacheMap;
-
 
     protected boolean enableCache = true;
 

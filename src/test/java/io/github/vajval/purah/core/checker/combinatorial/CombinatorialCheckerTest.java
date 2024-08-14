@@ -80,8 +80,6 @@ class CombinatorialCheckerTest {
         CheckResult<?> checkResult = matchListResult.data().get(0);//initiator:user_test
 
         Assertions.assertTrue(checkResult instanceof MultiCheckResult);
-        System.out.println(checkResult);
-
         MultiCheckResult<?> childResult = (MultiCheckResult) checkResult;
         Assertions.assertEquals(2, childResult.data().size());
         Assertions.assertTrue(childResult.data().get(0));

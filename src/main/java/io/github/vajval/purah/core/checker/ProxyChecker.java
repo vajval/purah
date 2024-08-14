@@ -21,9 +21,6 @@ public class ProxyChecker implements Checker<Object, Object> {
     }
 
 
-    public ProxyChecker(Checker<?, ?> checker) {
-        this(checker, checker.name(), checker.logicFrom());
-    }
 
     @Override
     public CheckResult<Object> check(InputToCheckerArg<Object> inputToCheckerArg) {

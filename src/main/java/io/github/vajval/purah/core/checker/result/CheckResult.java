@@ -33,10 +33,6 @@ public interface CheckResult<T> extends BooleanSupplier {
         return execInfo() == ExecInfo.failed;
     }
 
-//    default boolean isError() {
-//        return execInfo() == ExecInfo.error;
-//    }
-
     default boolean isIgnore() {
         return execInfo() == ExecInfo.ignore;
     }

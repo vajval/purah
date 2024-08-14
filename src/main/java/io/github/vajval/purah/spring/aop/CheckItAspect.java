@@ -2,8 +2,6 @@ package io.github.vajval.purah.spring.aop;
 
 
 import io.github.vajval.purah.spring.aop.exception.MethodArgCheckException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -26,16 +24,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Aspect
 public class CheckItAspect {
 
-
-    private static final Logger log = LogManager.getLogger(CheckItAspect.class);
-
     @Autowired
     Purahs purahs;
     @Autowired
     PurahContext purahContext;
     private final Map<Method, MethodHandlerChecker> methodCheckerMap = new ConcurrentHashMap<>();
-
-
 
     /*
      * 切面点
@@ -44,10 +37,7 @@ public class CheckItAspect {
     @Pointcut("execution(* *(.., @io.github.vajval.purah.spring.aop.ann.CheckIt (*), ..))")
     public void pointcut() {
 
-
     }
-
-
 
     @Around("pointcut()")
     public Object aroundAdvice(ProceedingJoinPoint joinPoint) {
@@ -81,11 +71,6 @@ public class CheckItAspect {
 
         MethodHandlerCheckResult methodHandlerCheckResult = methodHandlerChecker.check(inputToCheckerArg);
 
-
-//        if (methodHandlerCheckResult.isError()) {
-//            log.error(methodHandlerCheckResult.exception());
-//            throw new MethodArgCheckException(methodHandlerCheckResult);
-//        }
         boolean fillToMethodResult = methodHandlerChecker.isFillToMethodResult();
         if (methodHandlerCheckResult.isFailed()) {
             if (!fillToMethodResult) {

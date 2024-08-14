@@ -81,12 +81,8 @@ public class FieldMatcherResultReflectInvokeCache {
 
 
         final Map<String, ReflectTrieCache> reflectNodeMap = new HashMap<>();
-
-
         final String fieldName;
-
         String fullPath;
-
         Function<Object, InputToCheckerArg<?>> resultInvoke;
 
 
@@ -99,11 +95,8 @@ public class FieldMatcherResultReflectInvokeCache {
 
             if (firstPath.equals(path)) {
                 ReflectTrieCache node = reflectNodeMap.computeIfAbsent(path, i -> new ReflectTrieCache(path));
-
                 node.resultInvoke = object -> InputToCheckerArg.createChildWithFieldConfig(object, arg.fieldPath(), arg.field(), arg.annListOnField());
-
                 node.fullPath = fullPath;
-
             } else {
                 String childPath = path.substring(firstPath.length() + 1);
                 ReflectTrieCache reflectTrieCache = reflectNodeMap.computeIfAbsent(firstPath, i -> new ReflectTrieCache(firstPath));
@@ -113,8 +106,6 @@ public class FieldMatcherResultReflectInvokeCache {
         }
 
         public void invoke(Object arg, Map<String, InputToCheckerArg<?>> resultMap) {
-
-
             if (this.fullPath != null) {
                 resultMap.put(fullPath, resultInvoke.apply(arg));
             }

@@ -22,8 +22,8 @@ public class MultiCheckerExecutor {
     private List<CheckResult<?>> finalExecResult;
     private final List<CheckerExec> checkSupplierExecList = new ArrayList<>();
 
-    private LogicCheckResult<Object> successMainResult;
-    private LogicCheckResult<Object> failedMainResult;
+    private final LogicCheckResult<Object> successMainResult;
+    private final LogicCheckResult<Object> failedMainResult;
     private List<ExecInfo> execInfoList;
 
 

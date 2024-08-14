@@ -18,16 +18,10 @@ import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 public class PurahContext {
 
     public static final MethodConverter DEFAULT_METHOD_CONVERTER = new DefaultMethodConverter();
-
-
     private final PurahContextConfig config;
-
     private CheckerManager checkManager = new CheckerManager();
-
     private ArgResolver argResolver = new DefaultArgResolver();
-
     private MatcherManager matcherManager = new MatcherManager();
-
     private MethodConverter enableMethodConverter = DEFAULT_METHOD_CONVERTER;
 
     public PurahContext(PurahContextConfig config) {
@@ -47,7 +41,6 @@ public class PurahContext {
         }
         if (argResolver != null) {
             this.argResolver = argResolver;
-
         }
         if (matcherManager != null) {
             this.matcherManager = matcherManager;
@@ -89,7 +82,6 @@ public class PurahContext {
         checkManager.clear();
         if (argResolver.getClass().equals(ReflectArgResolver.class)) {
             ((ReflectArgResolver) argResolver).clearCache();
-
         }
     }
 

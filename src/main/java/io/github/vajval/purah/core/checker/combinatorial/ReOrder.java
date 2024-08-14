@@ -5,7 +5,6 @@ import io.github.vajval.purah.core.checker.result.ExecInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -54,10 +53,11 @@ public class ReOrder {
     }
 
     public void count(List<ExecInfo> execInfoList) {
-        for (int index = 0; index < execInfoList.size(); index++) {
+        for (int index = 0; index < Math.min(size,execInfoList.size()); index++) {
             ExecInfo execInfo = execInfoList.get(index);
             if (execInfo == stopInfo) {
                 fastStopIndexCountMap.get(index).addAndGet(1);
+                break;
             }
         }
         int i = checkCount.addAndGet(1);
@@ -72,7 +72,6 @@ public class ReOrder {
         List<Integer> sort = fastStopIndexCountMap.entrySet().stream()
                 .sorted((a, b) -> Integer.compare(b.getValue().get(), a.getValue().get()))
                 .map(Map.Entry::getKey).collect(Collectors.toList());
-
 
         //sort 2 0 1    当前第三步{2:1}执行的放最前面 (1), 当前第一步{0:2}执行的放第二(2) 当前第二步{1:0}执行的放第三(0)
         Map<Integer, Integer> newFastFailedStopMap = Maps.newHashMapWithExpectedSize(fastStopIndexMap.size());

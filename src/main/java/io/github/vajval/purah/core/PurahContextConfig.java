@@ -18,7 +18,6 @@ public class PurahContextConfig {
 
     ResultLevel defaultResultLevel = ResultLevel.only_failed_only_base_logic;
 
-
     Set<Class<? extends FieldMatcher>> singleStringConstructorFieldMatcherClassSet = new HashSet<>();
 
 

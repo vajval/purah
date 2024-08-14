@@ -162,9 +162,6 @@ public class InputToCheckerArg<INPUT_ARG> {
         this.fieldPath = fieldPath;
     }
 
-    public Class<?> getClazzInContext() {
-        return clazzInContext;
-    }
 }
 
 

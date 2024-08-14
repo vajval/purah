@@ -1,8 +1,6 @@
 package io.github.vajval.purah.core.checker;
 
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.exception.CheckException;
 import io.github.vajval.purah.core.exception.UnexpectedException;
@@ -150,10 +148,10 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
     private static HashMap<Class<?>, Class<?>> buildWrapperClassMap() {
 
         HashMap<Class<?>, Class<?>> wrapperClassMap = new HashMap<>();
-        wrapperClassMap.put( Byte.class, byte.class);
-        wrapperClassMap.put( Short.class, short.class);
-        wrapperClassMap.put( Integer.class, int.class);
-        wrapperClassMap.put( Long.class, long.class);
+        wrapperClassMap.put(Byte.class, byte.class);
+        wrapperClassMap.put(Short.class, short.class);
+        wrapperClassMap.put(Integer.class, int.class);
+        wrapperClassMap.put(Long.class, long.class);
         wrapperClassMap.put(Character.class, char.class);
         wrapperClassMap.put(Boolean.class, boolean.class);
         wrapperClassMap.put(Double.class, double.class);
@@ -246,7 +244,6 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
             return Objects.equals(clazz, that.clazz);
         }
 
-
         @Override
         public int hashCode() {
             return Objects.hash(clazz);
@@ -259,6 +256,4 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
                     '}';
         }
     }
-
-
 }

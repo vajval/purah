@@ -16,15 +16,12 @@ public class InputToCheckerArgCacheKey {
         this.checkerName = checkerName;
     }
 
-
     @Override
     public String toString() {
         if (inputToCheckerArg == null) {
             return "[#NULL#][" + checkerName + "]";
         }
         return "[" + inputToCheckerArg.fieldPath() + "][" + inputToCheckerArg.argValue() + "][" + checkerName + "]";
-
-
     }
 
     @Override

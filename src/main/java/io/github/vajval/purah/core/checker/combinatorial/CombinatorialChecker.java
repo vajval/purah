@@ -81,7 +81,6 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
     @Override
     public MultiCheckResult<CheckResult<?>> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
 
-
         //check inputArg
         List<CheckerExec> suppliers = new ArrayList<>(size);
         for (Checker<?, ?> checker : rootInputArgCheckers) {

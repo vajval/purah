@@ -9,16 +9,10 @@ import io.github.vajval.purah.core.checker.combinatorial.ExecMode;
 import io.github.vajval.purah.core.checker.custom.CustomAnnChecker;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
-import io.github.vajval.purah.core.checker.result.MultiCheckResult;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
 import io.github.vajval.purah.core.name.Name;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 import static io.github.vajval.purah.core.checker.MyCustomAnnChecker.NAME;

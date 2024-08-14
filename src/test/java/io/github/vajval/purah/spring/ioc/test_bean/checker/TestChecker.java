@@ -7,8 +7,6 @@ import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import io.github.vajval.purah.core.name.Name;
 import org.springframework.stereotype.Component;
 
-import static io.github.vajval.purah.spring.ioc.test_bean.checker.IocIgnoreChecker.NAME;
-
 @Name("中文名字检测")
 @Component
 public class TestChecker implements Checker<String, Object> {

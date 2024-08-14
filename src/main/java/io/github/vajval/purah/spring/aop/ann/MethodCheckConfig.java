@@ -19,9 +19,7 @@ public @interface MethodCheckConfig {
     ResultLevel resultLevel() default ResultLevel.all;
 
     boolean enableCache() default false;
-    /*
-     *
-     *   PurahCheckInstanceCacheContext.execOnCacheContext(() -> methodExec());
-     */
+
+
 
 }

@@ -94,26 +94,10 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
         }
         return super.isFailed();
     }
-//
-//    @Override
-//    public boolean isError() {
-//        if (isIgnore()) {
-//            ignoreError();
-//        }
-//        return super.isError();
-//    }
 
 
     private void ignoreError() {
         throw new UnexpectedException("this arg not check,no ann or be skip");
-
-//        if (execMode == ExecMode.Main.at_least_one) {
-//            throw new RuntimeException("unable to know,mode:[at_least_one],at least one has already succeeded.So this check is skipped,If the check must be conducted regardless. @MethodCheck set mainMode  at_least_one_but_must_check_all");
-//        } else if (execMode == ExecMode.Main.all_success) {
-//            throw new RuntimeException("unable to know,mode:[all_success],at least one has already failed.So this check is skipped,If the check must be conducted regardless. @MethodCheck set mainMode  all_success_but_must_check_all");
-//        } else {
-//            throw new UnexpectedException(execMode.name());
-//        }
     }
 
     public List<LogicCheckResult<?>> failedLogicList() {

@@ -23,7 +23,6 @@ public class Purahs {
 
     public ComboBuilderChecker combo(String... checkerNames) {
         return new ComboBuilderChecker(this, checkerNames);
-
     }
 
     public Checker<Object, Object> checkerOf(String name) {

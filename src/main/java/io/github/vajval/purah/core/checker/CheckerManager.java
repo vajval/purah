@@ -21,7 +21,6 @@ public class CheckerManager {
 
     private static final Logger logger = LogManager.getLogger(CheckerManager.class);
 
-
     private final Map<String, GenericsProxyChecker> enableCheckerCacheMap = new ConcurrentHashMap<>();
 
     private final List<CheckerFactory> checkerFactoryList = new CopyOnWriteArrayList<>();

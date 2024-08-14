@@ -19,7 +19,6 @@ public class PurahWrapMethod {
 
     protected final Object bean;
 
-
     protected boolean methodParamBeWrapped;
     protected Class<?> inputArgValueClazz = Object.class;
     protected final int needCheckArgIndex;

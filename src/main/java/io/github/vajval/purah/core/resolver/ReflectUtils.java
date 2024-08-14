@@ -20,8 +20,6 @@ import java.util.stream.Stream;
 
 public class ReflectUtils {
     protected static final Logger logger = LogManager.getLogger(ReflectUtils.class);
-    private static PropertyDescriptor propertyDescriptor;
-
     public static String firstPath(String path) {
         if (path.contains(".")) {
             return path.substring(0, path.indexOf("."));

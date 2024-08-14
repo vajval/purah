@@ -3,7 +3,7 @@
   <component name="Statistic">
     <option name="excludedDirectories">
       <list>
-        <option value="$PROJECT_DIR$/src/main" />
+        <option value="$PROJECT_DIR$/src/test" />
       </list>
     </option>
   </component>

@@ -2,10 +2,8 @@ package io.github.vajval.purah.core.resolver;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import io.github.vajval.purah.core.checker.ITCArgNullType;
 import io.github.vajval.purah.core.exception.ArgResolverException;
-import io.github.vajval.purah.core.exception.UnexpectedException;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.logging.log4j.LogManager;
@@ -35,10 +33,6 @@ public class ClassReflectCache {
     protected Map<String, Field> fieldByNameCacheMap;
     protected Map<String, List<Annotation>> annByFieldNameCacheMap;
     protected final Map<String, Function<InputToCheckerArg<?>, InputToCheckerArg<?>>> fieldInvokeFunctionMapping = new ConcurrentHashMap<>();
-
-    // FieldMatcher 匹配字段的缓存
-    //todo 缓存区分
-    protected final Map<FieldMatcher, Set<String>> matcherThisLevelFieldsCache = new ConcurrentHashMap<>();
 
 
     //FieldMatcher最终结果的缓存,缓存之后不需要执行FieldMatcher中的逻辑,直接获取结果
@@ -91,6 +85,11 @@ public class ClassReflectCache {
 
         @Override
         public void tryRegNewInvokeCache(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher, Map<String, InputToCheckerArg<?>> result) {
+        }
+
+        @Override
+        public Map<String, InputToCheckerArg<?>> fullResultByInvokeCache(Object inputArg, FieldMatcher fieldMatcher) {
+            return null;
         }
     };
 

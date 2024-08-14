@@ -3,7 +3,6 @@ package io.github.vajval.purah.core.matcher.nested;
 import com.google.common.collect.Lists;
 import io.github.vajval.purah.core.resolver.DefaultArgResolver;
 import io.github.vajval.purah.util.People;
-import io.github.vajval.purah.util.TestUser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
@@ -13,7 +12,6 @@ import java.util.Map;
 
 import static io.github.vajval.purah.util.User.GOOD_USER;
 import static io.github.vajval.purah.util.User.GOOD_USER_GOOD_CHILD;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 public class GeneralMultilevelFieldMatcherTest {

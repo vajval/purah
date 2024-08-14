@@ -17,11 +17,9 @@ import java.util.function.Supplier;
 public class PurahCheckInstanceCacheContext {
 
     private static final ThreadLocal<PurahCheckInstanceCacheContext> threadLocal = new ThreadLocal<>();
-
     private final Map<InputToCheckerArgCacheKey, CheckResult<?>> cacheMap = new ConcurrentHashMap<>();
 
     private int stackNum = 0;
-
 
     public static void execOnCacheContext(Runnable runnable) {
         execOnCacheContext(
@@ -30,42 +28,33 @@ public class PurahCheckInstanceCacheContext {
                     return 0;
                 }
         );
-
     }
 
     public static <T> T execOnCacheContext(Supplier<? extends T> supplier) {
-
         enableThreadCacheContext();
         try {
             return supplier.get();
         } finally {
             popCache();
         }
-
     }
 
     public static void putIntoCache(InputToCheckerArgCacheKey inputToCheckerArgCacheKey, CheckResult checkResult) {
         PurahCheckInstanceCacheContext thisThreadContextLocalCache = buildCacheContext();
         thisThreadContextLocalCache.cacheMap.put(inputToCheckerArgCacheKey, checkResult);
-
-
     }
 
     public static CheckResult<?> getResultFromCache(InputToCheckerArg inputToCheckerArg, String checkerName) {
-
         InputToCheckerArgCacheKey inputToCheckerArgCacheKey = new InputToCheckerArgCacheKey(inputToCheckerArg, checkerName);
         return getResultFromCache(inputToCheckerArgCacheKey);
-
     }
 
     public static CheckResult getResultFromCache(InputToCheckerArgCacheKey inputToCheckerArgCacheKey) {
         return buildCacheContext().cacheMap.get(inputToCheckerArgCacheKey);
-
     }
 
 
     public synchronized static void enableThreadCacheContext() {
-
         PurahCheckInstanceCacheContext thisThreadContextLocalCache = buildCacheContext();
         thisThreadContextLocalCache.stackNum++;
     }
@@ -97,8 +86,6 @@ public class PurahCheckInstanceCacheContext {
         result = new PurahCheckInstanceCacheContext();
         threadLocal.set(result);
         return result;
-
-
     }
 
 

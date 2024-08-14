@@ -6,11 +6,8 @@ import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import io.github.vajval.purah.core.checker.result.MultiCheckResult;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
-import io.github.vajval.purah.core.resolver.ArgResolver;
 import io.github.vajval.purah.core.resolver.ClassReflectCache;
-import io.github.vajval.purah.core.resolver.FieldMatcherResultReflectInvokeCache;
 import io.github.vajval.purah.core.resolver.ReflectArgResolver;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,14 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.StopWatch;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -119,24 +110,27 @@ public class CheckItAspectTest {
     @Test
 
     public void customSynt2sax() {
-        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("*|childUser.id|childUser.name|childUser.phone|childUser.age");
-        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
-        InputToCheckerArg<User> inputToCheckerArg = InputToCheckerArg.of(GOOD_USER_BAD_CHILD);
 
-        for (int i = 0; i < 1_000_000; i++) {
+
+        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("*|childUser.id|childUser.name|childUser.phone|childUser.age");
+        InputToCheckerArg<User> inputToCheckerArg = InputToCheckerArg.of(GOOD_USER_BAD_CHILD);
+        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
+
+        StopWatch stopWatch = new StopWatch("123");
+
+//        int num=1_00_000;
+        int num = 1_000;
+        for (int i = 0; i < num; i++) {
             reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
         }
 
-        StopWatch stopWatch = new StopWatch("123");
         stopWatch.start("123");
-        for (int i = 0; i < 10_000_000; i++) {
+        for (int i = 0; i < num * 1000; i++) {
             reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
         }
         stopWatch.stop();
         System.out.println(stopWatch.prettyPrint());
     }
-
-
 
 
     static class W {
