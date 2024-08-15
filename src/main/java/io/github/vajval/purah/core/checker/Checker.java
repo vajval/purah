@@ -22,19 +22,27 @@ public interface Checker<INPUT_ARG, RESULT> extends IName {
     CheckResult<RESULT> check(InputToCheckerArg<INPUT_ARG> inputToCheckerArg);
 
     default Class<?> inputArgClass() {
-        Class<?> result = ResolvableType.forClass(this.getClass()).as(Checker.class).getGenerics()[0].resolve();
-        if (result == null) {
-            return Object.class;
+        ResolvableType[] generics = ResolvableType.forClass(this.getClass()).as(Checker.class).getGenerics();
+        if (generics.length > 0) {
+            Class<?> result = generics[0].resolve();
+            if (result == null) {
+                return Object.class;
+            }
+            return result;
         }
-        return result;
+        return Object.class;
     }
 
     default Class<?> resultDataClass() {
-        Class<?> result = ResolvableType.forClass(this.getClass()).as(Checker.class).getGenerics()[1].resolve();
-        if (result == null) {
-            return Object.class;
+        ResolvableType[] generics = ResolvableType.forClass(this.getClass()).as(Checker.class).getGenerics();
+        if (generics.length > 1) {
+            Class<?> result = generics[1].resolve();
+            if (result == null) {
+                return Object.class;
+            }
+            return result;
         }
-        return result;
+        return Object.class;
     }
 
 
