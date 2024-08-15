@@ -5,10 +5,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class InputToCheckerArg<INPUT_ARG> {
     // input need check arg
@@ -29,7 +26,6 @@ public class InputToCheckerArg<INPUT_ARG> {
     List<Annotation> annListOnField = Collections.emptyList();
 
     ITCArgNullType nullType = ITCArgNullType.null_value;
-
 
     private InputToCheckerArg(INPUT_ARG arg, Class<?> clazzInContext, String fieldPath) {
         this(arg, fieldPath, null, Collections.emptyList());
@@ -55,6 +51,7 @@ public class InputToCheckerArg<INPUT_ARG> {
         if (annListOnField != null) {
             this.annListOnField = annListOnField;
         }
+
     }
 
 
@@ -101,8 +98,12 @@ public class InputToCheckerArg<INPUT_ARG> {
 
 
     public <E extends Annotation> E annOnField(Class<E> clazz) {
-        Optional<Annotation> first = annListOnField.stream().filter(i -> i.annotationType().equals(clazz)).findFirst();
-        return (E) (first.orElse(null));
+        for (Annotation annotation : annListOnField) {
+            if (annotation.annotationType().equals(clazz)) {
+                return (E) annotation;
+            }
+        }
+        return null;
     }
 
     public List<Annotation> annListOnField() {

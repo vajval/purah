@@ -9,7 +9,10 @@ public interface Checker<INPUT_ARG, RESULT> extends IName {
 
 
     default CheckResult<RESULT> oCheck(INPUT_ARG inputArg) {
-        return check(InputToCheckerArg.of(inputArg, inputArgClass()));
+        if (inputArg == null) {
+            check(InputToCheckerArg.of(null, inputArgClass()));
+        }
+        return check(InputToCheckerArg.of(inputArg));
     }
     /*
      * checker 入口

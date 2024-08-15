@@ -76,7 +76,9 @@ public class LogicCheckResult<T> implements CheckResult<T> {
     public static <T> LogicCheckResult<T> success(T data, String log) {
         return new LogicCheckResult<>(ExecInfo.success, data, log);
     }
-
+    public static <T> LogicCheckResult<T> failed() {
+        return new LogicCheckResult<>(ExecInfo.failed, null, null);
+    }
     public static <T> LogicCheckResult<T> failed(T data) {
         return new LogicCheckResult<>(ExecInfo.failed, data, null);
     }

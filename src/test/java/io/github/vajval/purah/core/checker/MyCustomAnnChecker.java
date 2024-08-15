@@ -6,13 +6,19 @@ import io.github.vajval.purah.core.checker.ann.NotEmptyTest;
 import io.github.vajval.purah.core.checker.ann.NotNull;
 import io.github.vajval.purah.core.checker.ann.Range;
 import io.github.vajval.purah.core.checker.combinatorial.ExecMode;
+import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
+import io.github.vajval.purah.core.checker.converter.checker.ByAnnMethodChecker;
 import io.github.vajval.purah.core.checker.custom.CustomAnnChecker;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
+import io.github.vajval.purah.core.checker.result.MultiCheckResult;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
 import io.github.vajval.purah.core.name.Name;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+
 
 
 import static io.github.vajval.purah.core.checker.MyCustomAnnChecker.NAME;
@@ -25,39 +31,29 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
     public static final String NAME = "custom_ann_check";
     public static int cnPhoneNumCount = 0;
 
+
     public MyCustomAnnChecker() {
         super(ExecMode.Main.all_success, ResultLevel.only_failed_only_base_logic);
     }
 
-//    @Override
-//    public MultiCheckResult<CheckResult<?>> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
-//        MultiCheckResult<CheckResult<?>> checkResultMultiCheckResult = super.doCheck(inputToCheckerArg);
-//        return new MultiCheckResult<>(LogicCheckResult.success(), Collections.emptyList());
-//    }
-    //    @Override
-//    public MultiCheckResult<CheckResult<?>> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
-////        return LogicCheckResult.success();
-//        List<Annotation> enableAnnotations = inputToCheckerArg.annListOnField().stream()
-//                .filter(i -> annCheckerMapping.containsKey(i.annotationType()))
-//                .collect(Collectors.toList());
-//        for (Annotation enableAnnotation : enableAnnotations) {
-//            if (inputToCheckerArg.isNull()) continue;
-//            boolean success;
-//            if (enableAnnotation.annotationType().equals(CNPhoneNum.class)) {
-//                success = cnPhoneNum((CNPhoneNum) enableAnnotation, (InputToCheckerArg) inputToCheckerArg).isSuccess();
-//            } else if (enableAnnotation.annotationType().equals(NotEmptyTest.class)) {
-//                success = notEmpty((NotEmptyTest) enableAnnotation, (InputToCheckerArg) inputToCheckerArg).isSuccess();
-//            } else if (enableAnnotation.annotationType().equals(Range.class)) {
-//                success = range((Range) enableAnnotation, (InputToCheckerArg) inputToCheckerArg).isSuccess();
-//            } else {
-//                success = notNull((NotNull) enableAnnotation, (Integer) inputToCheckerArg.argValue());
-//            }
-//            if (!success) {
-//               break;
-//            }
-//        }
-//        return new MultiCheckResult<>(LogicCheckResult.success(), Collections.emptyList());
-//    }
+
+    protected void initMethods() {
+        LambdaChecker<Integer> notNull = LambdaChecker.of(Integer.class).annBuild(NotNull.class.toString(), NotNull.class, this::notNull);
+        LambdaChecker<String> cNPhoneNum = LambdaChecker.of(String.class).annBuildWrap(CNPhoneNum.class.toString(), CNPhoneNum.class, this::cnPhoneNum);
+        LambdaChecker<String> notEmptyTest = LambdaChecker.of(String.class).annBuildWrap(NotEmptyTest.class.toString(), NotEmptyTest.class, this::notEmpty);
+        LambdaChecker<Number> range = LambdaChecker.of(Number.class).annBuildWrap(Range.class.toString(), Range.class, this::range);
+
+
+        annCheckerMapping.put(NotNull.class, GenericsProxyChecker.createByChecker(notNull));
+        annCheckerMapping.put(CNPhoneNum.class, GenericsProxyChecker.createByChecker(cNPhoneNum));
+        annCheckerMapping.put(NotEmptyTest.class, GenericsProxyChecker.createByChecker(notEmptyTest));
+        annCheckerMapping.put(Range.class, GenericsProxyChecker.createByChecker(range));
+
+
+
+
+    }
+
 
     public boolean notNull(NotNull notNull, Integer age) {
         return age != null;
@@ -80,8 +76,6 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
         String strValue = str.argValue();
         if (StringUtils.hasText(strValue)) {
             return LogicCheckResult.successBuildLog(str, "正确的");
-
-
         }
         return LogicCheckResult.failed(str.argValue(), str.fieldPath() + ":" + notEmptyTest.errorMsg());
 

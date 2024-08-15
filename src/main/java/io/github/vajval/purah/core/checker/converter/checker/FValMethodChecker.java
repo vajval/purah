@@ -156,11 +156,14 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
 
         protected Object selectFromMainResult(Map<String, InputToCheckerArg<?>> matchFieldObjectMap) {
             InputToCheckerArg<?> childArg = matchFieldObjectMap.get(FVal.value());
-            if (childArg == null || childArg.isNull()) {
+            if (childArg == null) {
                 return null;
             }
             if (clazz.isAnnotation()) {
                 return childArg.annOnField((Class) clazz);
+            }
+            if (childArg.isNull()) {
+                return null;
             }
             if (!clazz.isAssignableFrom(childArg.argClass())) {
                 throw new InitCheckerException("method cannot support arg[" + index + "] class: " + childArg.argClass() + " param class: " + clazz.getName() + "      method:  " + methodLog);

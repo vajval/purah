@@ -25,7 +25,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
     final String name;
     InputArgClass defaultInputArgClass;
-    Checker<?, ?> defaultChecker;
+    Checker<Object, Object> defaultChecker;
     final Map<InputArgClass, Checker<?, ?>> cacheGenericsCheckerMapping = new ConcurrentHashMap<>();
 
     BiFunction<GenericsProxyChecker, Integer, Integer> tryUpdateContext;
@@ -66,11 +66,11 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
         }
         InputArgClass checkerSupportInputArgClass = InputArgClass.byChecker(checker);
         if (defaultChecker == null) {
-            this.defaultChecker = checker;
+            this.defaultChecker = (Checker<Object, Object>) checker;
             this.defaultInputArgClass = checkerSupportInputArgClass;
         } else {
             if (checkerSupportInputArgClass.equals(defaultInputArgClass)) {
-                defaultChecker = checker;
+                defaultChecker = (Checker<Object, Object>) checker;
             }
         }
         this.cacheGenericsCheckerMapping.put(checkerSupportInputArgClass, checker);
@@ -83,6 +83,13 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
     }
 
     private static final InputToCheckerArg<Object> NULL_ARG = InputToCheckerArg.of(null);
+
+    public CheckResult<Object> oCheck(Object inputArg) {
+        if (inputArg == null) {
+            return defaultChecker.oCheck(null);
+        }
+        return check(InputToCheckerArg.of(inputArg));
+    }
 
     @Override
     public CheckResult<Object> check(InputToCheckerArg<Object> inputToCheckerArg) {
@@ -100,7 +107,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
 
 
     protected Checker<?, ?> getChecker(InputToCheckerArg<Object> inputToCheckerArg) {
-        if(defaultInputArgClass.clazz.equals(inputToCheckerArg.argClass())){
+        if (defaultInputArgClass.clazz.equals(inputToCheckerArg.argClass())) {
             return defaultChecker;
         }
         if (inputToCheckerArg.isNull() && (inputToCheckerArg.argClass() == null || inputToCheckerArg.argClass().equals(Object.class))) {

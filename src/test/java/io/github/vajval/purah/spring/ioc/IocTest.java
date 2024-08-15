@@ -1,10 +1,16 @@
 package io.github.vajval.purah.spring.ioc;
 
 import com.google.common.collect.Sets;
+import io.github.vajval.purah.core.checker.*;
+import io.github.vajval.purah.core.checker.ann.NotNull;
+import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
+import io.github.vajval.purah.core.checker.converter.checker.ByLogicMethodChecker;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
+import io.github.vajval.purah.spring.ioc.ann.ToChecker;
 import io.github.vajval.purah.spring.ioc.test_bean.PurahConfigPropertiesBean;
 import io.github.vajval.purah.spring.ioc.test_bean.TestCallBack;
+import io.github.vajval.purah.spring.ioc.test_bean.checker.CheckBean;
 import io.github.vajval.purah.spring.ioc.test_bean.checker.IocIgnoreChecker;
 import io.github.vajval.purah.spring.ioc.test_bean.matcher.IocIgnoreMatcher;
 import io.github.vajval.purah.spring.ioc.test_bean.matcher.ReverseStringMatcherFactory;
@@ -19,6 +25,7 @@ import io.github.vajval.purah.spring.ioc.test_bean.matcher.ReverseStringMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.lang.reflect.Method;
 import java.util.Set;
 
 @SpringBootTest(classes = ExampleApplication.class)
@@ -27,7 +34,31 @@ public class IocTest {
     Purahs purahs;
     @Autowired
     PurahConfigPropertiesBean purahConfigPropertiesBean;
-
+//
+//    @Test
+//    public void iosc() throws NoSuchMethodException {
+//        CheckBean checkBean = new CheckBean();
+//        LambdaChecker<String> checker = LambdaChecker.of(String.class)
+//                .build("lambdaTest", checkBean::lambdaTest);
+//        Checker<Object, Object> objectObjectChecker = purahs.checkerOf("lambdaTest");
+//
+//        Method method = CheckBean.class.getMethod("lambdaTest", String.class);
+//
+//
+//        ByLogicMethodChecker byLogicMethodChecker = new ByLogicMethodChecker(checkBean, method, "lambdaTest", AutoNull.notEnable);
+//        GenericsProxyChecker genericsProxyChecker = (GenericsProxyChecker) objectObjectChecker;
+//        System.out.println(genericsProxyChecker.defaultChecker.getClass());
+//        GenericsProxyChecker byChecker = GenericsProxyChecker.createByChecker(checker);
+//        MyCustomAnnChecker myCustomAnnChecker=new MyCustomAnnChecker();
+//        LambdaChecker<Integer> notNull = LambdaChecker.of(Integer.class).annBuild(NotNull.class.toString(), NotNull.class, myCustomAnnChecker::notNull);
+//        for (int i = 0; i < 100000000; i++) {
+//            notNull.oCheck(111111111);
+////            checker.check(InputToCheckerArg.of("111111111"));
+////
+//        }
+//
+//
+//    }
 
     @Test
     public void ioc() {
