@@ -70,6 +70,11 @@ public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>
         return this;
 
     }
+    public ComboBuilderChecker name(String name) {
+        config.setName(name);
+        combinatorialChecker = null;
+        return this;
+    }
 
     public GenericsProxyChecker regSelf(String name) {
         config.setName(name);
@@ -100,6 +105,8 @@ public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>
         return combinatorialChecker.check(inputToCheckerArg);
 
     }
+
+
 
     private MultiCheckResult<CheckResult<?>> singleCheck(String singleCheckerName, InputToCheckerArg<Object> inputToCheckerArg) {
         Checker<Object, Object> checker = purahs.checkerOf(singleCheckerName);

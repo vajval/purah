@@ -18,6 +18,7 @@ import io.github.vajval.purah.core.checker.factory.CheckerFactory;
 import io.github.vajval.purah.spring.config.PurahConfigProperties;
 import io.github.vajval.purah.spring.ioc.ann.ToChecker;
 import io.github.vajval.purah.spring.ioc.ann.ToCheckerFactory;
+import org.springframework.aop.support.AopUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -65,9 +66,6 @@ public class PurahIocRegS {
             logger.info("enable methodConverter:{} ", methodConverter.getClass());
         }
         purahContext.override(checkerManager, argResolver, matcherManager, methodConverter);
-
-
-
 
     }
 
@@ -132,24 +130,26 @@ public class PurahIocRegS {
 
     public void regPurahMethodsRegBean(Object enableBean) {
         if (enableBean == null) return;
-        logger.info("start reg bean class: {} to purahContext", enableBean.getClass());
+        Class<?> enableBeanClazz = AopUtils.getTargetClass(enableBean);
+
+        logger.info("start reg bean class: {} to purahContext", enableBeanClazz);
         MethodConverter enableMethodConverter = purahContext.enableMethodConverter();
-        List<Method> checkMethods = Stream.of(enableBean.getClass().getMethods()).filter(i -> i.getDeclaredAnnotation(ToChecker.class) != null).collect(Collectors.toList());
+        List<Method> checkMethods = Stream.of(enableBeanClazz.getMethods()).filter(i -> i.getDeclaredAnnotation(ToChecker.class) != null).collect(Collectors.toList());
 
         List<String> checkerNameList = new ArrayList<>(checkMethods.size());
         List<Checker<?, ?>> checkerList = new ArrayList<>();
         for (Method checkMethod : checkMethods) {
             ToChecker toChecker = checkMethod.getDeclaredAnnotation(ToChecker.class);
-            Checker<?, ?> checker = enableMethodConverter.toChecker(enableBean, checkMethod, toChecker.value(),toChecker.autoNull());
+            Checker<?, ?> checker = enableMethodConverter.toChecker(enableBean, checkMethod, toChecker.value(), toChecker.autoNull(),toChecker.failedInfo());
             if (checker != null) {
                 checkerList.add(checker);
                 checkerNameList.add(checker.name());
             } else {
-                logger.warn("converter method to checker failed bean class {} method {} ", enableBean.getClass(), checkMethod);
+                logger.warn("converter method to checker failed bean class {} method {} ", enableBeanClazz, checkMethod);
             }
         }
 
-        List<Method> checkFactoryMethods = Stream.of(enableBean.getClass().getMethods()).filter(i -> i.getDeclaredAnnotation(ToCheckerFactory.class) != null).collect(Collectors.toList());
+        List<Method> checkFactoryMethods = Stream.of(enableBeanClazz.getMethods()).filter(i -> i.getDeclaredAnnotation(ToCheckerFactory.class) != null).collect(Collectors.toList());
         List<String> checkerFactroyMatchList = new ArrayList<>(checkFactoryMethods.size());
         List<CheckerFactory> checkerFactoryList = new ArrayList<>();
 
@@ -160,7 +160,7 @@ public class PurahIocRegS {
                 checkerFactoryList.add(checkerFactory);
                 checkerFactroyMatchList.add(checkerFactory.name());
             } else {
-                logger.warn("converter method to checkerFactory failed bean class {} method {} ", enableBean.getClass(), checkMethod);
+                logger.warn("converter method to checkerFactory failed bean class {} method {} ", enableBeanClazz, checkMethod);
             }
         }
         for (Checker<?, ?> checker : checkerList) {

@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 public class DefaultMethodConverter implements MethodConverter {
     private static final Logger logger = LogManager.getLogger(DefaultMethodConverter.class);
 
-    protected Checker<?, ?> doToChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull) {
+    protected Checker<?, ?> doToChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull) {
         return null;
     }
 
@@ -25,9 +25,9 @@ public class DefaultMethodConverter implements MethodConverter {
 
 
     @Override
-    public Checker<?, ?> toChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull) {
+    public Checker<?, ?> toChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull, String failedInfo) {
 
-        String errorMsg = AbstractWrapMethodToChecker.errorMsgAbstractMethodToChecker(methodsToCheckersBean, method,name);
+        String errorMsg = AbstractWrapMethodToChecker.errorMsgAbstractMethodToChecker(methodsToCheckersBean, method, name);
 
 
         if (errorMsg != null) {
@@ -35,7 +35,7 @@ public class DefaultMethodConverter implements MethodConverter {
             return null;
         }
 
-        Checker<?, ?> checker = doToChecker(methodsToCheckersBean, method, name,autoNull);
+        Checker<?, ?> checker = doToChecker(methodsToCheckersBean, method, name, autoNull);
         if (checker != null) {
             return checker;
         }
@@ -43,20 +43,20 @@ public class DefaultMethodConverter implements MethodConverter {
         errorMsg = ByLogicMethodChecker.errorMsgCheckerByLogicMethod(methodsToCheckersBean, method);
         if (errorMsg == null) {
             logger.info("{}  {}", method, ByLogicMethodChecker.class);
-            return new ByLogicMethodChecker(methodsToCheckersBean, method, name,autoNull);
+            return new ByLogicMethodChecker(methodsToCheckersBean, method, name, autoNull, failedInfo);
         }
 
         errorMsg = ByAnnMethodChecker.errorMsgCheckerByAnnMethod(methodsToCheckersBean, method);
 
         if (errorMsg == null) {
             logger.info("{}  {}", method, ByAnnMethodChecker.class);
-            return new ByAnnMethodChecker(methodsToCheckersBean, method, name,autoNull);
+            return new ByAnnMethodChecker(methodsToCheckersBean, method, name, autoNull, failedInfo);
         }
         errorMsg = FValMethodChecker.errorMsgAutoMethodCheckerByDefaultReflectArgResolver
                 (methodsToCheckersBean, method);
         if (errorMsg == null) {
             logger.info("{}  {}", method, FValMethodChecker.class);
-            return new FValMethodChecker(methodsToCheckersBean, method, name,autoNull);
+            return new FValMethodChecker(methodsToCheckersBean, method, name, autoNull, failedInfo);
 
         }
 
@@ -64,7 +64,7 @@ public class DefaultMethodConverter implements MethodConverter {
         errorMsg = ByBaseMethodChecker.errorMsgCheckerByBaseMethod(methodsToCheckersBean, method);
         if (errorMsg == null) {
             logger.info("{}  {}", method, ByBaseMethodChecker.class);
-            return new ByBaseMethodChecker(methodsToCheckersBean, method, name,autoNull);
+            return new ByBaseMethodChecker(methodsToCheckersBean, method, name, autoNull, failedInfo);
 
         }
         logger.warn("convert  failed not enable converter,{}", method.toGenericString());

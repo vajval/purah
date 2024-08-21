@@ -111,19 +111,19 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
     }
 
     public void setLogicFrom(CheckResult<?> checkResult) {
-        checkResult.setCheckLogicFrom(info().logicFrom);
+        checkResult.setCheckerLogicFrom(info().logicFrom);
     }
 
 
     protected abstract CheckResult<RESULT> doCheck(InputToCheckerArg<INPUT_ARG> inputToCheckerArg);
 
 
-    protected LogicCheckResult<RESULT> success(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
-        return LogicCheckResult.successBuildLog(inputToCheckerArg, result);
-    }
+//    protected LogicCheckResult<RESULT> success(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
+//        return LogicCheckResult.successBuildLog(inputToCheckerArg, result);
+//    }
 
-    protected LogicCheckResult<RESULT> failed(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
-        return LogicCheckResult.failedBuildLog(inputToCheckerArg, result);
-    }
+//    protected LogicCheckResult<RESULT> failed(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
+//        return LogicCheckResult.failedBuildLog(inputToCheckerArg, result);
+//    }
 
 }

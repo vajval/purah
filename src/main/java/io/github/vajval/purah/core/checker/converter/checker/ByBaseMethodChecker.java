@@ -11,8 +11,8 @@ import java.lang.reflect.Method;
 public class ByBaseMethodChecker extends AbstractWrapMethodToChecker {
     Checker<Object, Object> checker;
 
-    public ByBaseMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull) {
-        super(methodsToCheckersBean, method, name,autoNull);
+    public ByBaseMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull, String failedInfo) {
+        super(methodsToCheckersBean, method, name,autoNull,failedInfo);
 
         String errorMsg = errorMsgCheckerByBaseMethod(methodsToCheckersBean, method);
 

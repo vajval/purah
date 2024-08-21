@@ -5,9 +5,11 @@ import io.github.vajval.purah.core.checker.Checker;
 import io.github.vajval.purah.core.checker.combinatorial.ExecMode;
 import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @PurahMethodsRegBean
+@Component
 public class ToCheckerTest {
     @Autowired
     Purahs purahs;

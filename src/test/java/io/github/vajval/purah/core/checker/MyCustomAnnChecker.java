@@ -6,15 +6,11 @@ import io.github.vajval.purah.core.checker.ann.NotEmptyTest;
 import io.github.vajval.purah.core.checker.ann.NotNull;
 import io.github.vajval.purah.core.checker.ann.Range;
 import io.github.vajval.purah.core.checker.combinatorial.ExecMode;
-import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
-import io.github.vajval.purah.core.checker.converter.checker.ByAnnMethodChecker;
 import io.github.vajval.purah.core.checker.custom.CustomAnnChecker;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
-import io.github.vajval.purah.core.checker.result.MultiCheckResult;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
 import io.github.vajval.purah.core.name.Name;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -66,7 +62,7 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
         cnPhoneNumCount++;
         //gpt小姐 说的
         if (strValue.matches("^1[3456789]\\d{9}$")) {
-            return LogicCheckResult.successBuildLog(str, "正确的");
+            return LogicCheckResult.success(str, "正确的");
         }
         return LogicCheckResult.failed(str.argValue(), str.fieldPath() + ":" + cnPhoneNum.errorMsg());
     }
@@ -75,7 +71,7 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
     public CheckResult<?> notEmpty(NotEmptyTest notEmptyTest, InputToCheckerArg<String> str) {
         String strValue = str.argValue();
         if (StringUtils.hasText(strValue)) {
-            return LogicCheckResult.successBuildLog(str, "正确的");
+            return LogicCheckResult.success(str, "正确的");
         }
         return LogicCheckResult.failed(str.argValue(), str.fieldPath() + ":" + notEmptyTest.errorMsg());
 
@@ -86,9 +82,9 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
     public CheckResult<?> range(Range range, InputToCheckerArg<Number> num) {
         Number numValue = num.argValue();
         if (numValue.doubleValue() < range.min() || numValue.doubleValue() > range.max()) {
-            return LogicCheckResult.failed(num.argValue(), (num.fieldPath() + ":" + range.errorMsg()));
+            return LogicCheckResult.failed(num.argValue(), num.fieldPath() + ":" + range.errorMsg());
         }
-        return LogicCheckResult.successBuildLog(num, "参数合规");
+        return LogicCheckResult.successAutoLog(num, "参数合规");
     }
 
 

@@ -2,6 +2,7 @@ package io.github.vajval.purah.core.checker;
 
 import io.github.vajval.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import io.github.vajval.purah.core.checker.result.CheckResult;
+import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ class BaseSupportCacheCheckerTest {
         @Override
         public CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
             count++;
-            return success(inputToCheckerArg, null);
+            return LogicCheckResult.success(inputToCheckerArg, null);
         }
     };
 

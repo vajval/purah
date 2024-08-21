@@ -3,11 +3,13 @@ package io.github.vajval.purah.core.checker.combinatorial;
 
 import io.github.vajval.purah.core.checker.*;
 import io.github.vajval.purah.core.checker.result.CheckResult;
+import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import io.github.vajval.purah.core.checker.result.MultiCheckResult;
 import io.github.vajval.purah.core.Purahs;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.core.resolver.ArgResolver;
+import org.apache.commons.logging.Log;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -95,7 +97,7 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
         }
 
 
-        String log = "[" + inputToCheckerArg.fieldPath() + "]: " + this.name();
+        String log = LogicCheckResult.logStr(inputToCheckerArg, this.name() + "  ");
         MultiCheckerExecutor executor = new MultiCheckerExecutor(this.config.mainExecType, this.config.resultLevel, log);
         if (reOrder != null) {
             suppliers = reOrder.reOrder(suppliers);
@@ -107,7 +109,7 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
         if (reOrder != null) {
             reOrder.count(executor.getExecInfoList());
         }
-        multiCheckResult.setCheckLogicFrom(this.logicFrom());
+        multiCheckResult.setCheckerLogicFrom(this.logicFrom());
         return multiCheckResult;
     }
 
@@ -125,14 +127,15 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
             this.fieldMatcher = config.fieldMatcher;
             argResolver = purahs.argResolver();
             checkerList = config.checkerNames.stream().map(purahs::checkerOf).collect(Collectors.toList());
-            log = "[" + combinatorialCheckerConfig.name + "]  of match:(" + config.fieldMatcher + ") checkers: " + config.checkerNames;
+            log = " match by:[" + config.fieldMatcher + "] to checkers:  " + config.checkerNames;
             this.mainMode = combinatorialCheckerConfig.mainExecType;
         }
 
         @Override
         public MultiCheckResult<CheckResult<?>> check(InputToCheckerArg<Object> inputToCheckerArg) {
             Map<String, InputToCheckerArg<?>> matchFieldObjectMap = argResolver.getMatchFieldObjectMap(inputToCheckerArg, fieldMatcher);
-            MultiCheckerExecutor executor = new MultiCheckerExecutor(mainMode, ResultLevel.all, log);
+            String useLog = LogicCheckResult.logStr(inputToCheckerArg, "") + log;
+            MultiCheckerExecutor executor = new MultiCheckerExecutor(mainMode, ResultLevel.all, useLog);
             for (Checker<?, ?> checker : checkerList) {
                 for (InputToCheckerArg<?> value : matchFieldObjectMap.values()) {
                     executor.add(checker, value);

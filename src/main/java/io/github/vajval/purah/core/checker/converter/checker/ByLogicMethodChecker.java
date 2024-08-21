@@ -22,8 +22,8 @@ public class ByLogicMethodChecker extends AbstractWrapMethodToChecker {
 
 
 
-    public ByLogicMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull) {
-        super(methodsToCheckersBean, method, name,autoNull);
+    public ByLogicMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull, String failedInfo) {
+        super(methodsToCheckersBean, method, name,autoNull,failedInfo);
         String errorMsg = errorMsgCheckerByLogicMethod(methodsToCheckersBean, method);
         if (errorMsg != null) {
             throw new InitCheckerException(errorMsg);

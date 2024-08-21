@@ -23,16 +23,18 @@ import java.util.stream.Collectors;
  * see org.purah.springboot.aop.AspectTestService
  */
 
-@Component
 public class ExampleCustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFactory {
 
 
-    @Autowired
     Purahs purahs;
 
     final static Splitter fieldSplitter = Splitter.on(";");
     final static Splitter iSplitter = Splitter.on(":");
     final static Splitter checkerSplitter = Splitter.on(",");
+
+    public ExampleCustomSyntaxCheckerFactory(Purahs purahs) {
+        this.purahs = purahs;
+    }
 
     public Purahs purahs() {
         return purahs;
@@ -85,6 +87,7 @@ public class ExampleCustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheck
             }
 
         }
+        checker.name(needMatchCheckerName);
         return checker;
     }
 

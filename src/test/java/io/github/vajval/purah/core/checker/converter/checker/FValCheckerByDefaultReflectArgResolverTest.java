@@ -73,10 +73,8 @@ public class FValCheckerByDefaultReflectArgResolverTest {
     void check() {
 
         Method method = Stream.of(FValCheckerByDefaultReflectArgResolverTest.class.getDeclaredMethods()).filter(i -> i.getName().equals("childNameCheck")).collect(Collectors.toList()).get(0);
-        FValMethodChecker checker = new FValMethodChecker(null, method, "test",AutoNull.notEnable);
+        FValMethodChecker checker = new FValMethodChecker(null, method, "test",AutoNull.notEnable,"failed");
 
-        FixedMatcher fixedMatcher = new FixedMatcher("child#0.child#0.name|child#0|child#0.child|child#100|name|child#0.child#0.child|child");
-        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
         for (int i = 0; i < 3; i++) {
             Assertions.assertTrue(checker.oCheck(People.elder));
         }
@@ -151,7 +149,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
 
         FValMethodChecker checker = new
                 FValMethodChecker(
-                null, method, "test",AutoNull.notEnable);
+                null, method, "test",AutoNull.notEnable,"failed");
 
 
         for (int i = 0; i < 3*1000; i++) {//no cache 3*1000*1000=13s cache 9.5s
@@ -165,7 +163,7 @@ public class FValCheckerByDefaultReflectArgResolverTest {
 
         FValMethodChecker checker = new
                 FValMethodChecker(
-                null, method, "test",AutoNull.notEnable);
+                null, method, "test",AutoNull.notEnable,"failed");
 
         for (int i = 0; i < 10000; i++) {
             Assertions.assertTrue(checker.oCheck(People.elder).isSuccess());

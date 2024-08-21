@@ -3,10 +3,11 @@ package io.github.vajval.purah.spring.ioc.test_bean.checker;
 import io.github.vajval.purah.spring.ioc.ann.PurahMethodsRegBean;
 import io.github.vajval.purah.spring.ioc.ann.ToChecker;
 import io.github.vajval.purah.spring.ioc.ann.ToCheckerFactory;
-
+import org.springframework.stereotype.Component;
 
 
 @PurahMethodsRegBean
+@Component
 public class IocMethodRegTestBean {
     public static final String NOT_NULL_CHECKER_NAME = "not null check for ioc test";
     public static final String RANGE_TEST = "value in [1-3]";

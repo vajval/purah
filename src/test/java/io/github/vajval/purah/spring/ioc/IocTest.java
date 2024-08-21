@@ -7,6 +7,7 @@ import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
 import io.github.vajval.purah.core.checker.converter.checker.ByLogicMethodChecker;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
+import io.github.vajval.purah.spring.extra.ExampleCustomSyntaxCheckerFactory;
 import io.github.vajval.purah.spring.ioc.ann.ToChecker;
 import io.github.vajval.purah.spring.ioc.test_bean.PurahConfigPropertiesBean;
 import io.github.vajval.purah.spring.ioc.test_bean.TestCallBack;
@@ -60,6 +61,8 @@ public class IocTest {
 //
 //    }
 
+
+
     @Test
     public void ioc() {
 
@@ -79,7 +82,8 @@ public class IocTest {
         System.out.println(purahConfigPropertiesBean);
         CheckResult<Object> result = purahs.checkerOf("用户注册检查").oCheck(new User(null, null, null, null));
         System.out.println(result);
-
+        result = purahs.checkerOf("example:1[][name:中文名字检测;*n*:中文名字检测]").oCheck(new User(null, null, null, null));
+        System.out.println(result);
     }
 
     @Test

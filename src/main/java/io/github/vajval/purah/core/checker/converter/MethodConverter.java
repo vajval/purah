@@ -10,7 +10,7 @@ public interface MethodConverter {
 
 
 
-    Checker<?,?> toChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull);
+    Checker<?,?> toChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull, String failedInfo);
 
 
     CheckerFactory toCheckerFactory(Object bean, Method method, String match, boolean cacheBeCreatedChecker);

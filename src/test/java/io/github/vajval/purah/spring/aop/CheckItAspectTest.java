@@ -109,30 +109,30 @@ public class CheckItAspectTest {
 
     }
 
-    @Test
-
-    public void customSynt2sax() {
-
-
-        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("*|childUser.id|childUser.name|childUser.phone|childUser.age");
-        InputToCheckerArg<User> inputToCheckerArg = InputToCheckerArg.of(GOOD_USER_BAD_CHILD);
-        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
-        reflectArgResolver.configCache(true);
-        StopWatch stopWatch = new StopWatch("123");
-
-        int num=1_00_000;
-//        int num = 1_000;
-        for (int i = 0; i < num; i++) {
-            reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
-        }
-
-        stopWatch.start("123");
-        for (int i = 0; i < num * 1000; i++) {
-            reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
-        }
-        stopWatch.stop();
-        System.out.println(stopWatch.prettyPrint());
-    }
+//    @Test
+//
+//    public void customSynt2sax() {
+//
+//
+//        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("*|childUser.id|childUser.name|childUser.phone|childUser.age");
+//        InputToCheckerArg<User> inputToCheckerArg = InputToCheckerArg.of(GOOD_USER_BAD_CHILD);
+//        ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
+//        reflectArgResolver.configCache(true);
+//        StopWatch stopWatch = new StopWatch("123");
+//
+//        int num=1_00_000;
+////        int num = 1_000;
+//        for (int i = 0; i < num; i++) {
+//            reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
+//        }
+//
+//        stopWatch.start("123");
+//        for (int i = 0; i < num * 1000; i++) {
+//            reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
+//        }
+//        stopWatch.stop();
+//        System.out.println(stopWatch.prettyPrint());
+//    }
 
 
     static class W {

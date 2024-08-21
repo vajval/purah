@@ -30,8 +30,8 @@ public class ByAnnMethodChecker extends AbstractWrapMethodToChecker {
     Class<? extends Annotation> annClazz;
 
 
-    public ByAnnMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull) {
-        super(methodsToCheckersBean, method, name,autoNull);
+    public ByAnnMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull, String failedInfo) {
+        super(methodsToCheckersBean, method, name,autoNull,failedInfo);
 
         String errorMsg = errorMsgCheckerByAnnMethod(methodsToCheckersBean, method);
 

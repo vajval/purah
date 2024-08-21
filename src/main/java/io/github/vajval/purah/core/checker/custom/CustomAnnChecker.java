@@ -52,7 +52,7 @@ public abstract class CustomAnnChecker extends AbstractBaseSupportCacheChecker<O
             String errorMsg = ByAnnMethodChecker.errorMsgCheckerByAnnMethod(this, method);
 
             if (errorMsg == null) {
-                ByAnnMethodChecker byAnnMethodChecker = new ByAnnMethodChecker(this, method, UUID.randomUUID().toString(), AutoNull.notEnable);
+                ByAnnMethodChecker byAnnMethodChecker = new ByAnnMethodChecker(this, method, UUID.randomUUID().toString(), AutoNull.notEnable,"failed");
                 String name = this.name() + "[" + byAnnMethodChecker.annClazz() + "]" + "[" + byAnnMethodChecker.inputArgClass() + "]";
                 String logicFrom = this.getClass() + "  convert method " + method.getName();
                 Class<? extends Annotation> annClazz = byAnnMethodChecker.annClazz();

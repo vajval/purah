@@ -18,14 +18,14 @@ import java.lang.reflect.Method;
 
 
 public class ByLogicMethodCheckerTest {
-    @Name("nameNotEmpty")
+
     public static boolean nameNotEmpty(String name) {
 
         return StringUtils.hasText(name);
     }
 
 
-    @Name("nameNotEmpty")
+
     public static boolean nameNotEmpty(People people) {
         if (people == null) return false;
         return StringUtils.hasText(people.getName());
@@ -37,11 +37,11 @@ public class ByLogicMethodCheckerTest {
     public void beforeEach() throws NoSuchMethodException {
         purahs = new Purahs(new PurahContext());
         Method method = ByLogicMethodCheckerTest.class.getMethod("nameNotEmpty", String.class);
-        ByLogicMethodChecker methodChecker = new ByLogicMethodChecker(null, method, "nameNotEmpty",AutoNull.notEnable);
+        ByLogicMethodChecker methodChecker = new ByLogicMethodChecker(null, method, "nameNotEmpty",AutoNull.notEnable,"failed");
         purahs.reg(methodChecker);
 
         method = ByLogicMethodCheckerTest.class.getMethod("nameNotEmpty", People.class);
-        methodChecker = new ByLogicMethodChecker(null, method, "nameNotEmpty",AutoNull.notEnable);
+        methodChecker = new ByLogicMethodChecker(null, method, "nameNotEmpty",AutoNull.notEnable,"failed");
         purahs.reg(methodChecker);
 
     }

@@ -11,6 +11,7 @@ import io.github.vajval.purah.core.resolver.ArgResolver;
 import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 import io.github.vajval.purah.spring.IgnoreBeanOnPurahContext;
 import io.github.vajval.purah.spring.config.PurahConfigProperties;
+import io.github.vajval.purah.spring.extra.ExampleCustomSyntaxCheckerFactory;
 import io.github.vajval.purah.spring.ioc.PurahIocRegS;
 import io.github.vajval.purah.spring.ioc.ann.PurahMethodsRegBean;
 import org.apache.logging.log4j.LogManager;
@@ -30,9 +31,10 @@ public class PurahRefreshHelper {
 
     PurahContext purahContext;
     ApplicationContext applicationContext;
-    public PurahRefreshHelper(PurahContext purahContext,ApplicationContext applicationContext) {
-        this.purahContext=purahContext;
-        this.applicationContext=applicationContext;
+
+    public PurahRefreshHelper(PurahContext purahContext, ApplicationContext applicationContext) {
+        this.purahContext = purahContext;
+        this.applicationContext = applicationContext;
     }
 
 
@@ -126,10 +128,10 @@ public class PurahRefreshHelper {
             purahIocRegS.regCheckerByProperties(purahConfigProperties);
         } catch (NoSuchBeanDefinitionException ignored) {
         }
+        purahIocRegS.regCheckerFactory(new ExampleCustomSyntaxCheckerFactory(purahContext.purahs()));
 
 
     }
-
 
 
     public void callBack(PurahIocRegS purahIocRegS, ApplicationContext applicationContext) {

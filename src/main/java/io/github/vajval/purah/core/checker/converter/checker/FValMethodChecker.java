@@ -45,14 +45,14 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
     private ArgResolver resolver = defaultResolver;
     private Purahs purahs;
 
-    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull, Purahs purahs) {
-        this(methodsToCheckersBean, method, name, autoNull);
+    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull, String failedInfo, Purahs purahs) {
+        this(methodsToCheckersBean, method, name, autoNull, failedInfo);
         this.resolver = purahs.argResolver();
         this.purahs = purahs;
     }
 
-    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull) {
-        super(methodsToCheckersBean, method, name, autoNull);
+    public FValMethodChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull, String failedInfo) {
+        super(methodsToCheckersBean, method, name, autoNull, failedInfo);
         String errorMsg = errorMsgAutoMethodCheckerByDefaultReflectArgResolver(methodsToCheckersBean, method);
         if (errorMsg != null) {
             throw new InitCheckerException(errorMsg);

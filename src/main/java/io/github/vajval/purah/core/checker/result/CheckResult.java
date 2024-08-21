@@ -8,17 +8,28 @@ public interface CheckResult<T> extends BooleanSupplier {
 
     T data();
 
-    default boolean isSuccess() {
-        if (isIgnore()) {
-            throw new RuntimeException("This check has been ignored,It is not certain whether it will succeed or fail. ");
-        }
-        return execInfo() == ExecInfo.success;
-    }
+
 
     @Override
     default boolean getAsBoolean() {
         return isSuccess();
     }
+
+    default String info() {
+        return log();
+    }
+
+    ExecInfo execInfo();
+
+    String log();
+
+    void setCheckerLogicFrom(String logicFrom);
+
+    String checkLogicFrom();
+
+    CheckResult<T> setInfo(String info);
+
+
 
     //todo isFromCache
 
@@ -32,22 +43,16 @@ public interface CheckResult<T> extends BooleanSupplier {
         }
         return execInfo() == ExecInfo.failed;
     }
+    default boolean isSuccess() {
+        if (isIgnore()) {
+            throw new RuntimeException("This check has been ignored,It is not certain whether it will succeed or fail. ");
+        }
+        return execInfo() == ExecInfo.success;
+    }
 
     default boolean isIgnore() {
         return execInfo() == ExecInfo.ignore;
     }
 
-    default String info() {
-        return log();
-    }
 
-    Exception exception();
-
-    ExecInfo execInfo();
-
-    String log();
-
-    void setCheckLogicFrom(String logicFrom);
-
-    String checkLogicFrom();
 }

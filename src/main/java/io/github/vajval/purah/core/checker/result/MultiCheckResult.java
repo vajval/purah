@@ -30,11 +30,24 @@ public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<L
     protected final LogicCheckResult<?> mainResult;
     protected final List<T> valueList;
 
+    protected String info;
+
     public MultiCheckResult(LogicCheckResult<?> mainResult, List<T> valueList) {
         this.mainResult = mainResult;
         this.valueList = valueList;
+        this.info = mainResult.info();
     }
 
+    @Override
+    public CheckResult<List<T>> setInfo(String info) {
+        this.info = info;
+        return this;
+    }
+
+    @Override
+    public String info() {
+        return info;
+    }
 
     public List<LogicCheckResult<?>> resultChildList(ResultLevel resultLevel) {
 
@@ -71,10 +84,6 @@ public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<L
         return valueList;
     }
 
-    @Override
-    public Exception exception() {
-        return mainResult.exception();
-    }
 
     @Override
     public ExecInfo execInfo() {
@@ -87,8 +96,8 @@ public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<L
     }
 
     @Override
-    public void setCheckLogicFrom(String logicFrom) {
-        this.mainResult.setCheckLogicFrom(logicFrom);
+    public void setCheckerLogicFrom(String logicFrom) {
+        this.mainResult.setCheckerLogicFrom(logicFrom);
     }
 
     @Override
@@ -103,7 +112,7 @@ public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<L
     @Override
     public String toString() {
         return "MultiCheckResult{" +
-                "base=" + mainResult +
+                " mainResult=" + mainResult +
                 ", valueList=" + valueList +
                 '}';
     }

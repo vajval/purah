@@ -35,8 +35,8 @@ public class MultiCheckerExecutor {
         } else if (mainExecMode == ExecMode.Main.at_least_one || mainExecMode == ExecMode.Main.at_least_one_but_must_check_all) {
             execInfo = ExecInfo.failed;
         }
-        successMainResult = LogicCheckResult.success(null, ExecInfo.success.value() + " (" + log + ")");
-        failedMainResult = LogicCheckResult.failed(null, ExecInfo.failed.value() + " (" + log + ")");
+        successMainResult = LogicCheckResult.success();
+        failedMainResult = LogicCheckResult.failed(null, ExecInfo.failed.value() + "  " + log );
     }
 
     public void add(CheckerExec checkerExec) {

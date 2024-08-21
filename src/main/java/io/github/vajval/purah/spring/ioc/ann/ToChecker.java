@@ -4,6 +4,7 @@ package io.github.vajval.purah.spring.ioc.ann;
 import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
 
 import java.lang.annotation.*;
+import java.util.Objects;
 
 /**
  * 只能用在有 @PurahMethodsRegBean注解的class的函数上
@@ -14,8 +15,11 @@ import java.lang.annotation.*;
 @Documented
 public @interface ToChecker {
 
+
     String value();
 
     AutoNull autoNull() default AutoNull.notEnable;
+
+    String failedInfo() default "failed";
 
 }

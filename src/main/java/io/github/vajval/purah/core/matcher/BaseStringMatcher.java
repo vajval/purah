@@ -23,7 +23,7 @@ public abstract class BaseStringMatcher implements IDebugFieldMatcher {
 
     @Override
     public String toString() {
-        return NameUtil.logClazzName(this) + ":(  " + matchStr + "  )";
+        return NameUtil.logClazzName(this) + ":(" + matchStr + ")";
     }
 
     @Override
