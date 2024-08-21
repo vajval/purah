@@ -39,7 +39,7 @@ public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<L
     }
 
     @Override
-    public CheckResult<List<T>> setInfo(String info) {
+    public CheckResult<List<T>> updateInfo(String info) {
         this.info = info;
         return this;
     }
@@ -80,7 +80,7 @@ public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<L
 
 
     @Override
-    public List<T> data() {
+    public List<T> value() {
         return valueList;
     }
 
@@ -95,15 +95,7 @@ public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<L
         return this.mainResult.log();
     }
 
-    @Override
-    public void setCheckerLogicFrom(String logicFrom) {
-        this.mainResult.setCheckerLogicFrom(logicFrom);
-    }
 
-    @Override
-    public String checkLogicFrom() {
-        return this.mainResult.checkLogicFrom();
-    }
 
     public LogicCheckResult<?> mainResult() {
         return mainResult;

@@ -26,8 +26,7 @@ public class CombinatorialCheckerConfig {
 
     List<String> forRootInputArgCheckerNames = new ArrayList<>();
 
-    protected  int reOrderCount=-1;
-
+    protected int reOrderCount = -1;
 
 
     public final List<FieldMatcherCheckerConfig> fieldMatcherCheckerConfigList = new ArrayList<>();

@@ -3,15 +3,14 @@ package io.github.vajval.purah.core.checker;
 import com.google.common.collect.Maps;
 import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
 import io.github.vajval.purah.core.checker.result.CheckResult;
+import io.github.vajval.purah.core.checker.result.ExecInfo;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.WeakHashMap;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -24,26 +23,53 @@ import java.util.function.Predicate;
 public class LambdaChecker<INPUT_ARG> implements Checker<INPUT_ARG, Object> {
     final String name;
     Function<InputToCheckerArg<INPUT_ARG>, CheckResult<?>> function;
-
     final Class<INPUT_ARG> clazz;
     AutoNull autoNull;
-
     String failedInfo;
-    String logicFrom;
-
-    boolean failedInfoReplace;
 
     private LambdaChecker(String name, Function<InputToCheckerArg<INPUT_ARG>, CheckResult<?>> function,
-                          Class<INPUT_ARG> clazz, AutoNull autoNull, String failedInfo, String logicFrom) {
+                          Class<INPUT_ARG> clazz, AutoNull autoNull, String failedInfo) {
         this.name = name;
         this.function = function;
         this.clazz = clazz;
         this.autoNull = autoNull;
         this.failedInfo = failedInfo;
-        this.logicFrom = logicFrom;
-        this.failedInfoReplace = this.failedInfo.contains("$");
     }
 
+    @Override
+    public CheckResult<Object> check(InputToCheckerArg<INPUT_ARG> inputToCheckerArg) {
+        if (inputToCheckerArg.isNull() && autoNull != AutoNull.notEnable) {
+            if (autoNull == AutoNull.failed) {
+                return LogicCheckResult.failedAutoInfo(inputToCheckerArg, failedInfo);
+            }
+            if (autoNull == AutoNull.success) {
+                return LogicCheckResult.success();
+            }
+            if (autoNull == AutoNull.ignore) {
+                return LogicCheckResult.ignore();
+            }
+        }
+        CheckResult<?> result = function.apply(inputToCheckerArg);
+        if (result.execInfo() == ExecInfo.failed) {
+            result.updateInfo(LogicCheckResult.autoInfo(inputToCheckerArg, failedInfo));
+        }
+        return (CheckResult) result;
+    }
+
+    @Override
+    public String name() {
+        return name;
+    }
+
+    @Override
+    public Class<?> inputArgClass() {
+        return clazz;
+    }
+
+    @Override
+    public Class<?> resultDataClass() {
+        return Object.class;
+    }
 
     public static <T> Builder<T> of(Class<T> clazz) {
         return new Builder<>(clazz);
@@ -99,7 +125,7 @@ public class LambdaChecker<INPUT_ARG> implements Checker<INPUT_ARG, Object> {
         }
 
         public LambdaChecker<T> buildWrap(String name, Function<InputToCheckerArg<T>, CheckResult<?>> function) {
-            return new LambdaChecker<>(name, function, clazz, autoNull, failedInfo, logicFrom);
+            return new LambdaChecker<>(name, function, clazz, autoNull, logicFrom);
         }
 
 
@@ -138,58 +164,5 @@ public class LambdaChecker<INPUT_ARG> implements Checker<INPUT_ARG, Object> {
 
     }
 
-    @Override
-    public String name() {
-        return name;
-    }
 
-    @Override
-    public Class<?> inputArgClass() {
-        return clazz;
-    }
-
-    @Override
-    public CheckResult<Object> check(InputToCheckerArg<INPUT_ARG> inputToCheckerArg) {
-
-
-        if (inputToCheckerArg.isNull() && autoNull != AutoNull.notEnable) {
-            if (autoNull == AutoNull.failed) {
-                String resultFailedInfo = failedInfo;
-                if (failedInfoReplace) {
-                    resultFailedInfo = resultFailedInfo(failedInfo, inputToCheckerArg);
-                }
-                return LogicCheckResult.failed().setInfo(resultFailedInfo);
-            }
-            if (autoNull == AutoNull.success) {
-                return LogicCheckResult.success();
-            }
-            if (autoNull == AutoNull.ignore) {
-                return LogicCheckResult.ignore();
-            }
-        }
-        CheckResult<?> result = function.apply(inputToCheckerArg);
-        String resultFailedInfo = failedInfo;
-        if (failedInfoReplace) {
-            resultFailedInfo = resultFailedInfo(failedInfo, inputToCheckerArg);
-        }
-        result.setCheckerLogicFrom(logicFrom);
-        result.setInfo(resultFailedInfo);
-        return (CheckResult) result;
-    }
-
-    private static <T> String resultFailedInfo(String failedInfo, InputToCheckerArg<T> inputToCheckerArg) {
-        Map<String, String> params = Maps.newHashMapWithExpectedSize(2);
-        if (StringUtils.hasText(inputToCheckerArg.fieldPath)) {
-            params.put("path", inputToCheckerArg.fieldPath);
-        }
-        params.put("arg", String.valueOf(inputToCheckerArg.argValue()));
-        StrSubstitutor strSubstitutor = new StrSubstitutor(params);
-        return strSubstitutor.replace(failedInfo);
-
-    }
-
-    @Override
-    public Class<?> resultDataClass() {
-        return Object.class;
-    }
 }

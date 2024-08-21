@@ -80,7 +80,7 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
 
 
         return ArgCheckResult.create(multiCheckResult.mainResult(), checkerNameList,
-                multiCheckResult.data(),
+                multiCheckResult.value(),
                 checkIt, checkArg, checkIt.mainMode());
 
     }

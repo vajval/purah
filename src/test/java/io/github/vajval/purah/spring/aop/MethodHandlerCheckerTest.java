@@ -103,16 +103,16 @@ public class MethodHandlerCheckerTest {
 
         MethodHandlerChecker methodHandlerChecker = checkerByMethodName("test2");
         MethodHandlerCheckResult methodHandlerCheckResult = methodHandlerChecker.oCheck(new People[]{People.elder});
-        Object haveChild = methodHandlerCheckResult.argResultOf(0).resultOf("have_child").data();
+        Object haveChild = methodHandlerCheckResult.argResultOf(0).resultOf("have_child").value();
         Assertions.assertEquals(haveChild, "success");
 
         methodHandlerCheckResult = methodHandlerChecker.oCheck(new People[]{People.granddaughterForDaughter});
-        haveChild = methodHandlerCheckResult.argResultOf(0).resultOf("have_child").data();
+        haveChild = methodHandlerCheckResult.argResultOf(0).resultOf("have_child").value();
         Assertions.assertEquals(haveChild, "no child");
         log.info("----------------");
         log.info(methodHandlerCheckResult.log());
         log.info(methodHandlerCheckResult.argResultOf(0).log());
-        log.info(methodHandlerCheckResult.argResultOf(0).resultOf("have_child").data());
+        log.info(methodHandlerCheckResult.argResultOf(0).resultOf("have_child").value());
 
 
     }
@@ -121,7 +121,7 @@ public class MethodHandlerCheckerTest {
     public void method3() {
         MethodHandlerChecker methodHandlerChecker = checkerByMethodName("test3");
         MethodHandlerCheckResult methodHandlerCheckResult = methodHandlerChecker.oCheck(new People[]{People.elder, People.granddaughterForDaughter, People.elder, People.elder, People.elder, People.elder, People.elder, People.elder});
-        List<ArgCheckResult> resultList = methodHandlerCheckResult.data();
+        List<ArgCheckResult> resultList = methodHandlerCheckResult.value();
         Assertions.assertTrue(resultList.get(0));
         Assertions.assertFalse(resultList.get(1));
         for (int index = 2; index < resultList.size(); index++) {
@@ -133,7 +133,7 @@ public class MethodHandlerCheckerTest {
     public void method4() {
         MethodHandlerChecker methodHandlerChecker = checkerByMethodName("test4");
         MethodHandlerCheckResult methodHandlerCheckResult = methodHandlerChecker.oCheck(new People[]{People.elder, People.granddaughterForDaughter, People.elder, People.elder, People.elder, People.elder, People.elder, People.elder});
-        List<ArgCheckResult> resultList = methodHandlerCheckResult.data();
+        List<ArgCheckResult> resultList = methodHandlerCheckResult.value();
         Assertions.assertTrue(resultList.get(0));
         Assertions.assertFalse(resultList.get(1));
         for (int index =2; index < resultList.size(); index++) {

@@ -126,7 +126,7 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
 
 
         MultiCheckResult<ArgCheckResult> multiCheckResult = (MultiCheckResult) multiCheckerExecutor.execToMultiCheckResult();
-        Iterator<ArgCheckResult> iterator = multiCheckResult.data().iterator();
+        Iterator<ArgCheckResult> iterator = multiCheckResult.value().iterator();
 
         List<ArgCheckResult> resultValueList = new ArrayList<>();
         for (int index = 0; index < args.length; index++) {

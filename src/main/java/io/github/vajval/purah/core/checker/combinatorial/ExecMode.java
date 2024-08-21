@@ -45,27 +45,4 @@ public class ExecMode {
             }
         }
     }
-
-
-    /**
-     * 用一个 checker 检查所有 field value,然后下一个 checker
-     * 一个field value被所有checker检查 ,然后下一个 field value
-     * Fine, here are two ways to check things:
-     * Go through each arg and apply every single check, then move on to the next arg.
-     * Apply one check to all the args, then move on to the next check.
-     */
-    public enum Matcher {
-        checker_arg(1),
-        arg_checker(2);
-        final int value;
-
-
-        Matcher(int value) {
-            this.value = value;
-        }
-
-        public int value() {
-            return value;
-        }
-    }
 }

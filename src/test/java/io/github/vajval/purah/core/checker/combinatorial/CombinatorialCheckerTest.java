@@ -71,26 +71,26 @@ class CombinatorialCheckerTest {
         CombinatorialChecker combinatorialChecker = new CombinatorialChecker(config);
 
         MultiCheckResult<CheckResult<?>> multiCheckResult = combinatorialChecker.oCheck(trade);
-        Assertions.assertEquals(2, multiCheckResult.data().size());
+        Assertions.assertEquals(2, multiCheckResult.value().size());
 
 
 
-        MultiCheckResult<?> matchListResult = ( MultiCheckResult<?>)multiCheckResult.data().get(0);
+        MultiCheckResult<?> matchListResult = ( MultiCheckResult<?>)multiCheckResult.value().get(0);
 
-        CheckResult<?> checkResult = matchListResult.data().get(0);//initiator:user_test
+        CheckResult<?> checkResult = matchListResult.value().get(0);//initiator:user_test
 
         Assertions.assertTrue(checkResult instanceof MultiCheckResult);
         MultiCheckResult<?> childResult = (MultiCheckResult) checkResult;
-        Assertions.assertEquals(2, childResult.data().size());
-        Assertions.assertTrue(childResult.data().get(0));
-        Assertions.assertTrue(childResult.data().get(1));
+        Assertions.assertEquals(2, childResult.value().size());
+        Assertions.assertTrue(childResult.value().get(0));
+        Assertions.assertTrue(childResult.value().get(1));
 
 
-        checkResult = multiCheckResult.data().get(1);
+        checkResult = multiCheckResult.value().get(1);
         Assertions.assertTrue(checkResult instanceof MultiCheckResult);
         childResult = (MultiCheckResult) checkResult;
-        Assertions.assertEquals(1, childResult.data().size());
-        Assertions.assertFalse(childResult.data().get(0));
+        Assertions.assertEquals(1, childResult.value().size());
+        Assertions.assertFalse(childResult.value().get(0));
 
     }
 
@@ -99,7 +99,7 @@ class CombinatorialCheckerTest {
         ComboBuilderChecker checker = comboBuilderChecker.mainMode(ExecMode.Main.all_success);
         MultiCheckResult<CheckResult<?>> result = checker.oCheck(trade);//
         Assertions.assertFalse(result);
-        Assertions.assertEquals(result.data().size(), 2);
+        Assertions.assertEquals(result.value().size(), 2);
     }
 
     @Test
@@ -107,7 +107,7 @@ class CombinatorialCheckerTest {
         ComboBuilderChecker checker = comboBuilderChecker.mainMode(ExecMode.Main.all_success_but_must_check_all);
         MultiCheckResult<CheckResult<?>> result = checker.oCheck(trade);//xx√
         Assertions.assertFalse(result);
-        Assertions.assertEquals(result.data().size(), 3);
+        Assertions.assertEquals(result.value().size(), 3);
     }
 
     @Test
@@ -115,7 +115,7 @@ class CombinatorialCheckerTest {
         ComboBuilderChecker checker = comboBuilderChecker.mainMode(ExecMode.Main.at_least_one);
         MultiCheckResult<CheckResult<?>> result = checker.oCheck(trade);//xx√
         Assertions.assertTrue(result);
-        Assertions.assertEquals(result.data().size(), 1);
+        Assertions.assertEquals(result.value().size(), 1);
     }
 
     @Test
@@ -123,7 +123,7 @@ class CombinatorialCheckerTest {
         ComboBuilderChecker checker = comboBuilderChecker.mainMode(ExecMode.Main.at_least_one_but_must_check_all);
         MultiCheckResult<CheckResult<?>> result = checker.oCheck(trade);//xx√
         Assertions.assertTrue(result);
-        Assertions.assertEquals(result.data().size(), 3);
+        Assertions.assertEquals(result.value().size(), 3);
     }
 
 

@@ -99,7 +99,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
         Checker<?, ?> checker = getChecker(inputToCheckerArg);
         if (checker == null) {
             InputArgClass inputCheckInstanceArgClass = InputArgClass.byInstance(inputToCheckerArg);
-            String errorLog = "checker [" + this.name + "] not support class " + inputCheckInstanceArgClass.clazz;
+            String errorLog = "checker [" + this.name + "] not support field [" + inputToCheckerArg.fieldPath() + "] class " + inputCheckInstanceArgClass.clazz;
             throw new CheckException(this, errorLog);
         }
         return ((Checker) checker).check(inputToCheckerArg);

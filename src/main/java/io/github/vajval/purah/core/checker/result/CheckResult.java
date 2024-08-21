@@ -6,8 +6,7 @@ import java.util.function.BooleanSupplier;
 public interface CheckResult<T> extends BooleanSupplier {
 
 
-    T data();
-
+    T value();
 
 
     @Override
@@ -23,19 +22,7 @@ public interface CheckResult<T> extends BooleanSupplier {
 
     String log();
 
-    void setCheckerLogicFrom(String logicFrom);
-
-    String checkLogicFrom();
-
-    CheckResult<T> setInfo(String info);
-
-
-
-    //todo isFromCache
-
-//    default boolean isFromCache() {
-//        return false;
-//    }
+    CheckResult<T> updateInfo(String info);
 
     default boolean isFailed() {
         if (isIgnore()) {
@@ -43,6 +30,7 @@ public interface CheckResult<T> extends BooleanSupplier {
         }
         return execInfo() == ExecInfo.failed;
     }
+
     default boolean isSuccess() {
         if (isIgnore()) {
             throw new RuntimeException("This check has been ignored,It is not certain whether it will succeed or fail. ");

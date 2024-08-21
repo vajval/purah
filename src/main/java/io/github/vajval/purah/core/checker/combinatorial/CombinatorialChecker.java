@@ -109,7 +109,6 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
         if (reOrder != null) {
             reOrder.count(executor.getExecInfoList());
         }
-        multiCheckResult.setCheckerLogicFrom(this.logicFrom());
         return multiCheckResult;
     }
 
@@ -145,9 +144,6 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
         }
     }
 }
-
-
-//
 
 
 

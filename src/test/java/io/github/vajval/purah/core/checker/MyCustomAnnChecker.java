@@ -84,7 +84,7 @@ public class MyCustomAnnChecker extends CustomAnnChecker {
         if (numValue.doubleValue() < range.min() || numValue.doubleValue() > range.max()) {
             return LogicCheckResult.failed(num.argValue(), num.fieldPath() + ":" + range.errorMsg());
         }
-        return LogicCheckResult.successAutoLog(num, "参数合规");
+        return LogicCheckResult.success();
     }
 
 

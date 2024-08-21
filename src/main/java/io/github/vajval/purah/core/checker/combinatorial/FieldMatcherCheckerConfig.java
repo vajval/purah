@@ -10,7 +10,6 @@ import java.util.List;
  * The correspondence between fields matched by fieldMatcher and the checkers to be used.
  */
 public class FieldMatcherCheckerConfig {
-    final ExecMode.Matcher execType = ExecMode.Matcher.arg_checker;
     final FieldMatcher fieldMatcher;
     final List<String> checkerNames;
 
@@ -23,8 +22,7 @@ public class FieldMatcherCheckerConfig {
     @Override
     public String toString() {
         return "FieldMatcherCheckerConfig{" +
-                "execType=" + execType +
-                ", fieldMatcher=" + fieldMatcher +
+                "fieldMatcher=" + fieldMatcher +
                 ", checkerNames=" + checkerNames +
                 '}';
     }

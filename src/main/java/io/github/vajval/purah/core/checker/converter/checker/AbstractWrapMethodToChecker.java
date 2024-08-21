@@ -3,10 +3,9 @@ package io.github.vajval.purah.core.checker.converter.checker;
 
 import com.google.common.collect.Maps;
 import io.github.vajval.purah.core.checker.AbstractBaseSupportCacheChecker;
-import io.github.vajval.purah.core.checker.LambdaChecker;
 import io.github.vajval.purah.core.checker.result.CheckResult;
+import io.github.vajval.purah.core.checker.result.ExecInfo;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
-import io.github.vajval.purah.core.exception.UnexpectedException;
 import io.github.vajval.purah.core.exception.init.InitCheckerException;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
 import io.github.vajval.purah.core.checker.PurahWrapMethod;
@@ -15,7 +14,6 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * 函数转checker
@@ -87,35 +85,17 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
                 return LogicCheckResult.ignore();
             }
             if (autoNull == AutoNull.failed) {
-                return failedResult(inputToCheckerArg, LogicCheckResult.failed());
+                return LogicCheckResult.failedAutoInfo(inputToCheckerArg, failedInfo);
             }
             if (autoNull == AutoNull.success) {
                 return LogicCheckResult.success();
             }
         }
         CheckResult<Object> result = methodDoCheck(inputToCheckerArg);
-        return failedResult(inputToCheckerArg, result);
-
-
-    }
-
-    protected CheckResult<Object> failedResult(InputToCheckerArg<Object> inputToCheckerArg, CheckResult<Object> result) {
-        String resultFailedInfo = failedInfo;
-        if (failedInfoReplace) {
-            resultFailedInfo = resultFailedInfo(failedInfo, inputToCheckerArg);
+        if (result.execInfo() == ExecInfo.failed) {
+            return result.updateInfo(LogicCheckResult.autoInfo(inputToCheckerArg, failedInfo));
         }
-        return result.setInfo(resultFailedInfo);
-    }
-
-    public static <T> String resultFailedInfo(String failedInfo, InputToCheckerArg<T> inputToCheckerArg) {
-        Map<String, String> params = Maps.newHashMapWithExpectedSize(2);
-        if (StringUtils.hasText(inputToCheckerArg.fieldPath())) {
-            params.put("path", inputToCheckerArg.fieldPath());
-        }
-        params.put("arg", String.valueOf(inputToCheckerArg.argValue()));
-        StrSubstitutor strSubstitutor = new StrSubstitutor(params);
-        return strSubstitutor.replace(failedInfo);
-
+        return result;
     }
 
     public abstract CheckResult<Object> methodDoCheck(InputToCheckerArg<Object> inputToCheckerArg);

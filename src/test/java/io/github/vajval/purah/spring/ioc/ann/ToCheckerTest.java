@@ -1,51 +1,43 @@
 package io.github.vajval.purah.spring.ioc.ann;
 
+import io.github.vajval.purah.ExampleApplication;
 import io.github.vajval.purah.core.Purahs;
-import io.github.vajval.purah.core.checker.Checker;
-import io.github.vajval.purah.core.checker.combinatorial.ExecMode;
-import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
+import io.github.vajval.purah.core.checker.result.CheckResult;
+import io.github.vajval.purah.core.checker.result.LogicCheckResult;
+import io.github.vajval.purah.core.checker.result.MultiCheckResult;
+import io.github.vajval.purah.core.checker.result.ResultLevel;
+import io.github.vajval.purah.util.User;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@PurahMethodsRegBean
-@Component
+import java.util.List;
+
+@SpringBootTest(classes = ExampleApplication.class)
 public class ToCheckerTest {
+
     @Autowired
     Purahs purahs;
 
+    @BeforeEach
+    public void beforeEach() {
 
-
-
-
-    @ToChecker(value = "auto_null_notEnable", autoNull = AutoNull.notEnable)// 将函数转换为规则并且注册
-    public boolean auto_null_notEnable(String name) {
-        return StringUtils.hasText(name);
     }
 
-    @ToChecker(value = "auto_null_success", autoNull = AutoNull.success)// 将
-    public boolean auto_null_success(String name) {
-        return false;
-    }
+    @Test
+    public void toChecker() {
+        User user = new User(1L, null, "123435345", 123);
+        MultiCheckResult<?> multiCheckResult =
+                (MultiCheckResult) purahs.checkerOf("example:1[][id|phone|name:not_null_test]").oCheck(user);
 
+        List<LogicCheckResult<?>> logicCheckResults = multiCheckResult.resultChildList(ResultLevel.only_failed_only_base_logic);
+        LogicCheckResult<?> checkResult = logicCheckResults.get(0);
+        Assertions.assertTrue(checkResult.info().contains("失败 字段 [name] 值为[null]"));
+        System.out.println(multiCheckResult.log());
+        System.out.println(checkResult.log());
 
-    @ToChecker(value = "auto_null_ignore_combo")//
-    public Checker<?, ?> auto_null_ignore_combo() {
-        return purahs.combo("auto_null_success", "auto_null_ignore").mainMode(ExecMode.Main.all_success);
-    }
-
-    @ToChecker(value = "auto_null_ignore", autoNull = AutoNull.ignore)
-    public boolean auto_null_ignore(String name) {
-        return false;
-    }
-
-    @ToChecker(value = "auto_null_failed", autoNull = AutoNull.failed)
-    public boolean auto_null_failed(String name) {
-        return true;
-    }
-    @ToChecker(value = "auto_null_ignore_combo_failed")// 将函数转换为规则并且注册
-    public Checker<?, ?> auto_null_ignore_combo_failed() {
-        return purahs.combo("auto_null_failed", "auto_null_ignore").mainMode(ExecMode.Main.at_least_one);
     }
 
 }

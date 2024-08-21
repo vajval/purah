@@ -49,7 +49,6 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
             if (resultCheckResult == null) {
                 throw new RuntimeException("checker result  cannot be Null  " + this.logicFrom());
             }
-            setLogicFrom(resultCheckResult);
             return resultCheckResult;
         }
         CheckResult<RESULT> resultCheckResult = this.readCache(inputToCheckerArg);
@@ -61,7 +60,6 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
             logger.error("checker result is NUll logicForm " + this.logicFrom());
             throw new RuntimeException("result cannot be Null " + this.logicFrom());
         }
-        setLogicFrom(resultCheckResult);
         putCache(inputToCheckerArg, resultCheckResult);
         return resultCheckResult;
     }
@@ -110,20 +108,11 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
         return info().resultDataClass;
     }
 
-    public void setLogicFrom(CheckResult<?> checkResult) {
-        checkResult.setCheckerLogicFrom(info().logicFrom);
-    }
+
 
 
     protected abstract CheckResult<RESULT> doCheck(InputToCheckerArg<INPUT_ARG> inputToCheckerArg);
 
 
-//    protected LogicCheckResult<RESULT> success(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
-//        return LogicCheckResult.successBuildLog(inputToCheckerArg, result);
-//    }
-
-//    protected LogicCheckResult<RESULT> failed(InputToCheckerArg<INPUT_ARG> inputToCheckerArg, RESULT result) {
-//        return LogicCheckResult.failedBuildLog(inputToCheckerArg, result);
-//    }
 
 }
