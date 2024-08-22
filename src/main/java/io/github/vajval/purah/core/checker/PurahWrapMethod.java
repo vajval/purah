@@ -88,7 +88,7 @@ public class PurahWrapMethod {
         } else if (Objects.equals(result, true)) {
             return LogicCheckResult.success();
         } else if (Objects.equals(result, false)) {
-            return LogicCheckResult.failedAutoLog(inputToCheckerArg, false);
+            return LogicCheckResult.failedAutoLog(inputToCheckerArg, null);
         }
         throw new UnexpectedException();
 

@@ -12,18 +12,20 @@ public class LogicCheckResult<T> implements CheckResult<T> {
     protected final ExecInfo execInfo;
     protected final T data;
 
-    protected final String log;
+    protected String log;
 
     protected String info;
+
+    protected String toString;
 
     protected LogicCheckResult(ExecInfo execInfo, T data, String log) {
         this.execInfo = execInfo;
         this.data = data;
         this.log = log;
-        this.info = log;
         if (!StringUtils.hasText(log)) {
-            this.info = execInfo.value();
+            this.log = execInfo.value();
         }
+        this.info = this.log;
     }
 
     @Override
@@ -126,16 +128,34 @@ public class LogicCheckResult<T> implements CheckResult<T> {
         return log;
     }
 
+
     @Override
     public String toString() {
-        return "{" +
-                "execInfo:'" + execInfo.value() +
-                "', data:" + data +
-                ", log='" + log +
-                "', info='" + info +
-                "'}";
-    }
+        if (toString != null) {
+            return toString;
+        }
+        String dataStr = "";
+        if (data != null) {
+            if (data instanceof String) {
+                dataStr = " data:'" + data + "',";
+            } else {
+                dataStr = " data:" + data + ",";
+            }
 
+        }
+        String infoStr = "";
+        if (!Objects.equals(info, log)) {
+            infoStr = ", info='" + info + "'";
+        }
+
+        toString = "{" +
+                "exec:'" + execInfo.value() +
+                "'," + dataStr +
+                " log='" + log +
+                "'" + infoStr +
+                "}";
+        return toString;
+    }
 
 }
 

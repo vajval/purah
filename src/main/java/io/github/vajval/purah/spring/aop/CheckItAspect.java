@@ -14,13 +14,11 @@ import io.github.vajval.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import io.github.vajval.purah.spring.aop.ann.MethodCheckConfig;
 import io.github.vajval.purah.spring.aop.result.MethodHandlerCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Lazy(value = false)
 @Aspect
 public class CheckItAspect {
 

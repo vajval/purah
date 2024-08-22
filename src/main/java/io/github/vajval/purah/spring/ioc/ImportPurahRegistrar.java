@@ -54,7 +54,7 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
         GenericBeanDefinition genericBeanDefinition = genericBeanDefinition(PurahContextRefreshEventHandler.class);
         genericBeanDefinition.setLazyInit(false);
 
-        registry.registerBeanDefinition(PurahContextRefreshEventHandler.class.getName(),genericBeanDefinition);
+        registry.registerBeanDefinition(PurahContextRefreshEventHandler.class.getName(), genericBeanDefinition);
     }
 
 

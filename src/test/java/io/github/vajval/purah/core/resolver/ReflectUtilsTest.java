@@ -1,5 +1,6 @@
 package io.github.vajval.purah.core.resolver;
 
+import com.google.common.collect.Sets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import io.github.vajval.purah.util.People;
@@ -10,6 +11,7 @@ import static com.google.common.collect.Sets.newHashSet;
 class ReflectUtilsTest {
     @Test
     public void test() {
+        Sets.newHashSet();
         TestUser testUser = new TestUser(1L, "testUser", "address");
         Assertions.assertTrue(ReflectUtils.noExtendEnabledFields(TestUser.class, newHashSet("id", "name")));
 
