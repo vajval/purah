@@ -1,13 +1,8 @@
 package io.github.vajval.purah.core.checker.result;
 
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
-import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 import org.springframework.util.StringUtils;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class LogicCheckResult<T> implements CheckResult<T> {
@@ -91,13 +86,9 @@ public class LogicCheckResult<T> implements CheckResult<T> {
         if (!failedInfo.contains("${")) {
             return failedInfo;
         }
-        Map<String, String> params = Maps.newHashMapWithExpectedSize(2);
-        if (StringUtils.hasText(inputToCheckerArg.fieldPath())) {
-            params.put("path", inputToCheckerArg.fieldPath());
-        }
-        params.put("arg", String.valueOf(inputToCheckerArg.argValue()));
-        StrSubstitutor strSubstitutor = new StrSubstitutor(params);
-        return strSubstitutor.replace(failedInfo);
+        return failedInfo
+                .replace("${path}", inputToCheckerArg.fieldPath())
+                .replace("${arg}", String.valueOf(inputToCheckerArg.argValue()));
     }
 
     public static <A> String logStr(InputToCheckerArg<A> inputToCheckerArg, String pre) {
@@ -137,16 +128,14 @@ public class LogicCheckResult<T> implements CheckResult<T> {
 
     @Override
     public String toString() {
-        Gson gson = new Gson();
-        LinkedHashMap<String, Object> objectMap = new LinkedHashMap<>();
-        objectMap.put("execInfo", execInfo.value());
-        objectMap.put("log", log);
-        if (!Objects.equals(log, info)) {
-            objectMap.put("info", info);
-        }
-        objectMap.put("data", data);
-        return gson.toJson(objectMap);
+        return "{" +
+                "execInfo:'" + execInfo.value() +
+                "', data:" + data +
+                ", log='" + log +
+                "', info='" + info +
+                "'}";
     }
+
 
 }
 

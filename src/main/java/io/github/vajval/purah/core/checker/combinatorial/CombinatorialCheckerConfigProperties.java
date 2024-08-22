@@ -1,6 +1,5 @@
 package io.github.vajval.purah.core.checker.combinatorial;
 
-import com.google.gson.Gson;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.core.Purahs;
@@ -53,15 +52,12 @@ public class CombinatorialCheckerConfigProperties {
     public String getLogicFrom() {
 
         if (logicFrom == null) {
-            Map<String, Object> objectMap = new HashMap<>();
-            objectMap.put("checkerName", checkerName);
-            objectMap.put("useCheckerNames", useCheckerNames);
-            objectMap.put("matcherFieldCheckerMapping", matcherFieldCheckerMapping);
-            objectMap.put("resultLevel", resultLevel);
-            objectMap.put("mainExecType", mainMode);
-            Gson gson = new Gson();
-            String json = gson.toJson(objectMap);
-            return "properties: " + json;
+            return "CombinatorialCheckerConfigProperties{" +
+                    "checkerName='" + checkerName + '\'' +
+                    ", mainExecType=" + mainMode +
+                    ", useCheckerNames=" + useCheckerNames +
+                    ", matcherFieldCheckerMapping=" + matcherFieldCheckerMapping +
+                    '}';
         }
         return logicFrom;
     }

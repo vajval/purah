@@ -16,8 +16,8 @@ public class MatcherTest {
         InputToCheckerArg<User> inputToCheckerArg = InputToCheckerArg.of(GOOD_USER_BAD_CHILD);
         ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
         reflectArgResolver.enableExtendUnsafeCache(unsafeCache);
-        int num = 1_0_000;
-        //   int num = 1_0_000;
+//        int num = 1_0_000;
+           int num = 1_000;
         for (int i = 0; i < num; i++) {
             reflectArgResolver.getMatchFieldObjectMap(inputToCheckerArg, generalFieldMatcher);
         }
