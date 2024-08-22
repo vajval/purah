@@ -29,8 +29,8 @@ public class PurahRefreshHelper {
     private static final Logger logger = LogManager.getLogger(PurahRefreshHelper.class);
 
 
-    PurahContext purahContext;
-    ApplicationContext applicationContext;
+    final PurahContext purahContext;
+    final ApplicationContext applicationContext;
 
     public PurahRefreshHelper(PurahContext purahContext, ApplicationContext applicationContext) {
         this.purahContext = purahContext;
@@ -78,8 +78,8 @@ public class PurahRefreshHelper {
 
         purahIocRegS.initMainBean(methodConverter, checkerManager, matcherManager, resolver);
         if (resolver instanceof ReflectArgResolver) {
-            boolean argResolverFastInvokeCache = purahIocRegS.purahContext.config().isArgResolverFastInvokeCache();
-            ((ReflectArgResolver) resolver).configCache(argResolverFastInvokeCache);
+            boolean argResolverFastInvokeCache = purahIocRegS.purahContext.config().isEnableExtendUnsafeCache();
+            ((ReflectArgResolver) resolver).enableExtendUnsafeCache(argResolverFastInvokeCache);
         }
     }
 

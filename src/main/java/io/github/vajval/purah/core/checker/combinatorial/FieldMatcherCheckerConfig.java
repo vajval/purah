@@ -13,7 +13,6 @@ public class FieldMatcherCheckerConfig {
     final FieldMatcher fieldMatcher;
     final List<String> checkerNames;
 
-
     public FieldMatcherCheckerConfig(FieldMatcher fieldMatcher, List<String> checkerNames) {
         this.fieldMatcher = fieldMatcher;
         this.checkerNames = checkerNames;

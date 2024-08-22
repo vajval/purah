@@ -15,7 +15,7 @@ import java.util.Set;
  */
 @Name("wild_card")
 public class WildCardMatcher extends BaseStringMatcher {
-    Set<String> matchKeyList;
+    final Set<String> matchKeyList;
 
 
     public WildCardMatcher(String matchStr) {

@@ -1,7 +1,5 @@
 package io.github.vajval.purah.spring.ioc.ann;
 
-import org.springframework.stereotype.Component;
-
 import java.lang.annotation.*;
 
 /**

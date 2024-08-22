@@ -9,7 +9,6 @@ import io.github.vajval.purah.core.Purahs;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.core.resolver.ArgResolver;
-import org.apache.commons.logging.Log;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,11 +32,11 @@ import java.util.stream.Collectors;
 public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object, List<CheckResult<?>>> {
     private static final Logger logger = LogManager.getLogger(CombinatorialChecker.class);
 
-    CombinatorialCheckerConfig config;
-    int size;
-    Purahs purahs;
-    List<Checker<?, ?>> rootInputArgCheckers;
-    List<FieldMatcherCheckerConfigExecutor> fieldMatcherCheckerConfigExecutors;
+    final CombinatorialCheckerConfig config;
+    final int size;
+    final Purahs purahs;
+    final List<Checker<?, ?>> rootInputArgCheckers;
+    final List<FieldMatcherCheckerConfigExecutor> fieldMatcherCheckerConfigExecutors;
     ReOrder reOrder;
 
     public CombinatorialChecker(CombinatorialCheckerConfig config) {
@@ -90,10 +89,9 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
         }
 
 
-        //check  inputArg matched field values
+        //check inputArg matched field values
         for (FieldMatcherCheckerConfigExecutor fieldMatcherCheckerConfigExecutor : fieldMatcherCheckerConfigExecutors) {
             suppliers.add(new CheckerExec(fieldMatcherCheckerConfigExecutor, inputToCheckerArg));
-//            suppliers.addAll(fieldMatcherCheckerConfigExecutor.checkResultSupplierList(inputToCheckerArg));
         }
 
 
@@ -117,10 +115,9 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
         final FieldMatcher fieldMatcher;
 
         final ArgResolver argResolver;
-
-        List<Checker<?, ?>> checkerList;
-        String log;
-        ExecMode.Main mainMode;
+        final List<Checker<?, ?>> checkerList;
+        final String log;
+        final ExecMode.Main mainMode;
 
         public FieldMatcherCheckerConfigExecutor(FieldMatcherCheckerConfig config, Purahs purahs, CombinatorialCheckerConfig combinatorialCheckerConfig) {
             this.fieldMatcher = config.fieldMatcher;

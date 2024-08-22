@@ -36,7 +36,7 @@ public class GeneralFieldMatcher extends BaseStringMatcher implements Multilevel
     protected final List<String> thisLevelWildCardMatchStrList;
     protected final Set<Integer> listIndexSet;
     protected final Set<String> otherListIndexSet;
-    protected boolean supportCache;
+    protected final boolean supportCache;
 
     public GeneralFieldMatcher(String matchStr) {
         super(matchStr);
@@ -80,13 +80,10 @@ public class GeneralFieldMatcher extends BaseStringMatcher implements Multilevel
         listIndexSet.remove(MatchStrS.NO_LIST_INDEX);
         listIndexSet.remove(MatchStrS.OTHER_LIST_MATCH);
         supportCache = (!this.matchStr.contains("#")) && (this.firstLevelStrMatchMap.size() == 0) && (this.firstLevelStrEqualMap.size() == 0);
-
-
     }
 
     protected FieldMatcher wrapMatchChild(String childMatchStr) {
         return isWildCardMatcher(childMatchStr) ? new GeneralFieldMatcher(childMatchStr) : new NormalMultiLevelMatcher(childMatchStr);
-
     }
 
     protected NestedMatchInfo initNestedMatchInfoIfSingle(MatchStrS matchStrS) {

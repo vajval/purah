@@ -16,13 +16,9 @@ import java.util.function.Predicate;
  *
  */
 public class LambdaCheckerFactory<INPUT_ARG> implements CheckerFactory {
-
-
     final BiPredicate<String, INPUT_ARG> checkLogic;
-
     final Predicate<String> matchLogic;
     final Class<INPUT_ARG> clazz;
-
 
     private LambdaCheckerFactory(Predicate<String> matchLogic, BiPredicate<String, INPUT_ARG> checkLogic, Class<INPUT_ARG> clazz) {
         this.checkLogic = checkLogic;
@@ -52,7 +48,6 @@ public class LambdaCheckerFactory<INPUT_ARG> implements CheckerFactory {
             this.clazz = clazz;
         }
 
-
         public LambdaCheckerFactory<T> build(Predicate<String> matchLogic, BiPredicate<String, T> predicate) {
             return new LambdaCheckerFactory<>(matchLogic, predicate, clazz);
         }
@@ -60,8 +55,6 @@ public class LambdaCheckerFactory<INPUT_ARG> implements CheckerFactory {
         public LambdaCheckerFactory<T> build(String matchStr, BiPredicate<String, T> predicate) {
             Predicate<String> matchLogic = i -> new WildCardMatcher(matchStr).match(i);
             return build(matchLogic, predicate);
-
         }
     }
-
 }

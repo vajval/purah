@@ -8,8 +8,8 @@ import java.util.List;
 
 public class NestedMatchInfo {
 
-    protected  List<FieldMatcher> childFieldMatcher;
-    protected  boolean needCollected;
+    protected final List<FieldMatcher> childFieldMatcher;
+    protected final boolean needCollected;
 
     private NestedMatchInfo(boolean needCollected, List<FieldMatcher> childFieldMatcher) {
         if(childFieldMatcher==null){
@@ -20,7 +20,7 @@ public class NestedMatchInfo {
     }
 
     public static final NestedMatchInfo justCollected = new NestedMatchInfo(true, null);
-    public static NestedMatchInfo ignore = new NestedMatchInfo(false, null);
+    public static final NestedMatchInfo ignore = new NestedMatchInfo(false, null);
 
 
     public static NestedMatchInfo create(boolean needCollected, List<FieldMatcher> childFieldMatcher) {

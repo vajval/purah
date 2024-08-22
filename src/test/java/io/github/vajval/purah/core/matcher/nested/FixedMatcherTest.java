@@ -4,7 +4,7 @@ import io.github.vajval.purah.core.Purahs;
 import io.github.vajval.purah.core.checker.ComboBuilderChecker;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
 import io.github.vajval.purah.core.checker.LambdaChecker;
-import io.github.vajval.purah.core.resolver.DefaultArgResolver;
+import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 import io.github.vajval.purah.util.People;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 
 class FixedMatcherTest {
-    final DefaultArgResolver resolver = new DefaultArgResolver();
+    final ReflectArgResolver resolver = new ReflectArgResolver();
 
 
     @Test
@@ -38,9 +38,7 @@ class FixedMatcherTest {
         Assertions.assertEquals(map.get("address").argValue(), People.elder.getAddress());
         Assertions.assertEquals(map.get("child#0.id").argValue(), People.elder.getChild().get(0).getId());
         Assertions.assertNull(map.get("noExistField").argValue());
-        System.out.println(map.keySet());
         Assertions.assertEquals(map.size(), 5);
-
         Purahs purahs=new Purahs(new PurahContext());
         purahs.reg(LambdaChecker.of(Object.class).build("notNull", Objects::nonNull));
         ComboBuilderChecker checker = purahs.combo().match(fixedMatcher, "notNull");

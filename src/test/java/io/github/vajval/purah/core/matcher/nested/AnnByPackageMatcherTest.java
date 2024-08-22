@@ -89,7 +89,6 @@ public class AnnByPackageMatcherTest {
         b.a = a;
         b.id = "id";
         ReflectArgResolver reflectArgResolver = new ReflectArgResolver();
-        Set<Class<? > >annClazz=    Sets.newHashSet(TestAnn.class);
 
         AnnByPackageMatcher annByPackageMatcher = new AnnByPackageMatcher("*",2,TestAnn.class) ;
         Map<String, InputToCheckerArg<?>> matchFieldObjectMap = reflectArgResolver.oGetMatchFieldObjectMap(a, annByPackageMatcher);

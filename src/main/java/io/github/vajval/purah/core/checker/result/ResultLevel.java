@@ -41,9 +41,6 @@ public enum ResultLevel {
         } else if (value == 4) {
             return only_failed_only_base_logic;
         }
-//        else if (value == 0) {
-//            return only_error;
-//        }
         throw new UnexpectedException("ResultLevel value :" + value);
     }
 
@@ -60,14 +57,10 @@ public enum ResultLevel {
         } else if (this == ResultLevel.only_failed_only_base_logic) {
             return (!checkResult.isSuccess());
         }
-//        else if (this == ResultLevel.only_error) {
-//            return checkResult.isError();
-//        }
         return false;
     }
 
     public boolean allowAddToFinalResult(CheckResult<?> checkResult) {
-
         if (checkResult.isIgnore()) {
             return false;
         }
@@ -80,9 +73,6 @@ public enum ResultLevel {
         } else if (this == ResultLevel.only_failed_only_base_logic) {
             return (!checkResult.isSuccess()) && (checkResult instanceof LogicCheckResult);
         }
-//        else if (this == ResultLevel.only_error) {
-//            return checkResult.isError();
-//        }
         return false;
     }
 }

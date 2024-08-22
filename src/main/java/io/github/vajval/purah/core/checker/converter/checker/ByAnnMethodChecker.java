@@ -26,15 +26,11 @@ import java.lang.reflect.Method;
  */
 
 public class ByAnnMethodChecker extends AbstractWrapMethodToChecker {
-
     Class<? extends Annotation> annClazz;
 
-
-    public ByAnnMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull, String failedInfo) {
-        super(methodsToCheckersBean, method, name,autoNull,failedInfo);
-
+    public ByAnnMethodChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull, String failedInfo) {
+        super(methodsToCheckersBean, method, name, autoNull, failedInfo);
         String errorMsg = errorMsgCheckerByAnnMethod(methodsToCheckersBean, method);
-
         if (errorMsg != null) {
             throw new InitCheckerException(errorMsg);
         }
@@ -61,7 +57,6 @@ public class ByAnnMethodChecker extends AbstractWrapMethodToChecker {
             return "you need to have two parameters! [" + method + "]";
         }
         Class<?> parameterizedType = method.getParameters()[0].getType();
-
         if (!(parameterizedType.isAnnotation())) {
             return "Um, the first parameter has to be an annotation, and it'll be filled with the annotation value from the field [" + method + "]";
         }
@@ -71,8 +66,6 @@ public class ByAnnMethodChecker extends AbstractWrapMethodToChecker {
 
         }
         return null;
-
-
     }
 
 }

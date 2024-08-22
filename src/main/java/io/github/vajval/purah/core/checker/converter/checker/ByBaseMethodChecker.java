@@ -11,21 +11,17 @@ import java.lang.reflect.Method;
 public class ByBaseMethodChecker extends AbstractWrapMethodToChecker {
     Checker<Object, Object> checker;
 
-    public ByBaseMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull, String failedInfo) {
-        super(methodsToCheckersBean, method, name,autoNull,failedInfo);
-
+    public ByBaseMethodChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull, String failedInfo) {
+        super(methodsToCheckersBean, method, name, autoNull, failedInfo);
         String errorMsg = errorMsgCheckerByBaseMethod(methodsToCheckersBean, method);
-
         if (errorMsg != null) {
             throw new InitCheckerException(errorMsg);
         }
         try {
-            checker = (Checker ) method.invoke(methodsToCheckersBean);
+            checker = (Checker) method.invoke(methodsToCheckersBean);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
 
@@ -44,8 +40,6 @@ public class ByBaseMethodChecker extends AbstractWrapMethodToChecker {
 
         }
         return null;
-
-
     }
 
     @Override
@@ -57,7 +51,6 @@ public class ByBaseMethodChecker extends AbstractWrapMethodToChecker {
     public Class<?> resultDataClass() {
         return checker.resultDataClass();
     }
-
 
     @Override
     public String logicFrom() {

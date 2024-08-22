@@ -4,10 +4,7 @@ import java.util.function.BooleanSupplier;
 
 
 public interface CheckResult<T> extends BooleanSupplier {
-
-
     T value();
-
 
     @Override
     default boolean getAsBoolean() {
@@ -41,6 +38,4 @@ public interface CheckResult<T> extends BooleanSupplier {
     default boolean isIgnore() {
         return execInfo() == ExecInfo.ignore;
     }
-
-
 }

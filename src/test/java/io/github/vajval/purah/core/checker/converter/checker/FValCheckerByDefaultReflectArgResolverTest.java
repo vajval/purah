@@ -1,8 +1,6 @@
 package io.github.vajval.purah.core.checker.converter.checker;
 
 import io.github.vajval.purah.core.matcher.FieldMatcher;
-import io.github.vajval.purah.core.matcher.nested.FixedMatcher;
-import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 import io.github.vajval.purah.util.People;
 import io.github.vajval.purah.util.TestAnn;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -43,7 +41,6 @@ public class FValCheckerByDefaultReflectArgResolverTest {
         if (noExistAnn != null) {
             return false;
         }
-
         if (!Objects.equals(testAnnOnNameField.value(), "不超过3个字")) {
             return false;
         }

@@ -57,12 +57,10 @@ public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<L
     }
 
     protected static void allBaseLogicCheckResultByRecursion(MultiCheckResult<?> multiCheckResult, ResultLevel resultLevel, List<LogicCheckResult<?>> logicCheckResultList) {
-
         if (resultLevel.allowAddToFinalResult(multiCheckResult)) {
             logicCheckResultList.add(multiCheckResult.mainResult);
         }
         if (multiCheckResult.valueList == null) return;
-
         for (Object o : multiCheckResult.valueList) {
             if (o instanceof MultiCheckResult) {
                 MultiCheckResult<?> childResult = (MultiCheckResult) o;
@@ -78,12 +76,10 @@ public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<L
         }
     }
 
-
     @Override
     public List<T> value() {
         return valueList;
     }
-
 
     @Override
     public ExecInfo execInfo() {
@@ -94,8 +90,6 @@ public class MultiCheckResult<T extends CheckResult<?>> implements CheckResult<L
     public String log() {
         return this.mainResult.log();
     }
-
-
 
     public LogicCheckResult<?> mainResult() {
         return mainResult;

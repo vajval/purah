@@ -10,8 +10,6 @@ import io.github.vajval.purah.core.checker.Checker;
 import io.github.vajval.purah.core.checker.ComboBuilderChecker;
 import io.github.vajval.purah.core.checker.factory.AbstractCustomSyntaxCheckerFactory;
 import io.github.vajval.purah.core.matcher.nested.GeneralFieldMatcher;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -24,10 +22,7 @@ import java.util.stream.Collectors;
  */
 
 public class ExampleCustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheckerFactory {
-
-
-    Purahs purahs;
-
+    final Purahs purahs;
     final static Splitter fieldSplitter = Splitter.on(";");
     final static Splitter iSplitter = Splitter.on(":");
     final static Splitter checkerSplitter = Splitter.on(",");
@@ -39,7 +34,6 @@ public class ExampleCustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheck
     public Purahs purahs() {
         return purahs;
     }
-
     @Override
     public String name() {
         return "example";
@@ -64,7 +58,6 @@ public class ExampleCustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheck
 
         // 0[x,y][a:b,c;e:d,e]
 
-
         // x,y
         String useCheckersExp = checkerExp.substring(checkerExp.indexOf("[") + 1, checkerExp.indexOf("]"));
         String[] rootCheckerNames = checkerSplitter.splitToList(useCheckersExp).stream().filter(StringUtils::hasText).toArray(String[]::new);
@@ -79,7 +72,6 @@ public class ExampleCustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheck
             List<List<String>> list = fieldSplitter.splitToList(fieldCheckerExp).stream().
                     map(iSplitter::splitToList)
                     .collect(Collectors.toList());
-
             for (List<String> strList : list) {
                 String fieldStr = strList.get(0);
                 String[] checkerNames = checkerSplitter.splitToList(strList.get(1)).stream().filter(StringUtils::hasText).toArray(String[]::new);
@@ -87,8 +79,7 @@ public class ExampleCustomSyntaxCheckerFactory extends AbstractCustomSyntaxCheck
             }
 
         }
-        checker.name(needMatchCheckerName);
-        return checker;
+        return checker.thisName(needMatchCheckerName);
     }
 
 

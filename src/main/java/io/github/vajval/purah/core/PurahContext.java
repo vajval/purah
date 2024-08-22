@@ -6,7 +6,6 @@ import io.github.vajval.purah.core.checker.converter.DefaultMethodConverter;
 import io.github.vajval.purah.core.checker.converter.MethodConverter;
 import io.github.vajval.purah.core.matcher.MatcherManager;
 import io.github.vajval.purah.core.resolver.ArgResolver;
-import io.github.vajval.purah.core.resolver.DefaultArgResolver;
 import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 
 /**
@@ -20,7 +19,7 @@ public class PurahContext {
     public static final MethodConverter DEFAULT_METHOD_CONVERTER = new DefaultMethodConverter();
     private final PurahContextConfig config;
     private CheckerManager checkManager = new CheckerManager();
-    private ArgResolver argResolver = new DefaultArgResolver();
+    private ArgResolver argResolver = new ReflectArgResolver();
     private MatcherManager matcherManager = new MatcherManager();
     private MethodConverter enableMethodConverter = DEFAULT_METHOD_CONVERTER;
 

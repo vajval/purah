@@ -1,7 +1,6 @@
 package io.github.vajval.purah.core.checker.converter.checker;
 
 
-import com.google.common.collect.Maps;
 import io.github.vajval.purah.core.checker.AbstractBaseSupportCacheChecker;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.checker.result.ExecInfo;
@@ -9,11 +8,9 @@ import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import io.github.vajval.purah.core.exception.init.InitCheckerException;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
 import io.github.vajval.purah.core.checker.PurahWrapMethod;
-import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * 函数转checker
@@ -29,6 +26,7 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
     protected Method method;
 
     protected AutoNull autoNull;
+
     protected String failedInfo;
     boolean failedInfoReplace;
 
@@ -49,18 +47,13 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
         if (!StringUtils.hasText(name)) {
             return "Hmph, name  must has text!";
         }
-
         if (method == null) {
             return "Hmph, the method must not be null!";
         }
-
-
         if (!java.lang.reflect.Modifier.isPublic(method.getModifiers())) {
             return "if the method isn't public, it just won't work, okay? [" + method.toGenericString() + "]";
         }
-
         boolean isStatic = java.lang.reflect.Modifier.isStatic(method.getModifiers());
-
         if (!isStatic && methodsToCheckersBean == null) {
             return "When the method is non-static, the parameter `bean` must not be null. [" + method.toGenericString() + "]";
         }
@@ -70,11 +63,7 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
                 return "if the bean class isn't public, it just won't work, okay? [" + method.toGenericString() + "]";
             }
         }
-
-
         return null;
-
-
     }
 
 

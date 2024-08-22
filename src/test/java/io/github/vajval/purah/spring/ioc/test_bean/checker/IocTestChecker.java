@@ -15,7 +15,6 @@ public class IocTestChecker extends AbstractBaseSupportCacheChecker<String, Obje
 
     public static final String NAME = "IocTestChecker";
 
-
     @Override
     public CheckResult<Object> doCheck(InputToCheckerArg<String> inputToCheckerArg) {
         if (inputToCheckerArg.argValue().equals(NAME)) {

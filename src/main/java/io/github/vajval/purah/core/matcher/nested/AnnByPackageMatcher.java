@@ -52,15 +52,13 @@ import java.util.function.Predicate;
 
 public class AnnByPackageMatcher extends BaseStringMatcher implements MultilevelFieldMatcher, ListIndexMatcher {
 
-    protected WildCardMatcher fieldNeedNestedMatcher;
+    protected final WildCardMatcher fieldNeedNestedMatcher;
 
+    protected final FieldInfo NULL = new FieldInfo();
 
-    protected FieldInfo NULL = new FieldInfo();
-
-    protected int maxDepth;
+    protected final int maxDepth;
 
     protected Set<Class<? extends Annotation>> annClazz;
-
 
     public AnnByPackageMatcher(String needNestedPackagePatch) {
         this(needNestedPackagePatch, 8);
@@ -72,12 +70,10 @@ public class AnnByPackageMatcher extends BaseStringMatcher implements Multilevel
         super(needNestedPackagePatch);
         this.fieldNeedNestedMatcher = new WildCardMatcher(needNestedPackagePatch);
         this.maxDepth = maxDepth;
-
         for (Class<? extends Annotation> clazz : annClazz) {
             if (!Annotation.class.isAssignableFrom(clazz)) {
                 throw new RuntimeException("clazz must be ann Clazz");
             }
-
         }
         this.annClazz = Sets.newHashSet(annClazz);
     }

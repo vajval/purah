@@ -4,7 +4,6 @@ package io.github.vajval.purah.spring.ioc.ann;
 import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
 
 import java.lang.annotation.*;
-import java.util.Objects;
 
 /**
  * 只能用在有 @PurahMethodsRegBean注解的class的函数上

@@ -20,8 +20,6 @@ import java.lang.reflect.Method;
 
 public class ByLogicMethodChecker extends AbstractWrapMethodToChecker {
 
-
-
     public ByLogicMethodChecker(Object methodsToCheckersBean, Method method, String name,AutoNull autoNull, String failedInfo) {
         super(methodsToCheckersBean, method, name,autoNull,failedInfo);
         String errorMsg = errorMsgCheckerByLogicMethod(methodsToCheckersBean, method);
@@ -29,8 +27,6 @@ public class ByLogicMethodChecker extends AbstractWrapMethodToChecker {
             throw new InitCheckerException(errorMsg);
         }
         purahEnableMethod = new PurahWrapMethod(methodsToCheckersBean, method);
-
-
     }
 
 
@@ -42,7 +38,6 @@ public class ByLogicMethodChecker extends AbstractWrapMethodToChecker {
         return purahEnableMethod.invokeResult(inputToCheckerArg, args);
     }
 
-
     public static String errorMsgCheckerByLogicMethod(Object methodsToCheckersBean, Method method) {
         if (method.getParameters().length != 1) {
             return "Only one parameter be check["+method.toGenericString()+"]";
@@ -50,7 +45,6 @@ public class ByLogicMethodChecker extends AbstractWrapMethodToChecker {
         Class<?> returnType = method.getReturnType();
         if (!(CheckResult.class.isAssignableFrom(returnType)) && !(boolean.class.isAssignableFrom(returnType))) {
             return "Only supports return types of CheckResult or boolean. [" + method + "]";
-
         }
         return null;
     }

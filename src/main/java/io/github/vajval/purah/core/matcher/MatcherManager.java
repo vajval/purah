@@ -17,16 +17,12 @@ public class MatcherManager {
     public void reg(MatcherFactory matcherFactory) {
         String name = matcherFactory.name();
         factoryMap.put(name, matcherFactory);
-
-
     }
 
     public BaseMatcherFactory regBaseStrMatcher(Class<? extends FieldMatcher> clazz) {
         BaseMatcherFactory matcherFactory = new BaseMatcherFactory(clazz);
         this.reg(matcherFactory);
         return matcherFactory;
-
-
     }
 
     public MatcherFactory factoryOf(String factoryTypeName) {

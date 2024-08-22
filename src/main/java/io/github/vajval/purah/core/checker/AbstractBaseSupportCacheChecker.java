@@ -4,7 +4,6 @@ package io.github.vajval.purah.core.checker;
 import io.github.vajval.purah.core.checker.cache.InputToCheckerArgCacheKey;
 import io.github.vajval.purah.core.checker.cache.PurahCheckInstanceCacheContext;
 import io.github.vajval.purah.core.checker.result.CheckResult;
-import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +30,7 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
             info.logicFrom = logicFrom();
             info.NULL = InputToCheckerArg.of(null, inputArgClass());
             info.inputArgClass = Checker.super.inputArgClass();
-            info.resultDataClass =Checker.super.resultDataClass();
+            info.resultDataClass = Checker.super.resultDataClass();
 
         }
         return info;
@@ -100,7 +99,7 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
 
     @Override
     public Class<?> inputArgClass() {
-       return info().inputArgClass;
+        return info().inputArgClass;
     }
 
     @Override
@@ -108,11 +107,6 @@ public abstract class AbstractBaseSupportCacheChecker<INPUT_ARG, RESULT> impleme
         return info().resultDataClass;
     }
 
-
-
-
     protected abstract CheckResult<RESULT> doCheck(InputToCheckerArg<INPUT_ARG> inputToCheckerArg);
-
-
 
 }

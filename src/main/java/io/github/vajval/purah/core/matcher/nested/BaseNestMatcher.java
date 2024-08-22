@@ -18,9 +18,7 @@ public abstract class BaseNestMatcher extends BaseStringMatcher implements ListI
 
     protected MatchStrS matchStrS;
     protected NestedMatchInfo nestedMatchInfo;
-
-    protected Set<Integer> listMatchIndexSet;
-
+    protected final Set<Integer> listMatchIndexSet;
 
     public BaseNestMatcher(String matchStr) {
         super(matchStr);
@@ -94,8 +92,11 @@ public abstract class BaseNestMatcher extends BaseStringMatcher implements ListI
         if (Objects.equals(matchedField, matchStr)) {
             return NestedMatchInfo.justCollected;
         }
-        if (nestedMatchInfo != null) {
-            return nestedMatchInfo;
+        if (matchStrS != null) {
+            if (Objects.equals(matchStrS.firstLevelStr, matchedField)) {
+                return nestedMatchInfo;
+            }
+            return NestedMatchInfo.ignore;
         }
         NestedMatchInfo result = nestedMatchInfoMap.get(matchedField);
         if (result != null) {

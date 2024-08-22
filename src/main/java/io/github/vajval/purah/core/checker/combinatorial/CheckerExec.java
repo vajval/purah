@@ -5,8 +5,8 @@ import io.github.vajval.purah.core.checker.InputToCheckerArg;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 
 public class CheckerExec {
-    public Checker<?, ?> checker;
-    public InputToCheckerArg<?> inputToCheckerArg;
+    public final Checker<?, ?> checker;
+    public final InputToCheckerArg<?> inputToCheckerArg;
 
     public CheckerExec(Checker<?, ?> checker, InputToCheckerArg<?> inputToCheckerArg) {
         this.checker = checker;
@@ -14,6 +14,6 @@ public class CheckerExec {
     }
 
     public CheckResult<?> exec() {
-        return ((Checker)checker).check(inputToCheckerArg);
+        return ((Checker) checker).check(inputToCheckerArg);
     }
 }

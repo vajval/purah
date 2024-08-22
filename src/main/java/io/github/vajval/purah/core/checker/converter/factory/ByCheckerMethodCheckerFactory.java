@@ -30,7 +30,6 @@ public class ByCheckerMethodCheckerFactory extends AbstractByMethodCheckerFactor
             return "The return type can only be Checker, okay? That's how it is~";
         }
         Parameter[] parameters = method.getParameters();
-
         if (!parameters[0].getParameterizedType().equals(String.class)) {
             return "The first parameter must be of type string and will be filled with the checker's name.";
         }

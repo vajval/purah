@@ -4,7 +4,7 @@ import io.github.vajval.purah.core.Purahs;
 import io.github.vajval.purah.core.checker.ComboBuilderChecker;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
 import io.github.vajval.purah.core.checker.LambdaChecker;
-import io.github.vajval.purah.core.resolver.DefaultArgResolver;
+import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 import io.github.vajval.purah.util.People;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,14 +14,11 @@ import java.util.Map;
 import java.util.Objects;
 
 class NormalMultiLevelMatcherTest {
-    @Test
-    void normalMultiLevelMatcher123() {
 
-    }
     @Test
     void normalMultiLevelMatcher() {
 
-        DefaultArgResolver resolver = new DefaultArgResolver();
+        ReflectArgResolver resolver = new ReflectArgResolver();
         NormalMultiLevelMatcher normalMatcher = new NormalMultiLevelMatcher("name|address|noExistField|child#0.id|child#5.child#0.id");
         Map<String, InputToCheckerArg<?>> map = resolver.oGetMatchFieldObjectMap(People.elder, normalMatcher);
         Assertions.assertEquals(map.get("name").argValue(), People.elder.getName());

@@ -24,7 +24,6 @@ public class ByLogicMethodCheckerFactory extends AbstractByMethodCheckerFactory 
             throw new InitCheckFactoryException(errorMsg);
         }
         purahEnableMethod = new PurahWrapMethod(bean, method, 1);
-
     }
 
     public static String errorMsgCheckerFactoryByLogicMethod(Object bean, Method method) {
@@ -33,7 +32,6 @@ public class ByLogicMethodCheckerFactory extends AbstractByMethodCheckerFactory 
         if (parameters.length != 2) {
             return "The function supports only two parameters: the first one is the parameter name, and the second one is the parameter to be checked.";
         }
-
         if (!parameters[0].getParameterizedType().equals(String.class)) {
             return "The first parameter must be of type string and will be filled with the name 'checker'.";
         }
@@ -48,19 +46,14 @@ public class ByLogicMethodCheckerFactory extends AbstractByMethodCheckerFactory 
 
 
     @Override
-    public Checker<?,?> createChecker(String needMatchCheckerName) {
-
-
-        return new AbstractBaseSupportCacheChecker<Object,Object>() {
+    public Checker<?, ?> createChecker(String needMatchCheckerName) {
+        return new AbstractBaseSupportCacheChecker<Object, Object>() {
             @Override
             public CheckResult<Object> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
-
                 Object[] args = new Object[2];
                 args[0] = needMatchCheckerName;
                 args[1] = inputToCheckerArg;
-
                 return purahEnableMethod.invokeResult(inputToCheckerArg, args);
-
             }
 
             @Override
@@ -84,6 +77,4 @@ public class ByLogicMethodCheckerFactory extends AbstractByMethodCheckerFactory 
             }
         };
     }
-
-
 }

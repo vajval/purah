@@ -68,10 +68,11 @@ class ReOrderTest {
         for (Future<?> future : futures) {
             future.get();
         }
-        System.out.println(reOrder.fastStopIndexMap);
-        System.out.println(reOrder.fastStopIndexCountMap);
+        Assertions.assertEquals(5, reOrder.fastStopIndexMap.size());
+        Assertions.assertEquals(5, reOrder.fastStopIndexCountMap.size());
         reOrder.reMap();
-        System.out.println(reOrder.fastStopIndexMap);
+        Assertions.assertEquals(5, reOrder.fastStopIndexMap.size());
+        Assertions.assertEquals(5, reOrder.fastStopIndexCountMap.size());
 
 
     }

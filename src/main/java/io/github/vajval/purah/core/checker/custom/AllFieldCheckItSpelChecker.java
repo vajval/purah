@@ -27,13 +27,10 @@ public abstract class AllFieldCheckItSpelChecker extends AbstractBaseSupportCach
 
     }
 
-
     protected abstract Purahs purahs();
-
     protected abstract String spel(String value, Map<String, ?> map,InputToCheckerArg<Object> inputToCheckerArg);
 
     protected abstract FieldMatcher fieldMatcher(InputToCheckerArg<Object> inputToCheckerArg);
-
 
     @Override
     public MultiCheckResult<CheckResult<?>> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
@@ -50,9 +47,6 @@ public abstract class AllFieldCheckItSpelChecker extends AbstractBaseSupportCach
             ComboBuilderChecker combo = purahs.combo(array).mainMode(checkIt.mainMode()).resultLevel(checkIt.resultLevel());
             multiCheckerExecutor.add(combo,value);
         }
-
         return multiCheckerExecutor.execToMultiCheckResult();
     }
-
-
 }

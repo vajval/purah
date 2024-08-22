@@ -102,7 +102,6 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
 
 
     public static String errorMsgAutoMethodCheckerByDefaultReflectArgResolver(Object methodsToCheckersBean, Method method) {
-
         if (method.getParameters().length < 1) {
             return "Come on, you need at least one parameter, okay? [" + method + "]";
         }
@@ -144,7 +143,6 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
         final ArgResolver resolver;
         final String methodLog;
 
-
         public FieldParameter(int index, FVal FVal, Class<?> clazz, FieldMatcher selfFieldMatcher, ArgResolver resolver, Method method) {
             this.index = index;
             this.FVal = FVal;
@@ -153,7 +151,6 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
             this.resolver = resolver;
             this.methodLog = method.toGenericString();
         }
-
         protected Object selectFromMainResult(Map<String, InputToCheckerArg<?>> matchFieldObjectMap) {
             InputToCheckerArg<?> childArg = matchFieldObjectMap.get(FVal.value());
             if (childArg == null) {

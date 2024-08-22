@@ -144,10 +144,6 @@ public class CheckerManager {
 
     protected ProxyChecker createCheckerByFactory(CheckerFactory checkerFactory, String needCreateCheckerName) {
         Checker<?, ?> factoryCreatechecker = checkerFactory.createChecker(needCreateCheckerName);
-//        String enableCheckerName = needCreateCheckerName;
-//        if (factoryCreateChecker.name() != null) {
-//            enableCheckerName = factoryCreateChecker.name();
-//        }
         Class<? extends CheckerFactory> clazz = checkerFactory.getClass();
         String clazzStr = clazz.getName();
         if (clazz.isAnonymousClass()) {

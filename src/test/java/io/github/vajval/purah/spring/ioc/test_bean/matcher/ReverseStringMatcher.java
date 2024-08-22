@@ -16,7 +16,6 @@ public class ReverseStringMatcher extends BaseStringMatcher {
     public static final String NAME = "reverse_ioc_test";
 
     public ReverseStringMatcher(String matchStr) {
-
         super(matchStr);
     }
 
@@ -31,7 +30,5 @@ public class ReverseStringMatcher extends BaseStringMatcher {
             }
         }
         return result;
-
-
     }
 }

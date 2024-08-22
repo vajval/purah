@@ -14,7 +14,6 @@ public class MethodArgCheckException extends BasePurahException {
     final MethodHandlerCheckResult checkResult;
 
     public MethodArgCheckException(MethodHandlerCheckResult checkResult) {
-
         super(checkResult.execInfo().name());
         this.checkResult = checkResult;
 

@@ -15,13 +15,12 @@ public class ReOrder {
     protected Map<Integer, AtomicInteger> fastStopIndexCountMap = new HashMap<>();
     protected final AtomicInteger checkCount = new AtomicInteger(0);
     protected final int orderCount;
+
     protected final int size;
     protected final ExecInfo stopInfo;
     protected final String checkerName;
 
     public ReOrder(ExecMode.Main mainMode, int size, int orderCount, String name) {
-
-
         this.orderCount = orderCount;
         this.size = size;
         if (mainMode == ExecMode.Main.all_success) {
@@ -34,11 +33,9 @@ public class ReOrder {
             fastStopIndexMap.put(i, i);
             fastStopIndexCountMap.put(i, new AtomicInteger(0));
         }
-
     }
 
     public List<CheckerExec> reOrder(List<CheckerExec> checkerExecs) {
-
         if (checkerExecs.size() != size) {
             logger.warn("checker " + checkerName + " 无法自动重排序,设定值长度与实际运行长度不同");
             return checkerExecs;
@@ -53,7 +50,7 @@ public class ReOrder {
     }
 
     public void count(List<ExecInfo> execInfoList) {
-        for (int index = 0; index < Math.min(size,execInfoList.size()); index++) {
+        for (int index = 0; index < Math.min(size, execInfoList.size()); index++) {
             ExecInfo execInfo = execInfoList.get(index);
             if (execInfo == stopInfo) {
                 fastStopIndexCountMap.get(index).addAndGet(1);

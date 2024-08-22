@@ -45,7 +45,6 @@ public class ByPropertiesMethodCheckerFactory extends AbstractByMethodCheckerFac
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-
         return new CombinatorialChecker(config);
     }
 }

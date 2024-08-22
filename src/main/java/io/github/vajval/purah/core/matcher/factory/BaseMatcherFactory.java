@@ -21,7 +21,6 @@ public class BaseMatcherFactory implements MatcherFactory {
     protected String name;
     protected Class<? extends FieldMatcher> fieldMatcherClazz;
     protected Constructor<? extends FieldMatcher> constructor;
-
     public BaseMatcherFactory(Class<? extends FieldMatcher> fieldMatcherClazz) {
         initVerify(fieldMatcherClazz);
     }
@@ -66,9 +65,7 @@ public class BaseMatcherFactory implements MatcherFactory {
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
             //todo
             throw new InitMatcherExceptionBase(fieldMatcherClazz + "   :    " + matchStr);
-
         }
-
     }
 
     @Override

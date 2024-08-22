@@ -13,7 +13,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 
 public class PurahContextRefreshEventHandler implements ApplicationListener<ContextRefreshedEvent> {
 
-
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         ApplicationContext applicationContext = event.getApplicationContext();

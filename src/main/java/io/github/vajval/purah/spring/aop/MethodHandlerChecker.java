@@ -27,17 +27,14 @@ import java.util.stream.Stream;
 public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object[], List<ArgCheckResult>> {
 
 
-
-
     protected final Object bean;
 
     protected final Method method;
+
     protected final Type returnType;
 
     protected String name;
-
     protected boolean fillToMethodResult;
-
     protected ExecMode.Main execMode = ExecMode.Main.all_success;
 
     protected ResultLevel resultLevel = ResultLevel.all;
@@ -48,7 +45,6 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
         this.method = method;
         this.returnType = method.getReturnType();
         this.init(purahs);
-
     }
 
 
@@ -108,10 +104,8 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
     @Override
     public MethodHandlerCheckResult doCheck(InputToCheckerArg<Object[]> inputToCheckerArg) {
         Object[] args = inputToCheckerArg.argValue();
-
         String log = bean.getClass() + ":" + method.getName();
-        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(execMode, resultLevel,log);
-
+        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(execMode, resultLevel, log);
         for (int index = 0; index < args.length; index++) {
 
             ParameterHandlerChecker checker = parameterHandlerCheckerMap.get(index);
@@ -120,14 +114,10 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
             }
             Object arg = args[index];
             InputToCheckerArg<Object> parameterArg = InputToCheckerArg.of(arg, checker.argClazz());
-            multiCheckerExecutor.add( checker,parameterArg);
+            multiCheckerExecutor.add(checker, parameterArg);
         }
-
-
-
         MultiCheckResult<ArgCheckResult> multiCheckResult = (MultiCheckResult) multiCheckerExecutor.execToMultiCheckResult();
         Iterator<ArgCheckResult> iterator = multiCheckResult.value().iterator();
-
         List<ArgCheckResult> resultValueList = new ArrayList<>();
         for (int index = 0; index < args.length; index++) {
             ParameterHandlerChecker checker = parameterHandlerCheckerMap.get(index);
@@ -141,8 +131,6 @@ public class MethodHandlerChecker extends AbstractBaseSupportCacheChecker<Object
                 }
             }
         }
-
-
         return new MethodHandlerCheckResult(multiCheckResult.mainResult(), resultValueList, bean, method);
     }
 

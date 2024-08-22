@@ -15,9 +15,9 @@ public class LogicCheckResult<T> implements CheckResult<T> {
     public static final String DEFAULT_FAILED_INFO = "FAILED";
 
     protected final ExecInfo execInfo;
-    protected T data;
+    protected final T data;
 
-    protected String log;
+    protected final String log;
 
     protected String info;
 
@@ -44,17 +44,6 @@ public class LogicCheckResult<T> implements CheckResult<T> {
     @Override
     public LogicCheckResult<T> updateInfo(String info) {
         this.info = info;
-        return this;
-    }
-
-    public LogicCheckResult<T> updateInfo(InputToCheckerArg<?> inputToCheckerArg, String failedInfo) {
-        Map<String, String> params = Maps.newHashMapWithExpectedSize(2);
-        if (StringUtils.hasText(inputToCheckerArg.fieldPath())) {
-            params.put("path", inputToCheckerArg.fieldPath());
-        }
-        params.put("arg", String.valueOf(inputToCheckerArg.argValue()));
-        StrSubstitutor strSubstitutor = new StrSubstitutor(params);
-        this.info = strSubstitutor.replace(failedInfo);
         return this;
     }
 

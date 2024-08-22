@@ -26,10 +26,7 @@ public class DefaultMethodConverter implements MethodConverter {
 
     @Override
     public Checker<?, ?> toChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull, String failedInfo) {
-
         String errorMsg = AbstractWrapMethodToChecker.errorMsgAbstractMethodToChecker(methodsToCheckersBean, method, name);
-
-
         if (errorMsg != null) {
             logger.warn("{},{}", errorMsg, method.toGenericString());
             return null;
@@ -47,11 +44,11 @@ public class DefaultMethodConverter implements MethodConverter {
         }
 
         errorMsg = ByAnnMethodChecker.errorMsgCheckerByAnnMethod(methodsToCheckersBean, method);
-
         if (errorMsg == null) {
             logger.info("{}  {}", method, ByAnnMethodChecker.class);
             return new ByAnnMethodChecker(methodsToCheckersBean, method, name, autoNull, failedInfo);
         }
+
         errorMsg = FValMethodChecker.errorMsgAutoMethodCheckerByDefaultReflectArgResolver
                 (methodsToCheckersBean, method);
         if (errorMsg == null) {
@@ -60,15 +57,13 @@ public class DefaultMethodConverter implements MethodConverter {
 
         }
 
-
         errorMsg = ByBaseMethodChecker.errorMsgCheckerByBaseMethod(methodsToCheckersBean, method);
         if (errorMsg == null) {
             logger.info("{}  {}", method, ByBaseMethodChecker.class);
             return new ByBaseMethodChecker(methodsToCheckersBean, method, name, autoNull, failedInfo);
-
         }
-        logger.warn("convert  failed not enable converter,{}", method.toGenericString());
 
+        logger.warn("convert  failed not enable converter,{}", method.toGenericString());
         return null;
     }
 

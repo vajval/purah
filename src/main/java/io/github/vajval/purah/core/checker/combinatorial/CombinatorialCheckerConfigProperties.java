@@ -1,6 +1,5 @@
 package io.github.vajval.purah.core.checker.combinatorial;
 
-import com.google.common.base.Splitter;
 import com.google.gson.Gson;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
@@ -19,6 +18,8 @@ public class CombinatorialCheckerConfigProperties {
     private ResultLevel resultLevel = ResultLevel.only_failed_only_base_logic;
     private String logicFrom;
 
+    private boolean autoLog = false;
+
     private ExecMode.Main mainMode = ExecMode.Main.all_success;
     private List<String> useCheckerNames = new ArrayList<>();
     protected int reOrderCount = -1;
@@ -28,7 +29,7 @@ public class CombinatorialCheckerConfigProperties {
     public CombinatorialCheckerConfig buildToConfig(Purahs purahs) {
 
         CombinatorialCheckerConfig config = CombinatorialCheckerConfig.create(purahs);
-
+        config.setAutoLog(this.autoLog);
         config.setMainExecType(this.getMainMode());
         config.setForRootInputArgCheckerNames(this.getUseCheckerNames());
         config.setName(this.getCheckerName());
@@ -101,23 +102,15 @@ public class CombinatorialCheckerConfigProperties {
         }
 
         matcherFieldCheckerMapping.put(matchFactoryType.trim(), valueMap);
-
     }
 
-    public CombinatorialCheckerConfigProperties addByStrMap(String matchFactoryType, LinkedHashMap<String, String> fieldCheckerStrMapping) {
-        LinkedHashMap<String, List<String>> valueMap = new LinkedHashMap<>();
 
-        for (Map.Entry<String, String> entry : fieldCheckerStrMapping.entrySet()) {
-            ArrayList<String> checkerLists = new ArrayList<>();
-            for (String checkerName : Splitter.on(",").splitToList(entry.getValue().trim())) {
-                checkerLists.add(checkerName.trim());
-            }
-            valueMap.put(entry.getKey().trim(), checkerLists);
-        }
+    public boolean isAutoLog() {
+        return autoLog;
+    }
 
-        matcherFieldCheckerMapping.put(matchFactoryType.trim(), valueMap);
-        return this;
-
+    public void setAutoLog(boolean autoLog) {
+        this.autoLog = autoLog;
     }
 
     public int getReOrderCount() {

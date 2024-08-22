@@ -13,7 +13,7 @@ public class ProxyChecker implements Checker<Object, Object> {
 
     public ProxyChecker(Checker<?, ?> checker, String name, String logicFrom) {
         if (checker == null) {
-            throw new InitCheckerException("bei proxy checker cannot be null");
+            throw new InitCheckerException("be proxy checker cannot be null");
         }
         this.checker = checker;
         this.name = name;
@@ -21,14 +21,10 @@ public class ProxyChecker implements Checker<Object, Object> {
     }
 
 
-
     @Override
     public CheckResult<Object> check(InputToCheckerArg<Object> inputToCheckerArg) {
-        CheckResult<Object> result = ((Checker) checker).check(inputToCheckerArg);
-//        result.setCheckerLogicFrom(this.logicFrom());
-        return result;
+        return (CheckResult<Object>) ((Checker) checker).check(inputToCheckerArg);
     }
-
 
     @Override
     public String logicFrom() {
@@ -40,17 +36,13 @@ public class ProxyChecker implements Checker<Object, Object> {
         return name;
     }
 
-
     @Override
     public Class<?> inputArgClass() {
         return checker.inputArgClass();
     }
 
-
     @Override
     public Class<?> resultDataClass() {
         return checker.resultDataClass();
     }
-
-
 }

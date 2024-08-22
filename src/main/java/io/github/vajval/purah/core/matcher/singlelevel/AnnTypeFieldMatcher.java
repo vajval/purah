@@ -71,9 +71,9 @@ public class AnnTypeFieldMatcher extends BaseStringMatcher {
             } catch (NoSuchFieldException e) {
                 continue;
             }
-            FieldType fieldType = declaredField.getDeclaredAnnotation(FieldType.class);
-            if (fieldType != null) {
-                String[] strings = fieldType.value();
+            ExampleFieldType exampleFieldType = declaredField.getDeclaredAnnotation(ExampleFieldType.class);
+            if (exampleFieldType != null) {
+                String[] strings = exampleFieldType.value();
                 for (String value : strings) {
                     if (value.equals(this.matchStr)) {
                         result.add(declaredField.getName());

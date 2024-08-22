@@ -7,16 +7,9 @@ import io.github.vajval.purah.core.checker.factory.CheckerFactory;
 import java.lang.reflect.Method;
 
 public interface MethodConverter {
-
-
-
-    Checker<?,?> toChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull, String failedInfo);
-
+    Checker<?, ?> toChecker(Object methodsToCheckersBean, Method method, String name, AutoNull autoNull, String failedInfo);
 
     CheckerFactory toCheckerFactory(Object bean, Method method, String match, boolean cacheBeCreatedChecker);
-
-
-
 
 
 }

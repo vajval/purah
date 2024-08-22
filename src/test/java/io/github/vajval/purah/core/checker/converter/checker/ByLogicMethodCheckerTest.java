@@ -8,7 +8,6 @@ import io.github.vajval.purah.core.PurahContext;
 import io.github.vajval.purah.core.Purahs;
 import io.github.vajval.purah.core.checker.Checker;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
-import io.github.vajval.purah.core.name.Name;
 import io.github.vajval.purah.core.checker.ComboBuilderChecker;
 import io.github.vajval.purah.core.matcher.nested.GeneralFieldMatcher;
 import io.github.vajval.purah.util.People;

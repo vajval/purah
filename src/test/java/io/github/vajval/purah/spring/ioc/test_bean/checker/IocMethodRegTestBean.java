@@ -12,13 +12,11 @@ public class IocMethodRegTestBean {
     public static final String NOT_NULL_CHECKER_NAME = "not null check for ioc test";
     public static final String RANGE_TEST = "value in [1-3]";
 
-
     private static final String RANGE_MATCH = "value in [*-*]";
     @ToChecker(NOT_NULL_CHECKER_NAME)
     public boolean IocTestNotNull(Integer o) {
         return o != null;
     }
-
 
     @ToCheckerFactory(match = RANGE_MATCH)
     public boolean range(String name, Number value) {

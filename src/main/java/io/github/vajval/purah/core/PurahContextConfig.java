@@ -14,13 +14,11 @@ import java.util.Set;
 public class PurahContextConfig {
 
     boolean cache = false;
-    boolean argResolverFastInvokeCache = false;
+    boolean enableExtendUnsafeCache = false;
 
     ResultLevel defaultResultLevel = ResultLevel.only_failed_only_base_logic;
 
     Set<Class<? extends FieldMatcher>> singleStringConstructorFieldMatcherClassSet = new HashSet<>();
-
-
     public PurahContextConfig() {
     }
 
@@ -49,12 +47,12 @@ public class PurahContextConfig {
         return defaultResultLevel;
     }
 
-    public boolean isArgResolverFastInvokeCache() {
-        return argResolverFastInvokeCache;
+    public boolean isEnableExtendUnsafeCache() {
+        return enableExtendUnsafeCache;
     }
 
-    public void setArgResolverFastInvokeCache(boolean argResolverFastInvokeCache) {
-        this.argResolverFastInvokeCache = argResolverFastInvokeCache;
+    public void setEnableExtendUnsafeCache(boolean enableExtendUnsafeCache) {
+        this.enableExtendUnsafeCache = enableExtendUnsafeCache;
     }
 
     public Set<Class<? extends FieldMatcher>> purahDefaultFieldMatcherClass() {

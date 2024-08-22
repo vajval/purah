@@ -15,7 +15,7 @@ import io.github.vajval.purah.core.checker.factory.LambdaCheckerFactory;
 import io.github.vajval.purah.core.matcher.nested.FixedMatcher;
 import io.github.vajval.purah.core.matcher.nested.GeneralFieldMatcher;
 import io.github.vajval.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
-import io.github.vajval.purah.core.matcher.singlelevel.FieldType;
+import io.github.vajval.purah.core.matcher.singlelevel.ExampleFieldType;
 
 import java.util.Objects;
 
@@ -128,9 +128,9 @@ class CombinatorialCheckerTest {
 
 
     public static class Trade {
-        @FieldType("shortText")
+        @ExampleFieldType("shortText")
         String title;
-        @FieldType("needCheck")
+        @ExampleFieldType("needCheck")
 
         User initiator;
         User recipients;

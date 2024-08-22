@@ -16,17 +16,14 @@ public abstract class AbstractCustomSyntaxCheckerFactory implements CheckerFacto
 
     public abstract Purahs purahs();
 
-
     @Override
     public abstract boolean match(String needMatchCheckerName);
 
     public abstract Checker<?, ?> doCreateChecker(String needMatchCheckerName);
 
-
     public boolean cache(String needMatchCheckerName, Checker<?, ?> checker) {
         return true;
     }
-
 
     @Override
     public Checker<?, ?> createChecker(String needMatchCheckerName) {
@@ -37,8 +34,6 @@ public abstract class AbstractCustomSyntaxCheckerFactory implements CheckerFacto
             purahs().reg(result);
         }
         return result;
-
-
     }
 
 }

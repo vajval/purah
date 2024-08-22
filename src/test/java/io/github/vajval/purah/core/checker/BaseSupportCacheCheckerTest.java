@@ -13,8 +13,6 @@ class BaseSupportCacheCheckerTest {
     @BeforeEach
     void beforeEach() {
         count = 0;
-
-
     }
 
     final Checker<Object, Object> checker = new AbstractBaseSupportCacheChecker<Object, Object>() {

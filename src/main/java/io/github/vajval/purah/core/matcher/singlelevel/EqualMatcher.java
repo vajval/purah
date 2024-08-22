@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Name("equal")
 public class EqualMatcher extends BaseStringMatcher {
-    Set<String> valueList;
+    final Set<String> valueList;
 
 
     public EqualMatcher(String matchStr) {

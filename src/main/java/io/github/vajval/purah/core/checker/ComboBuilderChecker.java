@@ -41,7 +41,9 @@ public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>
     public ComboBuilderChecker(Purahs purahs, String... checkerNames) {
         this.purahs = purahs;
         config = CombinatorialCheckerConfig.create(purahs);
+        config.setName("create by combo");
         config.setForRootInputArgCheckerNames(Stream.of(checkerNames).collect(Collectors.toList()));
+        config.setLogicFrom("create by combo");
     }
 
 
@@ -57,6 +59,7 @@ public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>
         return this;
 
     }
+
     public ComboBuilderChecker autoReOrder(int count) {
         config.setReOrderCount(count);
         combinatorialChecker = null;
@@ -70,10 +73,16 @@ public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>
         return this;
 
     }
-    public ComboBuilderChecker name(String name) {
+
+    public ComboBuilderChecker thisName(String name) {
         config.setName(name);
         combinatorialChecker = null;
         return this;
+    }
+
+    @Override
+    public MultiCheckResult<CheckResult<?>> oCheck(Object o) {
+        return check(InputToCheckerArg.of(o));
     }
 
     public GenericsProxyChecker regSelf(String name) {
@@ -82,11 +91,6 @@ public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>
         return purahs.reg(combinatorialChecker);
     }
 
-
-    @Override
-    public MultiCheckResult<CheckResult<?>> oCheck(Object o) {
-        return check(InputToCheckerArg.of(o));
-    }
 
     @Override
     public MultiCheckResult<CheckResult<?>> check(InputToCheckerArg<Object> inputToCheckerArg) {
@@ -107,7 +111,6 @@ public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>
     }
 
 
-
     private MultiCheckResult<CheckResult<?>> singleCheck(String singleCheckerName, InputToCheckerArg<Object> inputToCheckerArg) {
         Checker<Object, Object> checker = purahs.checkerOf(singleCheckerName);
         CheckResult<Object> childResult = checker.check(inputToCheckerArg);
@@ -116,7 +119,6 @@ public class ComboBuilderChecker implements Checker<Object, List<CheckResult<?>>
         } else if (childResult.isFailed()) {
             return new MultiCheckResult<>(LogicCheckResult.failed(singleCheckerName + " failed"), Lists.newArrayList(childResult));
         }
-
         throw new UnexpectedException();
     }
 }

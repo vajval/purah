@@ -20,7 +20,6 @@ public abstract class BaseStringMatcher implements IDebugFieldMatcher {
         this.matchStr = matchStr.trim();
     }
 
-
     @Override
     public String toString() {
         return NameUtil.logClazzName(this) + ":(" + matchStr + ")";

@@ -151,7 +151,6 @@ public class InputToCheckerArg<INPUT_ARG> {
 
     public boolean argEquals(Object o) {
         return Objects.equals(arg, o);
-
     }
 
     @Override

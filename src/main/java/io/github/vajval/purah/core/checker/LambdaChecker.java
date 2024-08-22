@@ -1,15 +1,11 @@
 package io.github.vajval.purah.core.checker;
 
-import com.google.common.collect.Maps;
 import io.github.vajval.purah.core.checker.converter.checker.AutoNull;
 import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.checker.result.ExecInfo;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
-import org.apache.logging.log4j.core.lookup.StrSubstitutor;
-import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -22,18 +18,20 @@ import java.util.function.Predicate;
  */
 public class LambdaChecker<INPUT_ARG> implements Checker<INPUT_ARG, Object> {
     final String name;
-    Function<InputToCheckerArg<INPUT_ARG>, CheckResult<?>> function;
+    final Function<InputToCheckerArg<INPUT_ARG>, CheckResult<?>> function;
     final Class<INPUT_ARG> clazz;
-    AutoNull autoNull;
-    String failedInfo;
+    final AutoNull autoNull;
+    final String failedInfo;
+    final String logicFrom;
 
     private LambdaChecker(String name, Function<InputToCheckerArg<INPUT_ARG>, CheckResult<?>> function,
-                          Class<INPUT_ARG> clazz, AutoNull autoNull, String failedInfo) {
+                          Class<INPUT_ARG> clazz, AutoNull autoNull, String failedInfo, String logicFrom) {
         this.name = name;
         this.function = function;
         this.clazz = clazz;
         this.autoNull = autoNull;
         this.failedInfo = failedInfo;
+        this.logicFrom = logicFrom;
     }
 
     @Override
@@ -69,6 +67,11 @@ public class LambdaChecker<INPUT_ARG> implements Checker<INPUT_ARG, Object> {
     @Override
     public Class<?> resultDataClass() {
         return Object.class;
+    }
+
+    @Override
+    public String logicFrom() {
+        return logicFrom;
     }
 
     public static <T> Builder<T> of(Class<T> clazz) {
@@ -125,7 +128,7 @@ public class LambdaChecker<INPUT_ARG> implements Checker<INPUT_ARG, Object> {
         }
 
         public LambdaChecker<T> buildWrap(String name, Function<InputToCheckerArg<T>, CheckResult<?>> function) {
-            return new LambdaChecker<>(name, function, clazz, autoNull, logicFrom);
+            return new LambdaChecker<>(name, function, clazz, autoNull, failedInfo, logicFrom);
         }
 
 

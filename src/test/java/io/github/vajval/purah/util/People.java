@@ -1,7 +1,7 @@
 package io.github.vajval.purah.util;
 
 import com.google.gson.Gson;
-import io.github.vajval.purah.core.matcher.singlelevel.FieldType;
+import io.github.vajval.purah.core.matcher.singlelevel.ExampleFieldType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.UUID;
 public class People {
 
     String id;
-    @FieldType("shortText")
+    @ExampleFieldType("shortText")
     @TestAnn("不超过3个字")
     String name;
     @TestAnn("南方城市")

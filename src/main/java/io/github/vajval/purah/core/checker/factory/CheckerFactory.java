@@ -13,5 +13,4 @@ public interface CheckerFactory extends IName {
         return true;
     }
 
-
 }

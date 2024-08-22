@@ -5,7 +5,7 @@ import org.springframework.util.StringUtils;
 public class MatchStrS {
     String firstLevelStr;
     String childStr;
-    String fullMatchStr;
+    final String fullMatchStr;
 
     /*
      * child#6.child#2.name ->

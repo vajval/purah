@@ -21,14 +21,14 @@ public class ReflectArgResolver implements ArgResolver {
 
     protected final ConcurrentHashMap<Class<?>, ClassReflectCache> classClassConfigCacheMap;
 
-    protected boolean enableCache = true;
+    protected boolean enableExtendUnsafeCache = false;
 
     public void clearCache() {
         classClassConfigCacheMap.clear();
     }
 
-    public void configCache(boolean enable) {
-        enableCache = enable;
+    public void enableExtendUnsafeCache(boolean enableExtendUnsafeCache) {
+        this.enableExtendUnsafeCache = enableExtendUnsafeCache;
     }
 
 
@@ -45,13 +45,13 @@ public class ReflectArgResolver implements ArgResolver {
         if (fieldMatcher == null) {
             throw new RuntimeException("fieldMatcher can not be null");
         }
-        if (Map.class.isAssignableFrom(inputToCheckerArg.argClass())) {
+        Class<?> inputArgClass = inputToCheckerArg.argClass();
+        if (Map.class.isAssignableFrom(inputArgClass)) {
             Map<String, InputToCheckerArg<?>> result = new HashMap<>();
             putMatchFieldObjectMapToResult(inputToCheckerArg, fieldMatcher, result);
             return result;
         }
-        Class<?> inputArgClass = inputToCheckerArg.argClass();
-        ClassReflectCache classReflectCache = classClassConfigCacheMap.computeIfAbsent(inputArgClass, ClassReflectCache::new);
+        ClassReflectCache classReflectCache = classClassConfigCacheMap.computeIfAbsent(inputArgClass, i -> new ClassReflectCache(i, enableExtendUnsafeCache));
         Object argValue = inputToCheckerArg.argValue();
         Map<String, InputToCheckerArg<?>> result = classReflectCache.fullResultByInvokeCache(argValue, fieldMatcher);
         if (result != null) {
@@ -59,7 +59,7 @@ public class ReflectArgResolver implements ArgResolver {
         }
         result = new HashMap<>();
         putMatchFieldObjectMapToResult(inputToCheckerArg, fieldMatcher, result);
-        if (enableCache) {
+        if (fieldMatcher.supportCache()) {
             classReflectCache.tryRegNewInvokeCache(inputToCheckerArg, fieldMatcher, result);
             return result;
         }
@@ -127,7 +127,7 @@ public class ReflectArgResolver implements ArgResolver {
 
     private Map<String, InputToCheckerArg<?>> getFirstLevelResultByReflect(InputToCheckerArg<Object> inputToCheckerArg, FieldMatcher fieldMatcher) {
         Class<?> inputArgClass = inputToCheckerArg.argClass();
-        ClassReflectCache classReflectCache = classClassConfigCacheMap.computeIfAbsent(inputArgClass, i -> new ClassReflectCache(inputArgClass));
+        ClassReflectCache classReflectCache = classClassConfigCacheMap.computeIfAbsent(inputArgClass, i -> new ClassReflectCache(inputArgClass, enableExtendUnsafeCache));
         return classReflectCache.thisLevelMatchFieldValueMap(inputToCheckerArg, fieldMatcher);
 
 

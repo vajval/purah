@@ -51,7 +51,7 @@ public class ReflectUtils {
 
     /**
      * 只有对象匹配到的所有的非叶子字段的class都是final
-     * 检测所有 而且 final字段的所有字段 的class也都是final
+     * 检测所有, 而且 final字段的所有字段 的class也都是final
      * 递归下去,只要有一个字段不是final就不行,因为 非final field的null值无法确定class
      * If this value is null, it's uncertain whether the object's class is People or SuperPeople,
      * potentially leading to errors in retrieving annotations.

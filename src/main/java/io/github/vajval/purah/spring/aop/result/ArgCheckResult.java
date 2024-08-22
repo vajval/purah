@@ -31,7 +31,6 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
 
     CheckIt checkItAnn;
     Object checkArg;
-
     LinkedHashMap<String, CheckResult<?>> checkResultMap;
     protected ExecMode.Main execMode;
 
@@ -57,21 +56,16 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
 
 
     public static ArgCheckResult create(LogicCheckResult<?> mainCheckResult, List<String> checkNameList, List<CheckResult<?>> valueList, CheckIt checkItAnn, Object checkArg, ExecMode.Main methodExecType
-
     ) {
-
-
         Iterator<String> iterator = checkNameList.iterator();
         LinkedHashMap<String, CheckResult<?>> checkResultMap = new LinkedHashMap<>();
         for (CheckResult<?> checkResult : valueList) {
             checkResultMap.put(iterator.next(), checkResult);
-
         }
         while (iterator.hasNext()) {
             checkResultMap.put(iterator.next(), fill(checkItAnn));
         }
         return new ArgCheckResult(mainCheckResult, checkResultMap, valueList, checkItAnn, checkArg, methodExecType);
-
     }
 
     public CheckResult<?> resultOf(String name) {

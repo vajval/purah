@@ -27,6 +27,7 @@ public class CombinatorialCheckerConfig {
     List<String> forRootInputArgCheckerNames = new ArrayList<>();
 
     protected int reOrderCount = -1;
+    boolean autoLog = false;
 
 
     public final List<FieldMatcherCheckerConfig> fieldMatcherCheckerConfigList = new ArrayList<>();
@@ -54,10 +55,8 @@ public class CombinatorialCheckerConfig {
 
     }
 
-
     public void setName(String name) {
         this.name = name;
-
     }
 
     public void addMatcherCheckerName(FieldMatcher fieldMatcher, List<String> list) {
@@ -86,6 +85,14 @@ public class CombinatorialCheckerConfig {
 
     public void setReOrderCount(int reOrderCount) {
         this.reOrderCount = reOrderCount;
+    }
+
+    public boolean isAutoLog() {
+        return autoLog;
+    }
+
+    public void setAutoLog(boolean autoLog) {
+        this.autoLog = autoLog;
     }
 
     @Override

@@ -62,22 +62,16 @@ public class CheckItAspect {
     }
 
     public Object pointcut(ProceedingJoinPoint joinPoint) {
-
-
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         MethodHandlerChecker methodHandlerChecker   =  methodCheckerMap.computeIfAbsent(method, i -> new MethodHandlerChecker(joinPoint.getThis(), method, purahs));
-
         InputToCheckerArg<Object[]> inputToCheckerArg = InputToCheckerArg.of(joinPoint.getArgs(), Object[].class);
-
         MethodHandlerCheckResult methodHandlerCheckResult = methodHandlerChecker.check(inputToCheckerArg);
-
         boolean fillToMethodResult = methodHandlerChecker.isFillToMethodResult();
         if (methodHandlerCheckResult.isFailed()) {
             if (!fillToMethodResult) {
                 throw new MethodArgCheckException(methodHandlerCheckResult);
             }
         }
-
         Object invokeObject;
         try {
             invokeObject = joinPoint.proceed();
@@ -89,10 +83,5 @@ public class CheckItAspect {
         } else {
             return invokeObject;
         }
-
-
     }
-
-
-
 }

@@ -9,6 +9,5 @@ public @interface Range {
 
     double min();
     double max();
-
     String errorMsg();
 }

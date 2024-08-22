@@ -43,7 +43,6 @@ public @interface CheckIt {
 
     ExecMode.Main mainMode() default ExecMode.Main.all_success;
 
-    //todo
     ResultLevel resultLevel() default ResultLevel.all;
 
 

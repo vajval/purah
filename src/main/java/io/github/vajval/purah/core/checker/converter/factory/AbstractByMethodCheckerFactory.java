@@ -46,18 +46,13 @@ public abstract class AbstractByMethodCheckerFactory implements CheckerFactory {
     }
 
     public static String errorMsgBaseCheckerFactoryByMethod(Object bean, Method method) {
-
         if (method == null) {
             return "Hmph, the method must not be null!";
         }
-
-
         if (!java.lang.reflect.Modifier.isPublic(method.getModifiers())) {
             return "if the method isn't public, it just won't work, okay? [" + method.toGenericString() + "]";
         }
-
         boolean isStatic = java.lang.reflect.Modifier.isStatic(method.getModifiers());
-
         if (!isStatic && bean == null) {
             return "When the method is non-static, the parameter `bean` must not be null. [" + method.toGenericString() + "]";
         }
@@ -67,9 +62,6 @@ public abstract class AbstractByMethodCheckerFactory implements CheckerFactory {
                 return "if the bean class isn't public, it just won't work, okay? [" + method.toGenericString() + "]";
             }
         }
-
         return null;
-
-
     }
 }

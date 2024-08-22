@@ -38,13 +38,15 @@ public class ClassReflectCache {
     //FieldMatcher最终结果的缓存,缓存之后不需要执行FieldMatcher中的逻辑,直接获取结果
     protected final Set<FieldMatcher> noSupportInovekCacheFieldMatcherSet = new HashSet<>();
     protected final Map<FieldMatcher, FieldMatcherResultReflectInvokeCache> fieldMatcherResultByCacheInvokeMap = new ConcurrentHashMap<>();
+    protected final boolean enableExtendUnsafeCache;
 
 
     private ClassReflectCache() {
-
+        this.enableExtendUnsafeCache = false;
     }
 
-    public ClassReflectCache(Class<?> inputArgClass) {
+
+    public ClassReflectCache(Class<?> inputArgClass, boolean enableExtendUnsafeCache) {
         if (inputArgClass == null) {
             throw new ArgResolverException("class not be null");
         }
@@ -66,6 +68,7 @@ public class ClassReflectCache {
                         return InputToCheckerArg.createChildWithFieldConfig(childArg, fieldName, field, annotationList);
                     });
         }
+        this.enableExtendUnsafeCache = enableExtendUnsafeCache;
     }
 
     /**
@@ -138,18 +141,27 @@ public class ClassReflectCache {
         return fieldMatcherResultReflectInvokeCache.invokeResultByCache(inputArg);
     }
 
+    protected boolean supportCache(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher, Map<String, InputToCheckerArg<?>> result) {
+        if (!fieldMatcher.supportCache()) {
+            return false;
+        }
+        if (noSupportInovekCacheFieldMatcherSet.contains(fieldMatcher)) {
+            return false;
+        }
+        boolean enabled = true;
+        if (!enableExtendUnsafeCache) {
+            enabled = ReflectUtils.noExtendEnabledFields(inputArgClass, result.keySet());
+        }
+
+        return enabled && enableNestedGetValue(inputToCheckerArg, result);
+    }
 
     public void tryRegNewInvokeCache(InputToCheckerArg<?> inputToCheckerArg, FieldMatcher fieldMatcher, Map<String, InputToCheckerArg<?>> result) {
         if (fieldMatcherResultByCacheInvokeMap.containsKey(fieldMatcher)) {
             return;
         }
-        if (!fieldMatcher.supportCache()) {
-            return;
-        }
-        if (noSupportInovekCacheFieldMatcherSet.contains(fieldMatcher)) {
-            return;
-        }
-        boolean enabled = enableNestedGetValue(inputToCheckerArg, result);
+        boolean enabled = supportCache(inputToCheckerArg, fieldMatcher, result);
+
         if (enabled) {
             fieldMatcherResultByCacheInvokeMap.computeIfAbsent(fieldMatcher, i -> new FieldMatcherResultReflectInvokeCache(inputArgClass, fieldMatcher, result));
         } else {
@@ -170,15 +182,10 @@ public class ClassReflectCache {
 
     protected static boolean enableNestedGetValue(InputToCheckerArg<?> inputToCheckerArg, Map<String, InputToCheckerArg<?>> result) {
         Object argValue = inputToCheckerArg.argValue();
-        Class<?> inputArgClass = inputToCheckerArg.argClass();
-
         for (String s : result.keySet()) {
             if (s.contains("#")) {
                 return false;
             }
-        }
-        if (!ReflectUtils.noExtendEnabledFields(inputArgClass, result.keySet())) {
-            return false;
         }
         //Directly retrieving values from nested fields yields the same results as the actual return values.
         for (Map.Entry<String, InputToCheckerArg<?>> entry : result.entrySet()) {

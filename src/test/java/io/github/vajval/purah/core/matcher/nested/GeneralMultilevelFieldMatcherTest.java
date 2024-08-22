@@ -1,7 +1,7 @@
 package io.github.vajval.purah.core.matcher.nested;
 
 import com.google.common.collect.Lists;
-import io.github.vajval.purah.core.resolver.DefaultArgResolver;
+import io.github.vajval.purah.core.resolver.ReflectArgResolver;
 import io.github.vajval.purah.util.People;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ public class GeneralMultilevelFieldMatcherTest {
     @Test
 
     public void generalFieldMatche123122() {
-        DefaultArgResolver resolver = new DefaultArgResolver();
+        ReflectArgResolver resolver = new ReflectArgResolver();
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("*|childUser.*");
         Map<String, InputToCheckerArg<?>> stringInputToCheckerArgMap = resolver.oGetMatchFieldObjectMap(GOOD_USER_GOOD_CHILD, generalFieldMatcher);
         Assertions.assertEquals(stringInputToCheckerArgMap.size(), 10);
@@ -30,7 +30,7 @@ public class GeneralMultilevelFieldMatcherTest {
     @Test
 
     public void generalFieldMatche12() {
-        DefaultArgResolver resolver = new DefaultArgResolver();
+        ReflectArgResolver resolver = new ReflectArgResolver();
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("*|*.*");
         Map<String, InputToCheckerArg<?>> stringInputToCheckerArgMap = resolver.oGetMatchFieldObjectMap(GOOD_USER_GOOD_CHILD, generalFieldMatcher);
         Assertions.assertEquals(stringInputToCheckerArgMap.size(), 10);
@@ -40,7 +40,7 @@ public class GeneralMultilevelFieldMatcherTest {
 
     @Test
     public void generalFieldMatche12234323122() {
-        DefaultArgResolver resolver = new DefaultArgResolver();
+        ReflectArgResolver resolver = new ReflectArgResolver();
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("*|*.*");
         Map<String, InputToCheckerArg<?>> stringInputToCheckerArgMap = resolver.oGetMatchFieldObjectMap(GOOD_USER, generalFieldMatcher);
         Assertions.assertEquals(stringInputToCheckerArgMap.size(), 5);
@@ -51,18 +51,16 @@ public class GeneralMultilevelFieldMatcherTest {
     @Test
 
     public void generalFieldMatcher3() {
-        DefaultArgResolver resolver = new DefaultArgResolver();
+        ReflectArgResolver resolver = new ReflectArgResolver();
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("#0.id");
         Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.oGetMatchFieldObjectMap(Lists.newArrayList(People.elder), generalFieldMatcher);
         Assertions.assertTrue(matchFieldObjectMap.get("#0.id").argEquals(People.elder.getId()));
     }
 
     @Test
-
     public void generalFieldMatscher2() {
-        DefaultArgResolver resolver = new DefaultArgResolver();
-        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("name");
-        generalFieldMatcher = new GeneralFieldMatcher("child#*.id");
+        ReflectArgResolver resolver = new ReflectArgResolver();
+        GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("child#*.id");
         Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.oGetMatchFieldObjectMap(People.elder, generalFieldMatcher);
         Assertions.assertTrue(matchFieldObjectMap.get("child#0.id").argEquals(People.elder.getChild().get(0).getId()));
 
@@ -71,7 +69,7 @@ public class GeneralMultilevelFieldMatcherTest {
     @Test
 
     public void generalFieldMatcher2() {
-        DefaultArgResolver resolver = new DefaultArgResolver();
+        ReflectArgResolver resolver = new ReflectArgResolver();
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("#0");
         Map<String, InputToCheckerArg<?>> matchFieldObjectMap = resolver.oGetMatchFieldObjectMap(Lists.newArrayList("123"), generalFieldMatcher);
         Assertions.assertTrue(matchFieldObjectMap.get("#0").argEquals("123"));
@@ -97,7 +95,7 @@ public class GeneralMultilevelFieldMatcherTest {
 
     @Test
     void generalFieldMatcher() {
-        DefaultArgResolver resolver = new DefaultArgResolver();
+        ReflectArgResolver resolver = new ReflectArgResolver();
         GeneralFieldMatcher normalMatcher = new GeneralFieldMatcher("na*|address|noExistField|child#*.id|child#5.child#5.id|child#*.child#4.id");
 
         Map<String, InputToCheckerArg<?>> map = resolver.oGetMatchFieldObjectMap(People.elder, normalMatcher);
@@ -117,7 +115,7 @@ public class GeneralMultilevelFieldMatcherTest {
     @Test
     void match2131() {
 
-        DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
+        ReflectArgResolver defaultArgResolver = new ReflectArgResolver();
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("child#*.name");
         Map<String, InputToCheckerArg<?>> objectMap = defaultArgResolver.oGetMatchFieldObjectMap(People.elder, generalFieldMatcher);
         Assertions.assertTrue(objectMap.get("child#0.name").argEquals(People.son.getName()));
@@ -127,7 +125,7 @@ public class GeneralMultilevelFieldMatcherTest {
 
     @Test
     void match123() {
-        DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
+        ReflectArgResolver defaultArgResolver = new ReflectArgResolver();
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("child#*");
         Map<String, InputToCheckerArg<?>> objectMap = defaultArgResolver.oGetMatchFieldObjectMap(People.elder, generalFieldMatcher);
 
@@ -139,7 +137,7 @@ public class GeneralMultilevelFieldMatcherTest {
     void match0() {
 
 
-        DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
+        ReflectArgResolver defaultArgResolver = new ReflectArgResolver();
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("child#*.child#*");
         Map<String, InputToCheckerArg<?>> objectMap = defaultArgResolver.oGetMatchFieldObjectMap(People.elder, generalFieldMatcher);
 
@@ -155,7 +153,7 @@ public class GeneralMultilevelFieldMatcherTest {
     void match1() {
 
 
-        DefaultArgResolver defaultArgResolver = new DefaultArgResolver();
+        ReflectArgResolver defaultArgResolver = new ReflectArgResolver();
         GeneralFieldMatcher generalFieldMatcher = new GeneralFieldMatcher("child#*.child#*.name");
         Map<String, InputToCheckerArg<?>> objectMap = defaultArgResolver.oGetMatchFieldObjectMap(People.elder, generalFieldMatcher);
         Assertions.assertTrue(objectMap.get("child#0.child#0.name").argEquals(People.grandson.getName()));

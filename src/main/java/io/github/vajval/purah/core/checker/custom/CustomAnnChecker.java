@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 
 public abstract class CustomAnnChecker extends AbstractBaseSupportCacheChecker<Object, List<CheckResult<?>>> {
     protected final Map<Class<? extends Annotation>, GenericsProxyChecker> annCheckerMapping = new ConcurrentHashMap<>();
-
     protected final ExecMode.Main mainExecType;
 
     protected final ResultLevel resultLevel;
@@ -46,24 +45,18 @@ public abstract class CustomAnnChecker extends AbstractBaseSupportCacheChecker<O
 
 
     protected void initMethods() {
-
-
         for (Method method : this.getClass().getDeclaredMethods()) {
             String errorMsg = ByAnnMethodChecker.errorMsgCheckerByAnnMethod(this, method);
-
             if (errorMsg == null) {
-                ByAnnMethodChecker byAnnMethodChecker = new ByAnnMethodChecker(this, method, UUID.randomUUID().toString(), AutoNull.notEnable,"failed");
+                ByAnnMethodChecker byAnnMethodChecker = new ByAnnMethodChecker(this, method, UUID.randomUUID().toString(), AutoNull.notEnable, "failed");
                 String name = this.name() + "[" + byAnnMethodChecker.annClazz() + "]" + "[" + byAnnMethodChecker.inputArgClass() + "]";
                 String logicFrom = this.getClass() + "  convert method " + method.getName();
                 Class<? extends Annotation> annClazz = byAnnMethodChecker.annClazz();
                 ProxyChecker proxyChecker = new ProxyChecker(byAnnMethodChecker, name, logicFrom);
                 GenericsProxyChecker genericsProxyChecker = annCheckerMapping.computeIfAbsent(annClazz, i -> GenericsProxyChecker.create(name).addNewChecker(proxyChecker));
                 genericsProxyChecker.addNewChecker(proxyChecker);
-
             }
-
         }
-
     }
 
     @Override
@@ -72,19 +65,14 @@ public abstract class CustomAnnChecker extends AbstractBaseSupportCacheChecker<O
         List<Annotation> enableAnnotations = inputToCheckerArg.annListOnField().stream()
                 .filter(i -> annCheckerMapping.containsKey(i.annotationType()))
                 .collect(Collectors.toList());
-
         String annListLogStr = enableAnnotations.stream().map(i -> i.annotationType().getSimpleName()).collect(Collectors.joining(",", "[", "]"));
         String log = inputToCheckerArg.fieldPath() + "  @Ann:" + annListLogStr + " : " + this.name();
-        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel,log);
-
+        MultiCheckerExecutor multiCheckerExecutor = new MultiCheckerExecutor(mainExecType, resultLevel, log);
         for (Annotation enableAnnotation : enableAnnotations) {
             GenericsProxyChecker genericsProxyChecker = annCheckerMapping.get(enableAnnotation.annotationType());
-            multiCheckerExecutor.add(genericsProxyChecker,inputToCheckerArg);
+            multiCheckerExecutor.add(genericsProxyChecker, inputToCheckerArg);
         }
-
         return multiCheckerExecutor.execToMultiCheckResult();
-
-
     }
 
 

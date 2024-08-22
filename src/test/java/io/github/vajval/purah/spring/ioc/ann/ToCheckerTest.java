@@ -2,7 +2,6 @@ package io.github.vajval.purah.spring.ioc.ann;
 
 import io.github.vajval.purah.ExampleApplication;
 import io.github.vajval.purah.core.Purahs;
-import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import io.github.vajval.purah.core.checker.result.MultiCheckResult;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
@@ -31,12 +30,10 @@ public class ToCheckerTest {
         User user = new User(1L, null, "123435345", 123);
         MultiCheckResult<?> multiCheckResult =
                 (MultiCheckResult) purahs.checkerOf("example:1[][id|phone|name:not_null_test]").oCheck(user);
-
         List<LogicCheckResult<?>> logicCheckResults = multiCheckResult.resultChildList(ResultLevel.only_failed_only_base_logic);
         LogicCheckResult<?> checkResult = logicCheckResults.get(0);
         Assertions.assertTrue(checkResult.info().contains("失败 字段 [name] 值为[null]"));
-        System.out.println(multiCheckResult.log());
-        System.out.println(checkResult.log());
+
 
     }
 
