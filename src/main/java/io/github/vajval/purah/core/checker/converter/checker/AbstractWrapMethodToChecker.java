@@ -74,7 +74,8 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
                 return LogicCheckResult.ignore();
             }
             if (autoNull == AutoNull.failed) {
-                return LogicCheckResult.failedAutoInfo(inputToCheckerArg, failedInfo);
+                return LogicCheckResult.failed(null, "auto null failed " + purahEnableMethod.log(inputToCheckerArg)).updateInfo(LogicCheckResult.autoInfo(inputToCheckerArg, failedInfo));
+
             }
             if (autoNull == AutoNull.success) {
                 return LogicCheckResult.success();
@@ -110,6 +111,8 @@ public abstract class AbstractWrapMethodToChecker extends AbstractBaseSupportCac
     public String logicFrom() {
         return purahEnableMethod.logicFrom();
     }
+
+
 
 
 }

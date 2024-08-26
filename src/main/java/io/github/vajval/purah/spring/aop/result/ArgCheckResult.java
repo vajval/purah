@@ -34,6 +34,7 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
     LinkedHashMap<String, CheckResult<?>> checkResultMap;
     protected ExecMode.Main execMode;
 
+    List<LogicCheckResult<?>> failedLogicList;
 
     private ArgCheckResult(LogicCheckResult<?> mainCheckResult, List<CheckResult<?>> valueList) {
         super(mainCheckResult, valueList);
@@ -72,6 +73,9 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
         return checkResultMap.get(name);
     }
 
+    public Object checkArg() {
+        return checkArg;
+    }
 
     @Override
     public boolean isSuccess() {
@@ -95,7 +99,11 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
     }
 
     public List<LogicCheckResult<?>> failedLogicList() {
-        return resultChildList(ResultLevel.only_failed_only_base_logic);
+        if (failedLogicList != null) {
+            return failedLogicList;
+        }
+        failedLogicList = resultChildList(ResultLevel.only_failed_only_base_logic);
+        return failedLogicList;
     }
 
     public static LogicCheckResult<?> fill(CheckIt checkIt) {
@@ -107,6 +115,10 @@ public class ArgCheckResult extends MultiCheckResult<CheckResult<?>> {
             throw new UnexpectedException(checkIt.mainMode().name());
 
         }
+    }
+
+    public CheckIt checkItAnn() {
+        return checkItAnn;
     }
 
     @Override

@@ -48,7 +48,7 @@ public class FieldMatcherResultReflectInvokeCache {
                 }
                 if (childArg.nullType() == ITCArgNullType.have_field_no_getter) {
                     inputArgToResultNullInovkeMap.put(fullFieldPath, i -> {
-                        logger.warn("set null value because not getter function for class {}, field: {}", inputArgClass, childArg.field().getName());
+                        logger.warn("set null value because not getter function for {}, field: {}", inputArgClass, childArg.field().getName());
                         return InputToCheckerArg.createNullChildWithFieldConfig(childArg.fieldPath(), childArg.field(), childArg.annListOnField(), ITCArgNullType.have_field_no_getter);
                     });
                     continue;

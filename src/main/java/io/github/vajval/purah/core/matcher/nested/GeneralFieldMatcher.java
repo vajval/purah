@@ -36,6 +36,7 @@ public class GeneralFieldMatcher extends BaseStringMatcher implements Multilevel
     protected final List<String> thisLevelWildCardMatchStrList;
     protected final Set<Integer> listIndexSet;
     protected final Set<String> otherListIndexSet;
+
     protected final boolean supportCache;
 
     public GeneralFieldMatcher(String matchStr) {

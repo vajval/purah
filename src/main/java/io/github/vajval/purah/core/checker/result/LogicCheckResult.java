@@ -18,7 +18,7 @@ public class LogicCheckResult<T> implements CheckResult<T> {
 
     protected String toString;
 
-    protected LogicCheckResult(ExecInfo execInfo, T data, String log) {
+    public LogicCheckResult(ExecInfo execInfo, T data, String log) {
         this.execInfo = execInfo;
         this.data = data;
         this.log = log;
@@ -111,13 +111,6 @@ public class LogicCheckResult<T> implements CheckResult<T> {
         return pre;
     }
 
-
-    public static <A, R> LogicCheckResult<R> failedAutoLog(InputToCheckerArg<A> inputToCheckerArg, R result) {
-        String log = logStr(inputToCheckerArg, DEFAULT_FAILED_INFO);
-        return LogicCheckResult.failed(result, log);
-    }
-
-
     @Override
     public T value() {
         return data;
@@ -145,15 +138,13 @@ public class LogicCheckResult<T> implements CheckResult<T> {
         }
         String infoStr = "";
         if (!Objects.equals(info, log)) {
-            infoStr = ", info='" + info + "'";
+            infoStr = " info='" + info + "',";
         }
 
-        toString = "{" +
-                "exec:'" + execInfo.value() +
-                "'," + dataStr +
-                " log='" + log +
-                "'" + infoStr +
-                "}";
+        toString =
+                "{exec:'" + execInfo.value() +
+                "'," + dataStr + infoStr +
+                " log='" + log + "'}" ;
         return toString;
     }
 

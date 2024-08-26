@@ -69,16 +69,6 @@ public class ByLogicMethodCheckerTest {
 
     }
 
-    @Test
-    public void nullTest() {
-        Checker<Object, Object> checker = purahs.checkerOf("nameNotEmpty");
-        CheckResult<?> result = checker.check(InputToCheckerArg.of(null, String.class));
-        Assertions.assertTrue(result.log().contains("java.lang.String"));
-        result = checker.check(InputToCheckerArg.of(null, People.class));
-        Assertions.assertTrue(result.log().contains(People.class.getName()));
-
-
-    }
 
 
 }

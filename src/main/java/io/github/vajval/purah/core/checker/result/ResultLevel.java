@@ -16,9 +16,6 @@ public enum ResultLevel {
     //只要失败的结果,只要校验逻辑直接返回的结果
     //"Only the results of failures, as long as they are directly returned by the validation logic."
     only_failed_only_base_logic(4),
-    //只要有异常的结果
-    //Only results that have exceptions.
-//    only_error(0)
     ;
 
     final int value;

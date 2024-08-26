@@ -114,7 +114,7 @@ public class ClassReflectCache {
                 InputToCheckerArg<?> objectInputToCheckerArg;
                 if (field != null) {
                     objectInputToCheckerArg = InputToCheckerArg.createNullChildWithFieldConfig(matchFieldStr, field, annByFieldNameCacheMap.get(matchFieldStr), ITCArgNullType.have_field_no_getter);
-                    logger.warn("set null value because not getter function for class {}, field: {}", inputToCheckerArg.argClass(), matchFieldStr);
+                    logger.warn("set null value because not getter function for {}, field: {}", inputToCheckerArg.argClass(), matchFieldStr);
                 } else {
                     objectInputToCheckerArg = InputToCheckerArg.createNullChildWithFieldConfig(matchFieldStr, null, null, ITCArgNullType.no_field_no_getter);
                 }

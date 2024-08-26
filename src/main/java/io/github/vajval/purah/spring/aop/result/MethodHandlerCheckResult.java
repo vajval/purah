@@ -1,11 +1,13 @@
 package io.github.vajval.purah.spring.aop.result;
 
+import io.github.vajval.purah.core.checker.result.ExecInfo;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import io.github.vajval.purah.core.checker.result.MultiCheckResult;
 import io.github.vajval.purah.core.checker.result.ResultLevel;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class MethodHandlerCheckResult extends MultiCheckResult<ArgCheckResult> {
@@ -16,6 +18,10 @@ public class MethodHandlerCheckResult extends MultiCheckResult<ArgCheckResult> {
         super(mainCheckResult, valueList);
         this.belongBean = belongBean;
         this.method = method;
+    }
+
+    public List<ArgCheckResult> enableArgCheckResultList() {
+        return valueList.stream().filter(i -> i.execInfo() != ExecInfo.ignore).collect(Collectors.toList());
     }
 
     public List<ArgCheckResult> argCheckResultList() {

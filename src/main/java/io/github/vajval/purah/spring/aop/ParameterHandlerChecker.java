@@ -46,10 +46,12 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
     public Class<?> argClazz() {
         return argClazz;
     }
+
     @Override
     public boolean enableCache() {
         return true;
     }
+
     @Override
     public ArgCheckResult oCheck(Object o) {
         return (ArgCheckResult) super.oCheck(o);
@@ -62,30 +64,28 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
 
     @Override
     public ArgCheckResult doCheck(InputToCheckerArg<Object> checkArg) {
-        String log = "arg" + index + "  of method:" + method.toGenericString();
+        String log = "arg" + index + " of method:" + method.toGenericString();
 
-        MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.mainMode(), checkIt.resultLevel(),log);
+        MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.mainMode(), checkIt.resultLevel(), log);
 
 
-        List<Checker<Object,Object>> checkerList = checkerNameList.stream().map(purahs::checkerOf).collect(Collectors.toList());
+        List<Checker<Object, Object>> checkerList = checkerNameList.stream().map(purahs::checkerOf).collect(Collectors.toList());
 
         for (Checker<?, ?> checker : checkerList) {
-            executor.add( checker,checkArg);
+            executor.add(checker, checkArg);
         }
-
-
 
 
         MultiCheckResult<CheckResult<?>> multiCheckResult = executor.execToMultiCheckResult();
 
 
-        return ArgCheckResult.create(multiCheckResult.mainResult(), checkerNameList,
+        return ArgCheckResult.create( multiCheckResult.mainResult(), checkerNameList,
                 multiCheckResult.value(),
-                checkIt, checkArg, checkIt.mainMode());
+                checkIt, checkArg.argValue(), checkIt.mainMode());
 
     }
 
-    protected ArgCheckResult createIgnoreResult(Object arg, ExecMode.Main execMode) {
+    protected ArgCheckResult createIgnoreResult(Object checkArg, ExecMode.Main execMode) {
         String log = "this arg not check,no ann or be skip";
 
         if (execMode == ExecMode.Main.at_least_one) {
@@ -93,7 +93,6 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
         } else if (execMode == ExecMode.Main.all_success) {
             log = "unable to know,mode:[all_success],at least one has already failed.So this check is skipped,If the check must be conducted regardless. @MethodCheck set mainMode  all_success_but_must_check_all";
         }
-        InputToCheckerArg<Object> checkArg = InputToCheckerArg.of(arg, argClazz());
         return ArgCheckResult.create(LogicCheckResult.ignore(log), checkerNameList,
                 Collections.emptyList(),
                 checkIt, checkArg, checkIt.mainMode());

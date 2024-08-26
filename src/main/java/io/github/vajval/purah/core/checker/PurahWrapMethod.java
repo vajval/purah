@@ -4,9 +4,12 @@ import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.checker.result.LogicCheckResult;
 import io.github.vajval.purah.core.exception.UnexpectedException;
 import org.springframework.core.ResolvableType;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.*;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /*
@@ -25,6 +28,8 @@ public class PurahWrapMethod {
     protected boolean methodResultBeWrapped;
     protected Class<?> resultDataClazz = boolean.class;
 
+    protected String logicFrom;
+
     public PurahWrapMethod(Object bean, Method method) {
         this(bean, method, 0);
     }
@@ -34,6 +39,9 @@ public class PurahWrapMethod {
         this.bean = bean;
         this.methodParamBeWrapped = false;
         this.needCheckArgIndex = needCheckArgIndex;
+        String collect = Stream.of(method.getParameters()).map(i -> i.getType().getSimpleName()).collect(Collectors.joining(","));
+        this.logicFrom = "check by method " + method.getDeclaringClass().getSimpleName() + "->" + method.getName() + "(" + collect + ")";
+
         if (needCheckArgIndex != -1) {
             this.inputArgValueClazz = method.getParameterTypes()[needCheckArgIndex];
             if (this.inputArgValueClazz.equals(InputToCheckerArg.class)) {
@@ -88,7 +96,8 @@ public class PurahWrapMethod {
         } else if (Objects.equals(result, true)) {
             return LogicCheckResult.success();
         } else if (Objects.equals(result, false)) {
-            return LogicCheckResult.failedAutoLog(inputToCheckerArg, null);
+
+            return LogicCheckResult.failed(null, log(inputToCheckerArg));
         }
         throw new UnexpectedException();
 
@@ -98,14 +107,13 @@ public class PurahWrapMethod {
         try {
             return method.invoke(bean, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
             throw new UnexpectedException(e);
         }
     }
 
 
     public String logicFrom() {
-        return method.toGenericString();
+        return logicFrom;
     }
 
     public Class<?> needCheckArgClass() {
@@ -115,6 +123,14 @@ public class PurahWrapMethod {
     public Class<?> resultDataClass() {
         return resultDataClazz;
     }
+    public String log(InputToCheckerArg<?> inputToCheckerArg){
+        String path = inputToCheckerArg.fieldPath();
+        String fieldLog = "";
+        if (StringUtils.hasText(path)) {
+            fieldLog = "field_path [" + inputToCheckerArg.fieldPath() + "] ";
+        }
+        return fieldLog + this.logicFrom;
 
+    }
 
 }
