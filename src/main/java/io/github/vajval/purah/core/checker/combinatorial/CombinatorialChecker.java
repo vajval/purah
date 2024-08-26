@@ -35,26 +35,17 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
     final CombinatorialCheckerConfig config;
     final int size;
     final Purahs purahs;
-    final List<Checker<?, ?>> rootInputArgCheckers;
-    final List<FieldMatcherCheckerConfigExecutor> fieldMatcherCheckerConfigExecutors;
+    List<Checker<?, ?>> rootInputArgCheckers;
+    List<FieldMatcherCheckerConfigExecutor> fieldMatcherCheckerConfigExecutors;
     ReOrder reOrder;
+
+    protected boolean init = false;
 
     public CombinatorialChecker(CombinatorialCheckerConfig config) {
         this.config = config;
         size = config.forRootInputArgCheckerNames.size() + config.fieldMatcherCheckerConfigList.size();
         purahs = config.purahs;
-        rootInputArgCheckers = this.config.forRootInputArgCheckerNames.stream().map(purahs::checkerOf).collect(Collectors.toList());
-        fieldMatcherCheckerConfigExecutors = this.config.fieldMatcherCheckerConfigList.stream().map(i -> new FieldMatcherCheckerConfigExecutor(i, purahs, config)).collect(Collectors.toList());
-        if (config.mainExecType == ExecMode.Main.all_success || config.mainExecType == ExecMode.Main.at_least_one) {
-            int reOrderCount = config.getReOrderCount();
-            if (reOrderCount != -1) {
-                if (reOrderCount < size) {
-                    logger.warn("checker {} reOrderCount{} less than size{}  re order not enable", config.name, reOrderCount, size);
-                } else {
-                    reOrder = new ReOrder(config.mainExecType, size, config.getReOrderCount(), config.name);
-                }
-            }
-        }
+
 
     }
 
@@ -81,6 +72,21 @@ public class CombinatorialChecker extends AbstractBaseSupportCacheChecker<Object
 
     @Override
     public MultiCheckResult<CheckResult<?>> doCheck(InputToCheckerArg<Object> inputToCheckerArg) {
+        if (!init) {
+            rootInputArgCheckers = this.config.forRootInputArgCheckerNames.stream().map(purahs::checkerOf).collect(Collectors.toList());
+            fieldMatcherCheckerConfigExecutors = this.config.fieldMatcherCheckerConfigList.stream().map(i -> new FieldMatcherCheckerConfigExecutor(i, purahs, config)).collect(Collectors.toList());
+            if (config.mainExecType == ExecMode.Main.all_success || config.mainExecType == ExecMode.Main.at_least_one) {
+                int reOrderCount = config.getReOrderCount();
+                if (reOrderCount != -1) {
+                    if (reOrderCount < size) {
+                        logger.warn("checker {} reOrderCount{} less than size{}  re order not enable", config.name, reOrderCount, size);
+                    } else {
+                        reOrder = new ReOrder(config.mainExecType, size, config.getReOrderCount(), config.name);
+                    }
+                }
+            }
+            init = true;
+        }
 
         //check inputArg
         List<CheckerExec> suppliers = new ArrayList<>(size);

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-//@ConfigurationProperties(value = "purah")
 public class PurahConfigProperties {
 
     List<ChildComboProperties> comboChecker = Collections.emptyList();
