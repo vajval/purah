@@ -38,12 +38,17 @@ public class CheckItAspect {
     }
 
     @Around("pointcut()")
-    public Object aroundAdvice(ProceedingJoinPoint joinPoint) {
+    public Object aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 
         boolean enableCache = enableCache(method);
         if (enableCache) {
-            return PurahCheckInstanceCacheContext.execOnCacheContext(() -> pointcut(joinPoint));
+            PurahCheckInstanceCacheContext.enableThreadCacheContext();
+            try {
+                return pointcut(joinPoint);
+            } finally {
+                PurahCheckInstanceCacheContext.popCache();
+            }
         }
         return pointcut(joinPoint);
 
@@ -59,9 +64,9 @@ public class CheckItAspect {
         return methodCheckConfig.enableCache();
     }
 
-    public Object pointcut(ProceedingJoinPoint joinPoint) {
+    public Object pointcut(ProceedingJoinPoint joinPoint) throws Throwable {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        MethodHandlerChecker methodHandlerChecker   =  methodCheckerMap.computeIfAbsent(method, i -> new MethodHandlerChecker(joinPoint.getThis(), method, purahs));
+        MethodHandlerChecker methodHandlerChecker = methodCheckerMap.computeIfAbsent(method, i -> new MethodHandlerChecker(joinPoint.getThis(), method, purahs));
         InputToCheckerArg<Object[]> inputToCheckerArg = InputToCheckerArg.of(joinPoint.getArgs(), Object[].class);
         MethodHandlerCheckResult methodHandlerCheckResult = methodHandlerChecker.check(inputToCheckerArg);
         boolean fillToMethodResult = methodHandlerChecker.isFillToMethodResult();
@@ -71,11 +76,9 @@ public class CheckItAspect {
             }
         }
         Object invokeObject;
-        try {
-            invokeObject = joinPoint.proceed();
-        }  catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+
+        invokeObject = joinPoint.proceed();
+
         if (fillToMethodResult) {
             return methodHandlerChecker.fillObject(methodHandlerCheckResult);
         } else {

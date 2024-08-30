@@ -33,6 +33,8 @@ public class IocTest {
         Assertions.assertTrue(containsChecker(IocTestChecker.NAME));
         Assertions.assertTrue(containsChecker(IocMethodRegTestBean.NOT_NULL_CHECKER_NAME));
         Assertions.assertTrue(containsChecker(IocMethodRegTestBean.RANGE_TEST));
+        Assertions.assertTrue(purahs.checkerOf(IocMethodRegTestBean.RANGE_TEST).oCheck(2));
+        Assertions.assertFalse(purahs.checkerOf(IocMethodRegTestBean.RANGE_TEST).oCheck(5));
 
         Assertions.assertFalse(containsChecker(IocIgnoreChecker.NAME));
 

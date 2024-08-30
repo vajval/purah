@@ -41,11 +41,7 @@ public class ByCheckerMethodCheckerFactory extends AbstractByMethodCheckerFactor
     public Checker<?,?> createChecker(String needMatchCheckerName) {
         try {
             Checker<?,?> result = (Checker) method.invoke(bean, needMatchCheckerName);
-            String name = needMatchCheckerName;
-            if (StringUtils.hasText(result.name())) {
-                name = result.name();
-            }
-            return new ProxyChecker(result, name, method.toGenericString());
+            return new ProxyChecker(result, needMatchCheckerName, method.toGenericString());
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new UnexpectedException(e.getMessage());
         }
