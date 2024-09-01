@@ -101,7 +101,7 @@ public class GeneralFieldMatcher extends BaseStringMatcher implements Multilevel
     }
 
 
-    private static boolean isWildCardMatcher(String s) {
+    protected static boolean isWildCardMatcher(String s) {
         if (!StringUtils.hasText(s)) {
             return false;
         }
@@ -174,9 +174,9 @@ public class GeneralFieldMatcher extends BaseStringMatcher implements Multilevel
                 childFieldMatcher.add(entry.getValue());
             }
         }
-        FieldMatcher generalFieldMatcher = firstLevelStrEqualMap.get(matchedField);
-        if (generalFieldMatcher != null) {
-            childFieldMatcher.add(generalFieldMatcher);
+        FieldMatcher fieldMatcher = firstLevelStrEqualMap.get(matchedField);
+        if (fieldMatcher != null) {
+            childFieldMatcher.add(fieldMatcher);
         }
         return NestedMatchInfo.create(needCollected, childFieldMatcher);
     }

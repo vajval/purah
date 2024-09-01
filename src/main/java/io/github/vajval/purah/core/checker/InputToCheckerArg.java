@@ -23,7 +23,13 @@ public class InputToCheckerArg<INPUT_ARG> {
     Class<?> clazzInContext;
 
     final Field fieldInClass;
+
+    //todo 组合模式
     List<Annotation> annListOnField = Collections.emptyList();
+    List<Annotation> annListOnParam = Collections.emptyList();
+
+    Map<String, Object> exDataMap = Collections.emptyMap();
+
 
     ITCArgNullType nullType = ITCArgNullType.null_value;
 
@@ -72,16 +78,16 @@ public class InputToCheckerArg<INPUT_ARG> {
     }
 
 
-    public static <T> InputToCheckerArg<T> createChild(T INPUT_ARG, String childFieldStr) {
-        return new InputToCheckerArg<>(INPUT_ARG, Object.class, childFieldStr);
+    public static <T> InputToCheckerArg<T> createChild(T INPUT_ARG, String fieldPath) {
+        return new InputToCheckerArg<>(INPUT_ARG, Object.class, fieldPath);
     }
 
-    public static <T> InputToCheckerArg<T> createChildWithFieldConfig(T INPUT_ARG, String childFieldStr, Field fieldInClass, List<Annotation> annotations) {
-        return new InputToCheckerArg<>(INPUT_ARG, childFieldStr, fieldInClass, annotations);
+    public static <T> InputToCheckerArg<T> createChildWithFieldConfig(T INPUT_ARG, String fieldPath, Field fieldInClass, List<Annotation> annotations) {
+        return new InputToCheckerArg<>(INPUT_ARG, fieldPath, fieldInClass, annotations);
     }
 
-    public static <T> InputToCheckerArg<T> createNullChildWithFieldConfig(String childFieldStr, Field fieldInClass, List<Annotation> annotations, ITCArgNullType nullType) {
-        InputToCheckerArg<T> result = new InputToCheckerArg<>(null, childFieldStr, fieldInClass, annotations);
+    public static <T> InputToCheckerArg<T> createNullChildWithFieldConfig(String fieldPath, Field fieldInClass, List<Annotation> annotations, ITCArgNullType nullType) {
+        InputToCheckerArg<T> result = new InputToCheckerArg<>(null, fieldPath, fieldInClass, annotations);
         result.nullType = nullType;
         return result;
     }
@@ -162,6 +168,21 @@ public class InputToCheckerArg<INPUT_ARG> {
         this.fieldPath = fieldPath;
     }
 
+    public List<Annotation> getAnnListOnParam() {
+        return annListOnParam;
+    }
+
+    public void setAnnListOnParam(List<Annotation> annListOnParam) {
+        this.annListOnParam = annListOnParam;
+    }
+
+    public Map<String, Object> getExDataMap() {
+        return exDataMap;
+    }
+
+    public void setExDataMap(Map<String, Object> exDataMap) {
+        this.exDataMap = exDataMap;
+    }
 }
 
 

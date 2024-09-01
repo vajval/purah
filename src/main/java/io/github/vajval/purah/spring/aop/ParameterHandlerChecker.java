@@ -12,11 +12,13 @@ import io.github.vajval.purah.core.checker.combinatorial.ExecMode;
 import io.github.vajval.purah.spring.aop.ann.CheckIt;
 import io.github.vajval.purah.spring.aop.result.ArgCheckResult;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Object, List<CheckResult<?>>> {
@@ -28,14 +30,18 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
     final int index;
     final Parameter parameter;
 
+    final List<Annotation> annListOnParam;
+
     public ParameterHandlerChecker(Purahs purahs, Parameter parameter, Method method, List<String> checkerNameList, int index) {
         this.parameter = parameter;
         this.method = method;
         this.index = index;
         this.purahs = purahs;
-        this.checkIt = parameter.getAnnotation(CheckIt.class);
+        this.checkIt = parameter.getDeclaredAnnotation(CheckIt.class);
         this.checkerNameList = checkerNameList;
         this.argClazz = parameter.getType();
+        this.annListOnParam = Stream.of(parameter.getDeclaredAnnotations()).collect(Collectors.toList());
+
     }
 
     @Override
@@ -65,12 +71,9 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
     @Override
     public ArgCheckResult doCheck(InputToCheckerArg<Object> checkArg) {
         String log = "arg" + index + " of method:" + method.toGenericString();
-
+        checkArg.setAnnListOnParam(annListOnParam);
         MultiCheckerExecutor executor = new MultiCheckerExecutor(checkIt.mainMode(), checkIt.resultLevel(), log);
-
-
         List<Checker<Object, Object>> checkerList = checkerNameList.stream().map(purahs::checkerOf).collect(Collectors.toList());
-
         for (Checker<?, ?> checker : checkerList) {
             executor.add(checker, checkArg);
         }
@@ -79,7 +82,7 @@ public class ParameterHandlerChecker extends AbstractBaseSupportCacheChecker<Obj
         MultiCheckResult<CheckResult<?>> multiCheckResult = executor.execToMultiCheckResult();
 
 
-        return ArgCheckResult.create( multiCheckResult.mainResult(), checkerNameList,
+        return ArgCheckResult.create(multiCheckResult.mainResult(), checkerNameList,
                 multiCheckResult.value(),
                 checkIt, checkArg.argValue(), checkIt.mainMode());
 
