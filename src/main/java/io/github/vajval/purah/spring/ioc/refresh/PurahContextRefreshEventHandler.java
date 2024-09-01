@@ -13,6 +13,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 
 public class PurahContextRefreshEventHandler implements ApplicationListener<ContextRefreshedEvent> {
 
+    static boolean init = false;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         ApplicationContext applicationContext = event.getApplicationContext();
@@ -23,6 +25,12 @@ public class PurahContextRefreshEventHandler implements ApplicationListener<Cont
             return;
         }
         PurahRefreshHelper purahRefreshHelper = new PurahRefreshHelper(purahContext, applicationContext);
-        purahRefreshHelper.refresh();
+        if (!init) {
+            purahRefreshHelper.init();
+            init = true;
+        } else {
+            purahRefreshHelper.refresh();
+
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import io.github.vajval.purah.core.matcher.BaseStringMatcher;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.core.matcher.singlelevel.WildCardMatcher;
+import io.github.vajval.purah.core.name.Name;
 import org.apache.commons.beanutils.PropertyUtils;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
 import io.github.vajval.purah.core.matcher.inft.ListIndexMatcher;
@@ -49,15 +50,12 @@ import java.util.function.Predicate;
  */
 //todo  list nested
 //todo  circular dependency error
-
+@Name("ann_by_package")
 public class AnnByPackageMatcher extends BaseStringMatcher implements MultilevelFieldMatcher, ListIndexMatcher {
 
     protected final WildCardMatcher fieldNeedNestedMatcher;
-
     protected final FieldInfo NULL = new FieldInfo();
-
     protected final int maxDepth;
-
     protected Set<Class<? extends Annotation>> annClazz;
 
     public AnnByPackageMatcher(String needNestedPackagePatch) {

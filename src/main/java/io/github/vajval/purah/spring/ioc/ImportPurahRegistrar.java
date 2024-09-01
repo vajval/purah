@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.github.vajval.purah.core.PurahContext;
 import io.github.vajval.purah.core.exception.UnexpectedException;
-import io.github.vajval.purah.core.matcher.factory.BaseMatcherFactory;
+import io.github.vajval.purah.core.matcher.factory.BaseStringCacheMatcherFactory;
 import io.github.vajval.purah.spring.IgnoreBeanOnPurahContext;
 import io.github.vajval.purah.spring.EnablePurah;
 import io.github.vajval.purah.spring.aop.CheckItAspect;
@@ -79,7 +79,7 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
 
         List<Class<FieldMatcher>> classes = scanStringMatcherClass(beanDefinitions);
 
-        List<Class<FieldMatcher>> collect = classes.stream().filter(BaseMatcherFactory::clazzVerify).collect(Collectors.toList());
+        List<Class<FieldMatcher>> collect = classes.stream().filter(BaseStringCacheMatcherFactory::clazzVerify).collect(Collectors.toList());
 
         definitionBuilder.addPropertyValue("singleStringConstructorFieldMatcherClassSet", collect);
 
@@ -116,7 +116,7 @@ public class ImportPurahRegistrar implements ImportBeanDefinitionRegistrar, Reso
                 log.error("Unexpected" + e);
                 throw new UnexpectedException(e.getMessage());
             }
-            boolean verify = BaseMatcherFactory.clazzVerify(clazz);
+            boolean verify = BaseStringCacheMatcherFactory.clazzVerify(clazz);
             if (verify) {
                 result.add((Class) clazz);
             }

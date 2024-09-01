@@ -8,6 +8,9 @@ import io.github.vajval.purah.core.name.NameUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -16,15 +19,12 @@ import java.lang.reflect.InvocationTargetException;
  * The most basic field matcher factory, which can create a factory by specifying the fieldMatcher class to use.
  * This factory generates a fieldMatcher of the specified class using a string parameter.
  */
-public class BaseMatcherFactory implements MatcherFactory {
+public class BaseStringCacheMatcherFactory implements MatcherFactory {
 
     protected String name;
     protected Class<? extends FieldMatcher> fieldMatcherClazz;
     protected Constructor<? extends FieldMatcher> constructor;
-    public BaseMatcherFactory(Class<? extends FieldMatcher> fieldMatcherClazz) {
-        initVerify(fieldMatcherClazz);
-    }
-
+    protected Map<String, FieldMatcher> cacheMap = new ConcurrentHashMap<>();
 
     /*
      *
@@ -33,17 +33,34 @@ public class BaseMatcherFactory implements MatcherFactory {
      * It must have a non-private constructor that accepts only a String as a parameter.
      * The class must have a @Name annotation on it.
      */
-
-    public void initVerify(Class<? extends FieldMatcher> fieldMatcherClazz) {
-        constructor = singleStringConstructor(fieldMatcherClazz);
-        if (constructor == null) {
+    public BaseStringCacheMatcherFactory(Class<? extends FieldMatcher> fieldMatcherClazz) {
+        this.constructor = singleStringConstructor(fieldMatcherClazz);
+        if (this.constructor == null) {
             throw new FieldMatcherException(fieldMatcherClazz.getName() + " No suitable constructor available. This method only supports constructors with a single String parameter.");
         }
-        name = NameUtil.nameByAnnOnClass(fieldMatcherClazz);
+        this.name = NameUtil.nameByAnnOnClass(fieldMatcherClazz);
         this.fieldMatcherClazz = fieldMatcherClazz;
     }
 
-    public static Constructor<? extends FieldMatcher> singleStringConstructor(Class<? extends FieldMatcher> fieldMatcherClazz) {
+    @Override
+    public FieldMatcher create(String matchStr) {
+        return this.cacheMap.computeIfAbsent(matchStr, this::doCreate);
+    }
+
+    protected FieldMatcher doCreate(String matchStr) {
+        try {
+            return this.constructor.newInstance(matchStr);
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new InitMatcherExceptionBase(this.fieldMatcherClazz + "   :    " + matchStr);
+        }
+    }
+
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    private static Constructor<? extends FieldMatcher> singleStringConstructor(Class<? extends FieldMatcher> fieldMatcherClazz) {
         try {
             return fieldMatcherClazz.getConstructor(String.class);
         } catch (NoSuchMethodException e) {
@@ -54,22 +71,7 @@ public class BaseMatcherFactory implements MatcherFactory {
     public static boolean clazzVerify(Class<?> clazz) {
         Constructor<? extends FieldMatcher> constructor = singleStringConstructor((Class) clazz);
         return constructor != null;
-
-
     }
 
-    @Override
-    public FieldMatcher create(String matchStr) {
-        try {
-            return constructor.newInstance(matchStr);
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            //todo
-            throw new InitMatcherExceptionBase(fieldMatcherClazz + "   :    " + matchStr);
-        }
-    }
 
-    @Override
-    public String name() {
-        return name;
-    }
 }

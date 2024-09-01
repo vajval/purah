@@ -2,11 +2,11 @@ package io.github.vajval.purah.core;
 
 import io.github.vajval.purah.core.checker.result.ResultLevel;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
+import io.github.vajval.purah.core.matcher.nested.AnnByPackageMatcher;
+import io.github.vajval.purah.core.matcher.nested.FixedMatcher;
 import io.github.vajval.purah.core.matcher.nested.GeneralFieldMatcher;
-import io.github.vajval.purah.core.matcher.singlelevel.ReMatcher;
-import io.github.vajval.purah.core.matcher.singlelevel.WildCardMatcher;
-import io.github.vajval.purah.core.matcher.singlelevel.AnnTypeFieldMatcher;
-import io.github.vajval.purah.core.matcher.singlelevel.ClassNameMatcher;
+import io.github.vajval.purah.core.matcher.nested.NormalMultiLevelMatcher;
+import io.github.vajval.purah.core.matcher.singlelevel.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +19,7 @@ public class PurahContextConfig {
     ResultLevel defaultResultLevel = ResultLevel.only_failed_only_base_logic;
 
     Set<Class<? extends FieldMatcher>> singleStringConstructorFieldMatcherClassSet = new HashSet<>();
+
     public PurahContextConfig() {
     }
 
@@ -62,6 +63,12 @@ public class PurahContextConfig {
         result.add(ReMatcher.class);
         result.add(WildCardMatcher.class);
         result.add(GeneralFieldMatcher.class);
+
+//        result.add(AnnByPackageMatcher.class);
+        result.add(FixedMatcher.class);
+        result.add(NormalMultiLevelMatcher.class);
+        result.add(EqualMatcher.class);
+
         return result;
     }
 }

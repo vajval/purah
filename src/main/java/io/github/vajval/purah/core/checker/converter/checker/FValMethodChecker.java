@@ -8,7 +8,7 @@ import io.github.vajval.purah.core.checker.result.CheckResult;
 import io.github.vajval.purah.core.exception.init.InitCheckerException;
 import io.github.vajval.purah.core.matcher.BaseStringMatcher;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
-import io.github.vajval.purah.core.matcher.factory.BaseMatcherFactory;
+import io.github.vajval.purah.core.matcher.factory.BaseStringCacheMatcherFactory;
 import io.github.vajval.purah.core.matcher.nested.FixedMatcher;
 import io.github.vajval.purah.core.name.NameUtil;
 import io.github.vajval.purah.core.resolver.ArgResolver;
@@ -68,7 +68,7 @@ public class FValMethodChecker extends AbstractWrapMethodToChecker {
                 FieldMatcher selfFieldMatcher = null;
                 Class<? extends BaseStringMatcher> selfClass = fVal.matcher();
                 if (!Objects.equals(selfClass, FixedMatcher.class)) {
-                    selfFieldMatcher = new BaseMatcherFactory(selfClass).create(fVal.value());
+                    selfFieldMatcher = new BaseStringCacheMatcherFactory(selfClass).create(fVal.value());
                 } else if (Map.class.equals(parameter.getType()) || Set.class.equals(parameter.getType())) {
                     selfFieldMatcher = this.generalFieldMatcher(fVal.value());
                 } else {

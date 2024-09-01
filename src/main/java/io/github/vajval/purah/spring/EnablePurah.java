@@ -34,6 +34,6 @@ public @interface EnablePurah {
 
     boolean enableExtendUnsafeCache() default false;
 
-//    ResultLevel defaultResultLevel() default ResultLevel.only_failed_only_base_logic;
+
 
 }

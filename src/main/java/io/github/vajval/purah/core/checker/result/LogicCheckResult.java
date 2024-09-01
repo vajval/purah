@@ -7,8 +7,6 @@ import java.util.Objects;
 
 public class LogicCheckResult<T> implements CheckResult<T> {
 
-    public static final String DEFAULT_FAILED_INFO = "FAILED";
-
     protected final ExecInfo execInfo;
     protected final T data;
 
@@ -143,8 +141,8 @@ public class LogicCheckResult<T> implements CheckResult<T> {
 
         toString =
                 "{exec:'" + execInfo.value() +
-                "'," + dataStr + infoStr +
-                " log='" + log + "'}" ;
+                        "'," + dataStr + infoStr +
+                        " log='" + log + "'}";
         return toString;
     }
 

@@ -37,9 +37,7 @@ public class PurahRefreshHelper {
         this.applicationContext = applicationContext;
     }
 
-
-    public void refresh() {
-        purahContext.clearAll();
+    public void init() {
         PurahIocRegS purahIocRegS = new PurahIocRegS(purahContext);
 
         this.initMain(purahIocRegS, applicationContext);
@@ -49,6 +47,11 @@ public class PurahRefreshHelper {
 
         logger.info("purahContext refresh finish");
         logger.info("Ciallo～(∠・ω< )⌒★");
+    }
+
+    public void refresh() {
+        purahContext.clearAll();
+        init();
 
 
     }
@@ -124,8 +127,14 @@ public class PurahRefreshHelper {
         }
 
         try {
-            PurahConfigProperties purahConfigProperties = applicationContext.getBean(PurahConfigProperties.class);
-            purahIocRegS.regCheckerByProperties(purahConfigProperties);
+            Set<PurahConfigProperties> purahConfigPropertiesSet = filterEnableBean(applicationContext.getBeansOfType(PurahConfigProperties.class).values());
+            for (PurahConfigProperties purahConfigProperties : purahConfigPropertiesSet) {
+                purahIocRegS.regCheckerByProperties(purahConfigProperties);
+
+            }
+//            Set<Object> purahMethodsRegBeanSet = filterEnableBean(applicationContext.getBeansWithAnnotation(PurahMethodsRegBean.class).values());
+
+//            PurahConfigProperties purahConfigProperties = applicationContext.getBean(PurahConfigProperties.class);
         } catch (NoSuchBeanDefinitionException ignored) {
         }
         purahIocRegS.regCheckerFactory(new ExampleCustomSyntaxCheckerFactory(purahContext.purahs()));

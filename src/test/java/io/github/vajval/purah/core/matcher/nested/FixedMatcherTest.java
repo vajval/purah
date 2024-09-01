@@ -20,7 +20,6 @@ class FixedMatcherTest {
     @Test
     void test() {
         FixedMatcher fixedMatcher = new FixedMatcher("child#5.child#0.id");
-
         Map<String, InputToCheckerArg<?>> map = resolver.oGetMatchFieldObjectMap(People.elder, fixedMatcher);
         Assertions.assertNull(map.get("child#5.child#0.id").argValue());
     }

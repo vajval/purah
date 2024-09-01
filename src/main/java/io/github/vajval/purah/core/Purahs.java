@@ -10,7 +10,7 @@ import io.github.vajval.purah.core.checker.ComboBuilderChecker;
 import io.github.vajval.purah.core.checker.GenericsProxyChecker;
 import io.github.vajval.purah.core.checker.converter.MethodConverter;
 import io.github.vajval.purah.core.checker.factory.CheckerFactory;
-import io.github.vajval.purah.core.matcher.factory.BaseMatcherFactory;
+import io.github.vajval.purah.core.matcher.factory.BaseStringCacheMatcherFactory;
 import io.github.vajval.purah.core.matcher.factory.MatcherFactory;
 import io.github.vajval.purah.core.resolver.ArgResolver;
 
@@ -70,7 +70,7 @@ public class Purahs {
         return purahContext.enableMethodConverter();
     }
 
-    public BaseMatcherFactory reg(Class<? extends FieldMatcher> clazz) {
+    public BaseStringCacheMatcherFactory reg(Class<? extends FieldMatcher> clazz) {
         return purahContext.matcherManager().regBaseStrMatcher(clazz);
     }
 
@@ -78,5 +78,7 @@ public class Purahs {
         return purahContext.argResolver();
     }
 
-
+    public PurahContext purahContext() {
+        return purahContext;
+    }
 }

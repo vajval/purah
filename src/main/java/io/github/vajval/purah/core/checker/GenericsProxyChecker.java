@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.BiFunction;
 
 /*
@@ -27,6 +28,8 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
     InputArgClass defaultInputArgClass;
     Checker<Object, Object> defaultChecker;
     final Map<InputArgClass, Checker<?, ?>> cacheGenericsCheckerMapping = new ConcurrentHashMap<>();
+
+    final Map<InputArgClass, Checker<?, ?>> exMap = new ConcurrentHashMap<>();
 
     BiFunction<GenericsProxyChecker, Integer, Integer> tryUpdateContext;
     int checkerFactoryCount;
@@ -74,6 +77,10 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
             }
         }
         this.cacheGenericsCheckerMapping.put(checkerSupportInputArgClass, checker);
+        for (InputArgClass inputArgClass : this.exMap.keySet()) {
+            this.cacheGenericsCheckerMapping.remove(inputArgClass);
+        }
+        this.exMap.clear();
         return this;
     }
 
@@ -188,6 +195,7 @@ public class GenericsProxyChecker implements Checker<Object, Object> {
             if (cacheInputArgClass.support(inputCheckInstanceArgClass)) {
                 result = entry.getValue();
                 cacheGenericsCheckerMapping.put(inputCheckInstanceArgClass, result);
+                exMap.put(inputCheckInstanceArgClass, result);
                 return result;
             }
         }
