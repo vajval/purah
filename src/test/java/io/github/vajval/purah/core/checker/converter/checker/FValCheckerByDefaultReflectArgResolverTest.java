@@ -3,7 +3,6 @@ package io.github.vajval.purah.core.checker.converter.checker;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
 import io.github.vajval.purah.util.People;
 import io.github.vajval.purah.util.TestAnn;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -164,20 +163,6 @@ public class FValCheckerByDefaultReflectArgResolverTest {
 
         for (int i = 0; i < 10000; i++) {
             Assertions.assertTrue(checker.oCheck(People.elder).isSuccess());
-        }
-    }
-
-    public static class Test2 {
-
-        final Map<String, String> map = Collections.singletonMap("1", "2");
-
-        public Map<String, String> getMap() {
-            return map;
-        }
-
-        public static void main(String[] args) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-            Test2 test = new Test2();
-            System.out.println(PropertyUtils.getProperty(test, "map.1"));
         }
     }
 }

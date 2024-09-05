@@ -7,6 +7,9 @@ import org.apache.logging.log4j.Logger;
 import io.github.vajval.purah.core.checker.ITCArgNullType;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -77,14 +80,16 @@ public class FieldMatcherResultReflectInvokeCache {
      * 前缀树优化
      */
 
-    static class ReflectTrieCache {
-
-
-        final Map<String, ReflectTrieCache> reflectNodeMap = new HashMap<>();
+    public static class ReflectTrieCache {
+        final List<ReflectTrieCache> childList = new ArrayList<>();
         final String fieldName;
         String fullPath;
-        Function<Object, InputToCheckerArg<?>> resultInvoke;
 
+        String argPath;
+        Field argField;
+
+        List<Annotation> argAnnListOnField;
+        Method method;
 
         public ReflectTrieCache(String fieldName) {
             this.fieldName = fieldName;
@@ -92,29 +97,46 @@ public class FieldMatcherResultReflectInvokeCache {
 
         public void insert(String path, InputToCheckerArg<?> arg, String fullPath) {
             String firstPath = ReflectUtils.firstPath(path);
-
+            ReflectTrieCache node = getChildByFieldName(firstPath);
             if (firstPath.equals(path)) {
-                ReflectTrieCache node = reflectNodeMap.computeIfAbsent(path, i -> new ReflectTrieCache(path));
-                node.resultInvoke = object -> InputToCheckerArg.createChildWithFieldConfig(object, arg.fieldPath(), arg.field(), arg.annListOnField());
+                node.argPath = arg.fieldPath();
+                node.argField = arg.field();
+                node.argAnnListOnField = arg.annListOnField();
                 node.fullPath = fullPath;
             } else {
                 String childPath = path.substring(firstPath.length() + 1);
-                ReflectTrieCache reflectTrieCache = reflectNodeMap.computeIfAbsent(firstPath, i -> new ReflectTrieCache(firstPath));
-                reflectTrieCache.insert(childPath, arg, fullPath);
+                node.insert(childPath, arg, fullPath);
             }
 
         }
 
+        public ReflectTrieCache getChildByFieldName(String fieldName) {
+            for (ReflectTrieCache reflectTrieCache : childList) {
+                if (reflectTrieCache.fieldName.equals(fieldName)) {
+                    return reflectTrieCache;
+                }
+            }
+            ReflectTrieCache result = new ReflectTrieCache(fieldName);
+            childList.add(result);
+            return result;
+        }
+
         public void invoke(Object arg, Map<String, InputToCheckerArg<?>> resultMap) {
             if (this.fullPath != null) {
-                resultMap.put(fullPath, resultInvoke.apply(arg));
+                resultMap.put(fullPath, InputToCheckerArg.createChildWithFieldConfig(arg, argPath, argField, argAnnListOnField));
             }
-            for (Map.Entry<String, ReflectTrieCache> entry : reflectNodeMap.entrySet()) {
-                String key = entry.getKey();
-                Object fieldValue = ReflectUtils.get(arg, key);
-                ReflectTrieCache reflectTrieCache = entry.getValue();
+            for (ReflectTrieCache reflectTrieCache : childList) {
+                if (arg == null) {
+                    reflectTrieCache.invoke(null, resultMap);
+                    continue;
+                }
+                if (reflectTrieCache.method == null) {
+                    reflectTrieCache.method = ReflectUtils.getFieldMethod(arg.getClass(), reflectTrieCache.fieldName);
+                }
+                Object fieldValue = ReflectUtils.getByMethod(arg, reflectTrieCache.method);
                 reflectTrieCache.invoke(fieldValue, resultMap);
             }
+
         }
     }
 

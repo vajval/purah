@@ -1,7 +1,9 @@
 package io.github.vajval.purah.core.resolver;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import io.github.vajval.purah.core.exception.UnexpectedException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,15 +13,16 @@ import org.springframework.util.StringUtils;
 import java.beans.FeatureDescriptor;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ReflectUtils {
     protected static final Logger logger = LogManager.getLogger(ReflectUtils.class);
+
     public static String firstPath(String path) {
         if (path.contains(".")) {
             return path.substring(0, path.indexOf("."));
@@ -122,37 +125,58 @@ public class ReflectUtils {
         return true;
     }
 
-    protected static Object get(Object inputArg, String field) {
-        if (inputArg == null) {
-            return null;
-        }
+    public static Object getByMethod(Object inputArg, Method method) {
         try {
-            return PropertyUtils.getProperty(inputArg, field);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            logger.error("get {} value from {}", field, inputArg.getClass(), e);
-            return null;
+            return method.invoke(inputArg);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new UnexpectedException("getByMethod");
         }
     }
 
-    public static Object getIgnoreNull(Object inputArg, String fullField) {
+    public static Object get(Object inputArg, String field) {
         if (inputArg == null) {
             return null;
         }
-        Iterable<String> split = Splitter.on(".").split(fullField);
-        Object result = inputArg;
         try {
-            for (String field : split) {
-                result = PropertyUtils.getProperty(result, field);
-                if (result == null) {
-                    return null;
-                }
+            Method method = getMethodCacheMap.computeIfAbsent(inputArg.getClass(), ReflectUtils::getMethodMap).get(field);
+            if (method == null) {
+                return null;
             }
-            return result;
-        } catch (Exception e) {
-            logger.error("get {} value from {}", fullField, inputArg.getClass(), e);
-            return null;
+            return method.invoke(inputArg);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            logger.error("get {} value from {}", field, inputArg.getClass(), e);
+            throw new UnexpectedException("invoke get");
         }
+    }
 
+    public static Method getFieldMethod(Class<?> clazz, String field) {
+        return getMethodCacheMap.computeIfAbsent(clazz, i -> getMethodMap(clazz)).get(field);
+    }
+
+
+    static Map<Class<?>, Map<String, Method>> getMethodCacheMap = new ConcurrentHashMap<>();
+
+    public static Map<String, Method> getMethodMap(Class<?> clazz) {
+        PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(clazz);
+        Map<String, Method> result = Maps.newHashMapWithExpectedSize(propertyDescriptors.length);
+        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+            Method readMethod = propertyDescriptor.getReadMethod();
+            String name = propertyDescriptor.getName();
+            result.put(name, readMethod);
+        }
+        return result;
+    }
+
+    public static Object getIgnoreNull(Object inputArg, String fullField) {
+        Object result = inputArg;
+        Iterable<String> split = Splitter.on(".").split(fullField);
+        for (String field : split) {
+            if (result == null) {
+                return null;
+            }
+            result = get(result, field);
+        }
+        return result;
     }
 
 }

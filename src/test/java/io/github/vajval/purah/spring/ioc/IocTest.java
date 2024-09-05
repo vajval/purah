@@ -18,6 +18,7 @@ import io.github.vajval.purah.spring.ioc.test_bean.checker.IocTestChecker;
 import io.github.vajval.purah.spring.ioc.test_bean.matcher.ReverseStringMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.ReflectionUtils;
 
 import java.util.Set;
 

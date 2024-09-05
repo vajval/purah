@@ -2,7 +2,7 @@ package io.github.vajval.purah.core.matcher.singlelevel;
 
 import com.google.common.base.Splitter;
 import io.github.vajval.purah.core.matcher.BaseStringMatcher;
-import org.apache.commons.io.FilenameUtils;
+import io.github.vajval.purah.core.matcher.WildCardUtils;
 import io.github.vajval.purah.core.name.Name;
 
 import java.util.HashSet;
@@ -31,7 +31,7 @@ public class WildCardMatcher extends BaseStringMatcher {
         Set<String> result = new HashSet<>();
         for (String field : fields) {
             for (String matchKey : matchKeyList) {
-                if (FilenameUtils.wildcardMatch(field, matchKey)) {
+                if (WildCardUtils.wildcardMatch(field, matchKey)) {
                     result.add(field);
                     break;
                 }

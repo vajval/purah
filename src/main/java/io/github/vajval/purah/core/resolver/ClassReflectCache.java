@@ -161,7 +161,6 @@ public class ClassReflectCache {
             return;
         }
         boolean enabled = supportCache(inputToCheckerArg, fieldMatcher, result);
-
         if (enabled) {
             fieldMatcherResultByCacheInvokeMap.computeIfAbsent(fieldMatcher, i -> new FieldMatcherResultReflectInvokeCache(inputArgClass, fieldMatcher, result));
         } else {

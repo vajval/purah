@@ -5,10 +5,10 @@ import com.google.common.base.Splitter;
 import io.github.vajval.purah.core.checker.InputToCheckerArg;
 import io.github.vajval.purah.core.matcher.BaseStringMatcher;
 import io.github.vajval.purah.core.matcher.FieldMatcher;
+import io.github.vajval.purah.core.matcher.WildCardUtils;
 import io.github.vajval.purah.core.matcher.inft.ListIndexMatcher;
 import io.github.vajval.purah.core.name.Name;
 import io.github.vajval.purah.core.matcher.inft.MultilevelFieldMatcher;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -141,7 +141,7 @@ public class GeneralFieldMatcher extends BaseStringMatcher implements Multilevel
     }
 
     private boolean fieldByMatchKey(String field, String matchKey) {
-        return FilenameUtils.wildcardMatch(field, matchKey);
+        return WildCardUtils.wildcardMatch(field, matchKey);
     }
 
 
