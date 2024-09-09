@@ -54,7 +54,7 @@ public class MultiCheckerExecutor {
     private void exec(List<CheckerExec> supplierList) {
 
         finalExecResult = new ArrayList<>();
-        execInfoList=new ArrayList<>();
+        execInfoList=new ArrayList<>(supplierList.size());
         for (CheckerExec supplier : supplierList) {
             CheckResult<?> checkResult = supplier.exec();
             execInfoList.add(checkResult.execInfo());

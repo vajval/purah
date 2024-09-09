@@ -21,7 +21,7 @@ Maven dependency
 <dependency>
     <groupId>io.github.vajval.purah</groupId>
     <artifactId>purah</artifactId>
-    <version>1.0.4-beta</version>
+    <version>1.0.13</version>
 </dependency>
 ```
 
